@@ -1,0 +1,2 @@
+adaptation-manager
+==================
