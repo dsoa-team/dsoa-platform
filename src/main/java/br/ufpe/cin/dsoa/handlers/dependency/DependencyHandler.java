@@ -14,7 +14,6 @@ import org.apache.felix.ipojo.util.DependencyModel;
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.contract.Constants;
-import br.ufpe.cin.dsoa.contract.Slo;
 
 public class DependencyHandler extends PrimitiveHandler {
 
