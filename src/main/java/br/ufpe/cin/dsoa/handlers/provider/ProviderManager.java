@@ -83,14 +83,6 @@ public class ProviderManager implements InvocationHandler, ServiceTrackerCustomi
 		return policy;
 	}
 
-	public static Object createProxy(InstanceManager m_manager,
-			ProviderMetadata p_metadata) {
-
-		return Proxy.newProxyInstance(m_manager.getClazz().getClassLoader(),
-				ProviderManager.getSpecifications(m_manager), new ProviderManager(
-						m_manager, p_metadata));
-	}
-
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 
@@ -140,7 +132,7 @@ public class ProviderManager implements InvocationHandler, ServiceTrackerCustomi
 	 * @param m_manager
 	 * @return
 	 */
-	private static Class<?>[] getSpecifications(InstanceManager m_manager) {
+	public static Class<?>[] getSpecifications(InstanceManager m_manager) {
 
 		String[] interfaces = m_manager.getFactory().getPojoMetadata()
 				.getInterfaces();
@@ -158,6 +150,13 @@ public class ProviderManager implements InvocationHandler, ServiceTrackerCustomi
 		return classes;
 	}
 
+	public static Object createProxy(InstanceManager manager,
+			ProviderMetadata metadata) {
+		return Proxy.newProxyInstance(manager.getClazz().getClassLoader(),
+				ProviderManager.getSpecifications(manager), new ProviderManager(
+						manager, metadata));
+	}
+	
 	private synchronized void setActivePolicy(CreationPolicy policy) {
 		if (null == activePolicy
 				|| !activePolicy.getClass().getName()

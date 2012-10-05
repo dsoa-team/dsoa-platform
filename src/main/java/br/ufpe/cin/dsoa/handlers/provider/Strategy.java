@@ -7,7 +7,7 @@ import org.apache.felix.ipojo.handlers.providedservice.CreationStrategy;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceRegistration;
 
-import br.ufpe.cin.dsoa.handlers.AdaptationManager;
+import br.ufpe.cin.dsoa.AdaptationManager;
 
 public class Strategy extends CreationStrategy {
 

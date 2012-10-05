@@ -3,47 +3,34 @@ package br.ufpe.cin.dsoa.handlers.dependency;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.contract.ServiceDescription;
-import br.ufpe.cin.dsoa.contract.Slo;
-import br.ufpe.cin.dsoa.event.Parameter;
-import br.ufpe.cin.dsoa.handlers.dependency.DependencyListener;
-import br.ufpe.cin.dsoa.handlers.dependency.impl.ServiceDependency;
-import br.ufpe.cin.dsoa.qos.monitoring.service.MonitoringConfiguration;
-import br.ufpe.cin.dsoa.qos.monitoring.service.MonitoringConfigurationItem;
-import br.ufpe.cin.dsoa.qos.monitoring.service.MonitoringService;
-import br.ufpe.cin.dsoa.qos.monitoring.service.events.ErrorEvent;
-import br.ufpe.cin.dsoa.qos.monitoring.service.events.Event;
-import br.ufpe.cin.dsoa.qos.monitoring.service.events.RequestEvent;
-import br.ufpe.cin.dsoa.qos.monitoring.service.events.ResponseEvent;
+import br.ufpe.cin.dsoa.broker.Broker;
 
 public class DependencyManager implements InvocationHandler, DependencyListener {
 
 	private final BundleContext ctx;
 	
-	private ServiceDependency dependency;
-	
 	private ServiceReference serviceReference;
 	private Object service;
-
+	private Broker broker;
+	private List<ServiceReference> blackList;
 
 	public DependencyManager(ServiceDependency dependency) {
-		this.dependency = dependency;
-		this.ctx = ctx;
+		this.ctx = dependency.getContext();
+		this.broker.getBestService(dependency.getSpecification().getName(),
+				dependency.getSlos(), this, this.blackList);
 	}
 	
 	
 	public synchronized void setSelected(ServiceReference reference) {
-		MonitoringService monitor = (MonitoringService) monitorTracker
+		this.serviceReference = reference;
+		this.service = ctx.getService(reference);
+		/*MonitoringService monitor = (MonitoringService) monitorTracker
 				.getService();
 		if (monitor != null) {
 			this.serviceReference = reference;
@@ -63,46 +50,54 @@ public class DependencyManager implements InvocationHandler, DependencyListener 
 			}
 			monitor.startMonitoring(configuration);
 			dependency.setValid(true);
-		}
+		}*/
 	}
 
 	public synchronized Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
-		long startTime = System.nanoTime();
 		
-		List<Parameter> params = new ArrayList<Parameter>();
+		
+/*		
+ 		long startTime = System.nanoTime();
+ 		List<Parameter> params = new ArrayList<Parameter>();
 
 		for(Class<?> clazz : method.getParameterTypes()){
 			params.add(new Parameter(clazz, provider, args[param.size()]));
 		}
 
-
-
 		Request request = new Request(method.getName(), params);
 
 		InvocationEvent event = Invoacti
 		
+		
+		
+		sendRequestEvent(correlationId, method, args);*/
+		//Long correlationId = random.nextLong();
+		System.out.println("FUNCIONOU...");
+		System.out.println("Method: " + method.getName());
+		System.out.println("Parameters: " + args);
 		Object result = null;
-		Long correlationId = random.nextLong();
-		sendRequestEvent(correlationId, method, args);
 		try {
 			if (null != service) {
+				System.out.println("Calling service: ");
 				result = method.invoke(service, args);
+				System.out.println("Return: " + result);
 			} else {
 				throw new IllegalStateException(
 						"Required service is not available!");
 			}
 		} catch (Exception exception) {
-			sendErrorEvent(correlationId, method, exception);
+			//sendErrorEvent(correlationId, method, exception);
 			throw exception;
 		}
-		sendResponseEvent(correlationId, method, result);
-		System.out.println("time : : " + (System.nanoTime() - startTime) / 1000000d);
 		return result;
+/*		sendResponseEvent(correlationId, method, result);
+		System.out.println("time : : " + (System.nanoTime() - startTime) / 1000000d);
+		return result;*/
 	}
 
 	public void listen(Map result, Object userObject, String statementName) {
-		StringBuilder builder = new StringBuilder(1000);
+		/*StringBuilder builder = new StringBuilder(1000);
 		builder.append("Violacao").append(" - ");
 		builder.append(System.currentTimeMillis()).append(" - ");
 		builder.append(result.get("value")).append(" - ");
@@ -128,18 +123,22 @@ public class DependencyManager implements InvocationHandler, DependencyListener 
 		// this.blackList.removeAll(blackList);
 
 		broker.getBestService(dependency.getSpecification().getName(),
-				dependency.getSlos(), this, this.blackList);
+				dependency.getSlos(), this, this.blackList);*/
 	}
 
-	private void sendEvent(Event event) {
+
+
+/*	
+ 
+ 	private void sendEvent(Event event) {
 		MonitoringService monitor = (MonitoringService) monitorTracker
 				.getService();
 		if (null != monitor) {
 			monitor.publishMonitoringEvent(event);
 		}
 	}
-
-/*	private void sendRequestEvent(Long correlationId, Method method,
+ 
+  	private void sendRequestEvent(Long correlationId, Method method,
 			Object[] args) {
 		sendEvent(new RequestEvent(System.nanoTime(),
 				configuration.getClientId(), configuration.getServiceId(),
@@ -197,12 +196,6 @@ public class DependencyManager implements InvocationHandler, DependencyListener 
 
 	}*/
 
-	public void setSelected(ServiceDescription serviceDescription) {
-		// TODO Auto-generated method stub
-
-	}
-
-
 	public static Object createProxy(ServiceDependency serviceDependency) {
 		DependencyManager manager = new DependencyManager(serviceDependency);
 		Object proxy = Proxy.newProxyInstance(serviceDependency.getSpecification().getClassLoader(),
@@ -210,5 +203,5 @@ public class DependencyManager implements InvocationHandler, DependencyListener 
 
 		return proxy;
 	}
-
+	
 }

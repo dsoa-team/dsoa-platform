@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.handlers;
+package br.ufpe.cin.dsoa;
 
 import org.apache.felix.ipojo.InstanceManager;
 

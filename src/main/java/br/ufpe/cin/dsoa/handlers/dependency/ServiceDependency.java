@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.felix.ipojo.FieldInterceptor;
 import org.osgi.framework.BundleContext;
 
+import br.ufpe.cin.dsoa.AdaptationManager;
 import br.ufpe.cin.dsoa.contract.Slo;
 
 public class ServiceDependency implements FieldInterceptor {
