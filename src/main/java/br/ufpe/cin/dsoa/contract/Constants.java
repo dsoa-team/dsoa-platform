@@ -28,7 +28,7 @@ public interface Constants {
 	/**
 	 * Tag handler
 	 */
-	public static final String NAMESPACE = "br.ufpe.cin.dsoa.qos.impl.adaptation-manager";
+	public static final String NAMESPACE = "br.ufpe.cin.dsoa";
 	public static final String NAME      = "requires";
 	
 	/**

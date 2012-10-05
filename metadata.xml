@@ -1,3 +1,7 @@
 <ipojo>
-<!-- declare your component types and instances here -->
+	<handler classname="br.ufpe.cin.dsoa.handlers.provider.ProviderManager"  name="provider-manager"   namespace="br.ufpe.cin.dsoa" >
+   	</handler>
+   	
+   	<handler classname="br.ufpe.cin.dsoa.handlers.dependency.DependencyHandler"	name="requires"	namespace="br.ufpe.cin.dsoa">
+  	</handler>
 </ipojo>

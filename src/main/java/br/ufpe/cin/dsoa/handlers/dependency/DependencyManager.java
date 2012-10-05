@@ -3,6 +3,7 @@ package br.ufpe.cin.dsoa.handlers.dependency;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,26 +11,44 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.broker.Broker;
+import br.ufpe.cin.dsoa.broker.impl.BrokerImpl;
+import br.ufpe.cin.dsoa.event.Request;
+import br.ufpe.cin.dsoa.monitor.Invocation;
+import br.ufpe.cin.dsoa.monitor.Response;
 
 public class DependencyManager implements InvocationHandler, DependencyListener {
 
 	private final BundleContext ctx;
 	
+	private ServiceDependency dependency;
+	
 	private ServiceReference serviceReference;
 	private Object service;
+	
 	private Broker broker;
 	private List<ServiceReference> blackList;
 
 	public DependencyManager(ServiceDependency dependency) {
+		this.dependency = dependency;
 		this.ctx = dependency.getContext();
+		this.broker = new BrokerImpl(ctx);
+		this.blackList = new ArrayList<ServiceReference>();
 		this.broker.getBestService(dependency.getSpecification().getName(),
 				dependency.getSlos(), this, this.blackList);
 	}
 	
+	public String getProviderId() {
+		return (String)this.serviceReference.getProperty("provider.pid");
+	}
+	
+	public String getConsumerId() {
+		return this.dependency.getConsumerPID();
+	}
 	
 	public synchronized void setSelected(ServiceReference reference) {
 		this.serviceReference = reference;
 		this.service = ctx.getService(reference);
+		dependency.setValid(true);
 		/*MonitoringService monitor = (MonitoringService) monitorTracker
 				.getService();
 		if (monitor != null) {
@@ -56,44 +75,28 @@ public class DependencyManager implements InvocationHandler, DependencyListener 
 	public synchronized Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 		
-		
-/*		
  		long startTime = System.nanoTime();
- 		List<Parameter> params = new ArrayList<Parameter>();
-
-		for(Class<?> clazz : method.getParameterTypes()){
-			params.add(new Parameter(clazz, provider, args[param.size()]));
-		}
-
-		Request request = new Request(method.getName(), params);
-
-		InvocationEvent event = Invoacti
-		
-		
-		
-		sendRequestEvent(correlationId, method, args);*/
-		//Long correlationId = random.nextLong();
-		System.out.println("FUNCIONOU...");
-		System.out.println("Method: " + method.getName());
-		System.out.println("Parameters: " + args);
+		Request request = new Request(this.getConsumerId(), this.getProviderId(), method.getName(), method.getParameterTypes(), args);
+		Response response = null;
+		Invocation invocation = new Invocation(request, response);
 		Object result = null;
 		try {
 			if (null != service) {
-				System.out.println("Calling service: ");
+				//System.out.println("Calling service: ");
 				result = method.invoke(service, args);
-				System.out.println("Return: " + result);
+				//System.out.println("Return: " + result);
 			} else {
 				throw new IllegalStateException(
 						"Required service is not available!");
 			}
+			response = new Response(method.getReturnType(), result);
+			return result;
 		} catch (Exception exception) {
-			//sendErrorEvent(correlationId, method, exception);
+			response = new Response(exception);
 			throw exception;
+		} finally {
+			
 		}
-		return result;
-/*		sendResponseEvent(correlationId, method, result);
-		System.out.println("time : : " + (System.nanoTime() - startTime) / 1000000d);
-		return result;*/
 	}
 
 	public void listen(Map result, Object userObject, String statementName) {

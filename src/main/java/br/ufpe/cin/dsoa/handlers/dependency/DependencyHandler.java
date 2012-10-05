@@ -74,8 +74,11 @@ public class DependencyHandler extends PrimitiveHandler {
 	@Override
 	public void start() {
 		this.setValidity(false);
+		System.out.println("TESTE..............");
 		for (ServiceDependency dep : dependencies) {
+			System.out.println("TESTE 22222222222222222");
 			dep.start();
+			System.out.println("TESTE 3333333333333333333333");
 		}
 	}
 
