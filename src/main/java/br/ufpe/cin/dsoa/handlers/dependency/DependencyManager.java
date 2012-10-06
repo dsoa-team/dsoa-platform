@@ -9,21 +9,28 @@ import java.util.Map;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import br.ufpe.cin.dsoa.broker.Broker;
 import br.ufpe.cin.dsoa.broker.impl.BrokerImpl;
+import br.ufpe.cin.dsoa.contract.Slo;
 import br.ufpe.cin.dsoa.event.Request;
 import br.ufpe.cin.dsoa.monitor.Invocation;
+import br.ufpe.cin.dsoa.monitor.MonitoringConfiguration;
+import br.ufpe.cin.dsoa.monitor.MonitoringConfigurationItem;
+import br.ufpe.cin.dsoa.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.monitor.Response;
 
-public class DependencyManager implements InvocationHandler, DependencyListener {
+public class DependencyManager implements InvocationHandler, DependencyListener, ServiceTrackerCustomizer {
 
 	private final BundleContext ctx;
 	
 	private ServiceDependency dependency;
-	
+	private final ServiceTracker monitorTracker;
 	private ServiceReference serviceReference;
 	private Object service;
+	private MonitoringService monitoringService;
 	
 	private Broker broker;
 	private List<ServiceReference> blackList;
@@ -35,6 +42,8 @@ public class DependencyManager implements InvocationHandler, DependencyListener 
 		this.blackList = new ArrayList<ServiceReference>();
 		this.broker.getBestService(dependency.getSpecification().getName(),
 				dependency.getSlos(), this, this.blackList);
+		this.monitorTracker = new ServiceTracker(ctx, MonitoringService.class.getName(), this);
+		this.monitorTracker.open();
 	}
 	
 	public String getProviderId() {
@@ -49,7 +58,7 @@ public class DependencyManager implements InvocationHandler, DependencyListener 
 		this.serviceReference = reference;
 		this.service = ctx.getService(reference);
 		dependency.setValid(true);
-		/*MonitoringService monitor = (MonitoringService) monitorTracker
+		MonitoringService monitor = (MonitoringService) monitorTracker
 				.getService();
 		if (monitor != null) {
 			this.serviceReference = reference;
@@ -69,7 +78,7 @@ public class DependencyManager implements InvocationHandler, DependencyListener 
 			}
 			monitor.startMonitoring(configuration);
 			dependency.setValid(true);
-		}*/
+		}
 	}
 
 	public synchronized Object invoke(Object proxy, Method method, Object[] args)
@@ -205,6 +214,20 @@ public class DependencyManager implements InvocationHandler, DependencyListener 
 				new Class[] {serviceDependency.getSpecification()}, manager );
 
 		return proxy;
+	}
+
+	public Object addingService(ServiceReference reference) {
+		this.monitoringService = (MonitoringService)this.ctx.getService(reference);
+		return this.monitoringService;
+	}
+
+	public void modifiedService(ServiceReference reference, Object service) {
+		
+	}
+
+	public void removedService(ServiceReference reference, Object service) {
+		this.monitoringService = null;
+		ctx.ungetService(reference);
 	}
 	
 }

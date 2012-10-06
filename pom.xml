@@ -23,5 +23,10 @@
       <version>4.2.0</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+    	<groupId>dsoa</groupId>
+    	<artifactId>dsoa-event-monitor</artifactId>
+    	<version>0.0.1</version>
+    </dependency>
   </dependencies>
 </project>
