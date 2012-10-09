@@ -2,9 +2,9 @@ package br.ufpe.cin.dsoa.contract;
 
 import java.util.List;
 
-public class Sla {
+public class SlaTemplate {
 
-	private String consumerPid;
+	private String consumerPID;
 
 	private String consumerName;
 
@@ -16,9 +16,9 @@ public class Sla {
 	/* Lista de requisitos não funcionais */
 	private List<Slo> slos;
 
-	public Sla(String consumerPid, String consumerName, String qosMode,
+	public SlaTemplate(String consumerPid, String consumerName, String qosMode,
 			Class<?> specification, List<Slo> slos) {
-		this.consumerPid = consumerPid;
+		this.consumerPID = consumerPid;
 		this.consumerName = consumerName;
 		this.qosMode = qosMode;
 		this.specification = specification;
@@ -26,11 +26,11 @@ public class Sla {
 	}
 
 	public String getConsumerPid() {
-		return consumerPid;
+		return consumerPID;
 	}
 
 	public void setConsumerPID(String consumerPID) {
-		this.consumerPid = consumerPID;
+		this.consumerPID = consumerPID;
 	}
 
 	public String getConsumerName() {

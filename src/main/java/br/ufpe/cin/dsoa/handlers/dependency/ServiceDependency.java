@@ -1,14 +1,10 @@
 package br.ufpe.cin.dsoa.handlers.dependency;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.felix.ipojo.FieldInterceptor;
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.AdaptationManager;
-import br.ufpe.cin.dsoa.contract.Sla;
-import br.ufpe.cin.dsoa.contract.Slo;
+import br.ufpe.cin.dsoa.contract.SlaTemplate;
 
 public class ServiceDependency implements FieldInterceptor {
 
@@ -19,13 +15,13 @@ public class ServiceDependency implements FieldInterceptor {
 	private DependencyManager manager;
 	
 	/* SLA */
-	private Sla sla;
+	private SlaTemplate sla;
 	
 	/* Status */
 	private boolean valid;
 
 
-	public ServiceDependency(DependencyHandler handler, Sla sla) {
+	public ServiceDependency(DependencyHandler handler, SlaTemplate sla) {
 		this.handler = handler;
 		this.sla = sla;
 	}
@@ -49,7 +45,7 @@ public class ServiceDependency implements FieldInterceptor {
 		return sla.getSpecification();
 	}
 
-	public Sla getSla() {
+	public SlaTemplate getSla() {
 		return sla;
 	}
 

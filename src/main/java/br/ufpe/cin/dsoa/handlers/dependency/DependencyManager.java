@@ -11,7 +11,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import br.ufpe.cin.dsoa.SlaManager;
 import br.ufpe.cin.dsoa.broker.Broker;
 import br.ufpe.cin.dsoa.broker.impl.BrokerImpl;
-import br.ufpe.cin.dsoa.contract.Sla;
+import br.ufpe.cin.dsoa.contract.SlaTemplate;
 import br.ufpe.cin.dsoa.monitor.MonitoringService;
 
 public class DependencyManager implements DependencyListener,
@@ -21,16 +21,19 @@ public class DependencyManager implements DependencyListener,
 	private ServiceReference serviceReference;
 	private Object service;
 	private MonitoringService monitoringService;
-
-	private Broker broker;
 	private List<ServiceReference> blackList;
+	
+	private Broker broker;
+	private SlaManager slaManager;
 
 	public DependencyManager(ServiceDependency dependency) {
 		this.dependency = dependency;
 		this.broker = new BrokerImpl(dependency.getContext());
 		this.blackList = new ArrayList<ServiceReference>();
+		this.slaManager = new SlaManager();
 		this.broker.getBestService(dependency.getSpecification().getName(),
 				dependency.getSla().getSlos(), this, this.blackList);
+		
 	}
 
 	public Object getProxy() {
@@ -50,11 +53,7 @@ public class DependencyManager implements DependencyListener,
 	}
 
 	public synchronized void setSelected(ServiceReference reference) {
-
-		BundleContext ctx = dependency.getContext();
 		this.serviceReference = reference;
-
-		SlaManager slaManager = SlaManager.getInstance();
 		this.service = slaManager.manage(reference, dependency.getSla(), this);
 
 		dependency.setValid(true);
@@ -183,7 +182,7 @@ public class DependencyManager implements DependencyListener,
 		}
 
 		public void plan(Map<?,?> result, Object userObject, String statementName,
-				Sla sla) {
+				SlaTemplate sla) {
 			// TODO Auto-generated method stub
 
 		}

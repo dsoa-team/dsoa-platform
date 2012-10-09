@@ -5,36 +5,20 @@ import java.lang.reflect.Method;
 
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.contract.Sla;
-import br.ufpe.cin.dsoa.contract.Slo;
+import br.ufpe.cin.dsoa.contract.SlaTemplate;
 import br.ufpe.cin.dsoa.event.Request;
 import br.ufpe.cin.dsoa.handlers.dependency.DependencyListener;
-import br.ufpe.cin.dsoa.monitor.Invocation;
-import br.ufpe.cin.dsoa.monitor.MonitoringConfiguration;
-import br.ufpe.cin.dsoa.monitor.MonitoringConfigurationItem;
+import br.ufpe.cin.dsoa.monitor.InvocationEvent;
 import br.ufpe.cin.dsoa.monitor.Response;
 
 public class SlaManager {
 
-	private static SlaManager instance;
-
 	private ServiceReference serviceReference;
 	private DependencyListener listener;
 	private Object service;
-	private Sla sla;
+	private SlaTemplate sla;
 
-	private SlaManager() {
-
-	}
-
-	public static SlaManager getInstance() {
-		if (instance == null) {
-			instance = new SlaManager();
-		}
-		return instance;
-	}
-
-	public Object manage(ServiceReference reference, Sla sla,
+	public Object manage(ServiceReference reference, SlaTemplate sla,
 			DependencyListener dependencyListener) {
 
 		this.serviceReference = reference;
@@ -72,7 +56,7 @@ public class SlaManager {
 					method.getName(), method.getParameterTypes(), args);
 
 			Response response = null;
-			Invocation invocation = new Invocation(request, response);
+			InvocationEvent invocation = new InvocationEvent(request, response);
 			Object result = null;
 			try {
 				if (null != service) {
