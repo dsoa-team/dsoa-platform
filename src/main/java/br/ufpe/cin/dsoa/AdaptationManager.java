@@ -9,8 +9,9 @@ import br.ufpe.cin.dsoa.handlers.provider.ProviderMetadata;
 
 public class AdaptationManager {
 
-	public static Object createProxy(ServiceDependency serviceDependency) {
-		return DependencyManager.createProxy(serviceDependency);
+	public static void manage(ServiceDependency serviceDependency) {
+		DependencyManager manager = new DependencyManager(serviceDependency);
+		serviceDependency.setDependencyManager(manager);
 	}
 
 	public static Object createProxy(InstanceManager manager,

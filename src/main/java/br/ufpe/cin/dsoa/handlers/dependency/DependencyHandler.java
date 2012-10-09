@@ -14,12 +14,10 @@ import org.apache.felix.ipojo.util.DependencyModel;
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.contract.Constants;
+import br.ufpe.cin.dsoa.contract.Sla;
 
 public class DependencyHandler extends PrimitiveHandler {
 
-	private String consumerPID;
-	private String consumerName;
-	private String qosMode;
 	private List<ServiceDependency> dependencies = new ArrayList<ServiceDependency>();
 	
 	public void initializeComponentFactory(ComponentTypeDescription ctd, Element metadata) throws ConfigurationException {
@@ -40,9 +38,9 @@ public class DependencyHandler extends PrimitiveHandler {
 		PojoMetadata manipulation = getFactory().getPojoMetadata();
 		
 		// Get consumer information
-		consumerPID = (String)  requires.getAttribute(Constants.CONSUMER_PID_ATTRIBUTE);
-		consumerName = (String) requires.getAttribute(Constants.CONSUMER_NAME_ATTRIBUTE);
-		qosMode = requires.getAttribute(Constants.QOS_MODE);
+		String consumerPID = (String)  requires.getAttribute(Constants.CONSUMER_PID_ATTRIBUTE);
+		String consumerName = (String) requires.getAttribute(Constants.CONSUMER_NAME_ATTRIBUTE);
+		String qosMode = requires.getAttribute(Constants.QOS_MODE);
 		
 		Element[] serviceElems = requires.getElements(Constants.SERVICE_ELEMENT);
 		DependencyMetadata dm = new DependencyMetadata();
@@ -57,7 +55,7 @@ public class DependencyHandler extends PrimitiveHandler {
 			String svcInterface = fieldmeta.getFieldType();
 			Class specification = DependencyModel.loadSpecification(svcInterface, getInstanceManager().getContext());
 			
-			ServiceDependency dependency = new ServiceDependency(this, specification, dm.getSlos());
+			ServiceDependency dependency = new ServiceDependency(this, new Sla(consumerPID, consumerName, qosMode, specification, dm.getSlos()));
 			dependencies.add(dependency);
 			// register the service field
 			getInstanceManager().register(fieldmeta, dependency);
@@ -66,9 +64,7 @@ public class DependencyHandler extends PrimitiveHandler {
 
 	@Override
 	public String toString() {
-		return "DependencyHandler [consumerPID=" + consumerPID
-				+ ", consumerName=" + consumerName + ", qosMode=" + qosMode
-				+ ", dependencies=" + dependencies + "]";
+		return "DependencyHandler [dependencies=" + dependencies + "]";
 	}
 
 	@Override
@@ -105,15 +101,4 @@ public class DependencyHandler extends PrimitiveHandler {
 		return null;
 	}
 
-	public String getConsumerPID() {
-		return consumerPID;
-	}
-
-	public String getConsumerName() {
-		return consumerName;
-	}
-
-	public String getQosMode() {
-		return qosMode;
-	}
 }

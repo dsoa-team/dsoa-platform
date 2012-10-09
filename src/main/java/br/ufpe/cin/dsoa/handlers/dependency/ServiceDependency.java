@@ -7,6 +7,7 @@ import org.apache.felix.ipojo.FieldInterceptor;
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.AdaptationManager;
+import br.ufpe.cin.dsoa.contract.Sla;
 import br.ufpe.cin.dsoa.contract.Slo;
 
 public class ServiceDependency implements FieldInterceptor {
@@ -14,34 +15,27 @@ public class ServiceDependency implements FieldInterceptor {
 	/* Handler responsável por tratar as dependências da aplicação */
 	private DependencyHandler handler;
 	
-	/* Proxy que referencia diferentes serviços selecionados de acordo com a qualidade fornecida */
-	private Object proxy;
+	/* Dependency manager */
+	private DependencyManager manager;
 	
-	/* Interface do serviço */
-	private Class<?> specification;
-	
-	/* Lista de requisitos não funcionais */
-	private List<Slo> slos;
+	/* SLA */
+	private Sla sla;
 	
 	/* Status */
 	private boolean valid;
 
 
-	@SuppressWarnings("rawtypes")
-	public ServiceDependency(DependencyHandler handler,
-			Class specification, List<Slo> slos) {
+	public ServiceDependency(DependencyHandler handler, Sla sla) {
 		this.handler = handler;
-		this.specification = specification;
-		this.slos = slos;
-		this.valid = false;
+		this.sla = sla;
 	}
 
 	public void start() {
-		this.proxy = AdaptationManager.createProxy(this);
+		AdaptationManager.manage(this);
 	}
 
 	public Object onGet(Object arg0, String arg1, Object arg2) {
-		return proxy;
+		return manager.getProxy();
 	}
 
 	public void onSet(Object arg0, String arg1, Object arg2) {
@@ -52,32 +46,36 @@ public class ServiceDependency implements FieldInterceptor {
 	}
 
 	public Class<?> getSpecification() {
-		return specification;
+		return sla.getSpecification();
 	}
 
-	public List<Slo> getSlos() {
-		return Collections.unmodifiableList(slos);
+	public Sla getSla() {
+		return sla;
 	}
 
-	public String getConsumerPID() {
-		return handler.getConsumerPID();
+	public String getConsumerPid() {
+		return sla.getConsumerPid();
 	}
 
 	public String getConsumerName() {
-		return handler.getConsumerName();
+		return sla.getConsumerName();
 	}
 
 	public String getQoSMode() {
-		return handler.getQosMode();
+		return sla.getQosMode();
 	}
 
-	public void setValid(boolean stateDep) {
-		this.valid = stateDep;
+	public void setValid(boolean valid) {
+		this.valid = valid;
 		this.handler.checkValidate();
 	}
 
 	public boolean isValid() {
 		return valid;
+	}
+
+	public void setDependencyManager(DependencyManager manager) {
+		this.manager = manager;
 	}
 
 }
