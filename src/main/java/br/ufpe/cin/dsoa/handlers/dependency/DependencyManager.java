@@ -6,90 +6,80 @@ import java.util.Map;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import br.ufpe.cin.dsoa.SlaManager;
 import br.ufpe.cin.dsoa.broker.Broker;
 import br.ufpe.cin.dsoa.broker.impl.BrokerImpl;
-import br.ufpe.cin.dsoa.contract.SlaTemplate;
-import br.ufpe.cin.dsoa.monitor.MonitoringService;
+import br.ufpe.cin.dsoa.contract.Sla;
+import br.ufpe.cin.dsoa.monitor.MonitoringListener;
 
-public class DependencyManager implements DependencyListener,
-		ServiceTrackerCustomizer {
+public class DependencyManager implements DependencyListener, MonitoringListener {
 
+	/**
+	 * Representa uma dependência de um serviço que é resolvida dinamicamente com base nos requisitos
+	 * funcionais e não funcionais especificados no arquivo de configuração. 
+	 */
 	private ServiceDependency dependency;
+	
+	/**
+	 * Referência para o serviço que é momentaneamente apontado pela dependência. Esse apontador é trocado
+	 * dinamicamente (em tempo de execução) caso o serviço deixe de atender aos requisitos não funcionais
+	 * estabelecidos.
+	 */
 	private ServiceReference serviceReference;
+	
 	private Object service;
-	private MonitoringService monitoringService;
+	
+	/**
+	 * Lista de serviços utilizados anteriormente e descartados em virtude de não terem atendido adquadamente.
+	 */
 	private List<ServiceReference> blackList;
 	
+	/**
+	 * Responsável por selecionar o serviço que irá resolver a dependência. Pode utilizar diferentes
+	 * políticas ao longo do tempo (uma de cada vez), sendo estas trocadas em tempo de execução.
+	 * */
 	private Broker broker;
+	
+	/**
+	 * Responsável por criar e remover 'contratos' entre o cliente e o provedor de serviço.
+	 */
 	private SlaManager slaManager;
 
 	public DependencyManager(ServiceDependency dependency) {
 		this.dependency = dependency;
-		this.broker = new BrokerImpl(dependency.getContext());
 		this.blackList = new ArrayList<ServiceReference>();
+		
 		this.slaManager = new SlaManager();
+		this.broker = new BrokerImpl(dependency.getContext());
 		this.broker.getBestService(dependency.getSpecification().getName(),
 				dependency.getSla().getSlos(), this, this.blackList);
 		
 	}
-
-	public Object getProxy() {
-		return this.service;
-	}
-
+	
 	public BundleContext getContext() {
 		return dependency.getContext();
 	}
 
-	public String getProviderId() {
-		return (String) this.serviceReference.getProperty("provider.pid");
-	}
-
-	public String getConsumerId() {
-		return this.dependency.getConsumerPid();
+	public Object getService() {
+		return getContext().getService(serviceReference);
 	}
 
 	public synchronized void setSelected(ServiceReference reference) {
 		this.serviceReference = reference;
-		this.service = slaManager.manage(reference, dependency.getSla(), this);
-
-		dependency.setValid(true);
+		this.service = this.slaManager.manage(reference, dependency.getSla(), this);
+		this.dependency.setValid(true);
 	}
 
 	public void listen(Map result, Object userObject, String statementName) {
-		/*
-		 * StringBuilder builder = new StringBuilder(1000);
-		 * builder.append("Violacao").append(" - ");
-		 * builder.append(System.currentTimeMillis()).append(" - ");
-		 * builder.append(result.get("value")).append(" - ");
-		 * builder.append(statementName); logGenerator.log(Level.INFO,
-		 * builder.toString());
-		 */
 
 		Planner planner = Planner.getInstance();
 		planner.plan(result, userObject, statementName, dependency.getSla());
 
 		this.blackList.add(this.serviceReference);
-		this.service = null;
 		this.dependency.getContext().ungetService(this.serviceReference);
 		this.serviceReference = null;
 		this.dependency.setValid(false);
-
-		// System.out.println("A monitoring event occurred: " + statementName);
-		// System.out.println("\tClause: " + ((MonitoringConfigurationItem)
-		// userObject).getStatement());
-		// for (Object key : result.keySet()) {
-		// System.out.println("\tKey: " + key);
-		// System.out.println("\tValue: " + result.get(key));
-		// System.out.println("");
-		// System.out.println("");
-		// }
-
-		// linha adicionadas para considerar efetivas trocas
-		// this.blackList.removeAll(blackList);
 
 		broker.getBestService(dependency.getSpecification().getName(),
 				dependency.getSla().getSlos(), this, this.blackList);
@@ -151,38 +141,10 @@ public class DependencyManager implements DependencyListener,
 	 * }
 	 */
 
-	public Object addingService(ServiceReference reference) {
-		this.monitoringService = (MonitoringService) this.getContext()
-				.getService(reference);
-		return this.monitoringService;
-	}
-
-	public void modifiedService(ServiceReference reference, Object service) {
-
-	}
-
-	public void removedService(ServiceReference reference, Object service) {
-		this.monitoringService = null;
-		getContext().ungetService(reference);
-	}
-
-	static class Planner {
-
-		private static Planner instance;
-
-		private Planner() {
-		}
-
-		public static Planner getInstance() {
-			if (instance == null) {
-				instance = new Planner();
-			}
-
-			return instance;
-		}
+	class Planner {
 
 		public void plan(Map<?,?> result, Object userObject, String statementName,
-				SlaTemplate sla) {
+				Sla sla) {
 			// TODO Auto-generated method stub
 
 		}

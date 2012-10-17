@@ -4,7 +4,7 @@ import org.apache.felix.ipojo.FieldInterceptor;
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.AdaptationManager;
-import br.ufpe.cin.dsoa.contract.SlaTemplate;
+import br.ufpe.cin.dsoa.contract.Sla;
 
 public class ServiceDependency implements FieldInterceptor {
 
@@ -15,13 +15,13 @@ public class ServiceDependency implements FieldInterceptor {
 	private DependencyManager manager;
 	
 	/* SLA */
-	private SlaTemplate sla;
+	private Sla sla;
 	
 	/* Status */
 	private boolean valid;
 
 
-	public ServiceDependency(DependencyHandler handler, SlaTemplate sla) {
+	public ServiceDependency(DependencyHandler handler, Sla sla) {
 		this.handler = handler;
 		this.sla = sla;
 	}
@@ -31,7 +31,7 @@ public class ServiceDependency implements FieldInterceptor {
 	}
 
 	public Object onGet(Object arg0, String arg1, Object arg2) {
-		return manager.getProxy();
+		return manager.getService();
 	}
 
 	public void onSet(Object arg0, String arg1, Object arg2) {
@@ -45,7 +45,7 @@ public class ServiceDependency implements FieldInterceptor {
 		return sla.getSpecification();
 	}
 
-	public SlaTemplate getSla() {
+	public Sla getSla() {
 		return sla;
 	}
 

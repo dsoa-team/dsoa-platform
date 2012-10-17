@@ -2,12 +2,19 @@ package br.ufpe.cin.dsoa.contract;
 
 import java.util.List;
 
+import org.osgi.framework.ServiceReference;
+
+import br.ufpe.cin.dsoa.monitor.MonitoringListener;
+
 public class SlaTemplate {
 
+	/* Id do consumer */
 	private String consumerPID;
 
+	/* Nome do consumer */
 	private String consumerName;
 
+	
 	private String qosMode;
 
 	/* Interface do serviço */
@@ -15,6 +22,9 @@ public class SlaTemplate {
 
 	/* Lista de requisitos não funcionais */
 	private List<Slo> slos;
+
+	/* Responsavel por escutar as quebras de contrato */
+	private MonitoringListener listener;
 
 	public SlaTemplate(String consumerPid, String consumerName, String qosMode,
 			Class<?> specification, List<Slo> slos) {
@@ -29,8 +39,8 @@ public class SlaTemplate {
 		return consumerPID;
 	}
 
-	public void setConsumerPID(String consumerPID) {
-		this.consumerPID = consumerPID;
+	public void setConsumerPid(String consumerPid) {
+		this.consumerPID = consumerPid;
 	}
 
 	public String getConsumerName() {

@@ -1,6 +1,5 @@
-package br.ufpe.cin.dsoa.monitor;
+package br.ufpe.cin.dsoa.event;
 
-import br.ufpe.cin.dsoa.event.Request;
 
 public class InvocationEvent {
 

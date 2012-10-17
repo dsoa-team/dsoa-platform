@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.monitor;
+package br.ufpe.cin.dsoa.event;
 
 public class Response {
 
