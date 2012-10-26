@@ -1,8 +1,8 @@
-package br.ufpe.cin.dsoa.handlers;
+package br.ufpe.cin.dsoa.agent;
 
 import br.ufpe.cin.dsoa.event.InvocationEvent;
 
-public interface MetricHandler {
-
+public interface MetricAggregator {
+	
 	public Object handle(InvocationEvent invocation);
 }
