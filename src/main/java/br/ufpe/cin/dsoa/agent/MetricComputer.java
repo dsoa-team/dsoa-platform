@@ -4,6 +4,6 @@ import br.ufpe.cin.dsoa.event.InvocationEvent;
 
 public interface MetricComputer {
 
-	public Object compute(InvocationEvent invocation);
+	public Object transform(InvocationEvent invocation);
 	
 }
