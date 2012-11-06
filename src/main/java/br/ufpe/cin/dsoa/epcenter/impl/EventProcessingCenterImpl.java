@@ -1,19 +1,10 @@
 package br.ufpe.cin.dsoa.epcenter.impl;
 
-import java.beans.EventHandler;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.epcenter.EventConsumer;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 
 import com.espertech.esper.client.Configuration;
@@ -37,7 +28,6 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 
 	@SuppressWarnings("rawtypes")
 	public void publishEvent(Map event, String eventName) {
-		Map<String, Object> propriedades = event;
 		this.epServiceProvider.getEPRuntime().sendEvent(event, eventName);
 	}
 

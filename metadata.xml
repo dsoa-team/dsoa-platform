@@ -4,4 +4,9 @@
    	
    	<handler classname="br.ufpe.cin.dsoa.handlers.dependency.DependencyHandler"	name="requires"	namespace="br.ufpe.cin.dsoa">
   	</handler>
+  	
+  	<component classname="br.ufpe.cin.dsoa.agent.store.impl.MemoryStorageAgent">
+  		<provides specifications="br.ufpe.cin.dsoa.agent.store.StorageAgentService" post-registration="listen" />
+  	</component>
+  	<instance component="br.ufpe.cin.dsoa.agent.store.impl.MemoryStorageAgent" />
 </ipojo>

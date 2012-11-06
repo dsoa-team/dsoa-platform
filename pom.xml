@@ -24,9 +24,11 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-    	<groupId>dsoa</groupId>
-    	<artifactId>dsoa-event-monitor</artifactId>
-    	<version>0.0.1</version>
+    	<groupId>com.espertech</groupId>
+    	<artifactId>esper</artifactId>
+    	<version>4.7.0</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
     </dependency>
   </dependencies>
 </project>
