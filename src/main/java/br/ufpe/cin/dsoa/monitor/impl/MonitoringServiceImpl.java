@@ -33,7 +33,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 	}
 
 	public void startMonitoring(Sla sla) {
-		this.configuration = new MonitoringConfiguration(new MonitoringContext(sla.getConsumerPid(),
+		/*this.configuration = new MonitoringConfiguration(new MonitoringContext(sla.getConsumerPid(),
 				sla.getServiceReference().getProperty("provider.pid").toString()), this);
 
 		for (Slo slo : this.sla.getSlos()) {
@@ -43,7 +43,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 					slo.getWindowUnit(), slo.getWindowValue(), configuration);
 			this.configuration.addConfigurationItem(item);
 		}
-		monitor.startMonitoring(configuration);
+		monitor.startMonitoring(configuration);*/
 		
 	}
 	

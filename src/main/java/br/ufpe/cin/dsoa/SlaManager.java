@@ -7,72 +7,127 @@ import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.contract.Sla;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
-import br.ufpe.cin.dsoa.event.Request;
-import br.ufpe.cin.dsoa.event.Response;
-import br.ufpe.cin.dsoa.handlers.dependency.DependencyListener;
-import br.ufpe.cin.dsoa.monitor.MonitoringService;
+import br.ufpe.cin.dsoa.monitor.SlaListener;
 
 public class SlaManager {
 
-	private DependencyListener listener;
-	private Sla sla;
+	public static final String PROVIDER_ID = "provider.pid";
+	
+	// private ServiceRegistry<MonitoringService> registry;
 
-	
-	
 	public Object manage(ServiceReference reference, Sla sla,
-			DependencyListener dependencyListener) {
+			SlaListener listener) {
+		return createProxy(reference, sla, listener);
+	}
 
-		this.listener = dependencyListener;
-		this.sla = sla;
-		this.sla.setServiceReference(reference);
-		return new ServiceProxy();
+	private Object createProxy(ServiceReference reference, Sla sla,
+			SlaListener listener) {
+		Binding binding = new Binding(sla, reference);
+		return new ServiceProxy(binding);
 	}
 
 	class ServiceProxy implements InvocationHandler {
-		
+
+		/*
+		 * String attribute; MonitoringService monitoringService;
+		 * 
+		 * List<MonitoringService> monitoringServices = new
+		 * ArrayList<MonitoringService>(); List<Slo> slos = sla.getSlos(); for
+		 * (Slo slo : slos) { attribute = slo.getAttribute(); monitoringService
+		 * = registry.getService(attribute); if (monitoringService != null) {
+		 * monitoringServices.add(monitoringService); } } return new
+		 * ServiceProxy(monitoringServices);
+		 */
+
+		private Binding binding;
+
+		public ServiceProxy(Binding binding) {
+			this.binding = binding;
+		}
+
 		public synchronized Object invoke(Object proxy, Method method,
 				Object[] args) throws Throwable {
 
 			long startTime = System.nanoTime();
-			Request request = new Request(sla.getConsumerPid(),
-					sla.getServiceReference().getProperty("provider.pid").toString(),
-					method.getName(), method.getParameterTypes(), args);
 
-			Response response = null;
-			InvocationEvent invocation = new InvocationEvent(request, response);
 			Object result = null;
-			try {
-				Object service = sla.getService();
-				if (null != service) {
-					result = method.invoke(service, args);
-				} else {
-					throw new IllegalStateException(
-							"Required service is not available!");
+			Exception exception = null;
+			boolean success = true;
+			if (null != binding) {
+				try {
+					result = method.invoke(binding.getService(), args);
+					return result;
+				} catch (Exception exc) {
+					success = false;
+					exception = exc;
+					throw exc;
+				} finally {
+					InvocationEvent invocation = new InvocationEvent(binding.getConsumerId(), binding.getServiceId(),							
+							method.getName(), method.getParameterTypes(), args,
+							method.getReturnType(), result, success, exception);
+					//publishEvent(invocation);
 				}
-				response = new Response(method.getReturnType(), result);
-				return result;
-			} catch (Exception exception) {
-				response = new Response(exception);
-				throw exception;
-			} finally {
-				// JOGAR NA FILA DO EVENT ADMIN
+			} else {
+				throw new IllegalStateException(
+						"Required service is not available!");
 			}
 		}
 	}
 	
+	class Binding {
+		
+		private String serviceId;
+		private String consumerId;
+		private Sla sla;
+		private Object service;
+		private ServiceReference reference;
+		
+		public Binding(Sla sla, ServiceReference reference) {
+			super();
+			this.sla = sla;
+			this.reference = reference;
+			this.service = reference.getBundle().getBundleContext().getService(reference);
+			this.serviceId = (String) reference.getProperty(PROVIDER_ID);
+		}
 
-	public Object addingService(ServiceReference reference) {
-		this.monitoringService = (MonitoringService) this.getContext()
-				.getService(reference);
-		return this.monitoringService;
-	}
+		public String getServiceId() {
+			return serviceId;
+		}
 
-	public void modifiedService(ServiceReference reference, Object service) {
+		public void setServiceId(String serviceId) {
+			this.serviceId = serviceId;
+		}
 
-	}
+		public String getConsumerId() {
+			return consumerId;
+		}
 
-	public void removedService(ServiceReference reference, Object service) {
-		this.monitoringService = null;
-		getContext().ungetService(reference);
+		public void setConsumerId(String consumerId) {
+			this.consumerId = consumerId;
+		}
+
+		public Sla getSla() {
+			return sla;
+		}
+
+		public void setSla(Sla sla) {
+			this.sla = sla;
+		}
+
+		public Object getService() {
+			return service;
+		}
+
+		public void setService(Object service) {
+			this.service = service;
+		}
+
+		public ServiceReference getReference() {
+			return reference;
+		}
+
+		public void setReference(ServiceReference reference) {
+			this.reference = reference;
+		}
 	}
 }

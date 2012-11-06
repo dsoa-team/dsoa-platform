@@ -7,12 +7,12 @@ import br.ufpe.cin.dsoa.epcenter.EventConsumer;
 
 public class MonitoringConfiguration  implements EventConsumer {
 
-	private MonitoringListener listener;
+	private SlaListener listener;
 	private Map<String, MonitoringConfigurationItem> itens;
 	private MonitoringContext context;
 	
 	public MonitoringConfiguration(MonitoringContext context,
-			MonitoringListener listener) {
+			SlaListener listener) {
 		this.context = context;
 		this.listener = listener;
 		this.itens = new HashMap<String, MonitoringConfigurationItem>();
@@ -22,7 +22,7 @@ public class MonitoringConfiguration  implements EventConsumer {
 		return context;
 	}
 
-	public MonitoringListener getListener() {
+	public SlaListener getListener() {
 		return listener;
 	}
 

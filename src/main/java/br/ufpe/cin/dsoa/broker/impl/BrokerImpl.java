@@ -20,7 +20,7 @@ import br.ufpe.cin.dsoa.broker.filter.IFilter;
 import br.ufpe.cin.dsoa.broker.normalizer.Normalizer;
 import br.ufpe.cin.dsoa.broker.rank.Rank;
 import br.ufpe.cin.dsoa.contract.Slo;
-import br.ufpe.cin.dsoa.handlers.dependency.DependencyListener;
+import br.ufpe.cin.dsoa.handlers.dependency.ServiceListener;
 
 
 public class BrokerImpl implements Broker {
@@ -79,7 +79,7 @@ public class BrokerImpl implements Broker {
 	}
 
 	public void getBestService(String spe, List<Slo> slos,
-			DependencyListener dep, List<ServiceReference> trash) {
+			ServiceListener dep, List<ServiceReference> trash) {
 
 		Filter filter = null;
 		ServiceReference[] references = null;

@@ -2,79 +2,70 @@ package br.ufpe.cin.dsoa.contract;
 
 import java.util.List;
 
-import org.osgi.framework.ServiceReference;
-
-import br.ufpe.cin.dsoa.monitor.MonitoringListener;
-
 public class Sla {
-
-	/* Template do Sla */
-	private SlaTemplate template;
-
-	/* Referencia para o serviço real */
-	private ServiceReference serviceReference;
 	
-	/* Responsavel por escutar as quebras de contrato */
-	private MonitoringListener listener;
+	/* Id do consumer */
+	private String consumerPID;
 
+	/* Nome do consumer */
+	private String consumerName;
+
+	
+	private String qosMode;
+
+	/* Interface do serviço */
+	private Class<?> specification;
+
+	/* Lista de requisitos não funcionais */
+	private List<Slo> slos;
+	
 	public Sla(String consumerPid, String consumerName, String qosMode,
 			Class<?> specification, List<Slo> slos) {
-		this.template = new SlaTemplate(consumerPid, consumerName, qosMode, specification, slos);
+		this.consumerPID = consumerPid;
+		this.consumerName = consumerName;
+		this.qosMode = qosMode;
+		this.specification = specification;
+		this.slos = slos;
 	}
 
 	public String getConsumerPid() {
-		return template.getConsumerPid();
+		return consumerPID;
 	}
 
 	public void setConsumerPid(String consumerPid) {
-		this.template.setConsumerPid(consumerPid);
+		this.consumerPID = consumerPid;
 	}
 
 	public String getConsumerName() {
-		return template.getConsumerName();
+		return consumerName;
 	}
 
 	public void setConsumerName(String consumerName) {
-		template.setConsumerName(consumerName);
+		this.consumerName = consumerName;
 	}
 
 	public String getQosMode() {
-		return template.getQosMode();
+		return qosMode;
 	}
 
 	public void setQosMode(String qosMode) {
-		template.setQosMode(qosMode);
+		this.qosMode = qosMode;
 	}
 
 	public Class<?> getSpecification() {
-		return template.getSpecification();
+		return specification;
 	}
 
 	public void setSpecification(Class<?> specification) {
-		template.setSpecification(specification);
+		this.specification = specification;
 	}
 
 	public List<Slo> getSlos() {
-		return template.getSlos();
+		return slos;
 	}
 
 	public void setSlos(List<Slo> slos) {
-		template.setSlos(slos);
+		this.slos = slos;
 	}
 
-	public String toString() {
-		return template.toString();
-	}
-
-	public void setServiceReference(ServiceReference serviceReference) {
-		this.serviceReference = serviceReference;
-	}
-
-	public Object getService() {
-		return this.serviceReference.getBundle().getBundleContext().getService(serviceReference);
-	}
-
-	public ServiceReference getServiceReference() {
-		return serviceReference;
-	}
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.contract.Slo;
-import br.ufpe.cin.dsoa.handlers.dependency.DependencyListener;
+import br.ufpe.cin.dsoa.handlers.dependency.ServiceListener;
 
 
 /**
@@ -15,7 +15,7 @@ import br.ufpe.cin.dsoa.handlers.dependency.DependencyListener;
 
 public interface Broker {
 	
-	public void getBestService(String spe, List<Slo> slos, DependencyListener dep, List<ServiceReference> trash);
+	public void getBestService(String spe, List<Slo> slos, ServiceListener dep, List<ServiceReference> trash);
 	//Tinha um mode;
 	
 }

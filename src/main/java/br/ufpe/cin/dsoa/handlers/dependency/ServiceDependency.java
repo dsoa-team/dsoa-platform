@@ -11,15 +11,18 @@ public class ServiceDependency implements FieldInterceptor {
 	/* Handler responsável por tratar as dependências da aplicação */
 	private DependencyHandler handler;
 	
-	/* Dependency manager */
-	private DependencyManager manager;
+	/* Status */
+	private boolean valid;
 	
 	/* SLA */
 	private Sla sla;
 	
-	/* Status */
-	private boolean valid;
-
+	/**
+	 * Refers to the service that is under use. This reference can be dynamically changed when the underline 
+	 * service can not provide the desired QoS level.
+	 */
+	private Object service;
+	
 
 	public ServiceDependency(DependencyHandler handler, Sla sla) {
 		this.handler = handler;
@@ -27,51 +30,37 @@ public class ServiceDependency implements FieldInterceptor {
 	}
 
 	public void start() {
-		AdaptationManager.manage(this);
+		AdaptationManager.createManager(this);
 	}
 
 	public Object onGet(Object arg0, String arg1, Object arg2) {
-		return manager.getService();
+		return service;
 	}
 
 	public void onSet(Object arg0, String arg1, Object arg2) {
+		
 	}
 
 	public BundleContext getContext() {
 		return handler.getInstanceManager().getContext();
 	}
 
-	public Class<?> getSpecification() {
-		return sla.getSpecification();
-	}
-
 	public Sla getSla() {
 		return sla;
 	}
 
-	public String getConsumerPid() {
-		return sla.getConsumerPid();
-	}
-
-	public String getConsumerName() {
-		return sla.getConsumerName();
-	}
-
-	public String getQoSMode() {
-		return sla.getQosMode();
-	}
-
-	public void setValid(boolean valid) {
-		this.valid = valid;
-		this.handler.checkValidate();
+	public void setService(Object service) {
+		this.service = service;
+		this.setValid(true);
 	}
 
 	public boolean isValid() {
 		return valid;
 	}
-
-	public void setDependencyManager(DependencyManager manager) {
-		this.manager = manager;
+	
+	public void setValid(boolean valid) {
+		this.valid = valid;
+		this.handler.checkValidate();
 	}
 
 }

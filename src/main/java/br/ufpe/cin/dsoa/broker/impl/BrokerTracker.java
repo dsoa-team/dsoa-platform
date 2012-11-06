@@ -7,14 +7,14 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import br.ufpe.cin.dsoa.handlers.dependency.DependencyListener;
+import br.ufpe.cin.dsoa.handlers.dependency.ServiceListener;
 
 public class BrokerTracker extends ServiceTracker {
 
-	private DependencyListener qdl;
+	private ServiceListener qdl;
 	private List<ServiceReference> blackList;
 	
-	public BrokerTracker(DependencyListener qdl, BundleContext context, Filter filter, List<ServiceReference> blackList) {
+	public BrokerTracker(ServiceListener qdl, BundleContext context, Filter filter, List<ServiceReference> blackList) {
 		super(context, filter, null);
 		this.blackList = blackList;
 		this.qdl = qdl;
