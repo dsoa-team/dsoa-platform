@@ -1,2 +1,2 @@
-adaptation-manager
-==================
+Dynamic SOA Platform
+====================
