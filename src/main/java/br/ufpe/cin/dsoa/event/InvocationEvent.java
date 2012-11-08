@@ -11,6 +11,8 @@ public class InvocationEvent {
 	private Object returnValue;
 	private boolean success;
 	private Exception exception;
+	private long resquestTimestamp;
+	private long responseTimestamp;
 
 	public InvocationEvent(String consumerId, String providerId,
 			String operationName, Class<?>[] parameterTypes, Object[] parameterValues,
@@ -64,4 +66,11 @@ public class InvocationEvent {
 		return exception;
 	}
 
+	public long getRequestTimestamp() {
+		return resquestTimestamp;
+	}
+
+	public long getResponseTimestamp() {
+		return responseTimestamp;
+	}
 }

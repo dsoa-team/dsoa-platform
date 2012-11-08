@@ -18,7 +18,7 @@ import br.ufpe.cin.dsoa.agent.store.StorageAgentService;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
 
-public class EventDispatcher implements EventHandler {
+public class EventDispatcher {
 
 	private int poolSize = 30;
 	private int maxPoolSize = 50;
@@ -74,7 +74,7 @@ public class EventDispatcher implements EventHandler {
 				}).open();
 	}
 
-	public void handleEvent(Event event) {
+	public void update(InvocationEvent event) {
 
 		final InvocationEvent invocationEvent = (InvocationEvent) event
 				.getProperty(event.getTopic());
