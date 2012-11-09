@@ -11,10 +11,10 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import br.ufpe.cin.dsoa.agent.MetricAggregator;
-import br.ufpe.cin.dsoa.agent.MetricComputer;
+//import br.ufpe.cin.dsoa.agent.MetricComputer;
 import br.ufpe.cin.dsoa.agent.store.StorageAgentService;
 
-public class MemoryStorageAgent implements StorageAgentService {
+public class MemoryStorageAgent {//implements StorageAgentService {
 
 	private BundleContext ctx;
 
@@ -28,7 +28,7 @@ public class MemoryStorageAgent implements StorageAgentService {
 	 * 
 	 * @param reference
 	 */
-	public void listen(ServiceReference reference) {
+/*	public void listen(ServiceReference reference) {
 
 		this.ctx = reference.getBundle().getBundleContext();
 
@@ -168,5 +168,5 @@ public class MemoryStorageAgent implements StorageAgentService {
 			String key = (String) reference.getProperty(AGENT_ID);
 			metricAggregatorAgents.get(key).remove(reference);
 		}
-	}
+	}*/
 }

@@ -13,7 +13,7 @@ import org.osgi.service.event.EventHandler;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-import br.ufpe.cin.dsoa.agent.MetricComputer;
+//import br.ufpe.cin.dsoa.agent.MetricComputer;
 import br.ufpe.cin.dsoa.agent.store.StorageAgentService;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
@@ -76,7 +76,7 @@ public class EventDispatcher {
 
 	public void update(InvocationEvent event) {
 
-		final InvocationEvent invocationEvent = (InvocationEvent) event
+/*		final InvocationEvent invocationEvent = (InvocationEvent) event
 				.getProperty(event.getTopic());
 
 		if (!registryList.isEmpty() && !epCenterList.isEmpty()) {
@@ -100,6 +100,6 @@ public class EventDispatcher {
 			};
 
 			threadPool.execute(publisher);
-		}
+		}*/
 	}
 }
