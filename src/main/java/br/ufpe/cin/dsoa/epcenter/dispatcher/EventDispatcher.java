@@ -16,7 +16,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 //import br.ufpe.cin.dsoa.agent.MetricComputer;
 import br.ufpe.cin.dsoa.agent.store.StorageAgentService;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
-import br.ufpe.cin.dsoa.event.InvocationEvent;
+import br.ufpe.cin.dsoa.event.InvocationEventOld;
 
 public class EventDispatcher {
 
@@ -74,7 +74,7 @@ public class EventDispatcher {
 				}).open();
 	}
 
-	public void update(InvocationEvent event) {
+	public void update(InvocationEventOld event) {
 
 /*		final InvocationEvent invocationEvent = (InvocationEvent) event
 				.getProperty(event.getTopic());

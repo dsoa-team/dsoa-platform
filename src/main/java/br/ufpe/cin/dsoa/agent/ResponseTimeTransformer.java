@@ -1,10 +1,10 @@
 package br.ufpe.cin.dsoa.agent;
 
-import br.ufpe.cin.dsoa.event.InvocationEvent;
+import br.ufpe.cin.dsoa.event.InvocationEventOld;
 
-public class ResponseTimeTransformer implements Derivator<InvocationEvent>{
+public class ResponseTimeTransformer implements Derivator<InvocationEventOld>{
 
-	public Object derive(InvocationEvent event) {
+	public Object derive(InvocationEventOld event) {
 		return event.getResponseTimestamp() - event.getRequestTimestamp();
 	}
 

@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.contract.Sla;
-import br.ufpe.cin.dsoa.event.InvocationEvent;
+import br.ufpe.cin.dsoa.event.InvocationEventOld;
 import br.ufpe.cin.dsoa.monitor.SlaListener;
 
 public class SlaManager {
@@ -62,7 +62,7 @@ public class SlaManager {
 					exception = exc;
 					throw exc;
 				} finally {
-					InvocationEvent invocation = new InvocationEvent(binding.getConsumerId(), binding.getServiceId(),							
+					InvocationEventOld invocation = new InvocationEventOld(binding.getConsumerId(), binding.getServiceId(),							
 							method.getName(), method.getParameterTypes(), args,
 							method.getReturnType(), result, success, exception);
 					//publishEvent(invocation);

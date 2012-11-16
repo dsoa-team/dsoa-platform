@@ -1,11 +1,23 @@
 package br.ufpe.cin.dsoa.event;
 
-public class AttributeType<T> {
+public class AttributeType {
+	private Class<?> type;
 	private String name;
 	private boolean required;
 	
+	public AttributeType(String name, Class<?> type, boolean required) {
+		super();
+		this.name = name;
+		this.type = type;
+		this.required = required;
+	}
+
 	public String getName() {
 		return name;
+	}
+	
+	public Class<?> getType() {
+		return type;
 	}
 	
 	public boolean isRequired() {
@@ -13,11 +25,16 @@ public class AttributeType<T> {
 	}
 
 	@Override
+	public String toString() {
+		return "AttributeType [type=" + type + ", name=" + name + ", required="
+				+ required + "]";
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + (required ? 1231 : 1237);
 		return result;
 	}
 
@@ -35,10 +52,7 @@ public class AttributeType<T> {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (required != other.required)
-			return false;
 		return true;
 	}
-	
-	
+
 }

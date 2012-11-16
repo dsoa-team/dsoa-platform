@@ -1,6 +1,6 @@
 package br.ufpe.cin.dsoa.event;
 
-public class InvocationEvent {
+public class InvocationEventOld {
 
 	private String consumerId;
 	private String providerId;
@@ -14,7 +14,7 @@ public class InvocationEvent {
 	private long resquestTimestamp;
 	private long responseTimestamp;
 
-	public InvocationEvent(String consumerId, String providerId,
+	public InvocationEventOld(String consumerId, String providerId,
 			String operationName, Class<?>[] parameterTypes, Object[] parameterValues,
 			Class<?> returnType, Object returnValue, boolean success,
 			Exception exception) {

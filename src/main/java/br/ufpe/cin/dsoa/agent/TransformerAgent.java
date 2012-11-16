@@ -46,8 +46,8 @@ public abstract class TransformerAgent {
 		Map<String, Object> attMap = new HashMap<String, Object>();
 		for (Event event : events) {
 			String eventTypeId = event.getEventType().getId();
-			List<Attribute<?>> attLst = event.getApplicationAttributes();
-			for (Attribute<?> att : attLst) {
+			List<Attribute> attLst = event.getApplicationAttributes();
+			for (Attribute att : attLst) {
 				attMap.put(
 						eventTypeId + "." + att.getAttributeType().getName(),
 						att.getValue());
@@ -62,7 +62,7 @@ public abstract class TransformerAgent {
 	public Event transform(Map<String, Object> stateMap) throws Exception {
 		String attExpression = null;
 		Object value = null;
-		List<Attribute<?>> attLst = new ArrayList<Attribute<?>>();
+		List<Attribute> attLst = new ArrayList<Attribute>();
 /*		for (String attName : transformationMaps.keySet()) {
 			if (outputEventType.getApplicationAttributeTypeList())
 			attExpression = transformationMaps.get(attName);
