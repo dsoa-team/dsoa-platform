@@ -4,29 +4,36 @@ import org.apache.felix.ipojo.FieldInterceptor;
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.AdaptationManager;
-import br.ufpe.cin.dsoa.contract.Sla;
+import br.ufpe.cin.dsoa.contract.ServiceImpl;
+import br.ufpe.cin.dsoa.contract.ServiceConsumer;
+import br.ufpe.cin.dsoa.contract.AggreementOffer;
 
 public class ServiceDependency implements FieldInterceptor {
 
 	/* Handler responsável por tratar as dependências da aplicação */
 	private DependencyHandler handler;
 	
-	/* Status */
-	private boolean valid;
+	/* Consumer */
+	private ServiceConsumer consumer;
 	
 	/* SLA */
-	private Sla sla;
+	private AggreementOffer slaTemplate;
+
+	/* Status */
+	private boolean valid;
 	
 	/**
 	 * Refers to the service that is under use. This reference can be dynamically changed when the underline 
 	 * service can not provide the desired QoS level.
 	 */
-	private Object service;
+	private ServiceImpl service;
 	
 
-	public ServiceDependency(DependencyHandler handler, Sla sla) {
+	public ServiceDependency(DependencyHandler handler, ServiceConsumer consumer, AggreementOffer sla) {
 		this.handler = handler;
-		this.sla = sla;
+		this.slaTemplate = sla;
+		this.consumer = consumer;
+		this.valid = false;
 	}
 
 	public void start() {
@@ -34,7 +41,7 @@ public class ServiceDependency implements FieldInterceptor {
 	}
 
 	public Object onGet(Object arg0, String arg1, Object arg2) {
-		return service;
+		return service.getServiceObject();
 	}
 
 	public void onSet(Object arg0, String arg1, Object arg2) {
@@ -45,17 +52,21 @@ public class ServiceDependency implements FieldInterceptor {
 		return handler.getInstanceManager().getContext();
 	}
 
-	public Sla getSla() {
-		return sla;
+	public AggreementOffer getSlaTemplate() {
+		return slaTemplate;
 	}
 
-	public void setService(Object service) {
-		this.service = service;
-		this.setValid(true);
+	public ServiceConsumer getConsumer() {
+		return this.consumer;
 	}
 
 	public boolean isValid() {
 		return valid;
+	}
+	
+	public void setService(ServiceImpl service) {
+		this.service = service;
+		this.setValid(true);
 	}
 	
 	public void setValid(boolean valid) {

@@ -1,9 +1,16 @@
 package br.ufpe.cin.dsoa.contract;
 
-public class Consumer {
+public class ServiceConsumer {
 
 	private String id;
 	private String name;
+	
+
+	public ServiceConsumer(String id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
 
 	public String getId() {
 		return id;

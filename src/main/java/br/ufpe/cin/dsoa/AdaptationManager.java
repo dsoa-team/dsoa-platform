@@ -13,8 +13,7 @@ public class AdaptationManager {
 
 	public static void createManager(ServiceDependency serviceDependency) {
 		DependencyManager manager = new DependencyManager(serviceDependency);
-		DependencyManagerMBean managerMbean = new DependencyManagerMBeanImpl(manager);
-		// publish MBean
+		manager.start();
 	}
 
 	public static Object createProxy(InstanceManager manager,

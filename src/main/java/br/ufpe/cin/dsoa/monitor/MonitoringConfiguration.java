@@ -3,16 +3,17 @@ package br.ufpe.cin.dsoa.monitor;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.ufpe.cin.dsoa.contract.AggreementMonitor;
 import br.ufpe.cin.dsoa.epcenter.EventConsumer;
 
 public class MonitoringConfiguration  implements EventConsumer {
 
-	private SlaListener listener;
+	private AggreementMonitor listener;
 	private Map<String, MonitoringConfigurationItem> itens;
 	private MonitoringContext context;
 	
 	public MonitoringConfiguration(MonitoringContext context,
-			SlaListener listener) {
+			AggreementMonitor listener) {
 		this.context = context;
 		this.listener = listener;
 		this.itens = new HashMap<String, MonitoringConfigurationItem>();
@@ -22,7 +23,7 @@ public class MonitoringConfiguration  implements EventConsumer {
 		return context;
 	}
 
-	public SlaListener getListener() {
+	public AggreementMonitor getListener() {
 		return listener;
 	}
 

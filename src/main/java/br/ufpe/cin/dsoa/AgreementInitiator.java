@@ -2,25 +2,48 @@ package br.ufpe.cin.dsoa;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.contract.Sla;
+import br.ufpe.cin.dsoa.broker.Broker;
+import br.ufpe.cin.dsoa.contract.ServiceConsumer;
+import br.ufpe.cin.dsoa.contract.ServiceProvider;
 import br.ufpe.cin.dsoa.event.InvocationEventOld;
-import br.ufpe.cin.dsoa.monitor.SlaListener;
 
-public class SlaManager {
+public class AgreementInitiator {
 
 	public static final String PROVIDER_ID = "provider.pid";
 	
-	// private ServiceRegistry<MonitoringService> registry;
+	/**
+	 * Responsável por selecionar o serviço que irá resolver a dependência. Pode utilizar diferentes
+	 * políticas ao longo do tempo (uma de cada vez), sendo estas trocadas em tempo de execução.
+	 * */
+	private Broker broker;
 
-	public Object manage(ServiceReference reference, Sla sla,
-			SlaListener listener) {
-		return createProxy(reference, sla, listener);
+	public List<AgreementTemplate> getTemplates() {
+		return null;
+	}
+	
+	public void createSla(final ServiceConsumer consumer, final List<String> blackList, final SlaTemplate sla,
+			final SlaMonitor monitor) {
+		this.broker.getBestService(sla.getSpecification().getName(),
+				sla.getSlos(), new ServiceListener() {
+					
+					public void setSelected(ServiceReference serviceDescription) {
+						String servicePid = service
+						new Sla(consumer, new ServiceProvider())
+						
+					}
+				}, blackList);
 	}
 
-	private Object createProxy(ServiceReference reference, Sla sla,
+	public synchronized void setSelected(ServiceReference reference) {
+		this.serviceReference = reference;
+		this.dependency.setService(slaManager.manage(reference, dependency.getSlaTemplate(), this));
+	}
+	
+	private Object createProxy(ServiceReference reference, SlaTemplate sla,
 			SlaListener listener) {
 		Binding binding = new Binding(sla, reference);
 		return new ServiceProxy(binding);
@@ -78,11 +101,11 @@ public class SlaManager {
 		
 		private String serviceId;
 		private String consumerId;
-		private Sla sla;
+		private SlaTemplate sla;
 		private Object service;
 		private ServiceReference reference;
 		
-		public Binding(Sla sla, ServiceReference reference) {
+		public Binding(SlaTemplate sla, ServiceReference reference) {
 			super();
 			this.sla = sla;
 			this.reference = reference;
@@ -106,11 +129,11 @@ public class SlaManager {
 			this.consumerId = consumerId;
 		}
 
-		public Sla getSla() {
+		public SlaTemplate getSla() {
 			return sla;
 		}
 
-		public void setSla(Sla sla) {
+		public void setSla(SlaTemplate sla) {
 			this.sla = sla;
 		}
 

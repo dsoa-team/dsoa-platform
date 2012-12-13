@@ -1,8 +1,8 @@
-package br.ufpe.cin.dsoa.monitor;
+package br.ufpe.cin.dsoa.contract;
 
 import java.util.Map;
 
-public interface SlaListener {
+public interface AggreementMonitor {
 	
 	public void listen(Map result, Object userObject,String statementName);
 

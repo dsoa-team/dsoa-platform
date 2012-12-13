@@ -1,24 +1,21 @@
 package br.ufpe.cin.dsoa.contract;
 
-public class Provider {
+public class ServiceProvider {
 
 	private String pid;
 	private String name;
-
+	
+	public ServiceProvider(String pid, String name, ServiceImpl description) {
+		this.pid = pid;
+		this.name = name;
+	}
+	
 	public String getPid() {
 		return pid;
 	}
 
-	public void setPid(String pid) {
-		this.pid = pid;
-	}
-
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 }

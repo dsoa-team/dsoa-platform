@@ -14,7 +14,8 @@ import org.apache.felix.ipojo.util.DependencyModel;
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.contract.Constants;
-import br.ufpe.cin.dsoa.contract.Sla;
+import br.ufpe.cin.dsoa.contract.ServiceConsumer;
+import br.ufpe.cin.dsoa.contract.AggreementOffer;
 
 public class DependencyHandler extends PrimitiveHandler {
 
@@ -55,7 +56,7 @@ public class DependencyHandler extends PrimitiveHandler {
 			String svcInterface = fieldmeta.getFieldType();
 			Class specification = DependencyModel.loadSpecification(svcInterface, getInstanceManager().getContext());
 			
-			ServiceDependency dependency = new ServiceDependency(this, new Sla(consumerPID, consumerName, qosMode, specification, dm.getSlos()));
+			ServiceDependency dependency = new ServiceDependency(this, new ServiceConsumer(consumerPID, consumerName), new AggreementOffer(qosMode, specification, dm.getSlos()));
 			dependencies.add(dependency);
 			// register the service field
 			getInstanceManager().register(fieldmeta, dependency);
