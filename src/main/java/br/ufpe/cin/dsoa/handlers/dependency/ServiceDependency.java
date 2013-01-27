@@ -1,33 +1,19 @@
 package br.ufpe.cin.dsoa.handlers.dependency;
 
-import org.apache.felix.ipojo.FieldInterceptor;
-import org.osgi.framework.BundleContext;
-
 import br.ufpe.cin.dsoa.contract.ServiceConsumer;
 
-public class ServiceDependency implements FieldInterceptor {
+public class ServiceDependency {
 
-	private DependencyHandler handler;
-	private DependencyManager manager;
 	private ServiceConsumer consumer;
 	private DependencyMetadata metadata;
 	private ServiceModel serviceModel;
 	private boolean valid;
 	
 
-	public ServiceDependency(DependencyHandler handler, ServiceConsumer consumer, DependencyMetadata sla) {
-		this.handler = handler;
+	public ServiceDependency(ServiceConsumer consumer, DependencyMetadata sla) {
 		this.metadata = sla;
 		this.consumer = consumer;
 		this.valid = false;
-	}
-
-	public void start() {
-		this.manager.resolve();
-	}
-
-	public void setDependencyManager(DependencyManager manager) {
-		this.manager = manager;
 	}
 
 	public Object onGet(Object arg0, String arg1, Object arg2) {
@@ -37,9 +23,6 @@ public class ServiceDependency implements FieldInterceptor {
 	public void onSet(Object arg0, String arg1, Object arg2) {
 	}
 
-	public BundleContext getContext() {
-		return handler.getInstanceManager().getContext();
-	}
 
 	public DependencyMetadata getMetadata() {
 		return metadata;
@@ -60,7 +43,5 @@ public class ServiceDependency implements FieldInterceptor {
 	
 	private void setValid(boolean valid) {
 		this.valid = valid;
-		this.handler.checkValidate();
 	}
-
 }

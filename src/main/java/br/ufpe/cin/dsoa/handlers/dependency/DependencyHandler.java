@@ -10,16 +10,17 @@ import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
-import org.apache.felix.ipojo.util.DependencyModel;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.contract.Constants;
-import br.ufpe.cin.dsoa.contract.Expression;
 import br.ufpe.cin.dsoa.contract.ServiceConsumer;
-import br.ufpe.cin.dsoa.contract.Slo;
 
 public class DependencyHandler extends PrimitiveHandler {
 
-	private List<ServiceDependency> dependencies = new ArrayList<ServiceDependency>();
+	private List<DependencyManager> depMgrs = new ArrayList<DependencyManager>();
+	private BundleContext ctx;
 
 	public void initializeComponentFactory(ComponentTypeDescription ctd,
 			Element metadata) throws ConfigurationException {
@@ -38,50 +39,6 @@ public class DependencyHandler extends PrimitiveHandler {
 		super.initializeComponentFactory(ctd, metadata);
 	}
 
-	private List<Slo> getSLOs(Element demand, Dictionary configuration) {
-		List<Slo> sloList = new ArrayList<Slo>();
-		Element[] sloSet = demand.getElements(Constants.SLO_ELEMENT);
-		for (Element sloEle : sloSet) {
-			// name
-			String attribute = sloEle
-					.getAttribute(Constants.SLO_ATTRIBUTE_ATTRIBUTE);
-
-			// value
-			double value = Double.parseDouble(sloEle
-					.getAttribute(Constants.SLO_VALUE_ATTRIBUTE));
-
-			// expression
-			String expression = sloEle
-					.getAttribute(Constants.SLO_EXPRESSION_ATTRIBUTE);
-
-			// target
-			String operation = sloEle
-					.getAttribute(Constants.SLO_OPERATION_ATTRIBUTE);
-
-			// statistic
-			String statistic = sloEle
-					.getAttribute(Constants.SLO_STATISTIC_ATTRIBUTE);
-
-			// weight
-			long weight = Long.parseLong(sloEle
-					.getAttribute(Constants.SLO_WEIGHT_ATTRIBUTE));
-
-			// window.value
-			double windowValue = Double.parseDouble(sloEle
-					.getAttribute(Constants.SLO_WINDOW_VALUE));
-
-			// window.unit
-			String windowUnit = sloEle.getAttribute(Constants.SLO_WINDOW_UNIT);
-
-			Slo slo = new Slo(attribute, Expression.valueOf(expression), value,
-					operation, statistic, weight, windowValue, windowUnit);
-
-			sloList.add(slo);
-		}
-		return sloList;
-	}
-	
-
 	private String getField(Element demand) throws ConfigurationException {
 		return demand.getAttribute(Constants.SERVICE_FIELD_ATTRIBUTE);
 	}
@@ -90,8 +47,8 @@ public class DependencyHandler extends PrimitiveHandler {
 	@Override
 	public void configure(Element metadata, Dictionary configuration)
 			throws ConfigurationException {
-		Element handlerConfig = metadata.getElements(Constants.NAME,
-				Constants.NAMESPACE)[0];
+		ctx = this.getInstanceManager().getContext();
+		Element handlerConfig = metadata.getElements(Constants.NAME, Constants.NAMESPACE)[0];
 		PojoMetadata manipulation = getFactory().getPojoMetadata();
 
 		// Get consumer information
@@ -99,43 +56,55 @@ public class DependencyHandler extends PrimitiveHandler {
 				.getAttribute(Constants.CONSUMER_PID_ATTRIBUTE);
 		String consumerName = (String) handlerConfig
 				.getAttribute(Constants.CONSUMER_NAME_ATTRIBUTE);
-
-		Element[] serviceElems = handlerConfig
-				.getElements(Constants.SERVICE_ELEMENT);
-
-		for (Element service : serviceElems) {
-			List<Slo> sloList = this.getSLOs(service, configuration);
-			String field = this.getField(service);
+		
+		ServiceConsumer serviceConsumer = new ServiceConsumer(consumerPID, consumerName);
+		
+		// Get service tags from the pojo's descriptor
+		Element[] serviceElems = handlerConfig.getElements(Constants.SERVICE_ELEMENT);
+		for (Element serviceElement : serviceElems) {
+			DependencyManager dependencyMgr = this.getDependencyManager(serviceConsumer, serviceElement);
+			String field = this.getField(serviceElement);
 			FieldMetadata fieldmeta = manipulation.getField(field);
-			String specificationStr = fieldmeta.getFieldType();
-			Class specification = DependencyModel.loadSpecification(
-					specificationStr, getInstanceManager().getContext());
-
-			ServiceDependency dependency = new ServiceDependency(this,
-					new ServiceConsumer(consumerPID, consumerName),
-					new DependencyMetadata(specification,sloList));
-			
-			this.register(fieldmeta, dependency);
-			
+			this.register(fieldmeta, dependencyMgr);
 		}
 	}
 
-	private void register(FieldMetadata fieldmeta, ServiceDependency dependency) {
-		dependencies.add(dependency);
+	private DependencyManager getDependencyManager(ServiceConsumer serviceConsumer, Element serviceElement) {
+		Element managerElement = serviceElement.getElements(Constants.MANAGER)[0];
+		String managerName = null;
+		if (managerElement != null) {
+			managerName = managerElement.getAttribute("name");
+			if (managerName == null) {
+				managerName = "DependencyManager-Default";
+			}
+		}
+		String filter = "name=" + managerName;
+		ServiceReference factoryRef = null;
+		try {
+			factoryRef = ctx.getServiceReferences(DependencyManagerFactory.class.toString(), filter)[0];
+		} catch (InvalidSyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		DependencyManagerFactory factory = (DependencyManagerFactory) ctx.getService(factoryRef);
+		return factory.create(serviceConsumer, managerElement);
+	}
+
+	private void register(FieldMetadata fieldmeta, DependencyManager dependency) {
+		depMgrs.add(dependency);
 		getInstanceManager().register(fieldmeta, dependency);
-		DependencyManager.createManager(dependency);
 	}
 
 	@Override
 	public String toString() {
-		return "DependencyHandler [dependencies=" + dependencies + "]";
+		return "DependencyHandler [dependencies=" + depMgrs + "]";
 	}
 
 	@Override
 	public void start() {
 		this.setValidity(false);
-		for (ServiceDependency dep : dependencies) {
-			dep.start();
+		for (DependencyManager mgr : depMgrs) {
+			mgr.start();
 		}
 	}
 
@@ -147,7 +116,7 @@ public class DependencyHandler extends PrimitiveHandler {
 	public void checkValidate() {
 
 		boolean valid = true;
-		for (ServiceDependency dep : dependencies) {
+		for (DependencyManager dep : depMgrs) {
 			if (dep.isValid() == false) {
 				valid = false;
 				break;

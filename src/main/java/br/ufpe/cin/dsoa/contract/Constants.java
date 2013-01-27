@@ -10,6 +10,7 @@ public interface Constants {
 	public static final String CONSUMER_PID_ATTRIBUTE            = "pid";
 	public static final String QOS_MODE							 = "qosMode";
 	
+	public static final String MANAGER			= "manager";
 	
 	/** 
 	 * Tag SLO
