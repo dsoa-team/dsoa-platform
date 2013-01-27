@@ -1,16 +1,18 @@
 package br.ufpe.cin.dsoa.contract;
 
+import br.ufpe.cin.dsoa.handlers.dependency.DependencyMetadata;
+
 
 public class Aggreement {
 	private ServiceConsumer consumer;
 	private ServiceProvider provider;
 	private Service service;
-	private AggreementOffer template;
+	private DependencyMetadata template;
 	private AggreementMonitor monitor;
 	
 	
 	public Aggreement(ServiceConsumer consumer, ServiceProvider provider,ServiceImpl service,
-			AggreementOffer template, AggreementMonitor monitor) {
+			DependencyMetadata template, AggreementMonitor monitor) {
 		super();
 		this.consumer = consumer;
 		this.provider = provider;

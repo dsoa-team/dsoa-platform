@@ -1,56 +1,39 @@
 package br.ufpe.cin.dsoa.handlers.dependency;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import br.ufpe.cin.dsoa.contract.ServiceImpl;
+import br.ufpe.cin.dsoa.osgi.ServiceModelFactory;
 
-import org.osgi.framework.BundleContext;
+public class DependencyManager implements SelectionListener, ViolationListener {
 
-import br.ufpe.cin.dsoa.SlaManager;
-import br.ufpe.cin.dsoa.contract.Aggreement;
-import br.ufpe.cin.dsoa.contract.AggreementMonitor;
-import br.ufpe.cin.dsoa.contract.AggreementOffer;
-
-public class DependencyManager implements AggreementMonitor {
-
-	
-	/**
-	 * Responsável por criar e remover 'contratos' entre o cliente e o provedor de serviço.
-	 */
-	private SlaManager slaManager;
-	
-	/**
-	 * Represents a service dependency which is dynamically resolved based on functional and non-functional requirements 
-	 */
 	private ServiceDependency dependency;
+	private SelectionStrategy selectionStrategy;
+	private MonitoringStrategy monitoringStrategy;
 	
-	private Aggreement aggreement;
-
-	/**
-	 * Lista de serviços utilizados anteriormente e descartados em virtude de não terem atendido adquadamente.
-	 */
-	private List<String> blackList;
+	public static DependencyManager createManager(ServiceDependency dependency) {
+		return new DependencyManager(dependency);
+	}
 	
-	public DependencyManager(ServiceDependency dependency) {
+	private DependencyManager(ServiceDependency dependency) {
+		super();
 		this.dependency = dependency;
-		this.blackList = new ArrayList<String>();
-	}
-	
-	public void start() {
-		this.aggreement = this.slaManager.createSla(dependency.getConsumer(), dependency.getSlaTemplate());
-	}
-	
-	public void listen(Map result, Object userObject, String statementName) {
-		this.aggreement.terminate();
+		this.dependency.setDependencyManager(this);
 	}
 
-	class Planner {
-
-		public void plan(Map<?,?> result, Object userObject, String statementName,
-				AggreementOffer sla) {
-			// TODO Auto-generated method stub
-
+	public void resolve() {
+		ServiceModel service = this.selectionStrategy.select(this, dependency.getMetadata());
+		if (service != null) {
+			notifySelection(service);
 		}
-
 	}
+	
+	public void notifySelection(ServiceModel serviceModel) {
+		
+		Object instrumentedService = this.monitoringStrategy.monitor(this, serviceModel, dependency.getMetadata());
+		dependency.setService(serviceModel);
+	}
+
+	public void notifyViolation(Violation violation) {
+		
+	}
+
 }

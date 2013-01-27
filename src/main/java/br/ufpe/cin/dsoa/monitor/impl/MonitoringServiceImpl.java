@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.contract.AggreementOffer;
+import br.ufpe.cin.dsoa.contract.DependencyMetadata;
 import br.ufpe.cin.dsoa.epcenter.EventConsumer;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 import br.ufpe.cin.dsoa.monitor.MonitoringConfiguration;
@@ -32,7 +32,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 		}
 	}
 
-	public void startMonitoring(AggreementOffer sla) {
+	public void startMonitoring(DependencyMetadata sla) {
 		/*this.configuration = new MonitoringConfiguration(new MonitoringContext(sla.getConsumerPid(),
 				sla.getServiceReference().getProperty("provider.pid").toString()), this);
 

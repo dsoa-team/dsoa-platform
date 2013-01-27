@@ -35,5 +35,15 @@ public class ServiceImpl implements Service {
 	public ServiceMetadata getMetadata() {
 		return this.metadata;
 	}
+
+	public String getId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getServiceInterface() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

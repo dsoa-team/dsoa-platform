@@ -3,73 +3,62 @@ package br.ufpe.cin.dsoa.handlers.dependency;
 import org.apache.felix.ipojo.FieldInterceptor;
 import org.osgi.framework.BundleContext;
 
-import br.ufpe.cin.dsoa.AdaptationManager;
-import br.ufpe.cin.dsoa.contract.ServiceImpl;
 import br.ufpe.cin.dsoa.contract.ServiceConsumer;
-import br.ufpe.cin.dsoa.contract.AggreementOffer;
 
 public class ServiceDependency implements FieldInterceptor {
 
-	/* Handler responsável por tratar as dependências da aplicação */
 	private DependencyHandler handler;
-	
-	/* Consumer */
+	private DependencyManager manager;
 	private ServiceConsumer consumer;
-	
-	/* SLA */
-	private AggreementOffer slaTemplate;
-
-	/* Status */
+	private DependencyMetadata metadata;
+	private ServiceModel serviceModel;
 	private boolean valid;
 	
-	/**
-	 * Refers to the service that is under use. This reference can be dynamically changed when the underline 
-	 * service can not provide the desired QoS level.
-	 */
-	private ServiceImpl service;
-	
 
-	public ServiceDependency(DependencyHandler handler, ServiceConsumer consumer, AggreementOffer sla) {
+	public ServiceDependency(DependencyHandler handler, ServiceConsumer consumer, DependencyMetadata sla) {
 		this.handler = handler;
-		this.slaTemplate = sla;
+		this.metadata = sla;
 		this.consumer = consumer;
 		this.valid = false;
 	}
 
 	public void start() {
-		AdaptationManager.createManager(this);
+		this.manager.resolve();
+	}
+
+	public void setDependencyManager(DependencyManager manager) {
+		this.manager = manager;
 	}
 
 	public Object onGet(Object arg0, String arg1, Object arg2) {
-		return service.getServiceObject();
+		return serviceModel.getService();
 	}
 
 	public void onSet(Object arg0, String arg1, Object arg2) {
-		
 	}
 
 	public BundleContext getContext() {
 		return handler.getInstanceManager().getContext();
 	}
 
-	public AggreementOffer getSlaTemplate() {
-		return slaTemplate;
+	public DependencyMetadata getMetadata() {
+		return metadata;
 	}
 
 	public ServiceConsumer getConsumer() {
-		return this.consumer;
+		return consumer;
 	}
 
 	public boolean isValid() {
 		return valid;
 	}
 	
-	public void setService(ServiceImpl service) {
-		this.service = service;
+	public void setService(ServiceModel serviceModel) {
+		this.serviceModel = serviceModel;
 		this.setValid(true);
 	}
 	
-	public void setValid(boolean valid) {
+	private void setValid(boolean valid) {
 		this.valid = valid;
 		this.handler.checkValidate();
 	}
