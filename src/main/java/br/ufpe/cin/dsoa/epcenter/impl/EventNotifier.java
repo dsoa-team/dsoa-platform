@@ -15,10 +15,8 @@ import com.espertech.esper.event.map.MapEventBean;
 public class EventNotifier implements StatementAwareUpdateListener{
 
 	private List<EventConsumer> consumers;
-	private EPServiceProvider epServiceProvider;
 
-	public EventNotifier(EPServiceProvider epServiceProvider) {
-		this.epServiceProvider = epServiceProvider;
+	public EventNotifier() {
 		this.consumers = new ArrayList<EventConsumer>();
 	}
 
@@ -36,23 +34,6 @@ public class EventNotifier implements StatementAwareUpdateListener{
 				consumer.receive(result,statement.getText(),statement.getName());
 			}
 		}
-		
-		if (statement.getName().startsWith("VioXy")){
-			@SuppressWarnings("unchecked")
-			List<String> statementsNames = (List<String>) statement.getUserObject(); 
-			for(String statementName: statementsNames){
-				this.epServiceProvider.getEPAdministrator().getStatement(statementName).destroy();
-			}
-			//System.out.println("");
-			//System.out.println("");
-			//for(String nameSta : this.epServiceProvider.getEPAdministrator().getStatementNames()){
-				//System.out.println(nameSta + " :: " + this.epServiceProvider.getEPAdministrator().getStatement(nameSta));
-			//}
-			//System.out.println("");
-			//System.out.println("");
-			
-		}
-		
 	}
 
 	public void removeEventConsumer(EventConsumer eventConsumer) {

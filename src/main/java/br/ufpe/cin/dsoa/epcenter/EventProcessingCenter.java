@@ -6,6 +6,8 @@ import java.util.Map;
 public interface EventProcessingCenter {
 
 	public void defineEvent(Class<?> event);
+	
+	public void defineEvent(String eventName, Map<String, Object> eventProperties);
 
 	public void publishEvent(Object event);
 
@@ -14,5 +16,9 @@ public interface EventProcessingCenter {
 	public void defineStatement(String name, String statement, List<String> userObject);
 	
 	public void defineStatement(String name, String statement);
+	
+	public void subscribe(String statementName, EventConsumer eventConsumer);
+	
+	public void unsubscribe(String statementName, EventConsumer eventConsumer);
 
 }

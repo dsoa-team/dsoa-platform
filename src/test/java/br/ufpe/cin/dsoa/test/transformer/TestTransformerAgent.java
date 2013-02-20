@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
 
 import br.ufpe.cin.dsoa.agent.TransformerAgent;
 import br.ufpe.cin.dsoa.agent.channel.OutputChannel;
@@ -29,7 +28,6 @@ public class TestTransformerAgent {
 	private long responseTimestamp;
 	 */
 	
-	@Before
 	public void setUp() {
 		AttributeType consumerIdType = new AttributeType("consumerIdType",  String.class, true);
 		AttributeType providerIdType = new AttributeType("providerIdType", String.class, true);

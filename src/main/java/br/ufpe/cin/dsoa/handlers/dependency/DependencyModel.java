@@ -4,7 +4,7 @@ import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.contract.ServiceConsumer;
 
-public class Dependency {
+public class DependencyModel {
 	private DependencyManager manager;
 	private ServiceConsumer consumer;
 	private DependencyMetadata metadata;
@@ -12,15 +12,15 @@ public class Dependency {
 	private boolean valid;
 	
 
-	public ServiceDependency(DependencyHandler handler, ServiceConsumer consumer, DependencyMetadata sla) {
-		this.handler = handler;
+	public DependencyModel(DependencyHandler handler, ServiceConsumer consumer, DependencyMetadata sla) {
+		//this.handler = handler;
 		this.metadata = sla;
 		this.consumer = consumer;
 		this.valid = false;
 	}
 
 	public void start() {
-		this.manager.resolve();
+		//this.manager.resolve();
 	}
 
 	public void setDependencyManager(DependencyManager manager) {
@@ -35,7 +35,7 @@ public class Dependency {
 	}
 
 	public BundleContext getContext() {
-		return handler.getInstanceManager().getContext();
+		return null;//handler.getInstanceManager().getContext();
 	}
 
 	public DependencyMetadata getMetadata() {
@@ -57,6 +57,6 @@ public class Dependency {
 	
 	private void setValid(boolean valid) {
 		this.valid = valid;
-		this.handler.checkValidate();
+		//this.handler.checkValidate();
 	}
 }
