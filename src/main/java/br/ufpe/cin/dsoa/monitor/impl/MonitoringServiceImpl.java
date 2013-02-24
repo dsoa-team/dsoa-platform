@@ -72,6 +72,12 @@ public class MonitoringServiceImpl implements MonitoringService {
 
 		}
 
+		@Override
+		public void receive(Object result, String statementName) {
+			// TODO Auto-generated method stub
+			
+		}
+
 	}
 
 	/*

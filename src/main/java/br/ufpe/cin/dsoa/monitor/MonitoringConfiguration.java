@@ -40,4 +40,10 @@ public class MonitoringConfiguration  implements EventConsumer {
 		listener.listen(result, brokenItem, name);
 	}
 
+	@Override
+	public void receive(Object result, String statementName) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

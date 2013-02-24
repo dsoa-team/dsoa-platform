@@ -10,43 +10,21 @@ import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.StatementAwareUpdateListener;
-import com.espertech.esper.event.map.MapEventBean;
 
 public class EventNotifier implements StatementAwareUpdateListener{
 
-	private List<EventConsumer> consumers;
+	private EventConsumer consumer;
 
-	public EventNotifier() {
-		this.consumers = new ArrayList<EventConsumer>();
-	}
-
-	public void addEventConsumer(EventConsumer eventConsumer) {
-		this.consumers.add(eventConsumer);
+	public EventNotifier(EventConsumer consumer) {
+		this.consumer = consumer;
 	}
 
 	public void update(EventBean[] newEvents, EventBean[] oldEvents,
 			EPStatement statement, EPServiceProvider epServiceProvider) {
 		
-		for(EventConsumer consumer : consumers) {
-			for (int i = 0; i < newEvents.length; i++) {
-				MapEventBean eventBean = (MapEventBean) newEvents[i];
-				Map<String,Object> result = eventBean.getProperties();
-				consumer.receive(result,statement.getText(),statement.getName());
-			}
+		for (int i = 0; i < newEvents.length; i++) {
+			Object result = newEvents[i].getUnderlying();
+			this.consumer.receive(result, statement.getName());
 		}
 	}
-
-	public void removeEventConsumer(EventConsumer eventConsumer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public boolean hasEventConsumers() {
-		boolean result = false;
-		if (null != consumers && consumers.size() != 0) {
-			result = true;
-		}
-		return result;
-	}
-
 }

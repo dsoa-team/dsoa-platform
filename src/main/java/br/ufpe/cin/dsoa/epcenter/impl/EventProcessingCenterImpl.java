@@ -12,6 +12,8 @@ import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
+import com.espertech.esper.client.EventBean;
+import com.espertech.esper.client.UpdateListener;
 
 public class EventProcessingCenterImpl implements EventProcessingCenter {
 
@@ -19,6 +21,10 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 	private final Map<String, EventNotifier> notifierMap;
 
 	public EventProcessingCenterImpl(BundleContext context) {
+		this();
+	}
+	
+	public EventProcessingCenterImpl() {
 		this.notifierMap = new Hashtable<String, EventNotifier>();
 		this.epServiceProvider = EPServiceProviderManager.getProvider(
 				"EngineInstance", new Configuration());
@@ -52,7 +58,7 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 		
 	}
 	
-	public void subscribe(String statementName, EventConsumer eventConsumer) {
+	/*public void subscribe(String statementName, EventConsumer eventConsumer) {
 		EventNotifier notifier = notifierMap.get(statementName);
 		
 		if(notifier == null) {
@@ -62,10 +68,16 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 		}
 		
 		notifier.addEventConsumer(eventConsumer);
+	}*/
+	
+	public void subscribe(String subscription, final EventConsumer eventConsumer) {
+		defineStatement("user", subscription);
+		this.epServiceProvider.getEPAdministrator().getStatement("user").
+			addListener(new EventNotifier(eventConsumer));
 	}
 	
 	public void unsubscribe(String statementName, EventConsumer eventConsumer) {
-		EventNotifier notifier = this.notifierMap.get(statementName);
+		/*EventNotifier notifier = this.notifierMap.get(statementName);
 		
 		if(notifier != null) {
 			notifier.removeEventConsumer(eventConsumer);
@@ -73,6 +85,6 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 				epServiceProvider.getEPAdministrator().getStatement(statementName).removeListener(notifier);
 				this.notifierMap.remove(statementName);
 			}
-		}
+		}*/
 	}
 }
