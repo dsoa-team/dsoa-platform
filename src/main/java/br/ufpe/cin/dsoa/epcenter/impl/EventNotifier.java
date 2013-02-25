@@ -1,9 +1,5 @@
 package br.ufpe.cin.dsoa.epcenter.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import br.ufpe.cin.dsoa.epcenter.EventConsumer;
 
 import com.espertech.esper.client.EPServiceProvider;
