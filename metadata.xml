@@ -9,6 +9,13 @@
   		<provides />
   	</component>
   	
+  	<component classname="br.ufpe.cin.dsoa.epcenter.configurator.PlatformConfigurator" >
+  		<requires field="epCenter"/>
+  		<callback transition="validate" method="start" />
+  		<callback transition="invalidate" method="stop" />
+  	</component>
+  	
   	<instance component="br.ufpe.cin.dsoa.agent.store.impl.MemoryStorageAgent" />
   	<instance component="br.ufpe.cin.dsoa.epcenter.impl.EventProcessingCenterImpl" />
+  	<instance component="br.ufpe.cin.dsoa.epcenter.configurator.PlatformConfigurator" />
 </ipojo>

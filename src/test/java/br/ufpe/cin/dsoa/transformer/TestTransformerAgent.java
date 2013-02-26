@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.test.transformer;
+package br.ufpe.cin.dsoa.transformer;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
