@@ -19,6 +19,7 @@ public class Property {
 	@XmlAttribute(name = "generated")
 	private boolean generated;
 	
+	//for agent expression definition
 	@XmlValue
 	private String expression;
 

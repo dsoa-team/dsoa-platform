@@ -3,6 +3,7 @@ package br.ufpe.cin.dsoa.epcenter.configurator.listener;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
@@ -79,21 +80,23 @@ public class BundleListener extends BundleTracker {
 			}
 			
 			for(Event e : list.getEvents()) {
-				Map<String, Object> props = e.getProperties();
+				Map<String, Object> eventProperties = e.getProperties();
+				if(null != e.getSuperType()){
+					eventProperties.putAll(eventMap.get(e.getSuperType()).getProperties());
+				}
 				
-				for(String key : e.getProperties().keySet()){
+				Set<String> keys = eventProperties.keySet();
+				Map<String, Object> registedProperties = new HashMap<String, Object>(eventProperties);
+				
+				for(String key : keys){
 					try {
-						props.put(key, Class.forName((String) e.getProperties().get(key)));
+						registedProperties.put(key, Class.forName((String) eventProperties.get(key)));
 					} catch (ClassNotFoundException ex ){
-						props.put(key, e.getProperties().get(key));
+						registedProperties.put(key, eventProperties.get(key));
 					}
 				}
 				
-				if(null != e.getSuperType()){
-					props.putAll(eventMap.get(e.getSuperType()).getProperties());
-				}
-				
-				this.epCenter.defineEvent(e.getType(), props);
+				this.epCenter.defineEvent(e.getType(), registedProperties);
 			}
 		}
 	}
