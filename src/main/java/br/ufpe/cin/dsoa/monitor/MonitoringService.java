@@ -1,8 +1,7 @@
 package br.ufpe.cin.dsoa.monitor;
 
-import br.ufpe.cin.dsoa.contract.Sla;
-
+import br.ufpe.cin.dsoa.handlers.dependency.DependencyMetadata;
 
 public interface MonitoringService {
-	public void startMonitoring(Sla sla);
+	public void startMonitoring(DependencyMetadata sla);
 }

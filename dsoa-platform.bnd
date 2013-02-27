@@ -1,3 +1,4 @@
 Import-Package: * 
-Export-Package: * 
-#Private-Package: 
+Export-Package: br.ufpe.cin.dsoa.epcenter 
+Private-Package: br.ufpe.cin.dsoa.*
+DynamicImport-Package: *

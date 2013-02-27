@@ -7,15 +7,13 @@ import org.apache.felix.ipojo.handlers.providedservice.CreationStrategy;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceRegistration;
 
-import br.ufpe.cin.dsoa.AdaptationManager;
-
 public class Strategy extends CreationStrategy {
 
 	private InstanceManager m_manager;
 	private ProviderMetadata p_metadata;
 
 	public Object getService(Bundle bundle, ServiceRegistration registration) {
-		return AdaptationManager.createProxy(m_manager, p_metadata);
+		return null; //AdaptationManager.createProxy(m_manager, p_metadata);
 	}
 
 	public void ungetService(Bundle bundle, ServiceRegistration registration,

@@ -26,9 +26,7 @@
     <dependency>
     	<groupId>com.espertech</groupId>
     	<artifactId>esper</artifactId>
-    	<version>4.7.0</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
+    	<version>4.8.0</version>
     </dependency>
   </dependencies>
 </project>

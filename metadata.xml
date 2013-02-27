@@ -5,8 +5,26 @@
    	<handler classname="br.ufpe.cin.dsoa.handlers.dependency.DependencyHandler"	name="requires"	namespace="br.ufpe.cin.dsoa">
   	</handler>
   	
-  	<component classname="br.ufpe.cin.dsoa.agent.store.impl.MemoryStorageAgent">
-  		<provides specifications="br.ufpe.cin.dsoa.agent.store.StorageAgentService" post-registration="listen" />
+  	<component classname="br.ufpe.cin.dsoa.epcenter.impl.EventProcessingCenterImpl">
+  		<provides />
   	</component>
+  	
+  	<component classname="br.ufpe.cin.dsoa.management.hook.RemoteServiceManager">
+  		<requires field="epCenter"/>
+  		<callback transition="validate" method="start" />
+  		<callback transition="invalidate" method="stop" />
+  	</component>
+  		
+  	<component classname="br.ufpe.cin.dsoa.epcenter.configurator.PlatformConfigurator" >
+  		<requires field="epCenter"/>
+  		<callback transition="validate" method="start" />
+  		<callback transition="invalidate" method="stop" />
+  	</component>
+  	
   	<instance component="br.ufpe.cin.dsoa.agent.store.impl.MemoryStorageAgent" />
+  	<instance component="br.ufpe.cin.dsoa.epcenter.impl.EventProcessingCenterImpl" />
+  	<instance component="br.ufpe.cin.dsoa.management.hook.RemoteServiceManager" />
+
+  	<instance component="br.ufpe.cin.dsoa.epcenter.configurator.PlatformConfigurator" />
+
 </ipojo>

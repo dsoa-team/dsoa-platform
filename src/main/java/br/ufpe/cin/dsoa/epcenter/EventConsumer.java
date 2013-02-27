@@ -6,5 +6,7 @@ public interface EventConsumer {
 	
 	@SuppressWarnings("rawtypes")
 	public void receive(Map result, Object userObject,String statementName);
+	
+	public void receive(Object result, String statementName);
 
 }

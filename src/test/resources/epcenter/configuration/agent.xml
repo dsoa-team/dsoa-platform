@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<agents>
+	<agent>
+		<name>ResponseTime</name>
+		<description>Response time from invocation</description>
+		<transformer type="mapping">
+			<input-events>
+				<event type="InvocationEvent"/>
+			</input-events>
+			<output-events >
+				<event type="ResponseTime"/>
+			</output-events>
+			
+			<mappings>
+				<mapping event="ResponseTime">
+					<property id="id" type="Double" generated="true" />
+					<property id="timestamp" type="Double" gererated="true" />
+					<property id="value" type="Double">InvocationEvent.response.timestamp - InvocationEvent.request.timestamp</property>
+				</mapping>
+			</mappings>
+			
+			<!-- 
+			query timestamp e id gerados (esper)
+			INSERT into ResponseTime 
+			SELECT InvocationEvent.response.timestamp - InvocationEvent.request.timestamp as value
+			FROM InvocationEvent
+			
+			we could use janino (evaluate expression)
+			 -->
+		</transformer>
+	</agent>
+	<agent>
+		<name>Availability</name>
+		<description>Availability from service</description>
+		<transformer type="class">
+			<input-events>
+				<event type="InvocationEvent"/>
+			</input-events>
+			<output-events >
+				<event type="Availabilty"/>
+			</output-events>
+			
+			<classname>br.ufpe.cin.dsoa.ping</classname>
+		</transformer>
+	</agent>
+	
+	<agent>
+		<name>ResponseTime</name>
+		<description>Availability from service</description>
+		<transformer type="query">
+			<input-events>
+				<event type="InvocationEvent"/>
+			</input-events>
+			<output-events >
+				<event type="ResponseTime"/>
+			</output-events>
+			
+			<query>
+				INSERT into ResponseTime 
+				SELECT InvocationEvent.responseTimestamp - InvocationEvent.resquestTimestamp as value
+				FROM InvocationEvent
+			</query>
+		</transformer>
+	</agent>
+</agents>
+
