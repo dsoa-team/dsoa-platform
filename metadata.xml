@@ -23,8 +23,6 @@
   	
   	<instance component="br.ufpe.cin.dsoa.agent.store.impl.MemoryStorageAgent" />
   	<instance component="br.ufpe.cin.dsoa.epcenter.impl.EventProcessingCenterImpl" />
-  	<instance component="br.ufpe.cin.dsoa.management.hook.RemoteServiceManager" />
-
   	<instance component="br.ufpe.cin.dsoa.epcenter.configurator.PlatformConfigurator" />
 
 </ipojo>

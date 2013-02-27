@@ -57,7 +57,7 @@
 			
 			<query>
 				INSERT into ResponseTime 
-				SELECT InvocationEvent.responseTimestamp - InvocationEvent.resquestTimestamp as value
+				SELECT InvocationEvent.response.timestamp - InvocationEvent.request.timestamp as value
 				FROM InvocationEvent
 			</query>
 		</transformer>

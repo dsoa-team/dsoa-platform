@@ -7,7 +7,7 @@
 			<property id="timestamp" type="java.lang.Double" />
 		</properties>
 	</event>
-<!-- 	
+	
 	<event type="Request" extends="DsoaEvent"/>
 	
 	<event type="Response" extends="DsoaEvent"/>
@@ -18,16 +18,16 @@
 			<property id="response" type="Response" />
 		</properties>
 	</event>
- -->	
-	<event type="ResponseTime" extends="DsoaEvent">
+	
+	<event type="ResponseTimeEvent" extends="DsoaEvent">
 		<properties>
-			<property id="value" type="java.lang.Double" />
+			<property id="responseTime" type="java.lang.Double" />
 		</properties>
 	</event>
 
-	<event type="Availabilty" extends="DsoaEvent">
+	<event type="AvailabiltyEvent" extends="DsoaEvent">
 		<properties>
-			<property id="value" type="java.lang.Double" />
+			<property id="availability" type="java.lang.Double" />
 		</properties>
 	</event>
 
