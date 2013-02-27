@@ -22,7 +22,7 @@ public class RemoteServiceManager implements EventHook, FindHook{
 		this.ctx = context;
 	}
 
-	void register() {
+	void start() {
 		System.out.println("Funcionou!!111onze");
 		registration = ctx.registerService(
 				new String[] {FindHook.class.getName(), EventHook.class.getName()}, this, null);	
