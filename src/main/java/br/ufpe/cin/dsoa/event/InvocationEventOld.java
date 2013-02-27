@@ -2,7 +2,6 @@ package br.ufpe.cin.dsoa.event;
 
 public class InvocationEventOld {
 
-	private String consumerId;
 	private String providerId;
 	private String operationName;
 	private Class<?>[] parameterTypes;
@@ -14,12 +13,11 @@ public class InvocationEventOld {
 	private long resquestTimestamp;
 	private long responseTimestamp;
 
-	public InvocationEventOld(String consumerId, String providerId,
+	public InvocationEventOld(String providerId,
 			String operationName, Class<?>[] parameterTypes, Object[] parameterValues,
 			Class<?> returnType, Object returnValue, boolean success,
-			Exception exception) {
+			Exception exception, long startTime, long nanoTime) {
 		super();
-		this.consumerId = consumerId;
 		this.providerId = providerId;
 		this.operationName = operationName;
 		this.parameterTypes = parameterTypes;
@@ -28,10 +26,6 @@ public class InvocationEventOld {
 		this.returnValue = returnValue;
 		this.success = success;
 		this.exception = exception;
-	}
-
-	public String getConsumerId() {
-		return consumerId;
 	}
 
 	public String getProviderId() {

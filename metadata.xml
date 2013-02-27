@@ -9,6 +9,11 @@
   		<provides />
   	</component>
   	
+  	<component classname="br.ufpe.cin.dsoa.management.hook.RemoteServiceManager">
+  		<callback transition="validate" method="register"/>
+  	</component>
+  	
   	<instance component="br.ufpe.cin.dsoa.agent.store.impl.MemoryStorageAgent" />
   	<instance component="br.ufpe.cin.dsoa.epcenter.impl.EventProcessingCenterImpl" />
+  	<instance component="br.ufpe.cin.dsoa.management.hook.RemoteServiceManager" />
 </ipojo>
