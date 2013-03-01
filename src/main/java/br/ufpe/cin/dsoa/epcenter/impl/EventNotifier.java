@@ -1,6 +1,6 @@
 package br.ufpe.cin.dsoa.epcenter.impl;
 
-import br.ufpe.cin.dsoa.epcenter.EventConsumer;
+import br.ufpe.cin.dsoa.epcenter.NotificationListener;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
@@ -9,9 +9,9 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
 
 public class EventNotifier implements StatementAwareUpdateListener{
 
-	private EventConsumer consumer;
+	private NotificationListener consumer;
 
-	public EventNotifier(EventConsumer consumer) {
+	public EventNotifier(NotificationListener consumer) {
 		this.consumer = consumer;
 	}
 

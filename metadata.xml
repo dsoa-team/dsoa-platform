@@ -9,20 +9,33 @@
   		<provides />
   	</component>
   	
-  	<component classname="br.ufpe.cin.dsoa.management.hook.RemoteServiceManager">
-  		<requires field="epCenter"/>
-  		<callback transition="validate" method="start" />
-  		<callback transition="invalidate" method="stop" />
+  	<component classname="br.ufpe.cin.dsoa.management.MetricCatalog">
+  		<provides />
   	</component>
-  		
-  	<component classname="br.ufpe.cin.dsoa.epcenter.configurator.PlatformConfigurator" >
+  	
+  	<component classname="br.ufpe.cin.dsoa.management.DsoaFindHook">
   		<requires field="epCenter"/>
   		<callback transition="validate" method="start" />
   		<callback transition="invalidate" method="stop" />
   	</component>
   	
-  	<instance component="br.ufpe.cin.dsoa.agent.store.impl.MemoryStorageAgent" />
+  	<component classname="br.ufpe.cin.dsoa.management.DsoaServiceListener">
+  		<requires field="epCenter"/>
+  		<requires field="metricCatalog"/>
+  		<callback transition="validate" method="start" />
+  		<callback transition="invalidate" method="stop" />
+  	</component>
+  		
+  	<component classname="br.ufpe.cin.dsoa.epcenter.configurator.PlatformConfigurator" >
+  		<requires field="metricCatalog"/>
+  		<callback transition="validate" method="start" />
+  		<callback transition="invalidate" method="stop" />
+  	</component>
+  	
   	<instance component="br.ufpe.cin.dsoa.epcenter.impl.EventProcessingCenterImpl" />
   	<instance component="br.ufpe.cin.dsoa.epcenter.configurator.PlatformConfigurator" />
+  	<instance component="br.ufpe.cin.dsoa.management.DsoaFindHook" />
+  	<instance component="br.ufpe.cin.dsoa.management.DsoaServiceListener" />
+   	<instance component="br.ufpe.cin.dsoa.management.MetricCatalog"/>
 
 </ipojo>

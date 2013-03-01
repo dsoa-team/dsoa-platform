@@ -1,24 +1,24 @@
 package br.ufpe.cin.dsoa.epcenter.impl;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import org.osgi.framework.BundleContext;
 
-import br.ufpe.cin.dsoa.epcenter.EventConsumer;
+import br.ufpe.cin.dsoa.epcenter.NotificationListener;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
-import com.espertech.esper.client.EventBean;
-import com.espertech.esper.client.UpdateListener;
 
 public class EventProcessingCenterImpl implements EventProcessingCenter {
 
 	private final EPServiceProvider epServiceProvider;
 	private final Map<String, EventNotifier> notifierMap;
+	private final List<String> eventNames;
 
 	public EventProcessingCenterImpl(BundleContext context) {
 		this();
@@ -28,6 +28,7 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 		this.notifierMap = new Hashtable<String, EventNotifier>();
 		this.epServiceProvider = EPServiceProviderManager.getProvider(
 				"EngineInstance", new Configuration());
+		this.eventNames = new ArrayList<String>();
 	}
 
 	public void publishEvent(Object event) {
@@ -36,12 +37,14 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 
 	@SuppressWarnings("rawtypes")
 	public void publishEvent(Map event, String eventName) {
+		this.eventNames.add(eventName);
 		this.epServiceProvider.getEPRuntime().sendEvent(event, eventName);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void defineEvent(Class event) {
-		this.epServiceProvider.getEPAdministrator().getConfiguration().addEventType(event);
+	public void defineEvent(Class eventClass) {
+		this.eventNames.add(eventClass.getSimpleName());
+		this.epServiceProvider.getEPAdministrator().getConfiguration().addEventType(eventClass);
 	}
 	
 	public void defineStatement(String name, String statement) {
@@ -70,13 +73,13 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 		notifier.addEventConsumer(eventConsumer);
 	}*/
 	
-	public void subscribe(String subscription, final EventConsumer eventConsumer) {
+	public void subscribe(String subscription, final NotificationListener eventConsumer) {
 		defineStatement("user", subscription);
 		this.epServiceProvider.getEPAdministrator().getStatement("user").
 			addListener(new EventNotifier(eventConsumer));
 	}
 	
-	public void unsubscribe(String statementName, EventConsumer eventConsumer) {
+	public void unsubscribe(String statementName, NotificationListener eventConsumer) {
 		/*EventNotifier notifier = this.notifierMap.get(statementName);
 		
 		if(notifier != null) {
@@ -86,5 +89,19 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 				this.notifierMap.remove(statementName);
 			}
 		}*/
+	}
+
+	public void undefineEvents() {
+		for (String eventName : this.eventNames) {
+			this.undefineEvent(eventName);
+		}
+	}
+	
+	public void undefineEvent(Class eventClass) {
+		this.undefineEvent(eventClass.getSimpleName());
+	}
+	
+	public void undefineEvent(String eventName) {
+		this.epServiceProvider.getEPAdministrator().getConfiguration().removeEventType(eventName, true);
 	}
 }

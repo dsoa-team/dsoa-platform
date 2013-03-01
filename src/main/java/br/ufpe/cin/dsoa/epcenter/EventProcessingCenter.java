@@ -17,8 +17,14 @@ public interface EventProcessingCenter {
 	
 	public void defineStatement(String name, String statement);
 	
-	public void subscribe(String statementName, EventConsumer eventConsumer);
+	public void subscribe(String statementName, NotificationListener eventConsumer);
 	
-	public void unsubscribe(String statementName, EventConsumer eventConsumer);
+	public void unsubscribe(String statementName, NotificationListener eventConsumer);
+
+	public void undefineEvents();
+	
+	public void undefineEvent(String eventName);
+	
+	public void undefineEvent(Class eventClass);
 
 }

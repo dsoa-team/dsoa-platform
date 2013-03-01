@@ -81,49 +81,6 @@ public class AgentParserSpec {
 	}
 	
 	@Test
-	public void testTransormerInpuEvent() {
-		String inputEvent = "InvocationEvent";
-		String outputEvent = "ResponseTime";
-		
-		Transformer t = list.getAgents().get(0).getTransformer(); 
-		
-		String input = t.getInputEvents().get(0).getType();
-		String output = t.getOutputEvents().get(0).getType();
-		
-		assertEquals("Xml has modified", inputEvent, input);
-		assertEquals("Xml has modified", outputEvent, output);
-	}
-	
-	@Test
-	public void testTransformerMappings() {
-		Transformer t = list.getAgents().get(0).getTransformer();
-		assertNotNull(t.getMapping());
-	}
-	
-	@Test
-	public void testTransformerMappingsAttributes() {
-		Transformer t = list.getAgents().get(0).getTransformer();
-		Set<String> set = t.getMapping().keySet(); 
-		
-		for(Object id : set){
-			assertNotNull(t.getMapping().get(id));
-		}
-	}
-	
-	@Test
-	public void testTransformerMappingProperties() {
-		Transformer t = list.getAgents().get(0).getTransformer();
-		Set<String> set = t.getMapping().keySet(); 
-		
-		for(Object id : set){
-			Map<String,String> properties = t.getMapping().get(id);
-			for(String key : properties.keySet()){
-				assertNotNull(properties.get(key));
-			}
-		}
-	}
-	
-	@Test
 	public void testTransformerQuery(){
 		Transformer t = list.getAgents().get(2).getTransformer();
 		String query = t.getQuery();
@@ -131,11 +88,4 @@ public class AgentParserSpec {
 		
 	}
 	
-	@Test
-	public void testTransformerClassname(){
-		Transformer t = list.getAgents().get(1).getTransformer();
-		String classname = t.getClassname();
-		assertNotNull(classname);
-	}
-
 }

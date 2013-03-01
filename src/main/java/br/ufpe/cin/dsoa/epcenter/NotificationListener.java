@@ -2,7 +2,7 @@ package br.ufpe.cin.dsoa.epcenter;
 
 import java.util.Map;
 
-public interface EventConsumer {
+public interface NotificationListener {
 	
 	@SuppressWarnings("rawtypes")
 	public void receive(Map result, Object userObject,String statementName);

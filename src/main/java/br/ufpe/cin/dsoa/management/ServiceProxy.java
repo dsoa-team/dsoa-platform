@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.management.hook;
+package br.ufpe.cin.dsoa.management;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -15,25 +15,26 @@ public class ServiceProxy implements InvocationHandler {
 	private ServiceReference reference;
 	private BundleContext context;
 	private String serviceName;
+	private Object service;
 	private EventProcessingCenter epCenter;
 
 	public ServiceProxy(BundleContext context, EventProcessingCenter epCenter,
 			ServiceReference reference) {
-		this.context = context;
 		this.reference = reference;
 		this.epCenter = epCenter;
 		this.serviceName = (String) reference
 				.getProperty(Constants.SERVICE_PID);
+		this.service = context.getService(reference);
 	}
 
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
+		System.out.println("===> ESTOU NO PROXY...");
 		long startTime = System.currentTimeMillis();
 		Object result = null;
 		Exception exception = null;
 		InvocationEvent invocation = null;
 		boolean success = false;
-		Object service = context.getService(reference);
 		try {
 			if (null != service) {
 				result = method.invoke(service, args);
@@ -49,6 +50,7 @@ public class ServiceProxy implements InvocationHandler {
 		invocation = new InvocationEvent(serviceName, method.getName(),
 				success, startTime, System.currentTimeMillis());
 		notifyInvocation(invocation);
+		System.out.println("===> SAINDO DO PROXY...");
 		if (null != exception) {
 			throw exception;
 		}

@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.epcenter.EventConsumer;
+import br.ufpe.cin.dsoa.epcenter.NotificationListener;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 import br.ufpe.cin.dsoa.handlers.dependency.DependencyMetadata;
 import br.ufpe.cin.dsoa.monitor.MonitoringConfiguration;
@@ -47,7 +47,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 		
 	}
 	
-	class Listener implements EventConsumer {
+	class Listener implements NotificationListener {
 		// Configura��es para otimizar a escrita na base escrevendo em uma thread separada
 		private int poolSize = 30;
 		private int maxPoolSize = 50;

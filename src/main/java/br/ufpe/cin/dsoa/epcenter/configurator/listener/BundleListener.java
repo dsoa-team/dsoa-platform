@@ -23,12 +23,15 @@ import br.ufpe.cin.dsoa.epcenter.configurator.parser.contextmodel.ContextMapping
 import br.ufpe.cin.dsoa.epcenter.configurator.parser.contextmodel.ContextModel;
 import br.ufpe.cin.dsoa.epcenter.configurator.parser.event.Event;
 import br.ufpe.cin.dsoa.epcenter.configurator.parser.event.EventList;
+import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.Metric;
+import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.MetricList;
+import br.ufpe.cin.dsoa.management.MetricCatalog;
 
 public class BundleListener extends BundleTracker {
 
 	private Map<String, Unmarshaller> JAXBContexts;
 	private EventProcessingCenter epCenter;
-	
+	private MetricCatalog metricCatalog;
 	private Map<String, Event> eventMap;
 	
 	private static Logger logger = Logger.getLogger(BundleListener.class.getName());
@@ -42,19 +45,29 @@ public class BundleListener extends BundleTracker {
 	
 	@Override
 	public Object addingBundle(Bundle bundle, BundleEvent event) {
-		try {
-			this.handleEventDefinition(bundle);
-			this.handleAgentDefinition(bundle);
-			this.handleContextDefinition(bundle);
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+		//if (event != null && event.getType() == BundleEvent.STARTED) {
+			try {
+				this.addMetricDefinitions(bundle);
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			}
+	//	} else if (event.getType() == BundleEvent.STOPPING)  {
+			/*try {
+				this.removeMetricDefinitions(bundle);
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			} */
+		//}
 		
 		return super.addingBundle(bundle, event);
 	}
 	
+	private void removeMetricDefinitions(Bundle bundle) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 	@Override
 	public void remove(Bundle bundle) {
 		super.remove(bundle);
@@ -101,17 +114,12 @@ public class BundleListener extends BundleTracker {
 		}
 	}
 	
-	private void handleAgentDefinition(Bundle bundle) throws JAXBException {
-		URL url = bundle.getEntry(AgentList.CONFIG);
+	private void addMetricDefinitions(Bundle bundle) throws JAXBException {
+		URL url = bundle.getEntry(MetricList.CONFIG);
 		if(url != null) {
-			AgentList list = (AgentList) JAXBContexts.get(AgentList.CONFIG).unmarshal(url);
-			
-			for(Agent a : list.getAgents()) {
-				if(a.getTransformer().getType().equalsIgnoreCase("query")) {
-					String query = a.getTransformer().getQuery();
-					this.epCenter.defineStatement(a.getName(), query);
-				}
-			}
+			Unmarshaller u = JAXBContexts.get(MetricList.CONFIG);
+			MetricList list = (MetricList)u.unmarshal(url);
+			this.metricCatalog.addMetrics(list);
 		}
 	}
 	
@@ -142,6 +150,11 @@ public class BundleListener extends BundleTracker {
 				}
 			}
 		}
+	}
+
+
+	public void setMetricCatalog(MetricCatalog metricCatalog) {
+		this.metricCatalog = metricCatalog;
 	}
 
 

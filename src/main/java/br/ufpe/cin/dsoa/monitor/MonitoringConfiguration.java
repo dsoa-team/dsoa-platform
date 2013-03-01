@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import br.ufpe.cin.dsoa.contract.AggreementMonitor;
-import br.ufpe.cin.dsoa.epcenter.EventConsumer;
+import br.ufpe.cin.dsoa.epcenter.NotificationListener;
 
-public class MonitoringConfiguration  implements EventConsumer {
+public class MonitoringConfiguration  implements NotificationListener {
 
 	private AggreementMonitor listener;
 	private Map<String, MonitoringConfigurationItem> itens;

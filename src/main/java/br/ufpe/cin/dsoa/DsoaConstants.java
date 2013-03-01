@@ -1,0 +1,6 @@
+package br.ufpe.cin.dsoa;
+
+public interface DsoaConstants {
+	public static final String SERVICE_PROXY = "service.proxy";
+	public static final String REMOTE_SERVICE = "service.imported"; 
+}

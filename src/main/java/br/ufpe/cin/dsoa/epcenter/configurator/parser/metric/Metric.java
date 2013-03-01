@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter.configurator.parser.agent;
+package br.ufpe.cin.dsoa.epcenter.configurator.parser.metric;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Agent {
+public class Metric {
 
 	@XmlElement(name = "name")
 	private String name;
@@ -15,11 +15,8 @@ public class Agent {
 	@XmlElement(name = "description")
 	private String description;
 	
-	@XmlElement(name = "metric")
-	private String metric;
-	
-	@XmlElement(name = "transformer")
-	private Transformer transformer;
+	@XmlElement(name = "agent")
+	private Agent agent;
 
 	public String getName() {
 		return name;
@@ -37,19 +34,12 @@ public class Agent {
 		this.description = description;
 	}
 
-	public Transformer getTransformer() {
-		return transformer;
+	public Agent getAgent() {
+		return agent;
 	}
 
-	public void setTransformer(Transformer transformer) {
-		this.transformer = transformer;
+	public void setAgent(Agent agent) {
+		this.agent = agent;
 	} 
 	
-	public String getMetric() {
-		return metric;
-	}
-	
-	public void setMetric(String metric) {
-		this.metric = metric;
-	}
 }
