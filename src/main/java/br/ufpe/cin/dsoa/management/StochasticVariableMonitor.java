@@ -4,25 +4,36 @@ import java.util.Map;
 
 import org.osgi.service.monitor.StatusVariable;
 
+import br.ufpe.cin.dsoa.DsoaConstants;
 import br.ufpe.cin.dsoa.epcenter.NotificationListener;
 
-public class MetricStatus implements NotificationListener {
+public class StochasticVariableMonitor implements NotificationListener {
 
-	private String name;
-	private String description;
+	private StochasticVariable variable;
 	private Object value;
 
-	public MetricStatus(String name, String description) {
-		this.name = name;
-		this.description = description;
+	public StochasticVariableMonitor(StochasticVariable variable) {
+		this.variable = variable;
+	}
+	
+	public String getCategory() {
+		return variable.getMetric().getCategory();
 	}
 	
 	public String getName() {
-		return name;
+		return variable.getMetric().getName();
+	}
+	
+	public String getScope() {
+		return variable.getMetric().getScope();
 	}
 
 	public String getDescription() {
-		return description;
+		return variable.getMetric().getDescription();
+	}
+	
+	public String getPath() {
+		return variable.getTarget() != null ? variable.getMetric() + DsoaConstants.TOKEN + variable.getTarget() : variable.getMetric().toString();
 	}
 	
 	public StatusVariable getStatusVariable() {

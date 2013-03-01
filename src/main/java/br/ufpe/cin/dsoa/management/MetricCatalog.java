@@ -8,10 +8,10 @@ import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.MetricList;
 
 public class MetricCatalog {
-	private Map<String,Metric> metricMap = new HashMap<String,Metric>();
+	private Map<MetricId,Metric> metricMap = new HashMap<MetricId,Metric>();
 	
-	public Metric getMetric(String name) {
-		return this.metricMap.get(name);
+	public Metric getMetric(MetricId id) {
+		return this.metricMap.get(id);
 	}
 	
 	public Collection<Metric> getMetrics() {
@@ -19,7 +19,7 @@ public class MetricCatalog {
 	}
 	
 	public void addMetric(Metric metric) {
-		this.metricMap.put(metric.getName(), metric);
+		this.metricMap.put(metric.getId(), metric);
 	}
 	
 	public void addMetrics(MetricList metrics) {
