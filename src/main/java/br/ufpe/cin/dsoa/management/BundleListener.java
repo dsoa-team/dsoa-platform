@@ -25,7 +25,6 @@ import br.ufpe.cin.dsoa.epcenter.configurator.parser.event.Event;
 import br.ufpe.cin.dsoa.epcenter.configurator.parser.event.EventList;
 import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.MetricList;
-import br.ufpe.cin.dsoa.management.MetricCatalog;
 
 public class BundleListener extends BundleTracker {
 

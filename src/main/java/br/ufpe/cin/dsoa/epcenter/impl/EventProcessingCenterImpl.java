@@ -1,14 +1,14 @@
 package br.ufpe.cin.dsoa.epcenter.impl;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import org.osgi.framework.BundleContext;
 
-import br.ufpe.cin.dsoa.epcenter.NotificationListener;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
+import br.ufpe.cin.dsoa.epcenter.NotificationListener;
+import br.ufpe.cin.dsoa.event.InvocationEvent;
 
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPServiceProvider;
@@ -16,8 +16,7 @@ import com.espertech.esper.client.EPServiceProviderManager;
 
 public class EventProcessingCenterImpl implements EventProcessingCenter {
 
-	private final EPServiceProvider epServiceProvider;
-	private final Map<String, EventNotifier> notifierMap;
+	private EPServiceProvider epServiceProvider;
 	private final List<String> eventNames;
 
 	public EventProcessingCenterImpl(BundleContext context) {
@@ -25,12 +24,31 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 	}
 	
 	public EventProcessingCenterImpl() {
-		this.notifierMap = new Hashtable<String, EventNotifier>();
-		this.epServiceProvider = EPServiceProviderManager.getProvider(
-				"EngineInstance", new Configuration());
 		this.eventNames = new ArrayList<String>();
 	}
+	
+	public void start() {
+		this.epServiceProvider = EPServiceProviderManager.getProvider(
+				"EngineInstance", new Configuration());
+		this.configureEvents();
+		this.configureContexts();
+	}
 
+	public void stop() {
+		this.epServiceProvider.destroy();
+	}
+	
+	private void configureEvents() {
+		this.defineEvent(InvocationEvent.class);
+	}
+	
+	private void configureContexts() {
+		String serviceCtx = "create context service partition by service from InvocationEvent";
+		String operationCtx = "create context operation partition by service,operationName from InvocationEvent";
+		this.defineContext(serviceCtx);
+		this.defineContext(operationCtx);
+	}
+	
 	public void publishEvent(Object event) {
 		this.epServiceProvider.getEPRuntime().sendEvent(event);
 	}
@@ -103,5 +121,9 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 	
 	public void undefineEvent(String eventName) {
 		this.epServiceProvider.getEPAdministrator().getConfiguration().removeEventType(eventName, true);
+	}
+	
+	public void defineContext(String ctxStatement) {
+		this.epServiceProvider.getEPAdministrator().createEPL(ctxStatement);
 	}
 }

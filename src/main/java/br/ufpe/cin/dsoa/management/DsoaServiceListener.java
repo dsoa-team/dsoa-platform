@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -26,10 +27,12 @@ public class DsoaServiceListener {
 	private List<ServiceRegistration> registrations;
 	private EventProcessingCenter epCenter;
 	private MetricCatalog metricCatalog;
+	private Logger log;
 
 	public DsoaServiceListener(BundleContext ctx) {
 		this.ctx = ctx;
 		this.registrations = new ArrayList<ServiceRegistration>();
+		this.log = Logger.getLogger(getClass().getSimpleName());
 	}
 
 	public void start() {
@@ -39,8 +42,9 @@ public class DsoaServiceListener {
 				if (event.getType() == ServiceEvent.REGISTERED) {
 					ServiceReference reference = event.getServiceReference();
 					if (Util.isRemote(reference)) {
-						System.out.println("==== ENTRANDO NO IF: "
+						log.info("A new remote service was registered: " 
 								+ reference.getProperty("service.id"));
+						log.info("Creating a service proxy...");
 						String[] classNames = (String[]) reference
 								.getProperty(Constants.OBJECTCLASS);
 						Class<?>[] classes = new Class<?>[classNames.length];
@@ -57,7 +61,7 @@ public class DsoaServiceListener {
 								new ServiceProxy(ctx, epCenter, reference));
 						ServiceRegistration proxyRegistration = ctx
 								.registerService(classNames, proxy, dict);
-						
+						log.info("Creating a service monitor...");
 						ServiceMonitor monitor = new ServiceMonitor(epCenter, metricCatalog, reference);
 						Hashtable ht = new Hashtable();
 						ht.put("service.pid", reference.getProperty(Constants.SERVICE_PID) + "-Monitor");

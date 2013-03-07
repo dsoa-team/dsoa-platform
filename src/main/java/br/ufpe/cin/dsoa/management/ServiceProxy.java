@@ -22,8 +22,8 @@ public class ServiceProxy implements InvocationHandler {
 			ServiceReference reference) {
 		this.reference = reference;
 		this.epCenter = epCenter;
-		this.serviceName = (String) reference
-				.getProperty(Constants.SERVICE_PID);
+		this.serviceName = reference
+				.getProperty(Constants.SERVICE_ID).toString();
 		this.service = context.getService(reference);
 	}
 
@@ -47,7 +47,7 @@ public class ServiceProxy implements InvocationHandler {
 			exception = exc;
 		}
 
-		invocation = new InvocationEvent(serviceName, method.getName(),
+		invocation = new InvocationEvent(serviceName, serviceName, method.getName(),
 				success, startTime, System.currentTimeMillis());
 		notifyInvocation(invocation);
 		System.out.println("===> SAINDO DO PROXY...");

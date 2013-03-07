@@ -12,11 +12,12 @@ import br.ufpe.cin.dsoa.management.MetricId;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Metric {
 
-	public static final String CATEGORY 	= "category";
-	public static final String NAME 		= "name";
-	public static final String SCOPE 		= "scope";
-	public static final String DESCRIPTION 	= "description";
-	public static final String AGENT 		= "agent";
+	public static final String METRIC_PREFIX	= "metric.";
+	public static final String CATEGORY 		= "category";
+	public static final String NAME 			= "name";
+	public static final String SCOPE 			= "scope";
+	public static final String DESCRIPTION 		= "description";
+	public static final String AGENT 			= "agent";
 	
 	@XmlElement(name = CATEGORY)
 	private String category;
@@ -88,7 +89,7 @@ public class Metric {
 		} else if (DsoaConstants.OPERATION_SCOPE.equals(getScope())) {
 			context = DsoaConstants.OPERATION_SCOPE;
 		} else {
-			throw new IllegalArgumentException("Context: " + getContext());
+			throw new IllegalArgumentException("Context: " + getScope());
 		}
 		return DsoaConstants.CONTEXT + " " + context;
 	} 

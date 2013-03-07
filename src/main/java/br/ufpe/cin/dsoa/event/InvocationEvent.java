@@ -3,16 +3,18 @@ package br.ufpe.cin.dsoa.event;
 public class InvocationEvent {
 
 	private String providerId;
-	private String operationName;
+	private String service;
+	private String operation;
 	private boolean success;
 	private long resquestTimestamp;
 	private long responseTimestamp;
 
-	public InvocationEvent(String providerId, String operationName,
+	public InvocationEvent(String providerId, String service, String operationName,
 			boolean success, long resquestTimestamp, long responseTimestamp) {
 		super();
+		this.service = service;
 		this.providerId = providerId;
-		this.operationName = operationName;
+		this.operation = operationName;
 		this.success = success;
 		this.resquestTimestamp = resquestTimestamp;
 		this.responseTimestamp = responseTimestamp;
@@ -22,8 +24,12 @@ public class InvocationEvent {
 		return providerId;
 	}
 
+	public String getService() {
+		return this.service;
+	}
+	
 	public String getOperationName() {
-		return operationName;
+		return operation;
 	}
 
 	public boolean isSuccess() {

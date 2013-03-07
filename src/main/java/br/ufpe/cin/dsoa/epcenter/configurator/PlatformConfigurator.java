@@ -2,7 +2,6 @@ package br.ufpe.cin.dsoa.epcenter.configurator;
 
 import org.osgi.framework.BundleContext;
 
-import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 import br.ufpe.cin.dsoa.epcenter.configurator.listener.BundleListener;
 import br.ufpe.cin.dsoa.management.MetricCatalog;
 

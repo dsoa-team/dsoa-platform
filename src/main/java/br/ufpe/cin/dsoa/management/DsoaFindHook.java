@@ -28,14 +28,16 @@ public class DsoaFindHook implements EventHook, FindHook {
 	}
 
 	public void start() {
-		epCenter.defineEvent(InvocationEvent.class);
-		registration = ctx.registerService(
-				new String[] { FindHook.class.getName(),
-						EventHook.class.getName() }, this, null);
+		this.registerHooks();
 	}
-
+	
+	public void registerHooks() {
+		registration = ctx.registerService(
+			new String[] { FindHook.class.getName(),
+					EventHook.class.getName() }, this, null);
+	}
+	
 	public void stop() {
-		epCenter.undefineEvent(InvocationEvent.class);
 		registration.unregister();
 	}
 	
