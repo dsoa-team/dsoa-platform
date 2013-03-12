@@ -28,7 +28,7 @@ public class InvocationEvent {
 		return this.service;
 	}
 	
-	public String getOperationName() {
+	public String getOperation() {
 		return operation;
 	}
 

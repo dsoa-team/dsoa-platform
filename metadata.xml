@@ -30,6 +30,7 @@
   		
   	<component classname="br.ufpe.cin.dsoa.epcenter.configurator.PlatformConfigurator" >
   		<requires field="metricCatalog"/>
+  		<requires field="epCenter"/>
   		<callback transition="validate" method="start" />
   		<callback transition="invalidate" method="stop" />
   	</component>

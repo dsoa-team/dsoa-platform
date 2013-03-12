@@ -120,6 +120,10 @@ public class BundleListener extends BundleTracker {
 			Unmarshaller u = JAXBContexts.get(MetricList.CONFIG);
 			MetricList list = (MetricList)u.unmarshal(url);
 			this.metricCatalog.addMetrics(list);
+			//define ESP statements
+			for(Metric m : list.getMetrics()){
+				this.epCenter.defineStatement(m.getId().toString(), m.getQuery());
+			}
 		}
 	}
 	

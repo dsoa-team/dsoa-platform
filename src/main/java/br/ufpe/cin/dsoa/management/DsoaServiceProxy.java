@@ -2,39 +2,66 @@ package br.ufpe.cin.dsoa.management;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Hashtable;
+import java.util.logging.Logger;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.monitor.Monitorable;
 
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
 
-public class ServiceProxy implements InvocationHandler {
-
-	private ServiceReference reference;
+/**
+ * A Service Proxy that intercepts requests at the client side. It generates events that represent service invocation (InvocationEvent) and forwards them
+ * to the Event Processing Center. There some Metric Computing Agents are responsible for metric derivation.
+ * @author fabions
+ *
+ */
+public class DsoaServiceProxy implements InvocationHandler {
+	
+	/*
+	 * DSOA BundleContext
+	 */
 	private BundleContext context;
-	private String serviceName;
-	private Object service;
+
+	/*
+	 * The Event Processing Center component
+	 */
 	private EventProcessingCenter epCenter;
 
-	public ServiceProxy(BundleContext context, EventProcessingCenter epCenter,
+	/*
+	 * The log service
+	 */
+	private Logger log;
+
+	/*
+	 * The reference to the real service
+	 */
+	private ServiceReference reference;
+
+	
+	public DsoaServiceProxy(BundleContext context, 
+			EventProcessingCenter epCenter,
 			ServiceReference reference) {
-		this.reference = reference;
+		this.context = context;
 		this.epCenter = epCenter;
-		this.serviceName = reference
-				.getProperty(Constants.SERVICE_ID).toString();
-		this.service = context.getService(reference);
+		this.reference = reference;
+		this.log = Logger.getLogger(getClass().getSimpleName());
 	}
 
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
-		System.out.println("===> ESTOU NO PROXY...");
+		log.info("Intercepted request to " + method.getName());
 		long startTime = System.currentTimeMillis();
 		Object result = null;
 		Exception exception = null;
 		InvocationEvent invocation = null;
 		boolean success = false;
+		String serviceName = reference.getProperty(Constants.SERVICE_ID).toString();
+		Object service = context.getService(reference);
 		try {
 			if (null != service) {
 				result = method.invoke(service, args);
@@ -47,10 +74,12 @@ public class ServiceProxy implements InvocationHandler {
 			exception = exc;
 		}
 
+		log.info("Creating an InvocationEvent...");
 		invocation = new InvocationEvent(serviceName, serviceName, method.getName(),
 				success, startTime, System.currentTimeMillis());
 		notifyInvocation(invocation);
-		System.out.println("===> SAINDO DO PROXY...");
+		
+		log.info("Leaving the service proxy...");
 		if (null != exception) {
 			throw exception;
 		}

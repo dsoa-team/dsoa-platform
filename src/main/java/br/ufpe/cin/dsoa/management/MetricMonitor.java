@@ -6,13 +6,14 @@ import org.osgi.service.monitor.StatusVariable;
 
 import br.ufpe.cin.dsoa.DsoaConstants;
 import br.ufpe.cin.dsoa.epcenter.NotificationListener;
+import br.ufpe.cin.dsoa.monitor.MonitoringConfigurationItem;
 
-public class StochasticVariableMonitor implements NotificationListener {
+public class MetricMonitor implements NotificationListener {
 
-	private StochasticVariable variable;
+	private MonitoringConfigurationItem variable;
 	private Object value;
 
-	public StochasticVariableMonitor(StochasticVariable variable) {
+	public MetricMonitor(MonitoringConfigurationItem variable) {
 		this.variable = variable;
 	}
 	
@@ -37,9 +38,6 @@ public class StochasticVariableMonitor implements NotificationListener {
 	}
 	
 	public StatusVariable getStatusVariable() {
-		System.out.println("Updatign status: ");
-		System.out.println("==>> Name: " + getName());
-		System.out.println("==>> Value: " + value);
 		return new StatusVariable(getName(),StatusVariable.CM_GAUGE, value.toString());
 	}
 
@@ -56,6 +54,5 @@ public class StochasticVariableMonitor implements NotificationListener {
 		System.out.println("Status variable: " + this.getStatusVariable());
 		System.out.println("Status: " + this.getStatusVariable().getString());
 		System.out.println("Status: " + this.getStatusVariable().getTimeStamp());
-		System.out.println("Status: " + this.getStatusVariable().getID());
 	}
 }

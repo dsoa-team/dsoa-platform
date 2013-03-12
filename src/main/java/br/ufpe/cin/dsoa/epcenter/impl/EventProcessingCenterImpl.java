@@ -44,7 +44,7 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 	
 	private void configureContexts() {
 		String serviceCtx = "create context service partition by service from InvocationEvent";
-		String operationCtx = "create context operation partition by service,operationName from InvocationEvent";
+		String operationCtx = "create context operation partition by service,operation from InvocationEvent";
 		this.defineContext(serviceCtx);
 		this.defineContext(operationCtx);
 	}
@@ -91,9 +91,8 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 		notifier.addEventConsumer(eventConsumer);
 	}*/
 	
-	public void subscribe(String subscription, final NotificationListener eventConsumer) {
-		defineStatement("user", subscription);
-		this.epServiceProvider.getEPAdministrator().getStatement("user").
+	public void subscribe(String statementName, final NotificationListener eventConsumer) {
+		this.epServiceProvider.getEPAdministrator().getStatement(statementName).
 			addListener(new EventNotifier(eventConsumer));
 	}
 	

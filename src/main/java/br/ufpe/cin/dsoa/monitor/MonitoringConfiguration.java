@@ -1,47 +1,19 @@
 package br.ufpe.cin.dsoa.monitor;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import br.ufpe.cin.dsoa.contract.AggreementMonitor;
-import br.ufpe.cin.dsoa.epcenter.NotificationListener;
+public class MonitoringConfiguration  {
 
-public class MonitoringConfiguration  implements NotificationListener {
-
-	private AggreementMonitor listener;
-	private Map<String, MonitoringConfigurationItem> itens;
-	private MonitoringContext context;
+	List<MonitoringConfigurationItem> itens = new ArrayList<MonitoringConfigurationItem>();
 	
-	public MonitoringConfiguration(MonitoringContext context,
-			AggreementMonitor listener) {
-		this.context = context;
-		this.listener = listener;
-		this.itens = new HashMap<String, MonitoringConfigurationItem>();
+	public void addItem(MonitoringConfigurationItem item) {
+		this.itens.add(item);
 	}
 
-	public MonitoringContext getContext() {
-		return context;
-	}
-
-	public AggreementMonitor getListener() {
-		return listener;
-	}
-
-	public void addConfigurationItem(MonitoringConfigurationItem item) {
-		this.itens.put(String.valueOf(item.getAttribute()), item);
-	}
-
-	public Map<String, MonitoringConfigurationItem> getItens() {
-		return itens;
-	}
-
-	public void receive(Map result, Object userObject, String name) {
-		MonitoringConfigurationItem brokenItem = this.itens.get(name);
-		listener.listen(result, brokenItem, name);
-	}
-
-	public void receive(Object result, String statementName) {
-		// TODO Auto-generated method stub
+	public List<MonitoringConfigurationItem> getItens() {
+		return Collections.unmodifiableList(itens);
 	}
 
 }
