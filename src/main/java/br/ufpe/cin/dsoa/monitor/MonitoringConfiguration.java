@@ -6,13 +6,13 @@ import java.util.List;
 
 public class MonitoringConfiguration  {
 
-	List<MonitoringConfigurationItem> itens = new ArrayList<MonitoringConfigurationItem>();
+	List<MetricInstance> itens = new ArrayList<MetricInstance>();
 	
-	public void addItem(MonitoringConfigurationItem item) {
+	public void addItem(MetricInstance item) {
 		this.itens.add(item);
 	}
 
-	public List<MonitoringConfigurationItem> getItens() {
+	public List<MetricInstance> getItens() {
 		return Collections.unmodifiableList(itens);
 	}
 

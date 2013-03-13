@@ -122,7 +122,7 @@ public class BundleListener extends BundleTracker {
 			this.metricCatalog.addMetrics(list);
 			//define ESP statements
 			for(Metric m : list.getMetrics()){
-				this.epCenter.defineStatement(m.getId().toString(), m.getQuery());
+				this.epCenter.defineStatement(m.toString(), m.getQuery());
 			}
 		}
 	}

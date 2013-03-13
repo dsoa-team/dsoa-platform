@@ -3,6 +3,7 @@ package br.ufpe.cin.dsoa.management;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.monitor.Monitorable;
 import org.osgi.service.monitor.StatusVariable;
@@ -10,20 +11,22 @@ import org.osgi.service.monitor.StatusVariable;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.monitor.MonitoringConfiguration;
-import br.ufpe.cin.dsoa.monitor.MonitoringConfigurationItem;
+import br.ufpe.cin.dsoa.monitor.MetricInstance;
 
 public class DsoaServiceMonitor implements Monitorable {
-
+	
+	private String serviceId;
 	private ServiceReference reference;
-	private MonitoringConfiguration config;
 	private MetricCatalog metricCatalog;
 	private EventProcessingCenter epCenter;
 	private Map<String, MetricMonitor> metricVariableMap;
+
 
 	public DsoaServiceMonitor(EventProcessingCenter epCenter, MetricCatalog metricCatalog, ServiceReference reference) {
 		this.epCenter = epCenter;
 		this.metricCatalog = metricCatalog;
 		this.reference = reference;
+		this.serviceId = reference.getProperty(Constants.SERVICE_ID).toString();
 		this.metricVariableMap = new HashMap<String, MetricMonitor>();
 		this.startMonitoring(reference);
 	}
@@ -37,14 +40,11 @@ public class DsoaServiceMonitor implements Monitorable {
 				MetricParser parser = new MetricParser(key.substring(Metric.METRIC_PREFIX.length()));
 				Metric metric = metricCatalog.getMetric(parser.getMetricId());
 				if (null != metric) {
-					if (config == null) {
-						config = new MonitoringConfiguration();
-					}
-					MonitoringConfigurationItem item;
-					config.addItem(item = new MonitoringConfigurationItem(metric, parser.getTarget()));
-					MetricMonitor metricMonitor = new MetricMonitor(item);
-					this.metricVariableMap.put(metricMonitor.getPath(), metricMonitor);
-					this.epCenter.subscribe(metric.getId().toString(), metricMonitor);
+					String operationName = parser.getOperationName();
+					MetricInstance metricInstance = new MetricInstance(metric, serviceId, parser.getOperationName());
+					MetricMonitor metricMonitor = new MetricMonitor(metricInstance);
+					this.metricVariableMap.put(metricInstance.getTarget(), metricMonitor);
+					this.epCenter.subscribe(metric.toString(), metricMonitor);
 				}
 			}
 		}

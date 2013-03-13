@@ -1,6 +1,7 @@
 package br.ufpe.cin.dsoa.epcenter.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,15 +10,20 @@ import org.osgi.framework.BundleContext;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 import br.ufpe.cin.dsoa.epcenter.NotificationListener;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
+import br.ufpe.cin.dsoa.management.MetricMonitor;
 
 import com.espertech.esper.client.Configuration;
+import com.espertech.esper.client.EPPreparedStatement;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
+import com.espertech.esper.client.EPStatement;
 
 public class EventProcessingCenterImpl implements EventProcessingCenter {
 
 	private EPServiceProvider epServiceProvider;
 	private final List<String> eventNames;
+	private Map<String, EPPreparedStatement> mapPreparedStmts;
+	private Map<String, EPStatement> mapStmts;
 
 	public EventProcessingCenterImpl(BundleContext context) {
 		this();
@@ -25,6 +31,8 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 	
 	public EventProcessingCenterImpl() {
 		this.eventNames = new ArrayList<String>();
+		this.mapPreparedStmts = new HashMap<String, EPPreparedStatement>();
+		this.mapStmts = new HashMap<String, EPStatement>();
 	}
 	
 	public void start() {
@@ -66,7 +74,8 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 	}
 	
 	public void defineStatement(String name, String statement) {
-		this.epServiceProvider.getEPAdministrator().createEPL(statement, name);
+		EPPreparedStatement prepared = epServiceProvider.getEPAdministrator().prepareEPL(statement);
+		this.mapPreparedStmts.put(name, prepared);
 	}
 	
 	public void defineStatement(String name, String statement, List<String> userObject) {
@@ -92,8 +101,15 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 	}*/
 	
 	public void subscribe(String statementName, final NotificationListener eventConsumer) {
-		this.epServiceProvider.getEPAdministrator().getStatement(statementName).
-			addListener(new EventNotifier(eventConsumer));
+		EPPreparedStatement preparedStmt = this.mapPreparedStmts.get(statementName);
+		preparedStmt.setObject(1, eventConsumer.getServiceId());
+		if (null != eventConsumer.getOperationName()) {
+			preparedStmt.setObject(2, eventConsumer.getOperationName());
+		}
+		String stmtName = ((MetricMonitor)eventConsumer).getTarget();
+		EPStatement statement = this.epServiceProvider.getEPAdministrator().create(preparedStmt, stmtName);
+		this.mapStmts.put(stmtName, statement);
+		statement.addListener(new EventNotifier(eventConsumer));
 	}
 	
 	public void unsubscribe(String statementName, NotificationListener eventConsumer) {

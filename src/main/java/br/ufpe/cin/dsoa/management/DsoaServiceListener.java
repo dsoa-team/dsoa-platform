@@ -26,6 +26,7 @@ import org.osgi.service.monitor.Monitorable;
 
 import br.ufpe.cin.dsoa.DsoaConstants;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
+import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.utils.Util;
 
 public class DsoaServiceListener {
@@ -69,8 +70,8 @@ public class DsoaServiceListener {
 	private ManagedService createManagedService(ServiceReference reference) {
 		ServiceRegistration proxyRegistration = registerProxy(reference);
 		ServiceRegistration monitorRegistration = registerMonitor(reference);
-		ObjectInstance mbeanRegistration = registerMBean(reference);
-		return new ManagedService(proxyRegistration, monitorRegistration, mbeanRegistration);
+		//ObjectInstance mbeanRegistration = registerMBean(reference);
+		return new ManagedService(proxyRegistration, monitorRegistration, null);
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -109,13 +110,13 @@ public class DsoaServiceListener {
 				monitor, ht);
 	}
 	
-	private ObjectInstance registerMBean(ServiceReference reference) {
+	/*private ObjectInstance registerMBean(ServiceReference reference) {
 		DsoaServiceMBean mbean = new DsoaServiceMBean(reference);
 		String pid = reference.getProperty(Constants.SERVICE_ID).toString();
 		ObjectName name;
 		ObjectInstance instance = null;
 		try {
-			name = new ObjectName(DsoaConstants.SERVICE_SCOPE + ":pid=" + pid);
+			name = new ObjectName(Metric.SERVICE_SCOPE + ":pid=" + pid);
 			instance = ManagementFactory.getPlatformMBeanServer().registerMBean(mbean, name);
 		} catch (MalformedObjectNameException e) {
 			// TODO Auto-generated catch block
@@ -134,7 +135,7 @@ public class DsoaServiceListener {
 			e.printStackTrace();
 		}
 		return instance;
-	}
+	}*/
 
 	public void stop() {
 		ctx.removeServiceListener(sl);

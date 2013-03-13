@@ -47,7 +47,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 		
 	}
 	
-	class Listener implements NotificationListener {
+	/*class Listener implements NotificationListener {
 		// Configura��es para otimizar a escrita na base escrevendo em uma thread separada
 		private int poolSize = 30;
 		private int maxPoolSize = 50;
@@ -77,7 +77,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 			
 		}
 
-	}
+	}*/
 
 	/*
 	@Override

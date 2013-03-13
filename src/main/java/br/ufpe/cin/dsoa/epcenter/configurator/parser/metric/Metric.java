@@ -15,7 +15,6 @@ public class Metric {
 	public static final String METRIC_PREFIX	= "metric.";
 	public static final String CATEGORY 		= "category";
 	public static final String NAME 			= "name";
-	public static final String SCOPE 			= "scope";
 	public static final String DESCRIPTION 		= "description";
 	public static final String AGENT 			= "agent";
 	
@@ -24,9 +23,6 @@ public class Metric {
 	
 	@XmlElement(name = NAME)
 	private String name;
-	
-	@XmlElement(name = SCOPE)
-	private String scope;
 	
 	@XmlElement(name = DESCRIPTION)
 	private String description;
@@ -50,14 +46,6 @@ public class Metric {
 		this.name = name;
 	}
 
-	public String getScope() {
-		return scope;
-	}
-	
-	public void setScope(String scope) {
-		this.scope = scope;
-	}
-	
 	public String getDescription() {
 		return description;
 	}
@@ -79,20 +67,10 @@ public class Metric {
 	}
 
 	public String getQuery() {
-		return getContext() + " " + agent.getQuery();
+		return agent.getQuery();
 	}
 
-	private String getContext() {
-		String context = null;
-		if ((getScope() == null) || DsoaConstants.SERVICE_SCOPE.equals(getScope())) {
-			context  = DsoaConstants.SERVICE_SCOPE;
-		} else if (DsoaConstants.OPERATION_SCOPE.equals(getScope())) {
-			context = DsoaConstants.OPERATION_SCOPE;
-		} else {
-			throw new IllegalArgumentException("Context: " + getScope());
-		}
-		return DsoaConstants.CONTEXT + " " + context;
-	} 
-	
-	
+	public String toString() {
+		return this.getCategory() + DsoaConstants.TOKEN + this.getName();
+	}
 }

@@ -6,7 +6,7 @@ public class MetricParser {
 
 	private String metricCategory;
 	private String metricName;
-	private String target;
+	private String operationName;
 	private MetricId metricId;
 	
 	public MetricParser(String key) {
@@ -23,15 +23,15 @@ public class MetricParser {
 			metricCategory = tokenizer.nextToken();
 			metricName = tokenizer.nextToken();
 			if (ntokens == 3) {
-				target = tokenizer.nextToken();
+				operationName = tokenizer.nextToken();
 			}
 			metricId = new MetricId(metricCategory, metricName);
 		}
 	}
 	
 	
-	public String getTarget() {
-		return target;
+	public String getOperationName() {
+		return operationName;
 	}
 
 	public String getMetricCategory() {

@@ -27,6 +27,5 @@ public interface EventProcessingCenter {
 	
 	public void undefineEvent(Class eventClass);
 
-	public void defineContext(String ctxStatement);
 
 }

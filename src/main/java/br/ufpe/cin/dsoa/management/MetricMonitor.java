@@ -4,37 +4,32 @@ import java.util.Map;
 
 import org.osgi.service.monitor.StatusVariable;
 
-import br.ufpe.cin.dsoa.DsoaConstants;
 import br.ufpe.cin.dsoa.epcenter.NotificationListener;
-import br.ufpe.cin.dsoa.monitor.MonitoringConfigurationItem;
+import br.ufpe.cin.dsoa.monitor.MetricInstance;
 
 public class MetricMonitor implements NotificationListener {
 
-	private MonitoringConfigurationItem variable;
+	private MetricInstance instance;
 	private Object value;
 
-	public MetricMonitor(MonitoringConfigurationItem variable) {
-		this.variable = variable;
+	public MetricMonitor(MetricInstance instance) {
+		this.instance = instance;
 	}
 	
 	public String getCategory() {
-		return variable.getMetric().getCategory();
+		return instance.getMetric().getCategory();
 	}
 	
 	public String getName() {
-		return variable.getMetric().getName();
+		return instance.getMetric().getName();
 	}
 	
-	public String getScope() {
-		return variable.getMetric().getScope();
-	}
-
 	public String getDescription() {
-		return variable.getMetric().getDescription();
+		return instance.getMetric().getDescription();
 	}
 	
-	public String getPath() {
-		return variable.getTarget() != null ? variable.getMetric() + DsoaConstants.TOKEN + variable.getTarget() : variable.getMetric().toString();
+	public String getTarget() {
+		return instance.getTarget();
 	}
 	
 	public StatusVariable getStatusVariable() {
@@ -46,6 +41,13 @@ public class MetricMonitor implements NotificationListener {
 		
 	}
 
+	public void update(Object value) {
+		System.out.println("Metric status: " + this.getName());
+		System.out.println("Metric description: " + this.getDescription());
+		this.value = value;
+		System.out.println("Metric value: " + value);
+	}
+	
 	public void receive(Object result, String statementName) {
 		System.out.println("Metric status: " + this.getName());
 		System.out.println("Metric description: " + this.getDescription());
@@ -54,5 +56,13 @@ public class MetricMonitor implements NotificationListener {
 		System.out.println("Status variable: " + this.getStatusVariable());
 		System.out.println("Status: " + this.getStatusVariable().getString());
 		System.out.println("Status: " + this.getStatusVariable().getTimeStamp());
+	}
+
+	public String getServiceId() {
+		return this.instance.getServiceId();
+	}
+
+	public String getOperationName() {
+		return this.instance.getOperationName();
 	}
 }
