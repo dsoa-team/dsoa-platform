@@ -67,9 +67,10 @@ public class DsoaServiceMonitor implements Monitorable, ServiceMetricManager {
 	 */
 	private void setupMetricMonitor(MetricInstance metricInstance) {
 		MetricMonitor metricMonitor = new MetricMonitor(metricInstance);
-		
-		this.metricVariableMap.put(metricInstance.getTarget(), metricMonitor);
-		this.epCenter.subscribe(metricInstance.getMetric().toString(), metricMonitor);
+		if(!this.metricVariableMap.containsKey(metricInstance.getTarget())){
+			this.metricVariableMap.put(metricInstance.getTarget(), metricMonitor);
+			this.epCenter.subscribe(metricInstance.getMetric().toString(), metricMonitor);
+		}
 	}
 
 	public String[] getStatusVariableNames() {
@@ -102,7 +103,4 @@ public class DsoaServiceMonitor implements Monitorable, ServiceMetricManager {
 		}
 		throw new IllegalArgumentException("Variable " + id + " does not exist");
 	}
-
-	
-
 }
