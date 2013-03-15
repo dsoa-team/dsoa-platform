@@ -1,19 +1,11 @@
 package br.ufpe.cin.dsoa.management;
 
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Proxy;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -26,7 +18,6 @@ import org.osgi.service.monitor.Monitorable;
 
 import br.ufpe.cin.dsoa.DsoaConstants;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.utils.Util;
 
 public class DsoaServiceListener {
@@ -104,10 +95,12 @@ public class DsoaServiceListener {
 		DsoaServiceMonitor monitor = new DsoaServiceMonitor(epCenter,
 				metricCatalog, reference);
 		Hashtable ht = new Hashtable();
-		ht.put("service.pid", reference.getProperty(Constants.SERVICE_PID)
+		ht.put(Constants.SERVICE_ID, reference.getProperty(Constants.SERVICE_ID)
 				+ "-Monitor");
-		return ctx.registerService(Monitorable.class.getName(),
-				monitor, ht);
+
+		String[] clazzes = {Monitorable.class.getName(), ServiceMetricManager.class.getName()};
+		
+		return ctx.registerService(clazzes,	monitor, ht);
 	}
 	
 	/*private ObjectInstance registerMBean(ServiceReference reference) {

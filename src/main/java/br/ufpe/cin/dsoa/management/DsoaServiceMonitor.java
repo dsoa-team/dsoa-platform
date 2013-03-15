@@ -13,7 +13,7 @@ import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.monitor.MonitoringConfiguration;
 import br.ufpe.cin.dsoa.monitor.MetricInstance;
 
-public class DsoaServiceMonitor implements Monitorable {
+public class DsoaServiceMonitor implements Monitorable, ServiceMetricManager {
 	
 	private String serviceId;
 	private ServiceReference reference;
@@ -40,14 +40,36 @@ public class DsoaServiceMonitor implements Monitorable {
 				MetricParser parser = new MetricParser(key.substring(Metric.METRIC_PREFIX.length()));
 				Metric metric = metricCatalog.getMetric(parser.getMetricId());
 				if (null != metric) {
-					String operationName = parser.getOperationName();
 					MetricInstance metricInstance = new MetricInstance(metric, serviceId, parser.getOperationName());
-					MetricMonitor metricMonitor = new MetricMonitor(metricInstance);
-					this.metricVariableMap.put(metricInstance.getTarget(), metricMonitor);
-					this.epCenter.subscribe(metric.toString(), metricMonitor);
+					this.setupMetricMonitor(metricInstance);
 				}
 			}
 		}
+	}
+
+	@Override
+	public void addMetric(MetricId metricId, String serviceId,
+			String operationName) {
+		
+		Metric metric = metricCatalog.getMetric(metricId);
+		if(null !=  metric){
+			MetricInstance metricInstance = new MetricInstance(metric, serviceId, operationName);
+			this.setupMetricMonitor(metricInstance);
+		}
+		
+	}
+	
+	/**
+	 * Creates a metricInstance and subscribe a query on complex event process
+	 * engine through EventProcessingCenter component.
+	 * 
+	 * @param metricInstance
+	 */
+	private void setupMetricMonitor(MetricInstance metricInstance) {
+		MetricMonitor metricMonitor = new MetricMonitor(metricInstance);
+		
+		this.metricVariableMap.put(metricInstance.getTarget(), metricMonitor);
+		this.epCenter.subscribe(metricInstance.getMetric().toString(), metricMonitor);
 	}
 
 	public String[] getStatusVariableNames() {
@@ -80,5 +102,7 @@ public class DsoaServiceMonitor implements Monitorable {
 		}
 		throw new IllegalArgumentException("Variable " + id + " does not exist");
 	}
+
+	
 
 }
