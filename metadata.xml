@@ -28,7 +28,7 @@
   		<callback transition="invalidate" method="stop" />
   	</component>
   		
-  	<component classname="br.ufpe.cin.dsoa.epcenter.configurator.PlatformConfigurator" >
+  	<component classname="br.ufpe.cin.dsoa.configurator.PlatformConfigurator" >
   		<requires field="metricCatalog"/>
   		<requires field="epCenter"/>
   		<callback transition="validate" method="start" />
@@ -36,7 +36,7 @@
   	</component>
   	
   	<instance component="br.ufpe.cin.dsoa.epcenter.impl.EventProcessingCenterImpl" />
-  	<instance component="br.ufpe.cin.dsoa.epcenter.configurator.PlatformConfigurator" />
+  	<instance component="br.ufpe.cin.dsoa.epcenter.PlatformConfigurator" />
   	<instance component="br.ufpe.cin.dsoa.management.DsoaFindHook" />
   	<instance component="br.ufpe.cin.dsoa.management.DsoaServiceListener" />
    	<instance component="br.ufpe.cin.dsoa.management.MetricCatalogImpl"/>

@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter.configurator.parser.event;
+package br.ufpe.cin.dsoa.configurator.parser.event;
 
 import java.util.List;
 

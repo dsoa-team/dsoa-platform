@@ -8,9 +8,8 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.monitor.Monitorable;
 import org.osgi.service.monitor.StatusVariable;
 
+import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.Metric;
-import br.ufpe.cin.dsoa.monitor.MonitoringConfiguration;
 import br.ufpe.cin.dsoa.monitor.MetricInstance;
 
 public class DsoaServiceMonitor implements Monitorable, ServiceMetricManager {

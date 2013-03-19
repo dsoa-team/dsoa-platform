@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter.configurator.parser;
+package br.ufpe.cin.dsoa.configurator.parser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,10 +7,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.agent.AgentList;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.contextmodel.ContextModel;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.event.EventList;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.MetricList;
+import br.ufpe.cin.dsoa.configurator.parser.agent.AgentList;
+import br.ufpe.cin.dsoa.configurator.parser.contextmodel.ContextModel;
+import br.ufpe.cin.dsoa.configurator.parser.event.EventList;
+import br.ufpe.cin.dsoa.configurator.parser.metric.MetricList;
 
 public class JAXBInitializer {
 

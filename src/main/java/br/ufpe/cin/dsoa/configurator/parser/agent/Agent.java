@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter.configurator.parser.agent;
+package br.ufpe.cin.dsoa.configurator.parser.agent;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

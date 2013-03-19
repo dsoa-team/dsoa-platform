@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter.configurator.parser.metric;
+package br.ufpe.cin.dsoa.configurator.parser.agent;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Agent {
+public class Transformer {
 
 	public static final String[] TYPES = {"mapping", "class", "query"};
 	

@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter.configurator.listener;
+package br.ufpe.cin.dsoa.configurator.listener;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -15,16 +15,16 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.util.tracker.BundleTracker;
 
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.JAXBInitializer;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.agent.Agent;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.agent.AgentList;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.contextmodel.Context;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.contextmodel.ContextMapping;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.contextmodel.ContextModel;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.event.Event;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.event.EventList;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.Metric;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.MetricList;
+import br.ufpe.cin.dsoa.configurator.parser.JAXBInitializer;
+import br.ufpe.cin.dsoa.configurator.parser.agent.Agent;
+import br.ufpe.cin.dsoa.configurator.parser.agent.AgentList;
+import br.ufpe.cin.dsoa.configurator.parser.contextmodel.Context;
+import br.ufpe.cin.dsoa.configurator.parser.contextmodel.ContextMapping;
+import br.ufpe.cin.dsoa.configurator.parser.contextmodel.ContextModel;
+import br.ufpe.cin.dsoa.configurator.parser.event.Event;
+import br.ufpe.cin.dsoa.configurator.parser.event.EventList;
+import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
+import br.ufpe.cin.dsoa.configurator.parser.metric.MetricList;
 import br.ufpe.cin.dsoa.management.MetricCatalog;
 
 public class BundleListener extends BundleTracker {

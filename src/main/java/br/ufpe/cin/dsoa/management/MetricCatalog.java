@@ -2,8 +2,8 @@ package br.ufpe.cin.dsoa.management;
 
 import java.util.Collection;
 
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.Metric;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.MetricList;
+import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
+import br.ufpe.cin.dsoa.configurator.parser.metric.MetricList;
 
 public interface MetricCatalog {
 

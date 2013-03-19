@@ -9,8 +9,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -19,9 +17,9 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.agent.Agent;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.agent.AgentList;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.agent.Transformer;
+import br.ufpe.cin.dsoa.configurator.parser.agent.Agent;
+import br.ufpe.cin.dsoa.configurator.parser.agent.AgentList;
+import br.ufpe.cin.dsoa.configurator.parser.agent.Transformer;
 
 public class AgentParserSpec {
 

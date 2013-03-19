@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.Metric;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.MetricList;
+import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
+import br.ufpe.cin.dsoa.configurator.parser.metric.MetricList;
 
 public class MetricCatalogImpl implements MetricCatalog {
 	private Map<MetricId,Metric> metricMap = new HashMap<MetricId,Metric>();

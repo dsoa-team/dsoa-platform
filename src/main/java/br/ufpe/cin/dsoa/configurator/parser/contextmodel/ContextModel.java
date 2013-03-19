@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter.configurator.parser.contextmodel;
+package br.ufpe.cin.dsoa.configurator.parser.contextmodel;
 
 import java.util.List;
 

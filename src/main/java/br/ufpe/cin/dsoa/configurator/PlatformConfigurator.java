@@ -1,9 +1,9 @@
-package br.ufpe.cin.dsoa.epcenter.configurator;
+package br.ufpe.cin.dsoa.configurator;
 
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
-import br.ufpe.cin.dsoa.epcenter.configurator.listener.BundleListener;
+import br.ufpe.cin.dsoa.configurator.listener.BundleListener;
 import br.ufpe.cin.dsoa.management.MetricCatalog;
 
 public class PlatformConfigurator {

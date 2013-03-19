@@ -14,9 +14,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.contextmodel.Context;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.contextmodel.ContextMapping;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.contextmodel.ContextModel;
+import br.ufpe.cin.dsoa.configurator.parser.contextmodel.Context;
+import br.ufpe.cin.dsoa.configurator.parser.contextmodel.ContextMapping;
+import br.ufpe.cin.dsoa.configurator.parser.contextmodel.ContextModel;
 
 public class ContextModelParserSpec {
 	

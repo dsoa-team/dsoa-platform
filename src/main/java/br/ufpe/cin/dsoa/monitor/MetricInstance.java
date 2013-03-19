@@ -1,7 +1,7 @@
 package br.ufpe.cin.dsoa.monitor;
 
 import br.ufpe.cin.dsoa.DsoaConstants;
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.metric.Metric;
+import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
 
 public class MetricInstance {
 

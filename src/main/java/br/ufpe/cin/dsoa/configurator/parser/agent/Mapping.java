@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter.configurator.parser.agent;
+package br.ufpe.cin.dsoa.configurator.parser.agent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import br.ufpe.cin.dsoa.epcenter.configurator.parser.Property;
+import br.ufpe.cin.dsoa.configurator.parser.Property;
 
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)

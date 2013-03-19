@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter.configurator.parser.metric;
+package br.ufpe.cin.dsoa.configurator.parser.metric;
 
 import java.util.List;
 
