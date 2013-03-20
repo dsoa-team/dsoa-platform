@@ -10,7 +10,7 @@ import org.osgi.framework.BundleContext;
 import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 import br.ufpe.cin.dsoa.epcenter.NotificationListener;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
-import br.ufpe.cin.dsoa.management.MetricMonitor;
+import br.ufpe.cin.dsoa.management.metric.MetricStatus;
 
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPPreparedStatement;
@@ -106,7 +106,7 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 		if (null != eventConsumer.getOperationName()) {
 			preparedStmt.setObject(2, eventConsumer.getOperationName());
 		}
-		String stmtName = ((MetricMonitor)eventConsumer).getTarget();
+		String stmtName = ((MetricStatus)eventConsumer).getTarget();
 		EPStatement statement = this.epServiceProvider.getEPAdministrator().create(preparedStmt, stmtName);
 		this.mapStmts.put(stmtName, statement);
 		statement.addListener(new EventNotifier(eventConsumer));

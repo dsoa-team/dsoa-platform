@@ -5,7 +5,7 @@ import java.util.Dictionary;
 
 import org.apache.felix.ipojo.metadata.Element;
 
-import br.ufpe.cin.dsoa.handlers.provider.ProviderMetadata;
+import br.ufpe.cin.dsoa.handler.provider.ProviderMetadata;
 
 public class PSlo {
 

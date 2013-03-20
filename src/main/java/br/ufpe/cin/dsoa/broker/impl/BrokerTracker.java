@@ -7,7 +7,7 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import br.ufpe.cin.dsoa.handlers.dependency.SelectionListener;
+import br.ufpe.cin.dsoa.handler.dependency.SelectionListener;
 import br.ufpe.cin.dsoa.osgi.ServiceModelFactory;
 
 public class BrokerTracker extends ServiceTracker {

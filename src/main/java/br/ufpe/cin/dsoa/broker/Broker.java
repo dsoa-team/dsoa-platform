@@ -5,7 +5,7 @@ import java.util.List;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.contract.Slo;
-import br.ufpe.cin.dsoa.handlers.dependency.SelectionListener;
+import br.ufpe.cin.dsoa.handler.dependency.SelectionListener;
 
 
 /**

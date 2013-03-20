@@ -5,8 +5,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import br.ufpe.cin.dsoa.DsoaConstants;
-import br.ufpe.cin.dsoa.management.MetricId;
+import br.ufpe.cin.dsoa.management.metric.MetricId;
+import br.ufpe.cin.dsoa.util.DsoaConstants;
 
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -28,5 +28,10 @@
     	<artifactId>esper</artifactId>
     	<version>4.8.0</version>
     </dependency>
+    <dependency>
+    	<groupId>org.apache.felix</groupId>
+    	<artifactId>org.apache.felix.shell</artifactId>
+    	<version>1.4.3</version>
+    </dependency>
   </dependencies>
 </project>

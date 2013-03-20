@@ -3,9 +3,7 @@ package br.ufpe.cin.dsoa.broker.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -21,12 +19,8 @@ import br.ufpe.cin.dsoa.broker.filter.FilterBuilder;
 import br.ufpe.cin.dsoa.broker.filter.IFilter;
 import br.ufpe.cin.dsoa.broker.normalizer.Normalizer;
 import br.ufpe.cin.dsoa.broker.rank.Rank;
-import br.ufpe.cin.dsoa.contract.Service;
-import br.ufpe.cin.dsoa.contract.ServiceImpl;
-import br.ufpe.cin.dsoa.contract.ServiceMetadata;
 import br.ufpe.cin.dsoa.contract.Slo;
-import br.ufpe.cin.dsoa.handlers.dependency.SelectionListener;
-import br.ufpe.cin.dsoa.handlers.dependency.ServiceModel;
+import br.ufpe.cin.dsoa.handler.dependency.SelectionListener;
 import br.ufpe.cin.dsoa.osgi.ServiceModelFactory;
 
 

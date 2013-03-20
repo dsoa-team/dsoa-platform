@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.felix.ipojo.metadata.Element;
 
-import br.ufpe.cin.dsoa.handlers.provider.ProviderMetadata;
+import br.ufpe.cin.dsoa.handler.provider.ProviderMetadata;
 
 
 public class Profile {

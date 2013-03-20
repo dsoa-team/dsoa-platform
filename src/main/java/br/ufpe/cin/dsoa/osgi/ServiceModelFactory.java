@@ -8,7 +8,7 @@ import org.osgi.framework.ServiceReference;
 import br.ufpe.cin.dsoa.contract.Service;
 import br.ufpe.cin.dsoa.contract.ServiceImpl;
 import br.ufpe.cin.dsoa.contract.ServiceMetadata;
-import br.ufpe.cin.dsoa.handlers.dependency.ServiceModel;
+import br.ufpe.cin.dsoa.handler.dependency.ServiceModel;
 
 public abstract class ServiceModelFactory {
 	
