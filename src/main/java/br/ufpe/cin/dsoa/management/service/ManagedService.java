@@ -6,7 +6,6 @@ import org.osgi.framework.ServiceRegistration;
 
 public class ManagedService {
 
-
 	private ServiceRegistration proxyReg;
 	private ServiceRegistration monitorReg;
 	private ObjectInstance mbeanReg;
