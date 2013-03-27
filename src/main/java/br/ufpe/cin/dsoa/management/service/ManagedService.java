@@ -6,17 +6,22 @@ import org.osgi.framework.ServiceRegistration;
 
 public class ManagedService {
 
+	private String id;
 	private ServiceRegistration proxyReg;
 	private ServiceRegistration monitorReg;
 	private ObjectInstance mbeanReg;
 	
-	
-	public ManagedService(ServiceRegistration proxyRegistration,
+	public ManagedService(String id, ServiceRegistration proxyRegistration,
 			ServiceRegistration monitorRegistration,
 			ObjectInstance mbeanRegistration) {
+		this.id = id;
 		this.proxyReg = proxyRegistration;
 		this.monitorReg = monitorRegistration;
 		this.mbeanReg = mbeanRegistration;
+	}
+	
+	public String getId() {
+		return id;
 	}
 	
 	public ServiceRegistration getProxyReg() {

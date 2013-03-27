@@ -14,18 +14,15 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.util.tracker.BundleTracker;
 
-import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
 import br.ufpe.cin.dsoa.configurator.parser.JAXBInitializer;
-import br.ufpe.cin.dsoa.configurator.parser.agent.Agent;
-import br.ufpe.cin.dsoa.configurator.parser.agent.AgentList;
 import br.ufpe.cin.dsoa.configurator.parser.contextmodel.Context;
 import br.ufpe.cin.dsoa.configurator.parser.contextmodel.ContextMapping;
 import br.ufpe.cin.dsoa.configurator.parser.contextmodel.ContextModel;
 import br.ufpe.cin.dsoa.configurator.parser.event.Event;
 import br.ufpe.cin.dsoa.configurator.parser.event.EventList;
-import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.configurator.parser.metric.MetricList;
-import br.ufpe.cin.dsoa.management.metric.MetricCatalog;
+import br.ufpe.cin.dsoa.event.EventProcessingCenter;
+import br.ufpe.cin.dsoa.metric.MetricCatalog;
 
 public class DsoaBundleListener extends BundleTracker {
 
@@ -47,7 +44,7 @@ public class DsoaBundleListener extends BundleTracker {
 	public Object addingBundle(Bundle bundle, BundleEvent event) {
 		//if (event != null && event.getType() == BundleEvent.STARTED) {
 			try {
-				this.addMetricDefinitions(bundle);
+				this.handleMetricDefinitions(bundle);
 			} catch (JAXBException e) {
 				e.printStackTrace();
 			}
@@ -76,10 +73,6 @@ public class DsoaBundleListener extends BundleTracker {
 	@Override
 	public void modifiedBundle(Bundle bundle, BundleEvent event, Object object) {
 		super.modifiedBundle(bundle, event, object);
-	}
-	
-	public void setEventProcessingCenter(EventProcessingCenter epCenter) {
-		this.epCenter = epCenter;
 	}
 	
 	private void handleEventDefinition(Bundle bundle) throws JAXBException, ClassNotFoundException {
@@ -114,16 +107,12 @@ public class DsoaBundleListener extends BundleTracker {
 		}
 	}
 	
-	private void addMetricDefinitions(Bundle bundle) throws JAXBException {
+	private void handleMetricDefinitions(Bundle bundle) throws JAXBException {
 		URL url = bundle.getEntry(MetricList.CONFIG);
 		if(url != null) {
 			Unmarshaller u = JAXBContexts.get(MetricList.CONFIG);
 			MetricList list = (MetricList)u.unmarshal(url);
 			this.metricCatalog.addMetrics(list);
-			//define ESP statements
-			for(Metric m : list.getMetrics()){
-				this.epCenter.defineStatement(m.toString(), m.getQuery());
-			}
 		}
 	}
 	
@@ -156,10 +145,11 @@ public class DsoaBundleListener extends BundleTracker {
 		}
 	}
 
-
 	public void setMetricCatalog(MetricCatalog metricCatalog) {
 		this.metricCatalog = metricCatalog;
 	}
 
-
+	public void setEventProcessingCenter(EventProcessingCenter epCenter) {
+		this.epCenter = epCenter;
+	}
 }

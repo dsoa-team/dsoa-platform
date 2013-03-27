@@ -11,7 +11,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.monitor.Monitorable;
 
-import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
+import br.ufpe.cin.dsoa.event.EventProcessingCenter;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
 
 /**

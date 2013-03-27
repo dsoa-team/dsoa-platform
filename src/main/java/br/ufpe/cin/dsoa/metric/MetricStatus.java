@@ -1,10 +1,10 @@
-package br.ufpe.cin.dsoa.management.metric;
+package br.ufpe.cin.dsoa.metric;
 
 import java.util.Map;
 
 import org.osgi.service.monitor.StatusVariable;
 
-import br.ufpe.cin.dsoa.epcenter.NotificationListener;
+import br.ufpe.cin.dsoa.event.NotificationListener;
 
 public class MetricStatus implements NotificationListener {
 

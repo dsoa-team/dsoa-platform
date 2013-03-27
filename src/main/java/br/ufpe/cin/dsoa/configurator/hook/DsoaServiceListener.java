@@ -3,8 +3,6 @@ package br.ufpe.cin.dsoa.configurator.hook;
 import java.lang.reflect.Proxy;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import org.osgi.framework.BundleContext;
@@ -17,12 +15,13 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.monitor.Monitorable;
 
 import br.ufpe.cin.dsoa.configurator.util.Util;
-import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
-import br.ufpe.cin.dsoa.management.metric.MetricCatalog;
-import br.ufpe.cin.dsoa.management.service.ServiceMonitor;
-import br.ufpe.cin.dsoa.management.service.ServiceProxy;
+import br.ufpe.cin.dsoa.event.EventProcessingCenter;
 import br.ufpe.cin.dsoa.management.service.ManagedService;
+import br.ufpe.cin.dsoa.management.service.ServiceCatalog;
+import br.ufpe.cin.dsoa.management.service.ServiceMonitor;
 import br.ufpe.cin.dsoa.management.service.ServiceMonitorConfigurator;
+import br.ufpe.cin.dsoa.management.service.ServiceProxy;
+import br.ufpe.cin.dsoa.metric.MetricCatalog;
 import br.ufpe.cin.dsoa.util.DsoaConstants;
 
 public class DsoaServiceListener {
@@ -32,12 +31,12 @@ public class DsoaServiceListener {
 	private EventProcessingCenter epCenter;
 	private MetricCatalog metricCatalog;
 	private Logger log;
-	private Map<String, ManagedService> managedServiceMap;
+	private ServiceCatalog catalog;
 	
-	public DsoaServiceListener(BundleContext ctx) {
+	public DsoaServiceListener(BundleContext ctx, ServiceCatalog catalog) {
 		this.ctx = ctx;
-		this.managedServiceMap = new ConcurrentHashMap<String, ManagedService>(8, 0.9f, 1);
 		this.log = Logger.getLogger(getClass().getSimpleName());
+		this.catalog = catalog;
 	}
 
 	public void start() {
@@ -45,10 +44,8 @@ public class DsoaServiceListener {
 			public void serviceChanged(ServiceEvent event) {
 				ServiceReference reference;
 				if (event.getType() == ServiceEvent.REGISTERED &&  Util.isRemote(reference = event.getServiceReference())) {
-					String pid = reference.getProperty(Constants.SERVICE_ID).toString();
-					
 					ManagedService managedService = createManagedService(reference);
-					managedServiceMap.put(pid, managedService);
+					catalog.addService(managedService);
 				} else if (event.getType() == ServiceEvent.UNREGISTERING &&  Util.isRemote(reference = event.getServiceReference())) {
 					// TODO: Unregister...
 				}
@@ -64,10 +61,11 @@ public class DsoaServiceListener {
 	}
 
 	private ManagedService createManagedService(ServiceReference reference) {
+		String id = reference.getProperty(Constants.SERVICE_ID).toString();
 		ServiceRegistration proxyRegistration = registerProxy(reference);
 		ServiceRegistration monitorRegistration = registerMonitor(reference);
 		//ObjectInstance mbeanRegistration = registerMBean(reference);
-		return new ManagedService(proxyRegistration, monitorRegistration, null);
+		return new ManagedService(id, proxyRegistration, monitorRegistration, null);
 	}
 	
 	@SuppressWarnings("rawtypes")

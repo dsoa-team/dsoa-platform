@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.management.metric;
+package br.ufpe.cin.dsoa.metric;
 
 import java.util.StringTokenizer;
 

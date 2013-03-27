@@ -8,7 +8,6 @@ import org.apache.felix.ipojo.metadata.Element;
 
 import br.ufpe.cin.dsoa.handler.provider.ProviderMetadata;
 
-
 public class Profile {
 
 	private String policy;

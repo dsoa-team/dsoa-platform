@@ -9,17 +9,16 @@ import org.osgi.service.monitor.Monitorable;
 import org.osgi.service.monitor.StatusVariable;
 
 import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
-import br.ufpe.cin.dsoa.epcenter.EventProcessingCenter;
-import br.ufpe.cin.dsoa.management.metric.MetricCatalog;
-import br.ufpe.cin.dsoa.management.metric.MetricId;
-import br.ufpe.cin.dsoa.management.metric.MetricInstance;
-import br.ufpe.cin.dsoa.management.metric.MetricParser;
-import br.ufpe.cin.dsoa.management.metric.MetricStatus;
+import br.ufpe.cin.dsoa.event.EventProcessingCenter;
+import br.ufpe.cin.dsoa.metric.MetricCatalog;
+import br.ufpe.cin.dsoa.metric.MetricId;
+import br.ufpe.cin.dsoa.metric.MetricInstance;
+import br.ufpe.cin.dsoa.metric.MetricParser;
+import br.ufpe.cin.dsoa.metric.MetricStatus;
 
 public class ServiceMonitor implements Monitorable, ServiceMonitorConfigurator {
 	
 	private String serviceId;
-	private ServiceReference reference;
 	private MetricCatalog metricCatalog;
 	private EventProcessingCenter epCenter;
 	private Map<String, MetricStatus> metricVariableMap;
@@ -28,7 +27,6 @@ public class ServiceMonitor implements Monitorable, ServiceMonitorConfigurator {
 	public ServiceMonitor(EventProcessingCenter epCenter, MetricCatalog metricCatalog, ServiceReference reference) {
 		this.epCenter = epCenter;
 		this.metricCatalog = metricCatalog;
-		this.reference = reference;
 		this.serviceId = reference.getProperty(Constants.SERVICE_ID).toString();
 		this.metricVariableMap = new HashMap<String, MetricStatus>();
 		this.startMonitoring(reference);
@@ -68,10 +66,10 @@ public class ServiceMonitor implements Monitorable, ServiceMonitorConfigurator {
 	 * @param metricInstance
 	 */
 	private void setupMetricMonitor(MetricInstance metricInstance) {
-		MetricStatus metricMonitor = new MetricStatus(metricInstance);
+		MetricStatus metricStatus = new MetricStatus(metricInstance);
 		if(!this.metricVariableMap.containsKey(metricInstance.getTarget())){
-			this.metricVariableMap.put(metricInstance.getTarget(), metricMonitor);
-			this.epCenter.subscribe(metricInstance.getMetric().toString(), metricMonitor);
+			this.metricVariableMap.put(metricInstance.getTarget(), metricStatus);
+			this.epCenter.subscribe(metricInstance.getMetric().toString(), metricStatus);
 		}
 	}
 

@@ -10,14 +10,15 @@
 	</handler>
 
 	<!-- DSOA Components -->
-	<component classname="br.ufpe.cin.dsoa.epcenter.impl.EventProcessingCenterImpl">
+	<component classname="br.ufpe.cin.dsoa.event.impl.EventProcessingCenterImpl">
 		<provides />
 		<callback transition="validate" method="start" />
 		<callback transition="invalidate" method="stop" />
 	</component>
 
-	<component classname="br.ufpe.cin.dsoa.management.metric.impl.MetricCatalogImpl">
+	<component classname="br.ufpe.cin.dsoa.management.metric.impl.MetricComputingCenter">
 		<provides />
+		<requires field="epCenter" />
 	</component>
 	
 	
@@ -46,7 +47,7 @@
 		<provides />
 	</component>
 
-	<instance component="br.ufpe.cin.dsoa.epcenter.impl.EventProcessingCenterImpl" />
+	<instance component="br.ufpe.cin.dsoa.event.impl.EventProcessingCenterImpl" />
 	<instance component="br.ufpe.cin.dsoa.management.metric.impl.MetricCatalogImpl" />
 	<instance component="br.ufpe.cin.dsoa.epcenter.PlatformConfigurator" />
 	<instance component="br.ufpe.cin.dsoa.configurator.hook.DsoaFindHook" />

@@ -1,6 +1,6 @@
 package br.ufpe.cin.dsoa.management;
 
-import br.ufpe.cin.dsoa.management.metric.MetricId;
+import br.ufpe.cin.dsoa.metric.MetricId;
 
 public class Slo {
 
