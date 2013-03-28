@@ -17,7 +17,7 @@ public class ServiceCatalogImpl implements ServiceCatalog {
 	
 	public ServiceCatalogImpl(BundleContext ctx) {
 		this.ctx = ctx;
-		this.listener = new DsoaServiceListener(ctx,this);
+		this.listener = new DsoaServiceListener(ctx);
 		this.listener.start();
 	}
 	

@@ -16,11 +16,14 @@
 		<callback transition="invalidate" method="stop" />
 	</component>
 
-	<component classname="br.ufpe.cin.dsoa.management.metric.impl.MetricComputingCenter">
-		<provides />
+	<component classname="br.ufpe.cin.dsoa.metric.impl.MetricComputingCenter">
 		<requires field="epCenter" />
+		<provides />
 	</component>
 	
+	<component classname="br.ufpe.cin.dsoa.management.service.impl.ServiceCatalogImpl">
+		<provides />
+	</component>
 	
 	<!-- DSOA Configuration -->
 	<component classname="br.ufpe.cin.dsoa.configurator.PlatformConfigurator">
@@ -33,6 +36,7 @@
 	<component classname="br.ufpe.cin.dsoa.configurator.hook.DsoaServiceListener">
 		<requires field="epCenter" />
 		<requires field="metricCatalog" />
+		<requires field="serviceCatalog" />
 		<callback transition="validate" method="start" />
 		<callback transition="invalidate" method="stop" />
 	</component>
@@ -42,16 +46,21 @@
 		<callback transition="invalidate" method="stop" />
 	</component>
 
-	<component classname="br.ufpe.cin.dsoa.management.shell.MonitorCommand">
-		<!-- TODO: requires service management center -->
+	<component classname="br.ufpe.cin.dsoa.management.shell.DsoaCommand">
+		<provides />
+	</component>
+	
+	<component classname="br.ufpe.cin.dsoa.management.shell.MetricListCommand">
+		<requires field="catalog"/>
 		<provides />
 	</component>
 
 	<instance component="br.ufpe.cin.dsoa.event.impl.EventProcessingCenterImpl" />
-	<instance component="br.ufpe.cin.dsoa.management.metric.impl.MetricCatalogImpl" />
-	<instance component="br.ufpe.cin.dsoa.epcenter.PlatformConfigurator" />
+	<instance component="br.ufpe.cin.dsoa.metric.impl.MetricComputingCenter" />
+	<instance component="br.ufpe.cin.dsoa.configurator.PlatformConfigurator" />
 	<instance component="br.ufpe.cin.dsoa.configurator.hook.DsoaFindHook" />
-	<instance component="br.ufpe.cin.dsoa.configurator.hook.DsoaServiceListener" />
-	<instance component="br.ufpe.cin.dsoa.management.shell.MonitorCommand" />
+	<instance component="br.ufpe.cin.dsoa.management.shell.DsoaCommand" />
+	<instance component="br.ufpe.cin.dsoa.management.shell.MetricListCommand" />
+	<instance component="br.ufpe.cin.dsoa.management.service.impl.ServiceCatalogImpl"/> 
 
 </ipojo>

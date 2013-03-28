@@ -31,12 +31,11 @@ public class DsoaServiceListener {
 	private EventProcessingCenter epCenter;
 	private MetricCatalog metricCatalog;
 	private Logger log;
-	private ServiceCatalog catalog;
+	private ServiceCatalog serviceCatalog;
 	
-	public DsoaServiceListener(BundleContext ctx, ServiceCatalog catalog) {
+	public DsoaServiceListener(BundleContext ctx) {
 		this.ctx = ctx;
 		this.log = Logger.getLogger(getClass().getSimpleName());
-		this.catalog = catalog;
 	}
 
 	public void start() {
@@ -45,7 +44,7 @@ public class DsoaServiceListener {
 				ServiceReference reference;
 				if (event.getType() == ServiceEvent.REGISTERED &&  Util.isRemote(reference = event.getServiceReference())) {
 					ManagedService managedService = createManagedService(reference);
-					catalog.addService(managedService);
+					serviceCatalog.addService(managedService);
 				} else if (event.getType() == ServiceEvent.UNREGISTERING &&  Util.isRemote(reference = event.getServiceReference())) {
 					// TODO: Unregister...
 				}
