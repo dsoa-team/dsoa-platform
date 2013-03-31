@@ -45,18 +45,17 @@ public class DsoaCommand implements Command, ServiceTrackerCustomizer {
 		return "dsoa *";
 	}
 
-	@Override
+	
 	public Object addingService(ServiceReference reference) {
 		this.shellService = (ShellService) ctx.getService(reference);
 		return shellService;
 	}
 
-	@Override
+
 	public void modifiedService(ServiceReference reference, Object service) {
 		this.shellService = (ShellService) ctx.getService(reference);
 	}
 
-	@Override
 	public void removedService(ServiceReference reference, Object service) {
 		this.shellService = null;
 	}

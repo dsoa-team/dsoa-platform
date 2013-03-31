@@ -1,5 +1,6 @@
 package br.ufpe.cin.dsoa.management.service.impl;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.osgi.framework.BundleContext;
@@ -23,6 +24,11 @@ public class ServiceCatalogImpl implements ServiceCatalog {
 	
 	public void addService(ManagedService service) {
 
+	}
+
+	public Collection<ManagedService> getServices() {
+		return this.managedServiceMap.values();
+		
 	}
 
 }

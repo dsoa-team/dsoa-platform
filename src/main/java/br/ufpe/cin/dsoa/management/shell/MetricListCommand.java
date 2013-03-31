@@ -13,22 +13,22 @@ public class MetricListCommand implements Command {
 	
 	private static final String ACTION_NAME = "metric-list";
 	
-	@Override
+	
 	public String getName() {
 		return ACTION_NAME;
 	}
 
-	@Override
+	
 	public String getUsage() {
 		return "metric-list";
 	}
 
-	@Override
+	
 	public String getShortDescription() {
 		return "*";
 	}
 
-	@Override
+	
 	public void execute(String line, PrintStream out, PrintStream err) {
 		for(Metric metric : catalog.getMetrics()){
 			out.println(" - " + metric.toString());
