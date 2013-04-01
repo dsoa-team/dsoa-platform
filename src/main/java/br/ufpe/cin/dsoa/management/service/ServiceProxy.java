@@ -2,14 +2,11 @@ package br.ufpe.cin.dsoa.management.service;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Hashtable;
 import java.util.logging.Logger;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.monitor.Monitorable;
 
 import br.ufpe.cin.dsoa.event.EventProcessingCenter;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
@@ -41,7 +38,7 @@ public class ServiceProxy implements InvocationHandler {
 	 * The reference to the real service
 	 */
 	private ServiceReference reference;
-
+	private String serviceName;
 	
 	public ServiceProxy(BundleContext context, 
 			EventProcessingCenter epCenter,
@@ -49,6 +46,7 @@ public class ServiceProxy implements InvocationHandler {
 		this.context = context;
 		this.epCenter = epCenter;
 		this.reference = reference;
+		this.serviceName = reference.getProperty(Constants.SERVICE_ID).toString();
 		this.log = Logger.getLogger(getClass().getSimpleName());
 	}
 
@@ -60,7 +58,6 @@ public class ServiceProxy implements InvocationHandler {
 		Exception exception = null;
 		InvocationEvent invocation = null;
 		boolean success = false;
-		String serviceName = reference.getProperty(Constants.SERVICE_ID).toString();
 		Object service = context.getService(reference);
 		try {
 			if (null != service) {
@@ -68,7 +65,7 @@ public class ServiceProxy implements InvocationHandler {
 				success = true;
 			} else {
 				throw new IllegalStateException(
-						"Required service is not available.");
+						"The required service is not available.");
 			}
 		} catch (Exception exc) {
 			exception = exc;
