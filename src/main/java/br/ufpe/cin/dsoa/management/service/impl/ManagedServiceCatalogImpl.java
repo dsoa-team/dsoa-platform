@@ -2,28 +2,27 @@ package br.ufpe.cin.dsoa.management.service.impl;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.configurator.hook.DsoaServiceListener;
 import br.ufpe.cin.dsoa.management.service.ManagedService;
-import br.ufpe.cin.dsoa.management.service.ServiceCatalog;
+import br.ufpe.cin.dsoa.management.service.ManagedServiceCatalog;
 
-public class ServiceCatalogImpl implements ServiceCatalog {
+public class ManagedServiceCatalogImpl implements ManagedServiceCatalog {
 
-	private BundleContext ctx;
 	private DsoaServiceListener listener;
 	private Map<String, ManagedService> managedServiceMap;
 	
-	public ServiceCatalogImpl(BundleContext ctx) {
-		this.ctx = ctx;
+	public ManagedServiceCatalogImpl(BundleContext ctx) {
+		this.managedServiceMap = new ConcurrentHashMap<String, ManagedService>();
 		this.listener = new DsoaServiceListener(ctx);
 		this.listener.start();
 	}
 	
 	public void addService(ManagedService service) {
-
+		this.managedServiceMap.put(service.getId(), service);
 	}
 
 	public Collection<ManagedService> getServices() {
@@ -31,4 +30,8 @@ public class ServiceCatalogImpl implements ServiceCatalog {
 		
 	}
 
+	public ManagedService getService(String serviceId) {
+		return this.managedServiceMap.get(serviceId);
+	}
+	
 }

@@ -7,12 +7,12 @@ import br.ufpe.cin.dsoa.configurator.parser.metric.MetricList;
 
 public interface MetricCatalog {
 
-	public abstract Metric getMetric(MetricId id);
+	public Metric getMetric(MetricId id);
 
-	public abstract Collection<Metric> getMetrics();
+	public Collection<Metric> getMetrics();
 
-	public abstract void addMetric(Metric metric);
+	public void addMetric(Metric metric);
 
-	public abstract void addMetrics(MetricList metrics);
+	public void addMetrics(MetricList metrics);
 
 }

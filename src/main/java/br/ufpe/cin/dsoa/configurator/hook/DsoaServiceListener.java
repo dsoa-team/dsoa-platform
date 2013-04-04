@@ -17,7 +17,7 @@ import org.osgi.service.monitor.Monitorable;
 import br.ufpe.cin.dsoa.configurator.util.Util;
 import br.ufpe.cin.dsoa.event.EventProcessingCenter;
 import br.ufpe.cin.dsoa.management.service.ManagedService;
-import br.ufpe.cin.dsoa.management.service.ServiceCatalog;
+import br.ufpe.cin.dsoa.management.service.ManagedServiceCatalog;
 import br.ufpe.cin.dsoa.management.service.ServiceMonitor;
 import br.ufpe.cin.dsoa.management.service.ServiceMonitorConfigurator;
 import br.ufpe.cin.dsoa.management.service.ServiceProxy;
@@ -31,7 +31,7 @@ public class DsoaServiceListener {
 	private EventProcessingCenter epCenter;
 	private MetricCatalog metricCatalog;
 	private Logger log;
-	private ServiceCatalog serviceCatalog;
+	private ManagedServiceCatalog serviceCatalog;
 	
 	public DsoaServiceListener(BundleContext ctx) {
 		this.ctx = ctx;
@@ -61,6 +61,9 @@ public class DsoaServiceListener {
 
 	private ManagedService createManagedService(ServiceReference reference) {
 		String id = reference.getProperty(Constants.SERVICE_ID).toString();
+		
+		System.out.println(reference.getProperty(Constants.OBJECTCLASS));//TODO
+		
 		ServiceRegistration proxyRegistration = registerProxy(reference);
 		ServiceRegistration monitorRegistration = registerMonitor(reference);
 		//ObjectInstance mbeanRegistration = registerMBean(reference);

@@ -21,7 +21,7 @@
 		<provides />
 	</component>
 	
-	<component classname="br.ufpe.cin.dsoa.management.service.impl.ServiceCatalogImpl">
+	<component classname="br.ufpe.cin.dsoa.management.service.impl.ManagedServiceCatalogImpl">
 		<provides />
 	</component>
 	
@@ -54,13 +54,34 @@
 		<requires field="catalog"/>
 		<provides />
 	</component>
-
+	
+	<component classname="br.ufpe.cin.dsoa.management.shell.ManagedServiceListCommand">
+		<requires field="catalog"/>
+		<provides />
+	</component>
+	
+	<component classname="br.ufpe.cin.dsoa.management.shell.ManagedServiceOperationsCommand">
+		<requires field="catalog"/>
+		<provides />
+	</component>
+	
+	<component classname="br.ufpe.cin.dsoa.management.shell.MonitorCommand">
+		<requires field="metricCatalog"/>
+		<requires field="serviceCatalog"/>
+		<provides />
+	</component>
+	
 	<instance component="br.ufpe.cin.dsoa.event.impl.EventProcessingCenterImpl" />
 	<instance component="br.ufpe.cin.dsoa.metric.impl.MetricComputingCenter" />
 	<instance component="br.ufpe.cin.dsoa.configurator.PlatformConfigurator" />
 	<instance component="br.ufpe.cin.dsoa.configurator.hook.DsoaFindHook" />
+	<instance component="br.ufpe.cin.dsoa.management.service.impl.ManagedServiceCatalogImpl"/> 
+	
+	<!-- commands -->
 	<instance component="br.ufpe.cin.dsoa.management.shell.DsoaCommand" />
 	<instance component="br.ufpe.cin.dsoa.management.shell.MetricListCommand" />
-	<instance component="br.ufpe.cin.dsoa.management.service.impl.ServiceCatalogImpl"/> 
+	<instance component="br.ufpe.cin.dsoa.management.shell.ManagedServiceListCommand" />
+	<instance component="br.ufpe.cin.dsoa.management.shell.ManagedServiceOperationsCommand" />
+	<instance component="br.ufpe.cin.dsoa.management.shell.MonitorCommand" />
 
 </ipojo>

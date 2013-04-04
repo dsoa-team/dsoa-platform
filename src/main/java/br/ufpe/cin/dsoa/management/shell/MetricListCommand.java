@@ -33,6 +33,7 @@ public class MetricListCommand implements Command {
 		for(Metric metric : catalog.getMetrics()){
 			out.println(" - " + metric.toString());
 		}
+		out.println("Total: " + catalog.getMetrics().size());
 	}
 
 }
