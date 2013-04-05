@@ -1,4 +1,4 @@
-<ipojo>
+<ipojo xmlns:wbp="org.apache.felix.ipojo.whiteboard">
 
 	<!-- DSOA Handlers -->
 	<handler classname="br.ufpe.cin.dsoa.handler.provider.ProviderManager"
@@ -21,8 +21,13 @@
 		<provides />
 	</component>
 	
-	<component classname="br.ufpe.cin.dsoa.management.service.impl.ServiceCatalogImpl">
+	<component classname="br.ufpe.cin.dsoa.management.ManagementService">
 		<provides />
+		<wbp:wbp 
+   	      filter="(service.managed=*)" 
+          onArrival="onArrival" 
+          onDeparture="onDeparture" 
+         />
 	</component>
 	
 	<!-- DSOA Configuration -->
