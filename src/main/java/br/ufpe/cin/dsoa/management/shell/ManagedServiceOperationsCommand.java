@@ -4,14 +4,14 @@ import java.io.PrintStream;
 
 import org.apache.felix.shell.Command;
 
-import br.ufpe.cin.dsoa.management.ManagedService;
-import br.ufpe.cin.dsoa.management.ManagedServiceRegistry;
+import br.ufpe.cin.dsoa.management.ManagedServiceMetadata;
+import br.ufpe.cin.dsoa.management.ManagementService;
 
 public class ManagedServiceOperationsCommand implements Command {
 
 	private static final String ACTION_NAME = "service-operations";
 
-	private ManagedServiceRegistry serviceRegistry;
+	private ManagementService managementService;
 
 	public String getName() {
 		return ACTION_NAME;
@@ -22,19 +22,27 @@ public class ManagedServiceOperationsCommand implements Command {
 	}
 
 	public String getUsage() {
-		return "service-operations";
+		return ACTION_NAME + "";
 	}
 
 	public void execute(String line, PrintStream out, PrintStream err) {
 		if (line.split(" ").length > 1) {
 			try {
 				int serviceId = Integer.parseInt(line.split(" ")[1]);
-				ManagedService service = this.serviceRegistry
-						.getService(serviceId + "");
-				if (null != service) {
+				ManagedServiceMetadata metadata = this.managementService
+						.getManagedServiceMetadata(serviceId + "");
+				
+				if (null != metadata) {
 					out.println("Operations: ");
-					out.println("Service id: " + service.getId());
-					
+					out.println("Service id: " + metadata.getId());
+					for (String it : metadata.getOperationsMap().keySet()) {
+						out.println(" * " + it);
+						for (String operation : metadata.getOperationsMap()
+								.get(it)) {
+							out.println(" - " + operation);
+						}
+					}
+
 				}
 			} catch (NumberFormatException e) {
 				err.println("Parameter error: You should give a number of service id");

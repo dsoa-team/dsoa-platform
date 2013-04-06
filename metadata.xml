@@ -38,13 +38,13 @@
 		<callback transition="invalidate" method="stop" />
 	</component>
 
-	<component classname="br.ufpe.cin.dsoa.configurator.hook.DsoaServiceListener">
+	<!-- <component classname="br.ufpe.cin.dsoa.configurator.hook.DsoaServiceListener">
 		<requires field="epCenter" />
 		<requires field="metricCatalog" />
 		<requires field="serviceCatalog" />
 		<callback transition="validate" method="start" />
 		<callback transition="invalidate" method="stop" />
-	</component>
+	</component> -->
 
 	<component classname="br.ufpe.cin.dsoa.configurator.hook.DsoaFindHook">
 		<callback transition="validate" method="start" />
@@ -56,23 +56,22 @@
 	</component>
 	
 	<component classname="br.ufpe.cin.dsoa.management.shell.MetricListCommand">
-		<requires field="catalog"/>
+		<requires field="managementService"/>
 		<provides />
 	</component>
 	
 	<component classname="br.ufpe.cin.dsoa.management.shell.ManagedServiceListCommand">
-		<requires field="serviceRegistry"/>
+		<requires field="managementService"/>
 		<provides />
 	</component>
 	
 	<component classname="br.ufpe.cin.dsoa.management.shell.ManagedServiceOperationsCommand">
-		<requires field="serviceRegistry"/>
+		<requires field="managementService"/>
 		<provides />
 	</component>
 	
 	<component classname="br.ufpe.cin.dsoa.management.shell.MonitorCommand">
-		<requires field="serviceRegistry"/>
-		<requires field="metricCatalog"/>
+		<requires field="managementService"/>
 		<provides />
 	</component>
 	

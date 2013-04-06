@@ -4,12 +4,11 @@ import java.io.PrintStream;
 
 import org.apache.felix.shell.Command;
 
-import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
-import br.ufpe.cin.dsoa.metric.MetricCatalog;
+import br.ufpe.cin.dsoa.management.ManagementService;
 
 public class MetricListCommand implements Command {
 
-	private MetricCatalog catalog;
+	private ManagementService managementService;
 	
 	private static final String ACTION_NAME = "metric-list";
 	
@@ -20,7 +19,7 @@ public class MetricListCommand implements Command {
 
 	
 	public String getUsage() {
-		return "metric-list";
+		return ACTION_NAME + "";
 	}
 
 	
@@ -30,10 +29,10 @@ public class MetricListCommand implements Command {
 
 	
 	public void execute(String line, PrintStream out, PrintStream err) {
-		for(Metric metric : catalog.getMetrics()){
+		for(String metric : this.managementService.getMetricList()){
 			out.println(" - " + metric.toString());
 		}
-		out.println("Total: " + catalog.getMetrics().size());
+		out.println("Total: " + this.managementService.getMetricList().size());
 	}
 
 }

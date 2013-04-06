@@ -4,27 +4,28 @@ import java.io.PrintStream;
 
 import org.apache.felix.shell.Command;
 
-import br.ufpe.cin.dsoa.management.ManagementService;
+public class MetricAddCommand implements Command {
 
-public class MonitorCommand implements Command {
-
-	private static final String ACTION_NAME = "monitor";
-
-	private ManagementService managementService;
-
+	private static final String ACTION_NAME = "metric-add";
+	
+	@Override
 	public String getName() {
 		return ACTION_NAME;
 	}
 
-	public String getShortDescription() {
-		return "*";
-	}
-
+	@Override
 	public String getUsage() {
 		return ACTION_NAME + "";
 	}
 
+	@Override
+	public String getShortDescription() {
+		return "*";
+	}
+
+	@Override
 	public void execute(String line, PrintStream out, PrintStream err) {
+		// TODO Auto-generated method stub
 		
 	}
 

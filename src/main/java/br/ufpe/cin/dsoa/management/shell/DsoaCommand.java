@@ -44,7 +44,7 @@ public class DsoaCommand implements Command, ServiceTrackerCustomizer {
 	}
 
 	public String getUsage() {
-		return "dsoa *";
+		return ACTION_NAME + " *";
 	}
 
 	

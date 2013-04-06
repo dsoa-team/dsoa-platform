@@ -38,6 +38,16 @@ public class ManagementService {
 		}
 		return metadata;
 	}
+	
+	public ManagedServiceMetadata getManagedServiceMetadata(String id){
+		ManagedService service = this.serviceRegistry.getService(id);
+		ManagedServiceMetadata metadata = null;
+		if(null != service) {
+			metadata = service.getMetadata();
+		}
+		
+		return metadata;
+	}
 
 	public List<String> getMetricList() {
 		List<String> metricList = new ArrayList<String>();

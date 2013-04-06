@@ -3,15 +3,16 @@ package br.ufpe.cin.dsoa.management.shell;
 import java.io.PrintStream;
 
 import org.apache.felix.shell.Command;
+import org.osgi.framework.Constants;
 
-import br.ufpe.cin.dsoa.management.ManagedService;
-import br.ufpe.cin.dsoa.management.ManagedServiceRegistry;
+import br.ufpe.cin.dsoa.management.ManagedServiceMetadata;
+import br.ufpe.cin.dsoa.management.ManagementService;
 
-public class ManagedServiceListCommand implements Command{
-	
+public class ManagedServiceListCommand implements Command {
+
 	private static final String ACTION_NAME = "service-list";
-	
-	private ManagedServiceRegistry serviceRegistry;
+
+	private ManagementService managementService;
 
 	public String getName() {
 		return ACTION_NAME;
@@ -22,14 +23,17 @@ public class ManagedServiceListCommand implements Command{
 	}
 
 	public String getUsage() {
-		return "service-list";
+		return ACTION_NAME + "";
 	}
-	
+
 	public void execute(String line, PrintStream out, PrintStream err) {
-		for(ManagedService service : serviceRegistry.getServices()) {
-			out.println(" - " + service.toString());
+		for (ManagedServiceMetadata metadata : this.managementService
+				.getManagedServicesMetadata()) {
+			out.println(String.format(" - Id: %s :: %s", metadata.getId(),
+					metadata.getProperty(Constants.SERVICE_DESCRIPTION)));
 		}
-		out.println("Total: " + serviceRegistry.getServices().size());
+		out.println("Total: "
+				+ this.managementService.getManagedServicesMetadata().size());
 	}
 
 }
