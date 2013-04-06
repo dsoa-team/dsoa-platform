@@ -6,14 +6,14 @@ import java.util.Map;
 
 import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.configurator.parser.metric.MetricList;
-import br.ufpe.cin.dsoa.event.EventProcessingCenter;
+import br.ufpe.cin.dsoa.event.EventProcessingService;
 import br.ufpe.cin.dsoa.metric.MetricCatalog;
 import br.ufpe.cin.dsoa.metric.MetricId;
 
 public class MetricComputingCenter implements MetricCatalog {
-	private Map<MetricId, Metric> metricMap = new HashMap<MetricId, Metric>();
-	private EventProcessingCenter epCenter;
-
+	private Map<MetricId,Metric> metricMap = new HashMap<MetricId,Metric>();
+	private EventProcessingService epCenter;
+	
 	public Metric getMetric(MetricId id) {
 		return this.metricMap.get(id);
 	}

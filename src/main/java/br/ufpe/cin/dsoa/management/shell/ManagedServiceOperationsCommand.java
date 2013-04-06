@@ -4,14 +4,14 @@ import java.io.PrintStream;
 
 import org.apache.felix.shell.Command;
 
-import br.ufpe.cin.dsoa.management.service.ManagedService;
-import br.ufpe.cin.dsoa.management.service.ManagedServiceCatalog;
+import br.ufpe.cin.dsoa.management.ManagedService;
+import br.ufpe.cin.dsoa.management.ManagedServiceRegistry;
 
 public class ManagedServiceOperationsCommand implements Command {
 
 	private static final String ACTION_NAME = "service-operations";
 
-	private ManagedServiceCatalog catalog;
+	private ManagedServiceRegistry serviceRegistry;
 
 	public String getName() {
 		return ACTION_NAME;
@@ -29,7 +29,7 @@ public class ManagedServiceOperationsCommand implements Command {
 		if (line.split(" ").length > 1) {
 			try {
 				int serviceId = Integer.parseInt(line.split(" ")[1]);
-				ManagedService service = this.catalog
+				ManagedService service = this.serviceRegistry
 						.getService(serviceId + "");
 				if (null != service) {
 					out.println("Operations: ");

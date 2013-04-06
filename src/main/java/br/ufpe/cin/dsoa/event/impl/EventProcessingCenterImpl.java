@@ -8,7 +8,7 @@ import java.util.Map;
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.event.EventNotifier;
-import br.ufpe.cin.dsoa.event.EventProcessingCenter;
+import br.ufpe.cin.dsoa.event.EventProcessingService;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
 import br.ufpe.cin.dsoa.event.NotificationListener;
 import br.ufpe.cin.dsoa.metric.MetricStatus;
@@ -19,7 +19,7 @@ import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
 
-public class EventProcessingCenterImpl implements EventProcessingCenter {
+public class EventProcessingCenterImpl implements EventProcessingService {
 
 	private EPServiceProvider epServiceProvider;
 	private final List<String> eventNames;
@@ -77,6 +77,10 @@ public class EventProcessingCenterImpl implements EventProcessingCenter {
 	public void defineStatement(String name, String statement) {
 		EPPreparedStatement prepared = epServiceProvider.getEPAdministrator().prepareEPL(statement);
 		this.mapPreparedStmts.put(name, prepared);
+	}
+	
+	public void destroyStatement(String name) {
+		epServiceProvider.getEPAdministrator().getStatement(name).destroy();
 	}
 	
 	public void defineStatement(String name, String statement, List<String> userObject) {

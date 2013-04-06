@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.management.service;
+package br.ufpe.cin.dsoa.management;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,7 @@ import org.osgi.service.monitor.Monitorable;
 import org.osgi.service.monitor.StatusVariable;
 
 import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
-import br.ufpe.cin.dsoa.event.EventProcessingCenter;
+import br.ufpe.cin.dsoa.event.EventProcessingService;
 import br.ufpe.cin.dsoa.metric.MetricCatalog;
 import br.ufpe.cin.dsoa.metric.MetricId;
 import br.ufpe.cin.dsoa.metric.MetricInstance;
@@ -20,11 +20,11 @@ public class ServiceMonitor implements Monitorable, ServiceMonitorConfigurator {
 	
 	private String serviceId;
 	private MetricCatalog metricCatalog;
-	private EventProcessingCenter epCenter;
+	private EventProcessingService epCenter;
 	private Map<String, MetricStatus> metricVariableMap;
 
 
-	public ServiceMonitor(EventProcessingCenter epCenter, MetricCatalog metricCatalog, ServiceReference reference) {
+	public ServiceMonitor(EventProcessingService epCenter, MetricCatalog metricCatalog, ServiceReference reference) {
 		this.epCenter = epCenter;
 		this.metricCatalog = metricCatalog;
 		this.serviceId = reference.getProperty(Constants.SERVICE_ID).toString();

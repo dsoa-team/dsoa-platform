@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.management.service;
+package br.ufpe.cin.dsoa.management;
 
 import org.osgi.framework.ServiceReference;
 

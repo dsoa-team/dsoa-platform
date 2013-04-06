@@ -1,17 +1,14 @@
-package br.ufpe.cin.dsoa.management.service;
+package br.ufpe.cin.dsoa.management;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Hashtable;
 import java.util.logging.Logger;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.monitor.Monitorable;
 
-import br.ufpe.cin.dsoa.event.EventProcessingCenter;
+import br.ufpe.cin.dsoa.event.EventProcessingService;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
 
 /**
@@ -20,35 +17,20 @@ import br.ufpe.cin.dsoa.event.InvocationEvent;
  * @author fabions
  *
  */
-public class ServiceProxy implements InvocationHandler {
+/*public class ServiceProxy implements InvocationHandler {
 	
-	/*
-	 * DSOA BundleContext
-	 */
-	private BundleContext context;
-
-	/*
-	 * The Event Processing Center component
-	 */
-	private EventProcessingCenter epCenter;
-
-	/*
+	
 	 * The log service
-	 */
+	 
 	private Logger log;
 
-	/*
-	 * The reference to the real service
-	 */
-	private ServiceReference reference;
-
 	
-	public ServiceProxy(BundleContext context, 
-			EventProcessingCenter epCenter,
-			ServiceReference reference) {
-		this.context = context;
-		this.epCenter = epCenter;
-		this.reference = reference;
+	 * The managedService
+	 
+	private ManagedService managedService;
+	
+	public ServiceProxy(ManagedService service) {
+		this.managedService = service;
 		this.log = Logger.getLogger(getClass().getSimpleName());
 	}
 
@@ -60,15 +42,14 @@ public class ServiceProxy implements InvocationHandler {
 		Exception exception = null;
 		InvocationEvent invocation = null;
 		boolean success = false;
-		String serviceName = reference.getProperty(Constants.SERVICE_ID).toString();
-		Object service = context.getService(reference);
+		Object service = managedService.getService();
 		try {
 			if (null != service) {
 				result = method.invoke(service, args);
 				success = true;
 			} else {
 				throw new IllegalStateException(
-						"Required service is not available.");
+						"The required service is not available.");
 			}
 		} catch (Exception exc) {
 			exception = exc;
@@ -87,6 +68,7 @@ public class ServiceProxy implements InvocationHandler {
 	}
 
 	private void notifyInvocation(InvocationEvent invocation) {
-		epCenter.publishEvent(invocation);
+		
+		//epCenter.publishEvent(invocation);
 	}
-}
+}*/

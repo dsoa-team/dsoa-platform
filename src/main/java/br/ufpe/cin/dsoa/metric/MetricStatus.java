@@ -27,6 +27,14 @@ public class MetricStatus implements NotificationListener {
 		return instance.getMetric().getDescription();
 	}
 	
+	public String getStatementName() {
+		return instance.getTarget();
+	}
+	
+	public String getStatement() {
+		return instance.getMetric().getQuery();
+	}
+	
 	public String getTarget() {
 		return instance.getTarget();
 	}

@@ -3,7 +3,7 @@ package br.ufpe.cin.dsoa.event;
 import java.util.List;
 import java.util.Map;
 
-public interface EventProcessingCenter {
+public interface EventProcessingService {
 
 	public void defineEvent(Class<?> event);
 	
@@ -16,6 +16,8 @@ public interface EventProcessingCenter {
 	public void defineStatement(String name, String statement, List<String> userObject);
 	
 	public void defineStatement(String name, String statement);
+	
+	public void destroyStatement(String name);
 	
 	public void subscribe(String statementName, NotificationListener eventConsumer);
 	

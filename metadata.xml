@@ -1,4 +1,4 @@
-<ipojo>
+<ipojo xmlns:wbp="org.apache.felix.ipojo.whiteboard">
 
 	<!-- DSOA Handlers -->
 	<handler classname="br.ufpe.cin.dsoa.handler.provider.ProviderManager"
@@ -21,8 +21,13 @@
 		<provides />
 	</component>
 	
-	<component classname="br.ufpe.cin.dsoa.management.service.impl.ManagedServiceCatalogImpl">
+	<component classname="br.ufpe.cin.dsoa.management.ManagementService">
 		<provides />
+		<wbp:wbp 
+   	      filter="(service.managed=*)" 
+          onArrival="onArrival" 
+          onDeparture="onDeparture" 
+         />
 	</component>
 	
 	<!-- DSOA Configuration -->
@@ -56,18 +61,18 @@
 	</component>
 	
 	<component classname="br.ufpe.cin.dsoa.management.shell.ManagedServiceListCommand">
-		<requires field="catalog"/>
+		<requires field="serviceRegistry"/>
 		<provides />
 	</component>
 	
 	<component classname="br.ufpe.cin.dsoa.management.shell.ManagedServiceOperationsCommand">
-		<requires field="catalog"/>
+		<requires field="serviceRegistry"/>
 		<provides />
 	</component>
 	
 	<component classname="br.ufpe.cin.dsoa.management.shell.MonitorCommand">
+		<requires field="serviceRegistry"/>
 		<requires field="metricCatalog"/>
-		<requires field="serviceCatalog"/>
 		<provides />
 	</component>
 	
@@ -75,7 +80,6 @@
 	<instance component="br.ufpe.cin.dsoa.metric.impl.MetricComputingCenter" />
 	<instance component="br.ufpe.cin.dsoa.configurator.PlatformConfigurator" />
 	<instance component="br.ufpe.cin.dsoa.configurator.hook.DsoaFindHook" />
-	<instance component="br.ufpe.cin.dsoa.management.service.impl.ManagedServiceCatalogImpl"/> 
 	
 	<!-- commands -->
 	<instance component="br.ufpe.cin.dsoa.management.shell.DsoaCommand" />

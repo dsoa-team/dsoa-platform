@@ -4,15 +4,14 @@ import java.io.PrintStream;
 
 import org.apache.felix.shell.Command;
 
-import br.ufpe.cin.dsoa.management.service.ManagedService;
-import br.ufpe.cin.dsoa.management.service.ManagedServiceCatalog;
+import br.ufpe.cin.dsoa.management.ManagedServiceRegistry;
 import br.ufpe.cin.dsoa.metric.MetricCatalog;
 
 public class MonitorCommand implements Command {
 
 	private static final String ACTION_NAME = "monitor";
 
-	private ManagedServiceCatalog serviceCatalog;
+	private ManagedServiceRegistry serviceRegistry;
 	private MetricCatalog metricCatalog;
 
 	public String getName() {

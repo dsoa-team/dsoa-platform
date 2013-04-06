@@ -21,13 +21,13 @@ import br.ufpe.cin.dsoa.configurator.parser.contextmodel.ContextModel;
 import br.ufpe.cin.dsoa.configurator.parser.event.Event;
 import br.ufpe.cin.dsoa.configurator.parser.event.EventList;
 import br.ufpe.cin.dsoa.configurator.parser.metric.MetricList;
-import br.ufpe.cin.dsoa.event.EventProcessingCenter;
+import br.ufpe.cin.dsoa.event.EventProcessingService;
 import br.ufpe.cin.dsoa.metric.MetricCatalog;
 
 public class DsoaBundleListener extends BundleTracker {
 
 	private Map<String, Unmarshaller> JAXBContexts;
-	private EventProcessingCenter epCenter;
+	private EventProcessingService epCenter;
 	private MetricCatalog metricCatalog;
 	private Map<String, Event> eventMap;
 	
@@ -149,7 +149,7 @@ public class DsoaBundleListener extends BundleTracker {
 		this.metricCatalog = metricCatalog;
 	}
 
-	public void setEventProcessingCenter(EventProcessingCenter epCenter) {
+	public void setEventProcessingCenter(EventProcessingService epCenter) {
 		this.epCenter = epCenter;
 	}
 }

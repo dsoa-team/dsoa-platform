@@ -1,37 +1,12 @@
 package br.ufpe.cin.dsoa.configurator.hook;
 
-import java.lang.reflect.Proxy;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.logging.Logger;
-
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
-import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.monitor.Monitorable;
-
-import br.ufpe.cin.dsoa.configurator.util.Util;
-import br.ufpe.cin.dsoa.event.EventProcessingCenter;
-import br.ufpe.cin.dsoa.management.service.ManagedService;
-import br.ufpe.cin.dsoa.management.service.ManagedServiceCatalog;
-import br.ufpe.cin.dsoa.management.service.ServiceMonitor;
-import br.ufpe.cin.dsoa.management.service.ServiceMonitorConfigurator;
-import br.ufpe.cin.dsoa.management.service.ServiceProxy;
-import br.ufpe.cin.dsoa.metric.MetricCatalog;
-import br.ufpe.cin.dsoa.util.DsoaConstants;
 
 public class DsoaServiceListener {
 
-	private BundleContext ctx;
+/*	private BundleContext ctx;
 	private ServiceListener sl;
-	private EventProcessingCenter epCenter;
-	private MetricCatalog metricCatalog;
 	private Logger log;
-	private ManagedServiceCatalog serviceCatalog;
+	private ManagedServiceRegistry serviceCatalog;
 	
 	public DsoaServiceListener(BundleContext ctx) {
 		this.ctx = ctx;
@@ -42,9 +17,8 @@ public class DsoaServiceListener {
 		sl = new ServiceListener() {
 			public void serviceChanged(ServiceEvent event) {
 				ServiceReference reference;
-				if (event.getType() == ServiceEvent.REGISTERED &&  Util.isRemote(reference = event.getServiceReference())) {
-					ManagedService managedService = createManagedService(reference);
-					serviceCatalog.addService(managedService);
+				if (event.getType() == ServiceEvent.REGISTERED &&  Util.isRemote(reference = event.getServiceReference()) && !Util.isProxy(reference)) {
+//					serviceCatalog.addService(reference);
 				} else if (event.getType() == ServiceEvent.UNREGISTERING &&  Util.isRemote(reference = event.getServiceReference())) {
 					// TODO: Unregister...
 				}
@@ -61,9 +35,6 @@ public class DsoaServiceListener {
 
 	private ManagedService createManagedService(ServiceReference reference) {
 		String id = reference.getProperty(Constants.SERVICE_ID).toString();
-		
-		System.out.println(reference.getProperty(Constants.OBJECTCLASS));//TODO
-		
 		ServiceRegistration proxyRegistration = registerProxy(reference);
 		ServiceRegistration monitorRegistration = registerMonitor(reference);
 		//ObjectInstance mbeanRegistration = registerMBean(reference);
@@ -108,7 +79,6 @@ public class DsoaServiceListener {
 		return ctx.registerService(clazzes,	monitor, ht);
 	}
 	
-	/*private ObjectInstance registerMBean(ServiceReference reference) {
 		DsoaServiceMBean mbean = new DsoaServiceMBean(reference);
 		String pid = reference.getProperty(Constants.SERVICE_ID).toString();
 		ObjectName name;
@@ -133,7 +103,7 @@ public class DsoaServiceListener {
 			e.printStackTrace();
 		}
 		return instance;
-	}*/
+	}
 
 	public void stop() {
 		ctx.removeServiceListener(sl);
@@ -153,5 +123,5 @@ public class DsoaServiceListener {
 		}
 		dict.put(DsoaConstants.SERVICE_PROXY, "true");
 		return dict;
-	}
+	}*/
 }
