@@ -11,7 +11,7 @@ import br.ufpe.cin.dsoa.event.EventNotifier;
 import br.ufpe.cin.dsoa.event.EventProcessingService;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
 import br.ufpe.cin.dsoa.event.NotificationListener;
-import br.ufpe.cin.dsoa.metric.MetricStatus;
+import br.ufpe.cin.dsoa.metric.MetricMonitor;
 
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPPreparedStatement;
@@ -111,7 +111,7 @@ public class EventProcessingCenterImpl implements EventProcessingService {
 		if (null != eventConsumer.getOperationName()) {
 			preparedStmt.setObject(2, eventConsumer.getOperationName());
 		}
-		String stmtName = ((MetricStatus)eventConsumer).getTarget();
+		String stmtName = ((MetricMonitor)eventConsumer).getTarget();
 		EPStatement statement = this.epServiceProvider.getEPAdministrator().create(preparedStmt, stmtName);
 		this.mapStmts.put(stmtName, statement);
 		statement.addListener(new EventNotifier(eventConsumer));

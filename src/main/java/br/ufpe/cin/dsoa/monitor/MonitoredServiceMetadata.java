@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.management;
+package br.ufpe.cin.dsoa.monitor;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -11,24 +11,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 
-public class ManagedServiceMetadata {
+import br.ufpe.cin.dsoa.util.Util;
+
+public class MonitoredServiceMetadata {
 	
+	/** Numeric Id and String pid */
 	private String id;
 	private String pid;
-	private Map<String, List<String>> operationsMap;
 	private ServiceReference reference;
-	private BundleContext context;
+	/** (className, List<operationName>) */
+	private Map<String, List<String>> operationsMap;
 	
-	public ManagedServiceMetadata(ServiceReference reference) {
-		this.id	= (String) reference.getProperty(Constants.SERVICE_ID);
-		this.pid = (String) reference.getProperty(Constants.SERVICE_PID);
+	public MonitoredServiceMetadata(ServiceReference reference) {
+		this.reference = reference;
+		this.id = Util.getId(reference);
+		this.pid = Util.getPid(reference);
 		this.operationsMap = new HashMap<String, List<String>>();
-		
-		
+		this.parseOperations();
+	}
+
+	private void parseOperations() {
 		for(String clazz : (String[]) reference.getProperty(Constants.OBJECTCLASS)){
 			List<String> operations = new ArrayList<String>();
 			try {
@@ -45,11 +50,8 @@ public class ManagedServiceMetadata {
 			}
 			
 		}
-		
-		this.reference = reference;
-		this.context = reference.getBundle().getBundleContext();
 	}
-
+	
 	public String getPid() {
 		return pid;
 	}
@@ -90,11 +92,8 @@ public class ManagedServiceMetadata {
 		return reference.getProperty(name);
 	}
 	
-	public BundleContext getContext() {
-		return context;
-	}
-	
-	public ServiceReference getReference() {
+	ServiceReference getReference() {
 		return reference;
 	}
+
 }

@@ -4,8 +4,8 @@ import java.io.PrintStream;
 
 import org.apache.felix.shell.Command;
 
-import br.ufpe.cin.dsoa.management.ManagedServiceMetadata;
 import br.ufpe.cin.dsoa.management.ManagementService;
+import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 
 public class ManagedServiceOperationsCommand implements Command {
 
@@ -29,7 +29,7 @@ public class ManagedServiceOperationsCommand implements Command {
 		if (line.split(" ").length > 1) {
 			try {
 				int serviceId = Integer.parseInt(line.split(" ")[1]);
-				ManagedServiceMetadata metadata = this.managementService
+				MonitoredServiceMetadata metadata = this.managementService
 						.getManagedServiceMetadata(serviceId + "");
 				
 				if (null != metadata) {

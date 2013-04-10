@@ -8,7 +8,7 @@ public class MetricAddCommand implements Command {
 
 	private static final String ACTION_NAME = "metric-add";
 	
-	@Override
+	
 	public String getName() {
 		return ACTION_NAME;
 	}

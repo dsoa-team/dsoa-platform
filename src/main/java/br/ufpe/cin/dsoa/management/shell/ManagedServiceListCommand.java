@@ -5,8 +5,8 @@ import java.io.PrintStream;
 import org.apache.felix.shell.Command;
 import org.osgi.framework.Constants;
 
-import br.ufpe.cin.dsoa.management.ManagedServiceMetadata;
 import br.ufpe.cin.dsoa.management.ManagementService;
+import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 
 public class ManagedServiceListCommand implements Command {
 
@@ -27,7 +27,7 @@ public class ManagedServiceListCommand implements Command {
 	}
 
 	public void execute(String line, PrintStream out, PrintStream err) {
-		for (ManagedServiceMetadata metadata : this.managementService
+		for (MonitoredServiceMetadata metadata : this.managementService
 				.getManagedServicesMetadata()) {
 			out.println(String.format(" - Id: %s :: %s", metadata.getId(),
 					metadata.getProperty(Constants.SERVICE_DESCRIPTION)));

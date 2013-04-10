@@ -1,5 +1,6 @@
-package br.ufpe.cin.dsoa.configurator.util;
+package br.ufpe.cin.dsoa.util;
 
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.util.DsoaConstants;
@@ -14,4 +15,11 @@ public class Util {
 		return reference.getProperty(DsoaConstants.SERVICE_PROXY) != null;
 	}
 	
+	public static String getId(ServiceReference reference) {
+		return (String) reference.getProperty(Constants.SERVICE_ID);
+	}
+	
+	public static String getPid(ServiceReference reference) {
+		return (String) reference.getProperty(Constants.SERVICE_PID);
+	}
 }

@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.management;
+package br.ufpe.cin.dsoa.monitor;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -11,49 +11,61 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.monitor.Monitorable;
 import org.osgi.service.monitor.StatusVariable;
 
-import br.ufpe.cin.dsoa.metric.MetricStatus;
+import br.ufpe.cin.dsoa.metric.MetricMonitor;
 
-public class ManagedService implements Monitorable {
-
-	private ManagedServiceMetadata metadata;
-	private ServiceRegistration registration;
-	private Map<String, MetricStatus> metricVariableMap;
-	private Logger log;
+public class MonitoredService implements Monitorable {
+	private static final String REFERED_SERVICE_ID = "refered.service.id";
+	private static final String REFERED_SERVICE_PID = "refered.service.pid";
 	
-	public ManagedService(ServiceReference reference) {
+	private Logger log;
+	private MonitoredServiceMetadata metadata;
+	// <target, MetricMonitor>
+	private Map<String, MetricMonitor> metricVariableMap;
+	private boolean started;
+	private ServiceRegistration registration;
+
+	
+	public MonitoredService(ServiceReference reference) {
 		this.log = Logger.getLogger(getClass().getSimpleName());
-		this.metadata = new ManagedServiceMetadata(reference);
-		this.metricVariableMap = new HashMap<String, MetricStatus>();
+		this.metricVariableMap = new HashMap<String, MetricMonitor>();
+		this.metadata = new MonitoredServiceMetadata(reference);
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void start() {
 		log.info("Registering monitor...");
 		Hashtable ht = new Hashtable();
-		ht.put(Constants.SERVICE_PID, metadata.getPid() + "-Monitor");
-		String[] clazzes = {Monitorable.class.getName(), ServiceMonitorConfigurator.class.getName()};
-		this.registration = this.metadata.getContext().registerService(clazzes, this, ht);
+		ht.put(Constants.SERVICE_PID, getMonitoredServicePid());
+		ht.put(REFERED_SERVICE_ID, metadata.getId());
+		ht.put(REFERED_SERVICE_PID, metadata.getPid());
+		String[] clazzes = {Monitorable.class.getName()};
+		this.registration = this.metadata.getReference().getBundle().getBundleContext().registerService(clazzes, this, ht);
+		this.started = true;
 	}
 	
-
 	public void stop() {
-		registration.unregister();
+		this.registration.unregister();
+		this.started = false;
+	}
+
+	public void addMetricMonitor(MetricMonitor monitor) {
+		this.metricVariableMap.put(monitor.getTarget(), monitor);
+	}
+	
+	private String getMonitoredServicePid() {
+		return this.metadata.getPid() + "-Monitor";
 	}
 	
 	public String getId() {
-		return metadata.getId();
+		return this.metadata.getId();
 	}
 	
 	public String getPid() {
-		return metadata.getPid();
+		return this.metadata.getPid();
 	}
 	
-	public ManagedServiceMetadata getMetadata() {
-		return metadata;
-	}
-
-	public void addStatusVariable(MetricStatus status) {
-		metricVariableMap.put(status.getTarget(), status);
+	public boolean isStarted() {
+		return this.started;
 	}
 	
 	public String[] getStatusVariableNames() {
@@ -87,7 +99,11 @@ public class ManagedService implements Monitorable {
 		throw new IllegalArgumentException("Variable " + id + " does not exist");
 	}
 
-	public ServiceReference getServiceReference() {
-		return this.metadata.getReference();
+	public Map<String, MetricMonitor> getMetricVariableMap() {
+		return this.metricVariableMap;
+	}
+
+	public MonitoredServiceMetadata getMetadata() {
+		return this.metadata;
 	}
 }

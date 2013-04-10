@@ -4,14 +4,15 @@ import java.util.Map;
 
 import org.osgi.service.monitor.StatusVariable;
 
+import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.event.NotificationListener;
 
-public class MetricStatus implements NotificationListener {
+public class MetricMonitor implements NotificationListener {
 
 	private MetricInstance instance;
 	private Object value;
 
-	public MetricStatus(MetricInstance instance) {
+	public MetricMonitor(MetricInstance instance) {
 		this.instance = instance;
 	}
 	
@@ -71,5 +72,13 @@ public class MetricStatus implements NotificationListener {
 
 	public String getOperationName() {
 		return this.instance.getOperationName();
+	}
+	
+	public MetricInstance getMetricInstance() {
+		return this.instance;
+	}
+	
+	public Metric getMetric() {
+		return this.instance.getMetric();
 	}
 }

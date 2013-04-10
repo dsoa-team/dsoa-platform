@@ -1,11 +1,14 @@
 package br.ufpe.cin.dsoa.monitor;
 
-import br.ufpe.cin.dsoa.management.ManagedService;
-import br.ufpe.cin.dsoa.metric.MetricId;
+import java.util.List;
+
+import org.osgi.framework.ServiceReference;
+
 
 public interface MonitoringService {
 
-	void startMonitoring(ManagedService mgrService);
-	void setupMetricMonitor(MetricId metricId, ManagedService service, String operation);
-	void stopMonitoring(ManagedService mgrService);
+	void startMonitoring(ServiceReference reference);
+	void stopMonitoring(ServiceReference reference);
+	List<MonitoredService> getMonitoredServices();
+	MonitoredService getMonitoredService(String id);
 }
