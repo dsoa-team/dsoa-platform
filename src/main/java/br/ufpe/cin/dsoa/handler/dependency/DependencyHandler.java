@@ -6,11 +6,10 @@ import java.util.List;
 
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.PrimitiveHandler;
-import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
+import org.apache.felix.ipojo.handlers.dependency.DependencyHandlerDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
@@ -19,91 +18,77 @@ import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyHandler extends PrimitiveHandler {
 
-	private List<DependencyManager> depMgrs = new ArrayList<DependencyManager>();
-	private BundleContext ctx;
-
-	public void initializeComponentFactory(ComponentTypeDescription ctd,
-			Element metadata) throws ConfigurationException {
-		Element[] requiresElems = metadata.getElements(Constants.NAME,
-				Constants.NAMESPACE);
-		if (requiresElems.length != 1) {
-			throw new ConfigurationException(
-					"One and only one "
-							+ Constants.NAME
-							+ " element is allowed in component "
-							+ ctd.getName()
-							+ " configuration. "
-							+ "use 'require' sub-elements to declare multiple dependencies.");
-		}
-
-		super.initializeComponentFactory(ctd, metadata);
-	}
-
-	private String getField(Element demand) throws ConfigurationException {
-		return demand.getAttribute(Constants.SERVICE_FIELD_ATTRIBUTE);
-	}
+	private List<Dependency> deps = new ArrayList<Dependency>();
+	private boolean valid;
+	private DependencyHandlerDescription m_description;
+	
+	/*
+	 * 
+	 * <qos:requires>
+                 <service field="homebroker">
+                 	  <manager id="QoSDependencyManager" >
+	                      <qos metric="ResponseTime" 
+	                      	  expression="LT" 
+	                      	  value="800" 
+	                      	  weight="2" 
+	                      	  operation="priceAlert" />
+	                      		 	
+	                      <qos metric="Availability" 
+	                      	  expression="GT" 
+	                      	  value="95" 
+	                      	  weight="1" /> 
+	                    </manager>
+                 </service>
+           </qos:requires>
+	 */
 	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void configure(Element metadata, Dictionary configuration)
 			throws ConfigurationException {
-		ctx = this.getInstanceManager().getContext();
-		Element handlerConfig = metadata.getElements(Constants.NAME, Constants.NAMESPACE)[0];
-		PojoMetadata manipulation = getFactory().getPojoMetadata();
-
-		// Get consumer information
-		String consumerPID = (String) handlerConfig
-				.getAttribute(Constants.CONSUMER_PID_ATTRIBUTE);
-		String consumerName = (String) handlerConfig
-				.getAttribute(Constants.CONSUMER_NAME_ATTRIBUTE);
+		String consumerName = metadata.getAttribute(Constants.NAME_ATT);
+		String consumerId 	= metadata.getAttribute(Constants.ID_ATT);
+		ServiceConsumer serviceConsumer = new ServiceConsumer(consumerId, consumerName);
 		
-		ServiceConsumer serviceConsumer = new ServiceConsumer(consumerPID, consumerName);
-		
-		// Get service tags from the pojo's descriptor
-		Element[] serviceElems = handlerConfig.getElements(Constants.SERVICE_ELEMENT);
-		for (Element serviceElement : serviceElems) {
-			DependencyManager dependencyMgr = this.getDependencyManager(serviceConsumer, serviceElement);
-			String field = this.getField(serviceElement);
-			FieldMetadata fieldmeta = manipulation.getField(field);
-			this.register(fieldmeta, dependencyMgr);
+		Element requiresTag = metadata.getElements(Constants.NAME, Constants.NAMESPACE)[0];
+		String  field 		= (String) requiresTag.getAttribute(Constants.FIELD_ATT);
+		/*<qos category="qos"
+       	  metric="ResponseTime" 
+       	  operation="priceAlert" 
+       	  expression="LT" 
+       	  value="800" 
+       	  weight="2"  />*/
+		Element[] qosTags	= requiresTag.getElements(Constants.QOS_ATT);
+		String category = null;
+		String metric = null;
+		String operation = null;
+		String expression = null;
+		String value = null;
+		String weight = null;
+		for (Element qosTag : qosTags) {
+			category = qosTag.getAttribute(Constants.CATEGORY_ATT);
+			metric = qosTag.getAttribute(Constants.METRIC_ATT);
+			operation = qosTag.getAttribute(Constants.OPERATION_ATT);
+			expression = qosTag.getAttribute(Constants.EXPRESSION_ATT);
+			value = qosTag.getAttribute(Constants.VALUE_ATT);
+			weight = qosTag.getAttribute(Constants.WEIGHT_ATT);
 		}
 	}
 
-	private DependencyManager getDependencyManager(ServiceConsumer serviceConsumer, Element serviceElement) {
-		Element managerElement = serviceElement.getElements(Constants.MANAGER)[0];
-		String managerName = null;
-		if (managerElement != null) {
-			managerName = managerElement.getAttribute("name");
-			if (managerName == null) {
-				managerName = "DependencyManager-Default";
-			}
-		}
-		String filter = "name=" + managerName;
-		ServiceReference factoryRef = null;
-		try {
-			factoryRef = ctx.getServiceReferences(DependencyManagerFactory.class.toString(), filter)[0];
-		} catch (InvalidSyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		DependencyManagerFactory factory = (DependencyManagerFactory) ctx.getService(factoryRef);
-		return factory.create(serviceConsumer, managerElement);
-	}
-
-	private void register(FieldMetadata fieldmeta, DependencyManager dependency) {
-		depMgrs.add(dependency);
+	private void register(FieldMetadata fieldmeta, Dependency dependency) {
+		deps.add(dependency);
 		getInstanceManager().register(fieldmeta, dependency);
 	}
 
 	@Override
 	public String toString() {
-		return "DependencyHandler [dependencies=" + depMgrs + "]";
+		return "DependencyHandler [dependencies=" + deps + "]";
 	}
 
 	@Override
 	public void start() {
 		this.setValidity(false);
-		for (DependencyManager mgr : depMgrs) {
+		for (Dependency mgr : deps) {
 			mgr.start();
 		}
 	}
@@ -116,7 +101,7 @@ public class DependencyHandler extends PrimitiveHandler {
 	public void checkValidate() {
 
 		boolean valid = true;
-		for (DependencyManager dep : depMgrs) {
+		for (Dependency dep : deps) {
 			if (dep.isValid() == false) {
 				valid = false;
 				break;

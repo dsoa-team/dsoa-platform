@@ -4,4 +4,5 @@ public interface Service {
 	public String getId();
 	public Object getServiceObject();
 	public String getServiceInterface();
+	public ServiceMetadata getMetadata();
 }

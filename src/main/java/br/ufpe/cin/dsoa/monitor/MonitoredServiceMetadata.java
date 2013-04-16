@@ -10,6 +10,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -24,8 +25,10 @@ public class MonitoredServiceMetadata {
 	private ServiceReference reference;
 	/** (className, List<operationName>) */
 	private Map<String, List<String>> operationsMap;
+	private Logger log;
 	
 	public MonitoredServiceMetadata(ServiceReference reference) {
+		this.log = Logger.getLogger(getClass().getSimpleName());
 		this.reference = reference;
 		this.id = Util.getId(reference);
 		this.pid = Util.getPid(reference);
@@ -34,11 +37,16 @@ public class MonitoredServiceMetadata {
 	}
 
 	private void parseOperations() {
+		log.info("ServiceId: " + id);
+		log.info("ServicePid: " + pid);
 		for(String clazz : (String[]) reference.getProperty(Constants.OBJECTCLASS)){
+			log.info("Service Interface: " + clazz);
 			List<String> operations = new ArrayList<String>();
 			try {
-				for(Method method : Class.forName(clazz).getDeclaredMethods()){
+				
+				for(Method method : reference.getBundle().loadClass(clazz).getDeclaredMethods()){
 					if(Modifier.isPublic(method.getModifiers())){
+						log.info("Operation: " + method.getName());
 						operations.add(method.getName());
 					}
 				}
@@ -78,16 +86,6 @@ public class MonitoredServiceMetadata {
 		return new ArrayList<String>(operations);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public Dictionary getProperties() {
-		String[] keys = reference.getPropertyKeys();
-		Dictionary dict = new Hashtable();
-		for (String key : keys) {
-			dict.put(key, reference.getProperty(key));
-		}
-		return dict;
-	}
-	
 	public Object getProperty(String name) {
 		return reference.getProperty(name);
 	}

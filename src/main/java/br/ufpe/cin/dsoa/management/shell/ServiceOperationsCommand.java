@@ -7,7 +7,7 @@ import org.apache.felix.shell.Command;
 import br.ufpe.cin.dsoa.management.ManagementService;
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 
-public class ManagedServiceOperationsCommand implements Command {
+public class ServiceOperationsCommand implements Command {
 
 	private static final String ACTION_NAME = "service-operations";
 

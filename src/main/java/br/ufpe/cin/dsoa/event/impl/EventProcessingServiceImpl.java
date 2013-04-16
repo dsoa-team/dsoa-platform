@@ -19,18 +19,18 @@ import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
 
-public class EventProcessingCenterImpl implements EventProcessingService {
+public class EventProcessingServiceImpl implements EventProcessingService {
 
 	private EPServiceProvider epServiceProvider;
 	private final List<String> eventNames;
 	private Map<String, EPPreparedStatement> mapPreparedStmts;
 	private Map<String, EPStatement> mapStmts;
 
-	public EventProcessingCenterImpl(BundleContext context) {
+	public EventProcessingServiceImpl(BundleContext context) {
 		this();
 	}
 	
-	public EventProcessingCenterImpl() {
+	public EventProcessingServiceImpl() {
 		this.eventNames = new ArrayList<String>();
 		this.mapPreparedStmts = new HashMap<String, EPPreparedStatement>();
 		this.mapStmts = new HashMap<String, EPStatement>();
@@ -40,7 +40,6 @@ public class EventProcessingCenterImpl implements EventProcessingService {
 		this.epServiceProvider = EPServiceProviderManager.getProvider(
 				"EngineInstance", new Configuration());
 		this.configureEvents();
-		this.configureContexts();
 	}
 
 	public void stop() {
@@ -49,13 +48,6 @@ public class EventProcessingCenterImpl implements EventProcessingService {
 	
 	private void configureEvents() {
 		this.defineEvent(InvocationEvent.class);
-	}
-	
-	private void configureContexts() {
-		String serviceCtx = "create context service partition by service from InvocationEvent";
-		String operationCtx = "create context operation partition by service,operation from InvocationEvent";
-		this.defineContext(serviceCtx);
-		this.defineContext(operationCtx);
 	}
 	
 	public void publishEvent(Object event) {

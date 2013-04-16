@@ -1,12 +1,13 @@
 package br.ufpe.cin.dsoa.handler.dependency;
 
+import br.ufpe.cin.dsoa.contract.Service;
 import br.ufpe.cin.dsoa.contract.ServiceConsumer;
 
 public class ServiceDependency {
 
 	private ServiceConsumer consumer;
 	private DependencyMetadata metadata;
-	private ServiceModel serviceModel;
+	private Service service;
 	private boolean valid;
 	
 
@@ -17,7 +18,7 @@ public class ServiceDependency {
 	}
 
 	public Object onGet(Object arg0, String arg1, Object arg2) {
-		return serviceModel.getService();
+		return service.getServiceObject();
 	}
 
 	public void onSet(Object arg0, String arg1, Object arg2) {
@@ -36,8 +37,8 @@ public class ServiceDependency {
 		return valid;
 	}
 	
-	public void setService(ServiceModel serviceModel) {
-		this.serviceModel = serviceModel;
+	public void setService(Service service) {
+		this.service = service;
 		this.setValid(true);
 	}
 	

@@ -2,21 +2,31 @@ package br.ufpe.cin.dsoa.util;
 
 public interface Constants {
 	/** 
-	 * Tag DEMAND
+	 * Tag REQUIRES
 	 */
-	public static final String SERVICE_ELEMENT                   = "service";
-	public static final String SERVICE_FIELD_ATTRIBUTE           = "field";
-	public static final String CONSUMER_NAME_ATTRIBUTE           = "name";
-	public static final String CONSUMER_PID_ATTRIBUTE            = "pid";
-	public static final String QOS_MODE							 = "qosMode";
+	public static final String ID_ATT         		= "id";
+	public static final String NAME_ATT         	= "name";
+	public static final String FIELD_ATT          	= "field";
+	public static final String MANAGER_ELE			= "manager";
 	
-	public static final String MANAGER			= "manager";
+    /**
+	 * properties name
+	 */
+	public static final String PROVIDER_NAME          = "provider.name";
+	public static final String PROVIDER_PID           = "service.pid";
+	
+	/**
+	 * Tag handler
+	 */
+	public static final String NAMESPACE = "br.ufpe.cin.dsoa";
+	public static final String NAME      = "requires";
 	
 	/** 
 	 * Tag SLO
 	 */
 	public static final String SLO_ELEMENT              = "slo";
 	public static final String SLO_ATTRIBUTE_ATTRIBUTE 	= "attribute";
+	public static final String CATEGORY_ATT 			= "category";
 	public static final String SLO_WINDOW_VALUE     	= "window.value";
 	public static final String SLO_WINDOW_UNIT         	= "window.unit";
 	
@@ -26,21 +36,4 @@ public interface Constants {
 	public static final String SLO_OPERATION_ATTRIBUTE  = "operation";
 	public static final String SLO_WEIGHT_ATTRIBUTE     = "weight";
 	
-	/**
-	 * Tag handler
-	 */
-	public static final String NAMESPACE = "br.ufpe.cin.dsoa";
-	public static final String NAME      = "requires";
-	
-	/**
-	 * properties name
-	 */
-	public static final String CONSUMER_NAME          = "consumer.name";
-    public static final String CONSUMER_PID           = "consumer.pid";
-    
-    /**
-	 * properties name
-	 */
-	public static final String PROVIDER_NAME          = "provider.name";
-	public static final String PROVIDER_PID           = "service.pid";
 }

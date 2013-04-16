@@ -20,15 +20,15 @@ public class MonitoredService implements Monitorable {
 	private Logger log;
 	private MonitoredServiceMetadata metadata;
 	// <target, MetricMonitor>
-	private Map<String, MetricMonitor> metricVariableMap;
+	private Map<String, MetricMonitor> metricMonitorMap;
 	private boolean started;
 	private ServiceRegistration registration;
 
 	
 	public MonitoredService(ServiceReference reference) {
 		this.log = Logger.getLogger(getClass().getSimpleName());
-		this.metricVariableMap = new HashMap<String, MetricMonitor>();
 		this.metadata = new MonitoredServiceMetadata(reference);
+		this.metricMonitorMap = new HashMap<String, MetricMonitor>();
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -49,7 +49,7 @@ public class MonitoredService implements Monitorable {
 	}
 
 	public void addMetricMonitor(MetricMonitor monitor) {
-		this.metricVariableMap.put(monitor.getTarget(), monitor);
+		this.metricMonitorMap.put(monitor.getTarget(), monitor);
 	}
 	
 	private String getMonitoredServicePid() {
@@ -69,17 +69,17 @@ public class MonitoredService implements Monitorable {
 	}
 	
 	public String[] getStatusVariableNames() {
-		String[] variableNames = new String[metricVariableMap.size()];
+		String[] variableNames = new String[metricMonitorMap.size()];
 		int i = 0;
-		for (String key : metricVariableMap.keySet()) {
+		for (String key : metricMonitorMap.keySet()) {
 			variableNames[i++] = key;
 		}
 		return variableNames;
 	}
 
 	public StatusVariable getStatusVariable(String id) throws IllegalArgumentException {
-		if (metricVariableMap.containsKey(id)) {
-			return metricVariableMap.get(id).getStatusVariable();
+		if (metricMonitorMap.containsKey(id)) {
+			return metricMonitorMap.get(id).getStatusVariable();
 		}
 		throw new IllegalArgumentException("Variable " + id + " does not exist");
 	}
@@ -93,14 +93,14 @@ public class MonitoredService implements Monitorable {
 	}
 
 	public String getDescription(String id) throws IllegalArgumentException {
-		if (metricVariableMap.containsKey(id)) {
-			return metricVariableMap.get(id).getDescription();
+		if (metricMonitorMap.containsKey(id)) {
+			return metricMonitorMap.get(id).getDescription();
 		}
 		throw new IllegalArgumentException("Variable " + id + " does not exist");
 	}
 
 	public Map<String, MetricMonitor> getMetricVariableMap() {
-		return this.metricVariableMap;
+		return this.metricMonitorMap;
 	}
 
 	public MonitoredServiceMetadata getMetadata() {

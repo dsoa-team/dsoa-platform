@@ -6,12 +6,15 @@ import java.util.List;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.management.ManagementService;
+import br.ufpe.cin.dsoa.metric.MetricComputingService;
+import br.ufpe.cin.dsoa.metric.MetricInstance;
 import br.ufpe.cin.dsoa.monitor.MonitoredService;
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 import br.ufpe.cin.dsoa.monitor.MonitoringService;
 
 public class ManagementServiceImpl implements ManagementService {
 
+	private MetricComputingService metricComputingService;
 	private MonitoringService monitoringService;
 	
 	/* (non-Javadoc)
@@ -19,7 +22,8 @@ public class ManagementServiceImpl implements ManagementService {
 	 */
 	@Override
 	public synchronized void onArrival(ServiceReference reference) {
-		monitoringService.startMonitoring(reference);
+		List<MetricInstance> metricInstances = metricComputingService.getMetricInstances(reference);
+		monitoringService.startMonitoring(reference, metricInstances);
 	}
 
 	/* (non-Javadoc)

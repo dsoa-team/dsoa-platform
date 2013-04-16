@@ -8,7 +8,7 @@ import org.osgi.framework.Constants;
 import br.ufpe.cin.dsoa.management.ManagementService;
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 
-public class ManagedServiceListCommand implements Command {
+public class ServiceListCommand implements Command {
 
 	private static final String ACTION_NAME = "service-list";
 

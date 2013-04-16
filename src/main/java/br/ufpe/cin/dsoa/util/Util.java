@@ -16,10 +16,11 @@ public class Util {
 	}
 	
 	public static String getId(ServiceReference reference) {
-		return (String) reference.getProperty(Constants.SERVICE_ID);
+		return reference.getProperty(Constants.SERVICE_ID).toString();
 	}
 	
 	public static String getPid(ServiceReference reference) {
-		return (String) reference.getProperty(Constants.SERVICE_PID);
+		Object pid = reference.getProperty(Constants.SERVICE_PID);
+		return pid == null ? null : pid.toString();
 	}
 }

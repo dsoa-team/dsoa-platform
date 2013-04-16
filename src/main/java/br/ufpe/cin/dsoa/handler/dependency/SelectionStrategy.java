@@ -1,7 +1,9 @@
 package br.ufpe.cin.dsoa.handler.dependency;
 
+import br.ufpe.cin.dsoa.contract.Service;
+
 public interface SelectionStrategy {
 
-	ServiceModel select(SelectionListener listener, DependencyMetadata metadata);
+	Service select(SelectionListener listener, DependencyMetadata metadata);
 
 }

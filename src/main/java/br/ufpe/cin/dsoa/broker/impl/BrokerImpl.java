@@ -19,9 +19,9 @@ import br.ufpe.cin.dsoa.broker.filter.FilterBuilder;
 import br.ufpe.cin.dsoa.broker.filter.IFilter;
 import br.ufpe.cin.dsoa.broker.normalizer.Normalizer;
 import br.ufpe.cin.dsoa.broker.rank.Rank;
+import br.ufpe.cin.dsoa.broker.util.ServiceModelFactory;
 import br.ufpe.cin.dsoa.contract.Slo;
 import br.ufpe.cin.dsoa.handler.dependency.SelectionListener;
-import br.ufpe.cin.dsoa.osgi.ServiceModelFactory;
 
 
 public class BrokerImpl implements Broker {
