@@ -28,13 +28,13 @@ public class ServiceOperationsCommand implements Command {
 	public void execute(String line, PrintStream out, PrintStream err) {
 		if (line.split(" ").length > 1) {
 			try {
-				int serviceId = Integer.parseInt(line.split(" ")[1]);
+				String servicePid = line.split(" ")[1];
 				MonitoredServiceMetadata metadata = this.managementService
-						.getManagedServiceMetadata(serviceId + "");
+						.getManagedServiceMetadata(servicePid + "");
 				
 				if (null != metadata) {
 					out.println("Operations: ");
-					out.println("Service id: " + metadata.getId());
+					out.println("Service Pid: " + metadata.getPid());
 					for (String it : metadata.getOperationsMap().keySet()) {
 						out.println(" * " + it);
 						for (String operation : metadata.getOperationsMap()

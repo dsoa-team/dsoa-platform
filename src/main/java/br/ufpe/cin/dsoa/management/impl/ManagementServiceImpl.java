@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.osgi.framework.ServiceReference;
 
+import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.management.ManagementService;
 import br.ufpe.cin.dsoa.metric.MetricComputingService;
+import br.ufpe.cin.dsoa.metric.MetricId;
 import br.ufpe.cin.dsoa.metric.MetricInstance;
 import br.ufpe.cin.dsoa.monitor.MonitoredService;
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
@@ -17,18 +19,11 @@ public class ManagementServiceImpl implements ManagementService {
 	private MetricComputingService metricComputingService;
 	private MonitoringService monitoringService;
 	
-	/* (non-Javadoc)
-	 * @see br.ufpe.cin.dsoa.management.ManagementService#onArrival(org.osgi.framework.ServiceReference)
-	 */
 	@Override
 	public synchronized void onArrival(ServiceReference reference) {
 		List<MetricInstance> metricInstances = metricComputingService.getMetricInstances(reference);
 		monitoringService.startMonitoring(reference, metricInstances);
 	}
-
-	/* (non-Javadoc)
-	 * @see br.ufpe.cin.dsoa.management.ManagementService#onDeparture(org.osgi.framework.ServiceReference)
-	 */
 	@Override
 	public synchronized void onDeparture(ServiceReference reference) {
 		monitoringService.stopMonitoring(reference);
@@ -52,24 +47,21 @@ public class ManagementServiceImpl implements ManagementService {
 		return metadata;
 	}
 
-	/* (non-Javadoc)
-	 * @see br.ufpe.cin.dsoa.management.ManagementService#getMetricList()
-	 */
 	@Override
 	public List<String> getMetricList() {
-		/*List<String> metricList = new ArrayList<String>();
-		for (Metric metric : this.metricCatalog.getMetrics()) {
-			metricList.add(metric.toString());
+		List<String> metricList = new ArrayList<String>();
+		
+		for(Metric m : this.metricComputingService.getMetrics()){
+			metricList.add(m.toString());
 		}
-		return metricList;*/
-		return null;
+		return metricList;
 	}
 	
-	/* (non-Javadoc)
-	 * @see br.ufpe.cin.dsoa.management.ManagementService#addMetric(br.ufpe.cin.dsoa.metric.MetricId, java.lang.String, java.lang.String)
-	 */
 	@Override
-	public void addMetric(String category, String metric, String servicePid, String operationName) {
-		//ManagedService mgdService = serviceRegistry.getService(servicePid);
+	public void addMetric(String category, String name, String servicePid, String operationName) {
+		MetricId id = new MetricId(category, name);
+		Metric metric = this.metricComputingService.getMetric(id);
+		MetricInstance metricInstance = new MetricInstance(metric, servicePid, operationName);
+		this.monitoringService.addMetric(servicePid, metricInstance);
 	}
 }

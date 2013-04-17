@@ -58,7 +58,7 @@ public class DependencyHandler extends PrimitiveHandler {
        	  expression="LT" 
        	  value="800" 
        	  weight="2"  />*/
-		Element[] qosTags	= requiresTag.getElements(Constants.QOS_ATT);
+	/*	Element[] qosTags	= requiresTag.getElements(Constants.QOS_ATT);
 		String category = null;
 		String metric = null;
 		String operation = null;
@@ -72,7 +72,7 @@ public class DependencyHandler extends PrimitiveHandler {
 			expression = qosTag.getAttribute(Constants.EXPRESSION_ATT);
 			value = qosTag.getAttribute(Constants.VALUE_ATT);
 			weight = qosTag.getAttribute(Constants.WEIGHT_ATT);
-		}
+		}*/
 	}
 
 	private void register(FieldMetadata fieldmeta, Dependency dependency) {

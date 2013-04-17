@@ -12,4 +12,6 @@ public interface MonitoringService {
 	void stopMonitoring(ServiceReference reference);
 	List<MonitoredService> getMonitoredServices();
 	MonitoredService getMonitoredService(String id);
+	void addMetric(String servicePid, MetricInstance metricInstance);
+	
 }

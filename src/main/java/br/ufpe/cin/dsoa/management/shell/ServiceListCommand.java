@@ -29,7 +29,7 @@ public class ServiceListCommand implements Command {
 	public void execute(String line, PrintStream out, PrintStream err) {
 		for (MonitoredServiceMetadata metadata : this.managementService
 				.getManagedServicesMetadata()) {
-			out.println(String.format(" - Id: %s :: %s", metadata.getId(),
+			out.println(String.format(" - Pid: %s :: %s", metadata.getPid(),
 					metadata.getProperty(Constants.SERVICE_DESCRIPTION)));
 		}
 		out.println("Total: "
