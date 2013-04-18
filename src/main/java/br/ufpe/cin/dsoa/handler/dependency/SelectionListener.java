@@ -1,9 +1,9 @@
 package br.ufpe.cin.dsoa.handler.dependency;
 
-import br.ufpe.cin.dsoa.contract.Service;
+import org.osgi.framework.ServiceReference;
 
 public interface SelectionListener {
 
-	public void notifySelection(Service service);
+	public void notifySelection(ServiceReference service);
 
 }

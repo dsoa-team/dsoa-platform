@@ -1,5 +1,8 @@
 package br.ufpe.cin.dsoa.handler.dependency;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
@@ -7,24 +10,24 @@ import org.apache.felix.ipojo.metadata.Element;
 public class DependencyHandlerDescription extends HandlerDescription {
 
 	private static final String STATUS_ELEMENT = "status";
-	private DependencyDescription[] depDescriptions;
+	private List<DependencyDescription> depDescriptions;
 
-	public DependencyHandlerDescription(DependencyHandler depHandler, Dependency[] deps) {
+	public DependencyHandlerDescription(DependencyHandler depHandler, List<Dependency> deps) {
 		super(depHandler);
-		depDescriptions = new DependencyDescription[deps.length];
-        for (int i = 0; i < depDescriptions.length; i++) {
-            depDescriptions[i] = new DependencyDescription(deps[i]);
+		depDescriptions = new ArrayList<DependencyDescription>(deps.size());
+        for (Dependency dependency : deps)  {
+            depDescriptions.add(new DependencyDescription(dependency));
         }
 	}
 	
 	public Element getHandlerInfo() {
         Element deps = super.getHandlerInfo();
         String state = "valid";
-        for (int i = 0; i < depDescriptions.length; i++) {
-            if (!depDescriptions[i].isValid()) {
+        for (DependencyDescription depDescription : depDescriptions) {
+            if (!depDescription.isValid()) {
                 state = "invalid";
             }
-            Element dep = depDescriptions[i].getInfo();
+            Element dep = depDescription.getInfo();
             deps.addElement(dep);
         }
         deps.addAttribute(new Attribute(STATUS_ELEMENT, state));

@@ -7,7 +7,6 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import br.ufpe.cin.dsoa.broker.util.ServiceModelFactory;
 import br.ufpe.cin.dsoa.handler.dependency.SelectionListener;
 
 public class BrokerTracker extends ServiceTracker {
@@ -24,7 +23,7 @@ public class BrokerTracker extends ServiceTracker {
 	@Override
 	public Object addingService(ServiceReference reference) {
 		if (!blackList.contains(reference)) {
-			qdl.notifySelection(ServiceModelFactory.createOsgiServiceModel(reference));
+			qdl.notifySelection(reference);
 			this.close();
 		}
 		return reference;

@@ -19,8 +19,7 @@ import br.ufpe.cin.dsoa.broker.filter.FilterBuilder;
 import br.ufpe.cin.dsoa.broker.filter.IFilter;
 import br.ufpe.cin.dsoa.broker.normalizer.Normalizer;
 import br.ufpe.cin.dsoa.broker.rank.Rank;
-import br.ufpe.cin.dsoa.broker.util.ServiceModelFactory;
-import br.ufpe.cin.dsoa.contract.Slo;
+import br.ufpe.cin.dsoa.contract.Constraint;
 import br.ufpe.cin.dsoa.handler.dependency.SelectionListener;
 
 
@@ -40,46 +39,7 @@ public class BrokerImpl implements Broker {
 		this.context = context;
 	}
 
-	private List<FilterBuilder> getFilters(String spe, List<Slo> slos) {
-		List<FilterBuilder> filter = new ArrayList<FilterBuilder>();
-		filter.add(new IFilter(Constants.OBJECTCLASS, spe));
-		for(Slo slo: slos) {
-			if(slo.getOperation() != null) {
-				filter.add(new DFilter(slo.getOperation() + "." + slo.getAttribute(), 
-						slo.getExpression(), slo.getValue()));
-			} else {
-				filter.add(new DFilter(slo.getAttribute(), slo.getExpression(), slo.getValue()));
-			}
-		}
-		return filter;
-	}
-
-	private ServiceReference findBestService(List<Slo> slos, List<ServiceReference> candidates) {
-		ServiceReference service = null;
-		ServiceReference[] references = candidates.toArray(new ServiceReference[candidates.size()]);
-		//double[][] norm = normalizer.normalizedMatrix(slos, candidates);
-		ServiceReference ranking = context.getServiceReference(Rank.class.getName());
-
-		if(ranking == null) {
-			Collections.sort(candidates, new RankComparator());
-			service = candidates.get(0);
-			//System.out.println(">>>>>>>>>>>>>>>  ========  getCotation.ResponseTime: " + service.getProperty("getCotation.ResponseTime"));
-			//System.out.println("Properties");
-			//for(String chave: service.getPropertyKeys()){
-				//System.out.println(chave + " - " +service.getProperty(chave));
-			//}
-			//service = references[0];
-
-		} else {
-			Normalizer normalizer = new Normalizer(slos, references); // Entrou
-			Rank rank = (Rank) context.getService(ranking);
-			service = rank.ranking(slos, normalizer, references);
-		}
-
-		return service;
-	}
-
-	public void getBestService(String spe, List<Slo> slos,
+	public void getBestService(String spe, List<Constraint> constraints,
 			SelectionListener dep, List<ServiceReference> trash) {
 
 		Filter filter = null;
@@ -88,7 +48,7 @@ public class BrokerImpl implements Broker {
 		List<ServiceReference> result = new ArrayList<ServiceReference>();
 		try {
 			filter = context.createFilter(new AndFilter(getFilters(
-					spe, slos)).toString());
+					spe, constraints)).toString());
 
 		} catch (InvalidSyntaxException e) {
 			e.printStackTrace();
@@ -98,7 +58,7 @@ public class BrokerImpl implements Broker {
 
 		try {
 			references = context.getServiceReferences(spe, new AndFilter(getFilters(
-					spe, slos)).toString());
+					spe, constraints)).toString());
 			if(references != null){
 				candidates = Arrays.asList(references);
 				//System.out.println("CANDIDATES ANTES: " + candidates.size());
@@ -124,9 +84,48 @@ public class BrokerImpl implements Broker {
 
 		} else {
 			//ServiceReference[] candidates = verifyBlackList(trash, references);
-			ServiceReference reference = findBestService(slos, candidates);
-			dep.notifySelection(ServiceModelFactory.createOsgiServiceModel(reference));
+			ServiceReference reference = findBestService(constraints, candidates);
+			dep.notifySelection(reference);
 		}
+	}
+	
+	private List<FilterBuilder> getFilters(String spe, List<Constraint> constraints) {
+		List<FilterBuilder> filter = new ArrayList<FilterBuilder>();
+		filter.add(new IFilter(Constants.OBJECTCLASS, spe));
+		for(Constraint constraint: constraints) {
+			if(constraint.getOperation() != null) {
+				filter.add(new DFilter(constraint.getOperation() + "." + constraint.getMetric(), 
+						constraint.getExpression(), constraint.getThreashold()));
+			} else {
+				filter.add(new DFilter(constraint.getMetric(), constraint.getExpression(), constraint.getThreashold()));
+			}
+		}
+		return filter;
+	}
+
+	private ServiceReference findBestService(List<Constraint> constraints, List<ServiceReference> candidates) {
+		ServiceReference service = null;
+		ServiceReference[] references = candidates.toArray(new ServiceReference[candidates.size()]);
+		//double[][] norm = normalizer.normalizedMatrix(slos, candidates);
+		ServiceReference ranking = context.getServiceReference(Rank.class.getName());
+
+		if(ranking == null) {
+			Collections.sort(candidates, new RankComparator());
+			service = candidates.get(0);
+			//System.out.println(">>>>>>>>>>>>>>>  ========  getCotation.ResponseTime: " + service.getProperty("getCotation.ResponseTime"));
+			//System.out.println("Properties");
+			//for(String chave: service.getPropertyKeys()){
+				//System.out.println(chave + " - " +service.getProperty(chave));
+			//}
+			//service = references[0];
+
+		} else {
+			Normalizer normalizer = new Normalizer(constraints, references); // Entrou
+			Rank rank = (Rank) context.getService(ranking);
+			service = rank.ranking(constraints, normalizer, references);
+		}
+
+		return service;
 	}
 
 	/*

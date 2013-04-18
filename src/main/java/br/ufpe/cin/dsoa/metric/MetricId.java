@@ -1,6 +1,6 @@
 package br.ufpe.cin.dsoa.metric;
 
-import br.ufpe.cin.dsoa.util.DsoaConstants;
+import br.ufpe.cin.dsoa.util.Constants;
 
 public class MetricId {
 
@@ -53,6 +53,6 @@ public class MetricId {
 	}
 	
 	public String toString() {
-		return getCategory() + DsoaConstants.TOKEN + getName();
+		return getCategory() + Constants.TOKEN + getName();
 	}
 }

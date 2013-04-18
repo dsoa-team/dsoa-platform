@@ -3,10 +3,10 @@ package br.ufpe.cin.dsoa.handler.dependency;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 
+import br.ufpe.cin.dsoa.util.Constants;
+
 public class DependencyDescription {
 
-	public static final String DEPENDENCY_NAME = "Dependency";
-	public static final String DEPENDENCY_NAMESPACE = "Dsoa";
 	private static final String DEPENDENCY_ATT_VALID = "valid";
 	private static final String DEPENDENCY_ATT_SPECIFICATION = "specification";
 	
@@ -21,7 +21,7 @@ public class DependencyDescription {
 	}
 	
 	public Element getInfo() {
-		Element elDependency = new Element(DEPENDENCY_NAME, DEPENDENCY_NAMESPACE);
+		Element elDependency = new Element(Constants.REQUIRES_TAG, Constants.REQUIRES_TAG_NAMESPACE);
 		elDependency.addAttribute(new Attribute(DEPENDENCY_ATT_VALID, String.valueOf(dependency.isValid())));
 		elDependency.addAttribute(new Attribute(DEPENDENCY_ATT_SPECIFICATION, dependency.getSpecification().getName()));
 		return elDependency;

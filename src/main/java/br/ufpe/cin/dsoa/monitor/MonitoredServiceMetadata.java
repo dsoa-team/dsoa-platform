@@ -3,10 +3,8 @@ package br.ufpe.cin.dsoa.monitor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +35,7 @@ public class MonitoredServiceMetadata {
 	}
 
 	private void parseOperations() {
-		log.info("ServiceId: " + id);
+		log.fine("ServiceId: " + id);
 		log.info("ServicePid: " + pid);
 		for(String clazz : (String[]) reference.getProperty(Constants.OBJECTCLASS)){
 			log.info("Service Interface: " + clazz);
