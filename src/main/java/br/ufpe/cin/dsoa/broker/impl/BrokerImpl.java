@@ -19,8 +19,9 @@ import br.ufpe.cin.dsoa.broker.filter.FilterBuilder;
 import br.ufpe.cin.dsoa.broker.filter.IFilter;
 import br.ufpe.cin.dsoa.broker.normalizer.Normalizer;
 import br.ufpe.cin.dsoa.broker.rank.Rank;
+import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.contract.Constraint;
-import br.ufpe.cin.dsoa.handler.dependency.SelectionListener;
+import br.ufpe.cin.dsoa.handler.dependency.ServiceListener;
 
 
 public class BrokerImpl implements Broker {
@@ -40,7 +41,7 @@ public class BrokerImpl implements Broker {
 	}
 
 	public void getBestService(String spe, List<Constraint> constraints,
-			SelectionListener dep, List<ServiceReference> trash) {
+			ServiceListener dep, List<ServiceReference> trash) {
 
 		Filter filter = null;
 		ServiceReference[] references = null;
@@ -85,16 +86,17 @@ public class BrokerImpl implements Broker {
 		} else {
 			//ServiceReference[] candidates = verifyBlackList(trash, references);
 			ServiceReference reference = findBestService(constraints, candidates);
-			dep.notifySelection(reference);
+			dep.notifyArrival(reference);
 		}
 	}
 	
 	private List<FilterBuilder> getFilters(String spe, List<Constraint> constraints) {
 		List<FilterBuilder> filter = new ArrayList<FilterBuilder>();
 		filter.add(new IFilter(Constants.OBJECTCLASS, spe));
+		//metric.QoS.ResponseTime.priceAlert
 		for(Constraint constraint: constraints) {
 			if(constraint.getOperation() != null) {
-				filter.add(new DFilter(constraint.getOperation() + "." + constraint.getMetric(), 
+				filter.add(new DFilter(Metric.METRIC_PREFIX +constraint.getMetric() + "." + constraint.getOperation(), 
 						constraint.getExpression(), constraint.getThreashold()));
 			} else {
 				filter.add(new DFilter(constraint.getMetric(), constraint.getExpression(), constraint.getThreashold()));

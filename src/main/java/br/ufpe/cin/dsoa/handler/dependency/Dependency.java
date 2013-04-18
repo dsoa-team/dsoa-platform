@@ -4,9 +4,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.FieldInterceptor;
-import org.apache.felix.ipojo.util.DependencyStateListener;
+import org.apache.felix.ipojo.IPOJOServiceFactory;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.broker.Broker;
@@ -14,7 +14,7 @@ import br.ufpe.cin.dsoa.broker.impl.BrokerImpl;
 import br.ufpe.cin.dsoa.contract.Constraint;
 import br.ufpe.cin.dsoa.contract.ServiceConsumer;
 
-public class Dependency implements FieldInterceptor, SelectionListener {
+public class Dependency implements FieldInterceptor, ServiceListener {
 	
 	private DependencyHandler handler;
 	private ServiceConsumer consumer;
@@ -24,7 +24,9 @@ public class Dependency implements FieldInterceptor, SelectionListener {
 	private List<Constraint> constraintList;
 	private DependencyStatus status;
 	private Broker broker;
+	private BundleContext context;
 	private ServiceReference reference;
+	private Object proxy;
 	
 	public Dependency(DependencyHandler dependencyHandler, ServiceConsumer serviceConsumer, String field, Class<?> specification, String filter, List<Constraint> constraintList) {
 		super();
@@ -35,6 +37,8 @@ public class Dependency implements FieldInterceptor, SelectionListener {
 		this.filter = filter;
 		this.constraintList = constraintList;
 		this.status = DependencyStatus.UNRESOLVED;
+		this.context = dependencyHandler.getInstanceManager().getContext();
+		this.broker = new BrokerImpl(context);
 	}
 	
 	public DependencyHandler getHandler() {
@@ -70,11 +74,19 @@ public class Dependency implements FieldInterceptor, SelectionListener {
 	}
 	
 	public Object getService() {
-		return null;
+		Object svc =  context.getService(reference);
+        if (svc instanceof IPOJOServiceFactory) {
+            Object obj =  ((IPOJOServiceFactory) svc).getService(handler.getInstanceManager());
+            return obj;
+        } else {
+            return svc;
+        }
 	}
 	
 	public void start() {
-		
+		DynamicProxyFactory proxyFactory = new DynamicProxyFactory();
+        proxy = proxyFactory.getProxy(getSpecification());
+		broker.getBestService(specification.getName(), constraintList, this, null);
 	}
 
 	public void stop() {
@@ -111,7 +123,7 @@ public class Dependency implements FieldInterceptor, SelectionListener {
      * dependency.
      */
     private void invalidate() {
-    	handler.invalidate(this);
+    	handler.invalidate();
     }
 
     /**
@@ -119,7 +131,7 @@ public class Dependency implements FieldInterceptor, SelectionListener {
      * dependency.
      */
     private void validate() {
-    	handler.validate(this);
+    	handler.validate();
     }
 	
 	@Override
@@ -128,12 +140,21 @@ public class Dependency implements FieldInterceptor, SelectionListener {
 	}
 	@Override
 	public Object onGet(Object pojo, String fieldName, Object value) {
-		return null;
+		return proxy;
 	}
 	
 	@Override
-	public void notifySelection(ServiceReference service) {
-		
+	public void notifyArrival(ServiceReference reference) {
+		this.reference = reference;
+		this.computeDependencyState();
+	}
+	
+	@Override
+	public void notifyDeparture(ServiceReference reference) {
+		if (this.reference != null && this.reference.equals(reference)) {
+			this.reference = null;
+			this.computeDependencyState();
+		}
 	}
 	
 	 /**
@@ -208,7 +229,7 @@ public class Dependency implements FieldInterceptor, SelectionListener {
                             "Unexpected Object method dispatched: " + method);
                 }
             }
-
+            System.out.println("Estou no proxy...");
             return method.invoke(svc, args);
         }
 

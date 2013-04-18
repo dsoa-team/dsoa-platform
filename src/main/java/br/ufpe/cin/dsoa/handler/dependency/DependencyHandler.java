@@ -87,11 +87,11 @@ public class DependencyHandler extends PrimitiveHandler {
 		return this.description;
 	}
 
-	public void validate(Dependency dependency) {
+	public void validate() {
 		checkContext();
 	}
 
-	public void invalidate(Dependency dependency) {
+	public void invalidate() {
 		setValidity(false);
 	}
 	
