@@ -36,6 +36,15 @@ public class DependencyHandler extends PrimitiveHandler {
 			String filter = requiresTag.getAttribute(Constants.REQUIRES_ATT_FILTER);
 			List<Constraint> constraintList = getConstraintList(requiresTag.getElements(Constants.CONSTRAINT_TAG));
 			FieldMetadata fieldMetadata = pojoMetadata.getField(field);
+			
+	/*		 Class spec = null;
+		        try {
+		            spec = context.getBundle().loadClass(specification);
+		        } catch (ClassNotFoundException e) {
+		            throw new ConfigurationException("A required specification cannot be loaded : " + specification);
+		        }
+		        return spec;*/
+			
 			Class<?> specification = null;
 			try {
 				specification = getInstanceManager().getContext().getBundle().loadClass(fieldMetadata.getFieldType());

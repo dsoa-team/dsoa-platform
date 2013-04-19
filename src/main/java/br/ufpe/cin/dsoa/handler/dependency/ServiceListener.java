@@ -4,8 +4,8 @@ import org.osgi.framework.ServiceReference;
 
 public interface ServiceListener {
 
-	void notifyArrival(ServiceReference service);
+	void onArrival(ServiceReference service);
 	
-	void notifyDeparture(ServiceReference service);
+	void onDeparture(ServiceReference service);
 
 }

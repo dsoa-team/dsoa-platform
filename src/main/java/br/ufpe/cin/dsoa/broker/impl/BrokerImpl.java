@@ -11,8 +11,10 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import br.ufpe.cin.dsoa.broker.Broker;
+import br.ufpe.cin.dsoa.broker.InvalidConstraintException;
 import br.ufpe.cin.dsoa.broker.filter.AndFilter;
 import br.ufpe.cin.dsoa.broker.filter.DFilter;
 import br.ufpe.cin.dsoa.broker.filter.FilterBuilder;
@@ -27,66 +29,67 @@ import br.ufpe.cin.dsoa.handler.dependency.ServiceListener;
 public class BrokerImpl implements Broker {
 
 	private BundleContext context;
-	//private ServiceReference[] references;
-	//private ServiceReference[] candidates;
-	//private Filter filter;
-
-	/**
-	 * Constructor
-	 * 
-	 **/
-
-	public BrokerImpl(BundleContext context) {
+	private String specification;
+	private List<Constraint> constraints;
+	private ServiceListener listener;
+	private Filter filter;
+	private List<ServiceReference> blackList;
+	
+	public BrokerImpl(BundleContext context, String specification, List<Constraint> constraints, List<ServiceReference> blackList, ServiceListener listener) {
 		this.context = context;
+		this.specification = specification;
+		this.constraints = constraints;
+		this.blackList = blackList;
+		this.listener = listener;
+		try {
+			this.filter = context.createFilter(new AndFilter(getFilters(
+				specification, constraints)).toString());
+		} catch (InvalidSyntaxException e) {
+			e.printStackTrace();
+			throw new InvalidConstraintException("Invalid constraints!", e);
+		} 
 	}
 
-	public void getBestService(String spe, List<Constraint> constraints,
-			ServiceListener dep, List<ServiceReference> trash) {
+	public void getBestService() {
 
-		Filter filter = null;
 		ServiceReference[] references = null;
 		List<ServiceReference> candidates = null;
 		List<ServiceReference> result = new ArrayList<ServiceReference>();
-		try {
-			filter = context.createFilter(new AndFilter(getFilters(
-					spe, constraints)).toString());
 
+		try {
+			references = context.getServiceReferences(specification, filter.toString());
 		} catch (InvalidSyntaxException e) {
 			e.printStackTrace();
-		}
-
-		//System.out.println("Filter:" + filter.toString());
-
-		try {
-			references = context.getServiceReferences(spe, new AndFilter(getFilters(
-					spe, constraints)).toString());
-			if(references != null){
-				candidates = Arrays.asList(references);
-				//System.out.println("CANDIDATES ANTES: " + candidates.size());
-				for(ServiceReference ref:candidates) {
-					if (!trash.contains(ref)) {
-						result.add(ref);
-					}
-				}
-				candidates = result;
-				//System.out.println("CANDIDATES DEPOIS: " + candidates.size());
-				for(ServiceReference ref:candidates) {
-					//System.out.println(ref);
+			throw new InvalidConstraintException("Invalid constraints!", e);
+		} 
+		
+		if(references != null){
+			candidates = Arrays.asList(references);
+			for(ServiceReference ref:candidates) {
+				if (!blackList.contains(ref)) {
+					result.add(ref);
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			candidates = result;
 		}
+		
 
 		if(candidates == null || candidates.size() == 0) {
-			ServiceTracker tracker = new BrokerTracker(dep, context, filter,trash);
+			ServiceTracker tracker = new BrokerTracker(listener, context, filter, blackList);
 			tracker.open();
-			System.out.println("entrou no if --------");
-
 		} else {
 			//ServiceReference[] candidates = verifyBlackList(trash, references);
 			ServiceReference reference = findBestService(constraints, candidates);
-			dep.notifyArrival(reference);
+			listener.onArrival(reference);
+			ServiceTracker s = new ServiceTracker(context, reference, null) {
+				@Override
+				public void removedService(ServiceReference reference, Object object) {
+					listener.onDeparture(reference);
+					super.removedService(reference, object);
+					this.close();
+				}
+			};
+			s.open();
 		}
 	}
 	

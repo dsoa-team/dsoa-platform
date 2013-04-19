@@ -23,7 +23,16 @@ public class BrokerTracker extends ServiceTracker {
 	@Override
 	public Object addingService(ServiceReference reference) {
 		if (!blackList.contains(reference)) {
-			qdl.notifyArrival(reference);
+			qdl.onArrival(reference);
+			ServiceTracker s =new ServiceTracker(context, reference, null) {
+				@Override
+				public void removedService(ServiceReference reference, Object object) {
+					qdl.onDeparture(reference);
+					super.removedService(reference, object);
+					this.close();
+				}
+			};
+			s.open();
 			this.close();
 		}
 		return reference;
