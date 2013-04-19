@@ -18,11 +18,11 @@ public class ServiceOperationsCommand implements Command {
 	}
 
 	public String getShortDescription() {
-		return "*";
+		return "Show service operations for every interface that service provider implements";
 	}
 
 	public String getUsage() {
-		return ACTION_NAME + "";
+		return "dsoa service-operations [service_pid]";
 	}
 
 	public void execute(String line, PrintStream out, PrintStream err) {

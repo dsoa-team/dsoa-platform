@@ -16,6 +16,8 @@ public interface ManagementService {
 	
 	void addMetric(String category, String metric, String servicePid, String operationName);
 	
+	void addMetricMonitor(String servicePid, String metricName, String metricCategory, String operationName);
+	
 	public MonitoredServiceMetadata getManagedServiceMetadata(String id);
 	
 	public List<MonitoredServiceMetadata> getManagedServicesMetadata();

@@ -40,11 +40,16 @@ public class DsoaCommand implements Command, ServiceTrackerCustomizer {
 	}
 
 	public String getShortDescription() {
-		return "dsoa *";
+		return "main command of dsoa platform";
 	}
 
 	public String getUsage() {
-		return ACTION_NAME + " *";
+		return "dsoa [cmd] <params>" +
+				"\n" +
+				"metric-list" +
+				"service-operations" +
+				"monitor" +
+				"service-list";
 	}
 
 	

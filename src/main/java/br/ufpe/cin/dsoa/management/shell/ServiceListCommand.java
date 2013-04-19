@@ -19,11 +19,11 @@ public class ServiceListCommand implements Command {
 	}
 
 	public String getShortDescription() {
-		return "*";
+		return "List all provided services on plaform";
 	}
 
 	public String getUsage() {
-		return ACTION_NAME + "";
+		return "dsoa service-list";
 	}
 
 	public void execute(String line, PrintStream out, PrintStream err) {

@@ -19,12 +19,12 @@ public class MetricListCommand implements Command {
 
 	
 	public String getUsage() {
-		return ACTION_NAME + "";
+		return "dsoa metric-list";
 	}
 
 	
 	public String getShortDescription() {
-		return "*";
+		return "List all monitorable metrics on platform";
 	}
 
 	

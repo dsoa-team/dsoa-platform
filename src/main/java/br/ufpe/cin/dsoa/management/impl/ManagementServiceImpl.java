@@ -64,4 +64,11 @@ public class ManagementServiceImpl implements ManagementService {
 		MetricInstance metricInstance = new MetricInstance(metric, servicePid, operationName);
 		this.monitoringService.addMetric(servicePid, metricInstance);
 	}
+	
+	@Override
+	public void addMetricMonitor(String servicePid, String metricName, String metricCategory, String operationName) {
+		Metric metric = this.metricComputingService.getMetric(new MetricId(metricCategory, metricName));
+		MetricInstance metricInstance = new MetricInstance(metric, servicePid, operationName);
+		this.monitoringService.addMetric(servicePid, metricInstance);
+	}
 }
