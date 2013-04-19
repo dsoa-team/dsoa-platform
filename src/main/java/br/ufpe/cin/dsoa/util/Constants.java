@@ -1,46 +1,32 @@
 package br.ufpe.cin.dsoa.util;
 
 public interface Constants {
-	/** 
-	 * Tag DEMAND
+	/**
+	 * Tag Component
 	 */
-	public static final String SERVICE_ELEMENT                   = "service";
-	public static final String SERVICE_FIELD_ATTRIBUTE           = "field";
-	public static final String CONSUMER_NAME_ATTRIBUTE           = "name";
-	public static final String CONSUMER_PID_ATTRIBUTE            = "pid";
-	public static final String QOS_MODE							 = "qosMode";
-	
-	public static final String MANAGER			= "manager";
+	public static final String COMPONENT_ID_ATT        	= "id";
+	public static final String COMPONENT_NAME_ATT      	= "name";
 	
 	/** 
-	 * Tag SLO
+	 * Tag Requires
 	 */
-	public static final String SLO_ELEMENT              = "slo";
-	public static final String SLO_ATTRIBUTE_ATTRIBUTE 	= "attribute";
-	public static final String SLO_WINDOW_VALUE     	= "window.value";
-	public static final String SLO_WINDOW_UNIT         	= "window.unit";
+	public static final String REQUIRES_TAG_NAMESPACE	= "br.ufpe.cin.dsoa";
+	public static final String REQUIRES_TAG    			= "requires";
+	public static final String REQUIRES_ATT_FIELD		= "field";
+	public static final String REQUIRES_ATT_FILTER		= "filter";
 	
-	public static final String SLO_EXPRESSION_ATTRIBUTE = "expression";
-	public static final String SLO_VALUE_ATTRIBUTE      = "value";
-	public static final String SLO_STATISTIC_ATTRIBUTE 	= "statistic";
-	public static final String SLO_OPERATION_ATTRIBUTE  = "operation";
-	public static final String SLO_WEIGHT_ATTRIBUTE     = "weight";
+	/** 
+	 * Tag Constraint
+	 */
+	public static final String CONSTRAINT_TAG		    	= "constraint";
+	public static final String CONSTRAINT_ATT_METRIC 		= "metric";
+	public static final String CONSTRAINT_ATT_OPERATION		= "operation";
+	public static final String CONSTRAINT_ATT_EXPRESSION    = "expression";
+	public static final String CONSTRAINT_ATT_THREASHOLD	= "threashold";
+	public static final String CONSTRAINT_ATT_WEIGHT		= "weight";
 	
-	/**
-	 * Tag handler
-	 */
-	public static final String NAMESPACE = "br.ufpe.cin.dsoa";
-	public static final String NAME      = "requires";
-	
-	/**
-	 * properties name
-	 */
-	public static final String CONSUMER_NAME          = "consumer.name";
-    public static final String CONSUMER_PID           = "consumer.pid";
-    
-    /**
-	 * properties name
-	 */
-	public static final String PROVIDER_NAME          = "provider.name";
-	public static final String PROVIDER_PID           = "service.pid";
+	public static final String SERVICE_PROXY = "service.proxy";
+	public static final String REMOTE_SERVICE = "service.imported"; 
+	public static final String TOKEN = ".";
+	public static final String CONTEXT = "context";
 }

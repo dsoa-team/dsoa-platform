@@ -24,12 +24,14 @@ public class DsoaCommand implements Command, ServiceTrackerCustomizer {
 
 		String subcomand = s.replaceAll(ACTION_NAME, "");
 
-		if (subcomand.split(" ").length >= 1) {
+		if (subcomand.split(" ").length >= 1 && !subcomand.trim().equalsIgnoreCase("")) {
 			try {
 				shellService.executeCommand(subcomand, out, err);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		} else {
+			err.println("Incorrect number of parameters");
 		}
 	}
 
@@ -42,7 +44,7 @@ public class DsoaCommand implements Command, ServiceTrackerCustomizer {
 	}
 
 	public String getUsage() {
-		return "dsoa *";
+		return ACTION_NAME + " *";
 	}
 
 	

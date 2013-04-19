@@ -6,123 +6,160 @@ import java.util.List;
 
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.PrimitiveHandler;
-import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
+import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 
+import br.ufpe.cin.dsoa.contract.Constraint;
+import br.ufpe.cin.dsoa.contract.Expression;
 import br.ufpe.cin.dsoa.contract.ServiceConsumer;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyHandler extends PrimitiveHandler {
 
-	private List<DependencyManager> depMgrs = new ArrayList<DependencyManager>();
-	private BundleContext ctx;
+	private List<Dependency> dependencies = new ArrayList<Dependency>();
+	private DependencyHandlerDescription description;
+	private boolean started;
 
-	public void initializeComponentFactory(ComponentTypeDescription ctd,
-			Element metadata) throws ConfigurationException {
-		Element[] requiresElems = metadata.getElements(Constants.NAME,
-				Constants.NAMESPACE);
-		if (requiresElems.length != 1) {
-			throw new ConfigurationException(
-					"One and only one "
-							+ Constants.NAME
-							+ " element is allowed in component "
-							+ ctd.getName()
-							+ " configuration. "
-							+ "use 'require' sub-elements to declare multiple dependencies.");
-		}
-
-		super.initializeComponentFactory(ctd, metadata);
-	}
-
-	private String getField(Element demand) throws ConfigurationException {
-		return demand.getAttribute(Constants.SERVICE_FIELD_ATTRIBUTE);
-	}
-	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void configure(Element metadata, Dictionary configuration)
-			throws ConfigurationException {
-		ctx = this.getInstanceManager().getContext();
-		Element handlerConfig = metadata.getElements(Constants.NAME, Constants.NAMESPACE)[0];
-		PojoMetadata manipulation = getFactory().getPojoMetadata();
+	public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
+		String consumerName = metadata.getAttribute(Constants.COMPONENT_NAME_ATT);
+		String consumerId = metadata.getAttribute(Constants.COMPONENT_ID_ATT);
+		ServiceConsumer serviceConsumer = new ServiceConsumer(consumerId, consumerName);
+		PojoMetadata pojoMetadata = getFactory().getPojoMetadata();
 
-		// Get consumer information
-		String consumerPID = (String) handlerConfig
-				.getAttribute(Constants.CONSUMER_PID_ATTRIBUTE);
-		String consumerName = (String) handlerConfig
-				.getAttribute(Constants.CONSUMER_NAME_ATTRIBUTE);
-		
-		ServiceConsumer serviceConsumer = new ServiceConsumer(consumerPID, consumerName);
-		
-		// Get service tags from the pojo's descriptor
-		Element[] serviceElems = handlerConfig.getElements(Constants.SERVICE_ELEMENT);
-		for (Element serviceElement : serviceElems) {
-			DependencyManager dependencyMgr = this.getDependencyManager(serviceConsumer, serviceElement);
-			String field = this.getField(serviceElement);
-			FieldMetadata fieldmeta = manipulation.getField(field);
-			this.register(fieldmeta, dependencyMgr);
-		}
-	}
-
-	private DependencyManager getDependencyManager(ServiceConsumer serviceConsumer, Element serviceElement) {
-		Element managerElement = serviceElement.getElements(Constants.MANAGER)[0];
-		String managerName = null;
-		if (managerElement != null) {
-			managerName = managerElement.getAttribute("name");
-			if (managerName == null) {
-				managerName = "DependencyManager-Default";
+		Element[] requiresTags = metadata.getElements(Constants.REQUIRES_TAG, Constants.REQUIRES_TAG_NAMESPACE);
+		for (Element requiresTag : requiresTags) {
+			String field = (String) requiresTag.getAttribute(Constants.REQUIRES_ATT_FIELD);
+			String filter = requiresTag.getAttribute(Constants.REQUIRES_ATT_FILTER);
+			List<Constraint> constraintList = getConstraintList(requiresTag.getElements(Constants.CONSTRAINT_TAG));
+			FieldMetadata fieldMetadata = pojoMetadata.getField(field);
+			
+	/*		 Class spec = null;
+		        try {
+		            spec = context.getBundle().loadClass(specification);
+		        } catch (ClassNotFoundException e) {
+		            throw new ConfigurationException("A required specification cannot be loaded : " + specification);
+		        }
+		        return spec;*/
+			
+			Class<?> specification = null;
+			try {
+				specification = getInstanceManager().getContext().getBundle().loadClass(fieldMetadata.getFieldType());
+			} catch (ClassNotFoundException e) {
+				throw new ConfigurationException("The required service interface cannot be loaded : " + e.getMessage());
 			}
+			Dependency dependency = new Dependency(this, serviceConsumer, field, specification, filter, constraintList);
+			register(fieldMetadata, dependency);
 		}
-		String filter = "name=" + managerName;
-		ServiceReference factoryRef = null;
-		try {
-			factoryRef = ctx.getServiceReferences(DependencyManagerFactory.class.toString(), filter)[0];
-		} catch (InvalidSyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		DependencyManagerFactory factory = (DependencyManagerFactory) ctx.getService(factoryRef);
-		return factory.create(serviceConsumer, managerElement);
+		description = new DependencyHandlerDescription(this, dependencies); // Initialize
+																			// the
+																			// description.
 	}
 
-	private void register(FieldMetadata fieldmeta, DependencyManager dependency) {
-		depMgrs.add(dependency);
+	private List<Constraint> getConstraintList(Element[] constraintTags) {
+		List<Constraint> constraintList = new ArrayList<Constraint>();
+		String metric = null, operation = null, expression = null, threashold = null, weight = null;
+		for (Element constraintTag : constraintTags) {
+			metric = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_METRIC);
+			operation = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_OPERATION);
+			expression = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_EXPRESSION);
+			threashold = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_THREASHOLD);
+			weight = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_WEIGHT);
+			constraintList.add(defineConstraint(metric, operation, expression, threashold, weight));
+		}
+		return constraintList;
+	}
+
+	private Constraint defineConstraint(String metric, String operation, String expression, String threashold,
+			String weight) {
+		Expression exp = Expression.valueOf(expression);
+		double thr = Double.parseDouble(threashold);
+		long wgt = Long.parseLong(weight);
+		return new Constraint(metric, operation, exp, thr, wgt);
+	}
+
+	private void register(FieldMetadata fieldmeta, Dependency dependency) {
+		dependencies.add(dependency);
 		getInstanceManager().register(fieldmeta, dependency);
 	}
-
+	
 	@Override
 	public String toString() {
-		return "DependencyHandler [dependencies=" + depMgrs + "]";
+		return "DependencyHandler [dependencies=" + dependencies + "]";
 	}
 
 	@Override
-	public void start() {
-		this.setValidity(false);
-		for (DependencyManager mgr : depMgrs) {
-			mgr.start();
-		}
+	public HandlerDescription getDescription() {
+		return this.description;
 	}
 
-	@Override
-	public void stop() {
-
+	public void validate() {
+		checkContext();
 	}
 
-	public void checkValidate() {
-
-		boolean valid = true;
-		for (DependencyManager dep : depMgrs) {
-			if (dep.isValid() == false) {
-				valid = false;
-				break;
-			}
-		}
-		setValidity(valid);
+	public void invalidate() {
+		setValidity(false);
 	}
+	
+    /**
+     * Handler start method.
+     * @see org.apache.felix.ipojo.Handler#start()
+     */
+    public void start() {
+        // Start the dependencies
+        for (Dependency dep : dependencies) {
+            dep.start();
+        }
+        // Check the state
+        started = true;
+        setValidity(false);
+        checkContext();
+    }
+
+    /**
+     * Handler stop method.
+     * @see org.apache.felix.ipojo.Handler#stop()
+     */
+    public void stop() {
+    	started = false;
+        for (Dependency dep : dependencies) {
+        	dep.stop();
+        }
+    }
+	
+    /**
+     * Check the validity of the dependencies.
+     */
+    protected void checkContext() {
+        if (!started) {
+            return;
+        }
+        synchronized (dependencies) {
+            // Store the initial state
+            boolean initialState = getValidity();
+
+            boolean valid = true;
+            for (Dependency dep : dependencies) {
+                if (dep.getStatus() != DependencyStatus.RESOLVED) {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (valid) {
+                if (!initialState) {
+                    setValidity(true);
+                }
+            } else {
+                if (initialState) {
+                    setValidity(false);
+                }
+            }
+
+        }
+    }
 
 }

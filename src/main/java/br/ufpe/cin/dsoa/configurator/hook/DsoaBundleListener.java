@@ -21,14 +21,14 @@ import br.ufpe.cin.dsoa.configurator.parser.contextmodel.ContextModel;
 import br.ufpe.cin.dsoa.configurator.parser.event.Event;
 import br.ufpe.cin.dsoa.configurator.parser.event.EventList;
 import br.ufpe.cin.dsoa.configurator.parser.metric.MetricList;
-import br.ufpe.cin.dsoa.event.EventProcessingCenter;
-import br.ufpe.cin.dsoa.metric.MetricCatalog;
+import br.ufpe.cin.dsoa.event.EventProcessingService;
+import br.ufpe.cin.dsoa.metric.MetricComputingService;
 
 public class DsoaBundleListener extends BundleTracker {
 
 	private Map<String, Unmarshaller> JAXBContexts;
-	private EventProcessingCenter epCenter;
-	private MetricCatalog metricCatalog;
+	private EventProcessingService epService;
+	private MetricComputingService mcService;
 	private Map<String, Event> eventMap;
 	
 	private static Logger logger = Logger.getLogger(DsoaBundleListener.class.getName());
@@ -102,7 +102,7 @@ public class DsoaBundleListener extends BundleTracker {
 					}
 				}
 				
-				this.epCenter.defineEvent(e.getType(), registedProperties);
+				this.epService.defineEvent(e.getType(), registedProperties);
 			}
 		}
 	}
@@ -112,7 +112,7 @@ public class DsoaBundleListener extends BundleTracker {
 		if(url != null) {
 			Unmarshaller u = JAXBContexts.get(MetricList.CONFIG);
 			MetricList list = (MetricList)u.unmarshal(url);
-			this.metricCatalog.addMetrics(list);
+			this.mcService.addMetrics(list);
 		}
 	}
 	
@@ -145,11 +145,11 @@ public class DsoaBundleListener extends BundleTracker {
 		}
 	}
 
-	public void setMetricCatalog(MetricCatalog metricCatalog) {
-		this.metricCatalog = metricCatalog;
+	public void setMetricComputingService(MetricComputingService metricCatalog) {
+		this.mcService = metricCatalog;
 	}
 
-	public void setEventProcessingCenter(EventProcessingCenter epCenter) {
-		this.epCenter = epCenter;
+	public void setEventProcessingService(EventProcessingService epCenter) {
+		this.epService = epCenter;
 	}
 }

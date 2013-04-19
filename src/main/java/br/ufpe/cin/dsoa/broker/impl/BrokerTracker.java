@@ -7,15 +7,14 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import br.ufpe.cin.dsoa.handler.dependency.SelectionListener;
-import br.ufpe.cin.dsoa.osgi.ServiceModelFactory;
+import br.ufpe.cin.dsoa.handler.dependency.ServiceListener;
 
 public class BrokerTracker extends ServiceTracker {
 
-	private SelectionListener qdl;
+	private ServiceListener qdl;
 	private List<ServiceReference> blackList;
 	
-	public BrokerTracker(SelectionListener qdl, BundleContext context, Filter filter, List<ServiceReference> blackList) {
+	public BrokerTracker(ServiceListener qdl, BundleContext context, Filter filter, List<ServiceReference> blackList) {
 		super(context, filter, null);
 		this.blackList = blackList;
 		this.qdl = qdl;
@@ -24,7 +23,16 @@ public class BrokerTracker extends ServiceTracker {
 	@Override
 	public Object addingService(ServiceReference reference) {
 		if (!blackList.contains(reference)) {
-			qdl.notifySelection(ServiceModelFactory.createOsgiServiceModel(reference));
+			qdl.onArrival(reference);
+			ServiceTracker s =new ServiceTracker(context, reference, null) {
+				@Override
+				public void removedService(ServiceReference reference, Object object) {
+					qdl.onDeparture(reference);
+					super.removedService(reference, object);
+					this.close();
+				}
+			};
+			s.open();
 			this.close();
 		}
 		return reference;

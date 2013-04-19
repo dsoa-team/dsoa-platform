@@ -1,7 +1,7 @@
 package br.ufpe.cin.dsoa.metric;
 
 import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
-import br.ufpe.cin.dsoa.util.DsoaConstants;
+import br.ufpe.cin.dsoa.util.Constants;
 
 public class MetricInstance {
 
@@ -34,9 +34,9 @@ public class MetricInstance {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(metric.toString());
-		sb.append(DsoaConstants.TOKEN).append(serviceId);
+		sb.append(Constants.TOKEN).append(serviceId);
 		if (null != this.operationName) {
-			sb.append(DsoaConstants.TOKEN).append(operationName);
+			sb.append(Constants.TOKEN).append(operationName);
 		}
 		return  sb.toString();
 	}
