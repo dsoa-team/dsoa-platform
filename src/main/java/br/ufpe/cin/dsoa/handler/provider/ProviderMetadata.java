@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.apache.felix.ipojo.metadata.Element;
 
-import br.ufpe.cin.dsoa.capability.PSlo;
-import br.ufpe.cin.dsoa.capability.Profile;
+import br.ufpe.cin.dsoa.handler.provider.capability.PSlo;
+import br.ufpe.cin.dsoa.handler.provider.capability.Profile;
 
 public class ProviderMetadata {
 

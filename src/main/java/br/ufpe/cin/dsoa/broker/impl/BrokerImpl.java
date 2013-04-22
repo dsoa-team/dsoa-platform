@@ -27,34 +27,21 @@ import br.ufpe.cin.dsoa.handler.dependency.ServiceListener;
 
 public class BrokerImpl implements Broker {
 
-	private BundleContext context;
-	private String specification;
-	private List<Constraint> constraints;
-	private ServiceListener listener;
-	private Filter filter;
-	private List<ServiceReference> blackList;
-	
-	public BrokerImpl(BundleContext context, String specification, List<Constraint> constraints, List<ServiceReference> blackList, ServiceListener listener) {
-		this.context = context;
-		this.specification = specification;
-		this.constraints = constraints;
-		this.blackList = blackList;
-		this.listener = listener;
+	public void getBestService(BundleContext context, String specification, List<Constraint> constraints, 
+			List<ServiceReference> blackList, final ServiceListener listener) {
+
+		ServiceReference[] references = null;
+		List<ServiceReference> candidates = null;
+		List<ServiceReference> result = new ArrayList<ServiceReference>();
+		Filter filter = null;
 		try {
-			this.filter = context.createFilter(new AndFilter(getFilters(
+			filter = context.createFilter(new AndFilter(getFilters(
 				specification, constraints)).toString());
 		} catch (InvalidSyntaxException e) {
 			e.printStackTrace();
 			throw new InvalidConstraintException("Invalid constraints!", e);
 		} 
-	}
-
-	public void getBestService() {
-
-		ServiceReference[] references = null;
-		List<ServiceReference> candidates = null;
-		List<ServiceReference> result = new ArrayList<ServiceReference>();
-
+		
 		try {
 			references = context.getServiceReferences(specification, filter.toString());
 		} catch (InvalidSyntaxException e) {
@@ -78,7 +65,7 @@ public class BrokerImpl implements Broker {
 			tracker.open();
 		} else {
 			//ServiceReference[] candidates = verifyBlackList(trash, references);
-			ServiceReference reference = findBestService(constraints, candidates);
+			ServiceReference reference = findBestService(context, constraints, candidates);
 			listener.onArrival(reference);
 			ServiceTracker s = new ServiceTracker(context, reference, null) {
 				@Override
@@ -107,7 +94,7 @@ public class BrokerImpl implements Broker {
 		return filter;
 	}
 
-	private ServiceReference findBestService(List<Constraint> constraints, List<ServiceReference> candidates) {
+	private ServiceReference findBestService(BundleContext context, List<Constraint> constraints, List<ServiceReference> candidates) {
 		ServiceReference service = null;
 		ServiceReference[] references = candidates.toArray(new ServiceReference[candidates.size()]);
 		//double[][] norm = normalizer.normalizedMatrix(slos, candidates);

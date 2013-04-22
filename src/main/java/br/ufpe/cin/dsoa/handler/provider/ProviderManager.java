@@ -20,8 +20,8 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-import br.ufpe.cin.dsoa.capability.Profile;
-import br.ufpe.cin.dsoa.capability.Resource;
+import br.ufpe.cin.dsoa.handler.provider.capability.Profile;
+import br.ufpe.cin.dsoa.handler.provider.capability.Resource;
 
 public class ProviderManager implements InvocationHandler, ServiceTrackerCustomizer,
 		NotificationListener {

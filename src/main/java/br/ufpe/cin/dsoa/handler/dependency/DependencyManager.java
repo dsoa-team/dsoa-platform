@@ -7,35 +7,52 @@ import java.lang.reflect.Proxy;
 import org.apache.felix.ipojo.IPOJOServiceFactory;
 import org.apache.felix.ipojo.InstanceManager;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentException;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import br.ufpe.cin.dsoa.broker.Broker;
-import br.ufpe.cin.dsoa.broker.impl.BrokerImpl;
+import br.ufpe.cin.dsoa.event.InvocationEvent;
 
-public class DependencyManager implements ServiceListener {
+public class DependencyManager {
 
 	private BundleContext context;
 	private InstanceManager instanceManager;
 
+	private ServiceListener listener;
+	/**
+	 * The component responsible for service selection.
+	 */
 	private Broker broker;
+	
+	/**
+	 * The component responsible for service monitoring.
+	 */
+	//private Monitor monitor;
+	
 	private DynamicProxyFactory proxyFactory;
 
 	private Dependency dependency;
 	private ServiceReference reference;
 	private Object realService;
+	private Boolean waiting;
+	private String serviceId;
 
 	public DependencyManager(Dependency dependency, InstanceManager instanceManager) {
 		this.instanceManager = instanceManager;
 		this.context = instanceManager.getContext();
 		this.dependency = dependency;
-		this.broker = new BrokerImpl(context, dependency.getSpecificationName(), dependency.getConstraintList(),
-				dependency.getBlackList(), this);
 		this.proxyFactory = new DynamicProxyFactory();
+		this.waiting = false;
+		this.listener = new ServiceListenerImpl();
+		new ServiceTracker(context, Broker.class.getName(), new BrokerTrackerCustomizer()).open();
 	}
 
 	public Object getService() {
 		if (this.realService == null) {
+			this.serviceId = (String)reference.getProperty(Constants.SERVICE_PID);
 			this.realService = context.getService(reference);
 			if (this.realService instanceof IPOJOServiceFactory) {
 				this.realService = ((IPOJOServiceFactory) this.realService).getService(instanceManager);
@@ -45,28 +62,22 @@ public class DependencyManager implements ServiceListener {
 	}
 	
 	public void resolve() {
-		broker.getBestService();
+		if (broker != null) {
+			broker.getBestService(context, dependency.getSpecificationName(), dependency.getConstraintList(),
+				dependency.getBlackList(), listener);
+		} else {
+			synchronized (waiting) {
+				waiting = true;
+			}
+		}
 	}
 
 	public void release() {
 		this.reference = null;
+		this.serviceId = null;
 		this.dependency.setServiceObject(null);
 	}
 
-	@Override
-	public void onArrival(ServiceReference reference) {
-		this.reference = reference;
-		this.dependency.setServiceObject(this.proxyFactory.getProxy());
-		this.dependency.computeDependencyState();
-	}
-
-	@Override
-	public void onDeparture(ServiceReference reference) {
-		this.release();
-		context.ungetService(reference);
-		this.dependency.computeDependencyState();
-		this.broker.getBestService();
-	}
 
 	/**
 	 * Creates java dynamic proxy .
@@ -143,11 +154,64 @@ public class DependencyManager implements ServiceListener {
 						throw new InternalError("Unexpected Object method dispatched: " + method);
 					}
 				}
-				return method.invoke(svc, args);
+				InvocationEvent ie = null;
+				long requestTime = System.nanoTime(), responseTime;
+				Object result = null;
+				boolean success = true;
+				try {
+					result = method.invoke(svc, args);
+				} catch(Exception exc) {
+					success = false;
+					throw exc;
+				} finally {
+					responseTime = System.nanoTime();
+					ie = new InvocationEvent(dependency.getConsumer().getId(), serviceId, method.getName(), success, requestTime, responseTime);
+				}
+				return result;
 			} else {
 				throw new ComponentException("The dependency on " + dependency.getSpecificationName() + " interface is not valid!");
 			}
 		}
+	}
+	
+	class ServiceListenerImpl implements ServiceListener {
+		@Override
+		public void onArrival(ServiceReference ref) {
+			reference = ref;
+			dependency.setServiceObject(proxyFactory.getProxy());
+			dependency.computeDependencyState();
+		}
 
+		@Override
+		public void onDeparture(ServiceReference reference) {
+			release();
+			context.ungetService(reference);
+			dependency.computeDependencyState();
+			broker.getBestService(context, dependency.getSpecificationName(), dependency.getConstraintList(),
+					dependency.getBlackList(), this);
+		}
+		
+	}
+	
+	class BrokerTrackerCustomizer implements ServiceTrackerCustomizer {
+		@Override
+		public Object addingService(ServiceReference reference) {
+			broker = (Broker) context.getService(reference);
+			synchronized (waiting) {
+				broker.getBestService(context, dependency.getSpecificationName(), dependency.getConstraintList(),
+						dependency.getBlackList(), listener);
+			}
+			return broker;
+		}
+
+		@Override
+		public void modifiedService(ServiceReference reference, Object service) {
+			// Just do nothing!
+		}
+
+		@Override
+		public void removedService(ServiceReference reference, Object service) {
+			broker = null;
+		}	
 	}
 }
