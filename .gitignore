@@ -13,3 +13,6 @@
 
 # Maven folders
 target
+
+# Meld temp
+*.orig

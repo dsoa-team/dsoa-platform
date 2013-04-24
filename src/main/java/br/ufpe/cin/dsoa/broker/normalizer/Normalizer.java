@@ -6,18 +6,18 @@ import java.util.List;
 
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.contract.Slo;
+import br.ufpe.cin.dsoa.contract.Constraint;
 
 public class Normalizer {
 	
 	private double[][] matrix;
 	
-	private List<Slo> slos;
+	private List<Constraint> slos;
 	private ServiceReference[] references;
 	
 	public Normalizer() {}
 	
-	public Normalizer(List<Slo> slos, ServiceReference... references) {
+	public Normalizer(List<Constraint> slos, ServiceReference... references) {
 		super();
 		this.slos = slos;
 		this.references = references;
@@ -28,7 +28,7 @@ public class Normalizer {
 	double[] max = max(slos, references, matrix);
 	
 
-	public double[][] normalizedMatrix(List<Slo> slos, ServiceReference[] references) {
+	public double[][] normalizedMatrix(List<Constraint> slos, ServiceReference[] references) {
 		double[][] normalized =  new double[references.length][slos.size()];
 		//double[][] matrix = mountMatrix(slos, references);
 		
@@ -64,7 +64,7 @@ public class Normalizer {
 		return normalized;
 	}
 
-	private double[][] mountMatrix(List<Slo> slos,
+	private double[][] mountMatrix(List<Constraint> slos,
 			ServiceReference[] references) {
 		double matrix[][] =  new double[references.length][slos.size()];
 		//double dbmatrix[][] = new double[references.length][slos.size()];
@@ -112,8 +112,9 @@ public class Normalizer {
 					
 					//System.out.println(slos.get(j).getAttribute()+"."+slos.get(j).getOperation());
 					
-					matrix[i][j] = Double.valueOf(references[i].getProperty(slos.get(j)
-							.getAttribute()+"."+slos.get(j).getOperation()).toString()).doubleValue();
+					//TODO: VERIFICAR A LINHA ABAIXO QUE COMENTEI...
+					/*matrix[i][j] = Double.valueOf(references[i].getProperty(slos.get(j)
+							.getAttribute()+"."+slos.get(j).getOperation()).toString()).doubleValue();*/
 					
 				} else {
 					
@@ -153,8 +154,9 @@ public class Normalizer {
 					
 					//System.out.println(slos.get(j).getAttribute());
 					
-					matrix[i][j] = Double.valueOf(references[i].getProperty(slos.get(j).
-							getAttribute()).toString()).doubleValue(); 
+					//TODO: VERIFICAR A LINHA ABAIXO QUE COMENTEI...
+					/*matrix[i][j] = Double.valueOf(references[i].getProperty(slos.get(j).
+							getAttribute()).toString()).doubleValue(); */
 					
 				}
 			}
@@ -168,7 +170,7 @@ public class Normalizer {
 		//}
 	}
 	
-	private double[] min(List<Slo> slos, ServiceReference[] references,
+	private double[] min(List<Constraint> slos, ServiceReference[] references,
 			double[][] matrix) {
 		double[] min = new double[slos.size()];
 		
@@ -187,7 +189,7 @@ public class Normalizer {
 		return min;
 	}
 	
-	private double[] max(List<Slo> slos, ServiceReference[] references,
+	private double[] max(List<Constraint> slos, ServiceReference[] references,
 			double[][] matrix) {
 		double[] max = new double[slos.size()];
 		
@@ -202,7 +204,7 @@ public class Normalizer {
 		return max;
 	}
 	
-	public double[] normalizedSlos(List<Slo> slos) {
+	public double[] normalizedSlos(List<Constraint> slos) {
 		double[] norm =  new double[slos.size()];
 		
 		for(int i=0; i<slos.size(); i++) {
@@ -212,7 +214,8 @@ public class Normalizer {
 				if((max[i]-min[i]) == 0) {
 					norm[i] = 1;
 				} else {
-					norm[i] = (max[i]-slos.get(i).getValue())/(max[i]-min[i]);
+					//TODO: VERIFICAR A LINHA ABAIXO QUE COMENTEI...
+					//norm[i] = (max[i]-slos.get(i).getValue())/(max[i]-min[i]);
 				}
 				
 			} else {
@@ -220,7 +223,8 @@ public class Normalizer {
 					if((max[i]-min[i]) == 0) {
 						norm[i] = 1;
 					} else {
-						norm[i] = (slos.get(i).getValue()-min[i])/(max[i]-min[i]);
+						//TODO: VERIFICAR A LINHA ABAIXO QUE COMENTEI...
+						//norm[i] = (slos.get(i).getValue()-min[i])/(max[i]-min[i]);
 					}
 					
 				}

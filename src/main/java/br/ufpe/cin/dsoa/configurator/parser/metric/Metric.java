@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import br.ufpe.cin.dsoa.metric.MetricId;
-import br.ufpe.cin.dsoa.util.DsoaConstants;
+import br.ufpe.cin.dsoa.util.Constants;
 
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,6 +71,6 @@ public class Metric {
 	}
 
 	public String toString() {
-		return this.getCategory() + DsoaConstants.TOKEN + this.getName();
+		return this.getCategory() + Constants.TOKEN + this.getName();
 	}
 }

@@ -6,108 +6,160 @@ import java.util.List;
 
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.PrimitiveHandler;
-import org.apache.felix.ipojo.handlers.dependency.DependencyHandlerDescription;
+import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 
+import br.ufpe.cin.dsoa.contract.Constraint;
+import br.ufpe.cin.dsoa.contract.Expression;
 import br.ufpe.cin.dsoa.contract.ServiceConsumer;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyHandler extends PrimitiveHandler {
 
-	private List<Dependency> deps = new ArrayList<Dependency>();
-	private boolean valid;
-	private DependencyHandlerDescription m_description;
-	
-	/*
-	 * 
-	 * <qos:requires>
-                 <service field="homebroker">
-                 	  <manager id="QoSDependencyManager" >
-	                      <qos metric="ResponseTime" 
-	                      	  expression="LT" 
-	                      	  value="800" 
-	                      	  weight="2" 
-	                      	  operation="priceAlert" />
-	                      		 	
-	                      <qos metric="Availability" 
-	                      	  expression="GT" 
-	                      	  value="95" 
-	                      	  weight="1" /> 
-	                    </manager>
-                 </service>
-           </qos:requires>
-	 */
-	
+	private List<Dependency> dependencies = new ArrayList<Dependency>();
+	private DependencyHandlerDescription description;
+	private boolean started;
+
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void configure(Element metadata, Dictionary configuration)
-			throws ConfigurationException {
-		String consumerName = metadata.getAttribute(Constants.NAME_ATT);
-		String consumerId 	= metadata.getAttribute(Constants.ID_ATT);
+	public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
+		String consumerName = metadata.getAttribute(Constants.COMPONENT_NAME_ATT);
+		String consumerId = metadata.getAttribute(Constants.COMPONENT_ID_ATT);
 		ServiceConsumer serviceConsumer = new ServiceConsumer(consumerId, consumerName);
-		
-		Element requiresTag = metadata.getElements(Constants.NAME, Constants.NAMESPACE)[0];
-		String  field 		= (String) requiresTag.getAttribute(Constants.FIELD_ATT);
-		/*<qos category="qos"
-       	  metric="ResponseTime" 
-       	  operation="priceAlert" 
-       	  expression="LT" 
-       	  value="800" 
-       	  weight="2"  />*/
-	/*	Element[] qosTags	= requiresTag.getElements(Constants.QOS_ATT);
-		String category = null;
-		String metric = null;
-		String operation = null;
-		String expression = null;
-		String value = null;
-		String weight = null;
-		for (Element qosTag : qosTags) {
-			category = qosTag.getAttribute(Constants.CATEGORY_ATT);
-			metric = qosTag.getAttribute(Constants.METRIC_ATT);
-			operation = qosTag.getAttribute(Constants.OPERATION_ATT);
-			expression = qosTag.getAttribute(Constants.EXPRESSION_ATT);
-			value = qosTag.getAttribute(Constants.VALUE_ATT);
-			weight = qosTag.getAttribute(Constants.WEIGHT_ATT);
-		}*/
+		PojoMetadata pojoMetadata = getFactory().getPojoMetadata();
+
+		Element[] requiresTags = metadata.getElements(Constants.REQUIRES_TAG, Constants.REQUIRES_TAG_NAMESPACE);
+		for (Element requiresTag : requiresTags) {
+			String field = (String) requiresTag.getAttribute(Constants.REQUIRES_ATT_FIELD);
+			String filter = requiresTag.getAttribute(Constants.REQUIRES_ATT_FILTER);
+			List<Constraint> constraintList = getConstraintList(requiresTag.getElements(Constants.CONSTRAINT_TAG));
+			FieldMetadata fieldMetadata = pojoMetadata.getField(field);
+			
+	/*		 Class spec = null;
+		        try {
+		            spec = context.getBundle().loadClass(specification);
+		        } catch (ClassNotFoundException e) {
+		            throw new ConfigurationException("A required specification cannot be loaded : " + specification);
+		        }
+		        return spec;*/
+			
+			Class<?> specification = null;
+			try {
+				specification = getInstanceManager().getContext().getBundle().loadClass(fieldMetadata.getFieldType());
+			} catch (ClassNotFoundException e) {
+				throw new ConfigurationException("The required service interface cannot be loaded : " + e.getMessage());
+			}
+			Dependency dependency = new Dependency(this, serviceConsumer, field, specification, filter, constraintList);
+			register(fieldMetadata, dependency);
+		}
+		description = new DependencyHandlerDescription(this, dependencies); // Initialize
+																			// the
+																			// description.
+	}
+
+	private List<Constraint> getConstraintList(Element[] constraintTags) {
+		List<Constraint> constraintList = new ArrayList<Constraint>();
+		String metric = null, operation = null, expression = null, threashold = null, weight = null;
+		for (Element constraintTag : constraintTags) {
+			metric = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_METRIC);
+			operation = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_OPERATION);
+			expression = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_EXPRESSION);
+			threashold = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_THREASHOLD);
+			weight = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_WEIGHT);
+			constraintList.add(defineConstraint(metric, operation, expression, threashold, weight));
+		}
+		return constraintList;
+	}
+
+	private Constraint defineConstraint(String metric, String operation, String expression, String threashold,
+			String weight) {
+		Expression exp = Expression.valueOf(expression);
+		double thr = Double.parseDouble(threashold);
+		long wgt = Long.parseLong(weight);
+		return new Constraint(metric, operation, exp, thr, wgt);
 	}
 
 	private void register(FieldMetadata fieldmeta, Dependency dependency) {
-		deps.add(dependency);
+		dependencies.add(dependency);
 		getInstanceManager().register(fieldmeta, dependency);
 	}
-
+	
 	@Override
 	public String toString() {
-		return "DependencyHandler [dependencies=" + deps + "]";
+		return "DependencyHandler [dependencies=" + dependencies + "]";
 	}
 
 	@Override
-	public void start() {
-		this.setValidity(false);
-		for (Dependency mgr : deps) {
-			mgr.start();
-		}
+	public HandlerDescription getDescription() {
+		return this.description;
 	}
 
-	@Override
-	public void stop() {
-
+	public void validate() {
+		checkContext();
 	}
 
-	public void checkValidate() {
-
-		boolean valid = true;
-		for (Dependency dep : deps) {
-			if (dep.isValid() == false) {
-				valid = false;
-				break;
-			}
-		}
-		setValidity(valid);
+	public void invalidate() {
+		setValidity(false);
 	}
+	
+    /**
+     * Handler start method.
+     * @see org.apache.felix.ipojo.Handler#start()
+     */
+    public void start() {
+        // Start the dependencies
+        for (Dependency dep : dependencies) {
+            dep.start();
+        }
+        // Check the state
+        started = true;
+        setValidity(false);
+        checkContext();
+    }
+
+    /**
+     * Handler stop method.
+     * @see org.apache.felix.ipojo.Handler#stop()
+     */
+    public void stop() {
+    	started = false;
+        for (Dependency dep : dependencies) {
+        	dep.stop();
+        }
+    }
+	
+    /**
+     * Check the validity of the dependencies.
+     */
+    protected void checkContext() {
+        if (!started) {
+            return;
+        }
+        synchronized (dependencies) {
+            // Store the initial state
+            boolean initialState = getValidity();
+
+            boolean valid = true;
+            for (Dependency dep : dependencies) {
+                if (dep.getStatus() != DependencyStatus.RESOLVED) {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (valid) {
+                if (!initialState) {
+                    setValidity(true);
+                }
+            } else {
+                if (initialState) {
+                    setValidity(false);
+                }
+            }
+
+        }
+    }
 
 }

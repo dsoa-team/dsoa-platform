@@ -24,7 +24,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 	public void startMonitoring(ServiceReference reference, List<MetricInstance> metricInstances) {
 		MonitoredService monitoredService = new MonitoredService(reference);
 		for (MetricInstance metricInstance : metricInstances) {
-			this.addMetric(monitoredService, metricInstance);
+			this.addMetricMonitor(monitoredService, metricInstance);
 		}
 		monitoredServiceMap.put(monitoredService.getPid(), monitoredService);
 		monitoredService.start();
@@ -36,7 +36,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 	}
 	
 	public void addMetric(String servicePid, MetricInstance metricInstance) {
-		this.addMetric(monitoredServiceMap.get(servicePid), metricInstance);
+		this.addMetricMonitor(monitoredServiceMap.get(servicePid), metricInstance);
 	}
 	
 	
@@ -50,7 +50,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 		return services;
 	}
 	
-	private void addMetric(MonitoredService monitoredService, MetricInstance metricInstance) {
+	private void addMetricMonitor(MonitoredService monitoredService, MetricInstance metricInstance) {
 		MetricMonitor monitor = new MetricMonitor(metricInstance);
 		monitoredService.addMetricMonitor(monitor);
 		eventProcessingService.subscribe(metricInstance.getMetric().toString(), monitor);
