@@ -19,17 +19,17 @@ public class ServiceListCommand implements Command {
 	}
 
 	public String getShortDescription() {
-		return "*";
+		return "List all provided services on plaform";
 	}
 
 	public String getUsage() {
-		return ACTION_NAME + "";
+		return "dsoa service-list";
 	}
 
 	public void execute(String line, PrintStream out, PrintStream err) {
 		for (MonitoredServiceMetadata metadata : this.managementService
 				.getManagedServicesMetadata()) {
-			out.println(String.format(" - Id: %s :: %s", metadata.getId(),
+			out.println(String.format(" - Pid: %s :: %s", metadata.getPid(),
 					metadata.getProperty(Constants.SERVICE_DESCRIPTION)));
 		}
 		out.println("Total: "
