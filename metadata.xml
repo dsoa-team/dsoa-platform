@@ -37,6 +37,11 @@
 		<provides />
 	</component>
 	
+	<component classname="br.ufpe.cin.dsoa.monitor.impl.MonitoringDepencencyImpl">
+		<requires field="eventProcessingService" />
+		<provides />
+	</component>
+	
 	<component classname="br.ufpe.cin.dsoa.metric.impl.MetricComputingServiceImpl">
 		<requires field="eventProcessingService" />
 		<provides />
@@ -47,6 +52,10 @@
 		<callback transition="validate" method="start" />
 		<callback transition="invalidate" method="stop" />
 	</component>
+	
+	<component classname="br.ufpe.cin.dsoa.broker.impl.BrokerImpl">
+		<provides />
+	</component>	
 		
 	<component classname="br.ufpe.cin.dsoa.management.shell.DsoaCommand">
 		<provides />
@@ -78,6 +87,7 @@
 	<instance component="br.ufpe.cin.dsoa.event.impl.EventProcessingServiceImpl" />
 	<instance component="br.ufpe.cin.dsoa.monitor.impl.MonitoringServiceImpl" />
 	<instance component="br.ufpe.cin.dsoa.metric.impl.MetricComputingServiceImpl" />
+	<instance component="br.ufpe.cin.dsoa.broker.impl.BrokerImpl"/>
 	<!-- <instance component="br.ufpe.cin.dsoa.configurator.hook.DsoaFindHook" />  -->
 	
 	<!-- Dsoa commands -->

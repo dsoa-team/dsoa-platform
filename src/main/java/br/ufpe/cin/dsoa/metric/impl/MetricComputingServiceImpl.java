@@ -14,6 +14,7 @@ import br.ufpe.cin.dsoa.event.EventProcessingService;
 import br.ufpe.cin.dsoa.metric.MetricComputingService;
 import br.ufpe.cin.dsoa.metric.MetricId;
 import br.ufpe.cin.dsoa.metric.MetricInstance;
+import br.ufpe.cin.dsoa.metric.MetricInstanceImpl;
 import br.ufpe.cin.dsoa.metric.MetricParser;
 import br.ufpe.cin.dsoa.util.Util;
 
@@ -55,7 +56,7 @@ public class MetricComputingServiceImpl implements MetricComputingService {
 				MetricId metricId = parser.getMetricId();
 				Metric metric = this.getMetric(metricId);
 				if (null != metric) {
-					MetricInstance metricInstance = new MetricInstance(metric, servicePid, operation);
+					MetricInstanceImpl metricInstance = new MetricInstanceImpl(metric, servicePid, operation);
 					metricInstances.add(metricInstance);
 				}
 			}

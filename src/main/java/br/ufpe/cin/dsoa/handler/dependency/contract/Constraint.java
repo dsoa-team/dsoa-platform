@@ -1,19 +1,31 @@
-package br.ufpe.cin.dsoa.contract;
+package br.ufpe.cin.dsoa.handler.dependency.contract;
 
 public class Constraint {
 	private String metric;
 	private String operation;
+	private WindowType windowType;
+	private long windowSize;
 	private Expression expression;
 	private double threashold;
 	private long weight;
 
-	public Constraint(String metric, String operation, Expression expression, double threashold, long weight) {
+	public Constraint(String metric, String operation, Expression expression, double threashold, WindowType type, long size, long wgt) {
 		super();
 		this.metric = metric;
 		this.operation = operation;
 		this.expression = expression;
 		this.threashold = threashold;
-		this.weight = weight;
+		this.weight = wgt;
+		this.windowType = type;
+		this.windowSize = size;
+	}
+
+	public WindowType getWindowType() {
+		return windowType;
+	}
+
+	public long getWindowSize() {
+		return windowSize;
 	}
 
 	public String getMetric() {

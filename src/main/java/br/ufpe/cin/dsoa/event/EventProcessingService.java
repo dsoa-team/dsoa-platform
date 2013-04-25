@@ -19,7 +19,7 @@ public interface EventProcessingService {
 	
 	public void destroyStatement(String name);
 	
-	public void subscribe(String statementName, NotificationListener eventConsumer);
+	public void subscribe(String statementName, List<Object> parameters, NotificationListener eventConsumer);
 	
 	public void unsubscribe(String statementName, NotificationListener eventConsumer);
 

@@ -85,24 +85,13 @@ public class EventProcessingServiceImpl implements EventProcessingService {
 		
 	}
 	
-	/*public void subscribe(String statementName, EventConsumer eventConsumer) {
-		EventNotifier notifier = notifierMap.get(statementName);
-		
-		if(notifier == null) {
-			notifier = new EventNotifier();
-			notifierMap.put(statementName, notifier);
-			epServiceProvider.getEPAdministrator().getStatement(statementName).addListener(notifier);
-		}
-		
-		notifier.addEventConsumer(eventConsumer);
-	}*/
-	
-	public void subscribe(String statementName, final NotificationListener eventConsumer) {
+	public void subscribe(String statementName, List<Object> parameters, final NotificationListener eventConsumer) {
 		EPPreparedStatement preparedStmt = this.mapPreparedStmts.get(statementName);
-		preparedStmt.setObject(1, eventConsumer.getServiceId());
-		if (null != eventConsumer.getOperationName()) {
-			preparedStmt.setObject(2, eventConsumer.getOperationName());
+		int index = 0;
+		for (Object parameter : parameters) {
+			preparedStmt.setObject(++index, parameter);
 		}
+		
 		String stmtName = ((MetricMonitor)eventConsumer).getTarget();
 		EPStatement statement = this.epServiceProvider.getEPAdministrator().create(preparedStmt, stmtName);
 		this.mapStmts.put(stmtName, statement);

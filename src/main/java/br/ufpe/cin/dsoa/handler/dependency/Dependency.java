@@ -4,22 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.felix.ipojo.FieldInterceptor;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.contract.Constraint;
-import br.ufpe.cin.dsoa.contract.ServiceConsumer;
+import br.ufpe.cin.dsoa.handler.dependency.contract.Constraint;
+import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceConsumer;
+import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
+import br.ufpe.cin.dsoa.handler.dependency.manager.DependencyManager;
 
 public class Dependency implements FieldInterceptor {
 
 	private DependencyHandler handler;
+	
 	private ServiceConsumer consumer;
+	private ServiceProvider serviceProvider;
+	
 	private String field;
 	private Class<?> specification;
+	private ClassLoader loader;
+	
 	private String filter;
 	private List<Constraint> constraintList;
 	private List<ServiceReference> blackList;
+	
 	private DependencyStatus status;
-	private Object serviceObject;
+	
 	private DependencyManager manager;
 
 	public Dependency(DependencyHandler dependencyHandler, ServiceConsumer serviceConsumer, String field,
@@ -33,9 +42,14 @@ public class Dependency implements FieldInterceptor {
 		this.constraintList = constraintList;
 		this.blackList = new ArrayList<ServiceReference>();
 		this.status = DependencyStatus.UNRESOLVED;
-		this.manager = new DependencyManager(this, dependencyHandler.getInstanceManager());
+		this.manager = new DependencyManager(this);
+		this.loader =  dependencyHandler.getInstanceManager().getClazz().getClassLoader();
 	}
 
+	public BundleContext getContext() {
+		return handler.getInstanceManager().getContext();
+	}
+	
 	public DependencyHandler getHandler() {
 		return handler;
 	}
@@ -72,34 +86,39 @@ public class Dependency implements FieldInterceptor {
 		return this.specification.getName();
 	}
 	
-	
-	
 	public List<ServiceReference> getBlackList() {
 		return blackList;
 	}
-
-	public Object getServiceObject() {
-		return serviceObject;
+	
+	public ClassLoader getClassloader() {
+		return this.loader;
 	}
 
-	void setServiceObject(Object serviceObject) {
-		this.serviceObject = serviceObject;
+	public ServiceProvider getServiceProvider() {
+		return this.serviceProvider;
+	}
+	
+	public void setServiceProvider(ServiceProvider provider) {
+		if (provider != serviceProvider && serviceProvider != null){
+			handler.getInstanceManager().getContext().ungetService(serviceProvider.getReference());
+		}
+		this.serviceProvider = provider;
 	}
 	
 	public void start() {
-		manager.resolve();
+		manager.start();
 	}
 
 	public void stop() {
-		manager.release();
+		manager.stop();
 		this.status = DependencyStatus.UNRESOLVED;
 	}
 
-	void computeDependencyState() {
+	public void computeDependencyState() {
 		boolean mustCallValidate = false;
 		boolean mustCallInvalidate = false;
 		synchronized (this) {
-			if (this.serviceObject != null) {
+			if (this.serviceProvider != null) {
 				if (status == DependencyStatus.UNRESOLVED) {
 					status = DependencyStatus.RESOLVED;
 					mustCallValidate = true;
@@ -143,7 +162,7 @@ public class Dependency implements FieldInterceptor {
 
 	@Override
 	public Object onGet(Object pojo, String fieldName, Object value) {
-		return this.serviceObject;
+		return this.serviceProvider.getServiceObject();
 	}
 
 }

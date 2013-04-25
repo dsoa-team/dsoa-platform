@@ -1,6 +1,6 @@
 package br.ufpe.cin.dsoa.broker.filter;
 
-import br.ufpe.cin.dsoa.contract.Expression;
+import br.ufpe.cin.dsoa.handler.dependency.contract.Expression;
 
 
 

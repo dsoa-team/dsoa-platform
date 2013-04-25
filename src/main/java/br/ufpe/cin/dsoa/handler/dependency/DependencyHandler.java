@@ -11,9 +11,10 @@ import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
 
-import br.ufpe.cin.dsoa.contract.Constraint;
-import br.ufpe.cin.dsoa.contract.Expression;
-import br.ufpe.cin.dsoa.contract.ServiceConsumer;
+import br.ufpe.cin.dsoa.handler.dependency.contract.Constraint;
+import br.ufpe.cin.dsoa.handler.dependency.contract.Expression;
+import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceConsumer;
+import br.ufpe.cin.dsoa.handler.dependency.contract.WindowType;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyHandler extends PrimitiveHandler {
@@ -61,24 +62,28 @@ public class DependencyHandler extends PrimitiveHandler {
 
 	private List<Constraint> getConstraintList(Element[] constraintTags) {
 		List<Constraint> constraintList = new ArrayList<Constraint>();
-		String metric = null, operation = null, expression = null, threashold = null, weight = null;
+		String metric = null, operation = null, expression = null, threashold = null, weight = null, windowType = null, windowSize = null;
 		for (Element constraintTag : constraintTags) {
 			metric = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_METRIC);
 			operation = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_OPERATION);
 			expression = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_EXPRESSION);
 			threashold = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_THREASHOLD);
 			weight = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_WEIGHT);
-			constraintList.add(defineConstraint(metric, operation, expression, threashold, weight));
+			windowType = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_WINDOW_TYPE);
+			windowSize = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_WINDOW_SIZE);
+			constraintList.add(defineConstraint(metric, operation, expression, threashold, weight, windowType, windowSize));
 		}
 		return constraintList;
 	}
 
 	private Constraint defineConstraint(String metric, String operation, String expression, String threashold,
-			String weight) {
+			String weight, String windowTypeName, String windowSize) {
 		Expression exp = Expression.valueOf(expression);
+		WindowType type = WindowType.valueOf(windowTypeName);
+		long size = Long.parseLong(windowSize);
 		double thr = Double.parseDouble(threashold);
 		long wgt = Long.parseLong(weight);
-		return new Constraint(metric, operation, exp, thr, wgt);
+		return new Constraint(metric, operation, exp, thr, type, size, wgt);
 	}
 
 	private void register(FieldMetadata fieldmeta, Dependency dependency) {

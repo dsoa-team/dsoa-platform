@@ -1,11 +1,11 @@
 package br.ufpe.cin.dsoa.handler.dependency;
 
-import org.osgi.framework.ServiceReference;
+import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
 
 public interface ServiceListener {
 
-	void onArrival(ServiceReference service);
+	void onArrival(ServiceProvider service);
 	
-	void onDeparture(ServiceReference service);
+	void onDeparture(ServiceProvider service);
 
 }
