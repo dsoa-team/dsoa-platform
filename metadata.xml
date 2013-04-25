@@ -37,6 +37,11 @@
 		<provides />
 	</component>
 	
+	<component classname="br.ufpe.cin.dsoa.monitor.impl.MonitoringDepencencyImpl">
+		<requires field="eventProcessingService" />
+		<provides />
+	</component>
+	
 	<component classname="br.ufpe.cin.dsoa.metric.impl.MetricComputingServiceImpl">
 		<requires field="eventProcessingService" />
 		<provides />
