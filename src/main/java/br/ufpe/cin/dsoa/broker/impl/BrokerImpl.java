@@ -21,8 +21,9 @@ import br.ufpe.cin.dsoa.broker.filter.IFilter;
 import br.ufpe.cin.dsoa.broker.normalizer.Normalizer;
 import br.ufpe.cin.dsoa.broker.rank.Rank;
 import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
-import br.ufpe.cin.dsoa.contract.Constraint;
 import br.ufpe.cin.dsoa.handler.dependency.ServiceListener;
+import br.ufpe.cin.dsoa.handler.dependency.contract.Constraint;
+import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
 
 
 public class BrokerImpl implements Broker {
@@ -66,11 +67,14 @@ public class BrokerImpl implements Broker {
 		} else {
 			//ServiceReference[] candidates = verifyBlackList(trash, references);
 			ServiceReference reference = findBestService(context, constraints, candidates);
-			listener.onArrival(reference);
+			String servicePid = (String)reference.getProperty(Constants.SERVICE_PID);
+			Object serviceObject = context.getService(reference);
+			listener.onArrival(new ServiceProvider(servicePid, reference, serviceObject));
 			ServiceTracker s = new ServiceTracker(context, reference, null) {
 				@Override
 				public void removedService(ServiceReference reference, Object object) {
-					listener.onDeparture(reference);
+					String servicePid = (String)reference.getProperty(Constants.SERVICE_PID);
+					listener.onDeparture(new ServiceProvider(servicePid, reference, object));
 					super.removedService(reference, object);
 					this.close();
 				}

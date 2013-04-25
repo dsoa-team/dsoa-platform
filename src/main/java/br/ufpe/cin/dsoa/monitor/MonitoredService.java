@@ -1,5 +1,7 @@
 package br.ufpe.cin.dsoa.monitor;
 
+import java.lang.reflect.Proxy;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -11,7 +13,10 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.monitor.Monitorable;
 import org.osgi.service.monitor.StatusVariable;
 
+import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
+import br.ufpe.cin.dsoa.management.ServiceProxy;
 import br.ufpe.cin.dsoa.metric.MetricMonitor;
+import br.ufpe.cin.dsoa.util.Util;
 
 public class MonitoredService implements Monitorable {
 	private static final String REFERED_SERVICE_ID = "refered.service.id";
@@ -22,32 +27,78 @@ public class MonitoredService implements Monitorable {
 	// <target, MetricMonitor>
 	private Map<String, MetricMonitor> metricMonitorMap;
 	private boolean started;
-	private ServiceRegistration registration;
+	
+	private ServiceReference reference;
+	private ServiceRegistration monitorRegistration;
+	private ServiceRegistration proxyRegistration;
 
 	
 	public MonitoredService(ServiceReference reference) {
 		this.log = Logger.getLogger(getClass().getSimpleName());
+		this.reference = reference;
 		this.metadata = new MonitoredServiceMetadata(reference);
 		this.metricMonitorMap = new HashMap<String, MetricMonitor>();
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void start() {
+		registerMonitor();
+		registerProxy();
+		this.started = true;
+	}
+	
+	public void stop() {
+		this.monitorRegistration.unregister();
+		this.proxyRegistration.unregister();
+		this.started = false;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void registerMonitor() {
 		log.info("Registering monitor...");
 		Hashtable ht = new Hashtable();
 		ht.put(Constants.SERVICE_PID, getMonitoredServicePid());
 		ht.put(REFERED_SERVICE_ID, metadata.getId());
 		ht.put(REFERED_SERVICE_PID, metadata.getPid());
 		String[] clazzes = {Monitorable.class.getName()};
-		this.registration = this.metadata.getReference().getBundle().getBundleContext().registerService(clazzes, this, ht);
-		this.started = true;
+		this.monitorRegistration = this.reference.getBundle().getBundleContext().registerService(clazzes, this, ht);
 	}
 	
-	public void stop() {
-		this.registration.unregister();
-		this.started = false;
-	}
+	@SuppressWarnings("rawtypes")
+	private void registerProxy() {
+		log.info("Registering proxy...");
+		ClassLoader cl = this.getClass().getClassLoader();
 
+		log.info("A new remote service was registered: "
+				+ reference.getProperty("service.id"));
+		log.info("Creating a service proxy...");
+		String[] classNames = (String[]) reference
+				.getProperty(Constants.OBJECTCLASS);
+		Class<?>[] classes = new Class<?>[classNames.length];
+		int i = 0;
+		for (String clazz : classNames) {
+			try {
+				classes[i++] = cl.loadClass(clazz);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		Dictionary dict = copyProperties(reference);
+		Object proxy = Proxy.newProxyInstance(cl, classes,
+				new ServiceProxy(new ServiceProvider(Util.getPid(reference),reference, reference.getBundle().getBundleContext().getService(reference))));
+		this.proxyRegistration = this.reference.getBundle().getBundleContext().registerService(classNames, proxy, dict);
+	}
+	
+	private Dictionary copyProperties(ServiceReference reference) {
+		String[] keys = reference.getPropertyKeys();
+		Dictionary dict = new Hashtable();
+		for (String key : keys) {
+			dict.put(key, reference.getProperty(key));
+		}
+		dict.put(br.ufpe.cin.dsoa.util.Constants.SERVICE_PROXY, "true");
+		return dict;
+	}
+	
 	public void addMetricMonitor(MetricMonitor monitor) {
 		this.metricMonitorMap.put(monitor.getTarget(), monitor);
 	}
