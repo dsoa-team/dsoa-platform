@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <agents>
-	<agent>
-		<name>ResponseTimeAgent</name>
+	<agent id="ResponseTimeAgent">
 		<description>Response time from invocation</description>
 		<transformer type="mapping">
 			<input-events>
@@ -20,17 +19,35 @@
 			</mappings>
 		</transformer>
 	</agent>
+	
+	<agent id="AvgResponseTimeAgent">
+		<description>Response time from invocation</description>
+		<transformer type="mapping">
+			<input-events>
+				<event type="ResponseTimeEvent" windowType="length_batch" windowSize="10"/>
+			</input-events>
+			
+			<output-events >
+				<event type="AvgResponseTimeEvent"/>
+			</output-events>
+			
+			<mappings>
+				<mapping event="AvgResponseTimeEvent">
+					<property id="id" generated="true" />
+					<property id="timestamp" gererated="true" />
+					<property id="AvgResponseTime" statistic="avg">ResponseTime.responseTime</property>
+				</mapping>
+			</mappings>
+		</transformer>
+	</agent>
 
 	<agent>
 		<name>ResponseTimeAgent</name>
 		<description>Availability from service</description>
 		<transformer type="query">
-			<output-events >
-				<event type="ResponseTime"/>
-			</output-events>
-			
 			<query>
-				SELECT InvocationEvent.responseTimestamp - InvocationEvent.requestTimestamp as responseTime
+				INSERT INTO ResponseTimeEvent(id, timestamp, responseTime)
+				SELECT id, timestamp, InvocationEvent.responseTimestamp - InvocationEvent.requestTimestamp as responseTime
 				FROM InvocationEvent
 			</query>
 		</transformer>

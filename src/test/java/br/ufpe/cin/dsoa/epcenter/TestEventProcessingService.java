@@ -66,19 +66,35 @@ public class TestEventProcessingService implements NotificationListener {
 	public void setUp() {
 		epCenter = new EventProcessingServiceImpl();
 		epCenter.start();
-		Statement stmt1, stmt2;
+		Statement stmt1, stmt2, stmt3, stmt4;
 		stmt1 = new Statement("stmt1", "insert into ResponseTime(service, operation, time) "
 				+ "select service, operation, responseTimestamp - requestTimestamp "
 				+ "from InvocationEvent");
 		epCenter.defineStatement(stmt1);
+		
+		stmt3 = new Statement("stmt3", "insert into Availability(service, operation, success) "
+				+ "select service, operation, success "
+				+ "from InvocationEvent");
+		epCenter.defineStatement(stmt3);
 
-		stmt2 = new Statement("stmt2", "select service, operation, avg(time) from ResponseTime(service=?, operation=?).win:length_batch(4) group by service, operation");
+		stmt2 = new Statement("stmt2", "select service, operation, avg(time) from ResponseTime(service=?, operation=?).win:length_batch(4)  group by service, operation");
 		epCenter.defineStatement(stmt2.getName(), stmt2.getQuery());
+		
+		stmt4 = new Statement("stmt4", "select ResponseTime.service, ResponseTime.operation, success, avg(time) " +
+				"from ResponseTime(service=?, operation=?).win:length_batch(6), " +
+				"Availability(service=?, operation=?, success=true).win:length_batch(3) " +
+				"group by ResponseTime.service, ResponseTime.operation, success");
+		
+		epCenter.defineStatement(stmt4.getName(), stmt4.getQuery());
 		
 		List<Object> parameters = new ArrayList<Object>();
 		parameters.add("service-1");
 		parameters.add("foo");
-		epCenter.subscribe(stmt2.getName(), parameters , this);
+		parameters.add("service-1");
+		parameters.add("foo");
+		//epCenter.subscribe(stmt2.getName(), parameters , this);
+		
+		epCenter.subscribe(stmt4.getName(), parameters, this);
 	}
 
 	@Test
