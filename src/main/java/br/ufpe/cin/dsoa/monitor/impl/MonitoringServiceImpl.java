@@ -9,7 +9,6 @@ import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.event.EventProcessingService;
 import br.ufpe.cin.dsoa.metric.MetricInstance;
-import br.ufpe.cin.dsoa.metric.MetricInstanceImpl;
 import br.ufpe.cin.dsoa.metric.MetricMonitor;
 import br.ufpe.cin.dsoa.monitor.MonitoredService;
 import br.ufpe.cin.dsoa.monitor.MonitoringService;
@@ -36,7 +35,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 		monitoredService.stop();
 	}
 	
-	public void addMetric(String servicePid, MetricInstanceImpl metricInstance) {
+	public void addMetric(String servicePid, MetricInstance metricInstance) {
 		this.addMetricMonitor(monitoredServiceMap.get(servicePid), metricInstance);
 	}
 	

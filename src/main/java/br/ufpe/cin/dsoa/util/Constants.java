@@ -29,6 +29,6 @@ public interface Constants {
 	public static final String REMOTE_SERVICE = "service.imported"; 
 	public static final String TOKEN = ".";
 	public static final String CONTEXT = "context";
-	public static final String CONSTRAINT_ATT_WINDOW_SIZE = "windowType";
-	public static final String CONSTRAINT_ATT_WINDOW_TYPE = "windowSize";
+	public static final String CONSTRAINT_ATT_WINDOW_SIZE = "windowSize";
+	public static final String CONSTRAINT_ATT_WINDOW_TYPE = "windowType";
 }

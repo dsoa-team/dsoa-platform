@@ -10,6 +10,7 @@ import br.ufpe.cin.dsoa.management.ManagementService;
 import br.ufpe.cin.dsoa.metric.MetricComputingService;
 import br.ufpe.cin.dsoa.metric.MetricId;
 import br.ufpe.cin.dsoa.metric.MetricInstance;
+import br.ufpe.cin.dsoa.metric.MetricInstanceImpl;
 import br.ufpe.cin.dsoa.monitor.MonitoredService;
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 import br.ufpe.cin.dsoa.monitor.MonitoringService;
@@ -61,14 +62,14 @@ public class ManagementServiceImpl implements ManagementService {
 	public void addMetric(String category, String name, String servicePid, String operationName) {
 		MetricId id = new MetricId(category, name);
 		Metric metric = this.metricComputingService.getMetric(id);
-		MetricInstance metricInstance = new MetricInstance(metric, servicePid, operationName);
+		MetricInstance metricInstance = new MetricInstanceImpl(metric, servicePid, operationName);
 		this.monitoringService.addMetric(servicePid, metricInstance);
 	}
 	
 	@Override
 	public void addMetricMonitor(String servicePid, String metricName, String metricCategory, String operationName) {
 		Metric metric = this.metricComputingService.getMetric(new MetricId(metricCategory, metricName));
-		MetricInstance metricInstance = new MetricInstance(metric, servicePid, operationName);
+		MetricInstance metricInstance = new MetricInstanceImpl(metric, servicePid, operationName);
 		this.monitoringService.addMetric(servicePid, metricInstance);
 	}
 }

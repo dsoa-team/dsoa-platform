@@ -11,6 +11,7 @@ import br.ufpe.cin.dsoa.event.EventNotifier;
 import br.ufpe.cin.dsoa.event.EventProcessingService;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
 import br.ufpe.cin.dsoa.event.NotificationListener;
+import br.ufpe.cin.dsoa.event.Statement;
 import br.ufpe.cin.dsoa.metric.MetricMonitor;
 
 import com.espertech.esper.client.Configuration;
@@ -92,9 +93,19 @@ public class EventProcessingServiceImpl implements EventProcessingService {
 			preparedStmt.setObject(++index, parameter);
 		}
 		
-		String stmtName = ((MetricMonitor)eventConsumer).getTarget();
-		EPStatement statement = this.epServiceProvider.getEPAdministrator().create(preparedStmt, stmtName);
-		this.mapStmts.put(stmtName, statement);
+		StringBuffer stmtName = new StringBuffer(statementName).append("[");
+		boolean firstParam = true;
+		for (Object parameter : parameters) {
+			if(!firstParam) {
+				stmtName.append(",");
+			} else {
+				firstParam = false;
+			}
+			stmtName.append(parameter);
+		}
+		stmtName.append("]");
+		EPStatement statement = this.epServiceProvider.getEPAdministrator().create(preparedStmt, stmtName.toString());
+		this.mapStmts.put(stmtName.toString(), statement);
 		statement.addListener(new EventNotifier(eventConsumer));
 	}
 	
@@ -126,5 +137,15 @@ public class EventProcessingServiceImpl implements EventProcessingService {
 	
 	public void defineContext(String ctxStatement) {
 		this.epServiceProvider.getEPAdministrator().createEPL(ctxStatement);
+	}
+
+	@Override
+	public void defineStatement(Statement stmt) {
+		this.epServiceProvider.getEPAdministrator().createEPL(stmt.getQuery(), stmt.getName());		
+	}
+	
+	public void subscribe(String statementName, final NotificationListener eventConsumer) {
+		EPStatement statement = this.epServiceProvider.getEPAdministrator().getStatement(statementName);
+		statement.addListener(new EventNotifier(eventConsumer));
 	}
 }

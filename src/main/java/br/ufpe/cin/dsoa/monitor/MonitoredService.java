@@ -93,7 +93,9 @@ public class MonitoredService implements Monitorable {
 		String[] keys = reference.getPropertyKeys();
 		Dictionary dict = new Hashtable();
 		for (String key : keys) {
-			dict.put(key, reference.getProperty(key));
+			if (!key.equals("service.managed")) {
+				dict.put(key, reference.getProperty(key));
+			}
 		}
 		dict.put(br.ufpe.cin.dsoa.util.Constants.SERVICE_PROXY, "true");
 		return dict;

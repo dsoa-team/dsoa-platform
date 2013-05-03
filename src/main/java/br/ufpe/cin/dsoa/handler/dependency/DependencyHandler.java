@@ -48,7 +48,9 @@ public class DependencyHandler extends PrimitiveHandler {
 			
 			Class<?> specification = null;
 			try {
-				specification = getInstanceManager().getContext().getBundle().loadClass(fieldMetadata.getFieldType());
+				
+				//specification = getInstanceManager().getContext().getBundle().loadClass(fieldMetadata.getFieldType());
+				specification = getInstanceManager().getClazz().getClassLoader().loadClass(fieldMetadata.getFieldType());
 			} catch (ClassNotFoundException e) {
 				throw new ConfigurationException("The required service interface cannot be loaded : " + e.getMessage());
 			}

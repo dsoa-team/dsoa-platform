@@ -10,6 +10,11 @@
 	</handler>
 
 	<!-- DSOA Components -->
+	<component classname="br.ufpe.cin.dsoa.handler.dependency.manager.EsperVerifier">
+		<!-- <requires field="eventProcessingService" />  -->
+		<provides/>
+	</component>
+	
 	<component classname="br.ufpe.cin.dsoa.configurator.PlatformConfigurator">
 		<requires field="metricComputingService" />
 		<requires field="eventProcessingService" />
@@ -17,6 +22,9 @@
 		<callback transition="invalidate" method="stop" />
 	</component>
 	
+	<!-- The Management Service is responsible for providing an access point to perform
+	management related activities. It is exposed as remote service in order to allow remote
+	administration -->
 	<component classname="br.ufpe.cin.dsoa.management.impl.ManagementServiceImpl">
 		<requires field="metricComputingService" />
 		<requires field="monitoringService" />
@@ -37,10 +45,10 @@
 		<provides />
 	</component>
 	
-	<component classname="br.ufpe.cin.dsoa.monitor.impl.MonitoringDepencencyImpl">
+<!-- 	<component classname="br.ufpe.cin.dsoa.monitor.impl.MonitoringDepencencyImpl">
 		<requires field="eventProcessingService" />
 		<provides />
-	</component>
+	</component> -->
 	
 	<component classname="br.ufpe.cin.dsoa.metric.impl.MetricComputingServiceImpl">
 		<requires field="eventProcessingService" />
@@ -88,6 +96,7 @@
 	<instance component="br.ufpe.cin.dsoa.monitor.impl.MonitoringServiceImpl" />
 	<instance component="br.ufpe.cin.dsoa.metric.impl.MetricComputingServiceImpl" />
 	<instance component="br.ufpe.cin.dsoa.broker.impl.BrokerImpl"/>
+	<instance component="br.ufpe.cin.dsoa.handler.dependency.manager.EsperVerifier"/>
 	<!-- <instance component="br.ufpe.cin.dsoa.configurator.hook.DsoaFindHook" />  -->
 	
 	<!-- Dsoa commands -->

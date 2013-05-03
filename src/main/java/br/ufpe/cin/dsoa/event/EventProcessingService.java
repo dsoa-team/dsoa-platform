@@ -29,5 +29,7 @@ public interface EventProcessingService {
 	
 	public void undefineEvent(Class eventClass);
 
+	public void defineStatement(Statement stmt1);
 
+	public void subscribe(String statementName, NotificationListener eventConsumer);
 }

@@ -48,6 +48,11 @@ public class Constraint {
 		return weight;
 	}
 
-	
+	@Override
+	public String toString() {
+		return "Constraint [metric=" + metric + ", operation=" + operation + ", windowType=" + windowType
+				+ ", windowSize=" + windowSize + ", expression=" + expression + ", threashold=" + threashold
+				+ ", weight=" + weight + "]";
+	}
 
 }

@@ -1,6 +1,5 @@
 package br.ufpe.cin.dsoa.handler.dependency.manager;
 
-import java.util.List;
 import java.util.Map;
 
 import org.osgi.framework.ServiceReference;
@@ -11,7 +10,6 @@ import br.ufpe.cin.dsoa.broker.Broker;
 import br.ufpe.cin.dsoa.event.NotificationListener;
 import br.ufpe.cin.dsoa.handler.dependency.Dependency;
 import br.ufpe.cin.dsoa.handler.dependency.ServiceListener;
-import br.ufpe.cin.dsoa.handler.dependency.contract.Constraint;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
 
 public class DependencyManager implements NotificationListener {
@@ -21,7 +19,7 @@ public class DependencyManager implements NotificationListener {
 	 */
 	private Dependency dependency;
 	
-	private VerifierFactory verifierFactory;
+	private Verifier verifierFactory;
 	
 	/**
 	 * Listens service arrivals and departures notified by the Broker
@@ -41,15 +39,19 @@ public class DependencyManager implements NotificationListener {
 
 	private ServiceTracker brokerTracker;
 
+	private ServiceTracker verifierTracker;
+
 	public DependencyManager(Dependency dependency) {
 		this.dependency = dependency;
 		this.waiting = false;
 		this.listener = new ServiceListenerImpl();
 		this.brokerTracker = new ServiceTracker(dependency.getContext(), Broker.class.getName(), new BrokerTrackerCustomizer());
+		this.verifierTracker = new ServiceTracker(dependency.getContext(), Verifier.class.getName(), new VerifierTrackerCustomizer());
 	}
 
 	public void start() {
 		brokerTracker.open();
+		verifierTracker.open();
 		resolve();
 	}
 
@@ -75,7 +77,7 @@ public class DependencyManager implements NotificationListener {
 	}
 	
 	public void configureVerifierAgents(ServiceProvider provider) {
-		this.verifierFactory.configure(this, dependency.getConsumer().getId(), provider.getServicePid(), dependency.getConstraintList());
+		this.verifierFactory.configure(this, provider.getServicePid(), dependency.getConstraintList());
 	}
 	
 	class ServiceListenerImpl implements ServiceListener {
@@ -114,10 +116,30 @@ public class DependencyManager implements NotificationListener {
 
 		@Override
 		public void removedService(ServiceReference reference, Object service) {
+			dependency.getContext().ungetService(reference);
 			broker = null;
 		}	
 	}
 
+	class VerifierTrackerCustomizer implements ServiceTrackerCustomizer {
+		@Override
+		public Object addingService(ServiceReference reference) {
+			verifierFactory = (Verifier) dependency.getContext().getService(reference);
+			return verifierFactory;
+		}
+
+		@Override
+		public void modifiedService(ServiceReference reference, Object service) {
+			// Just do nothing!
+		}
+
+		@Override
+		public void removedService(ServiceReference reference, Object service) {
+			dependency.getContext().ungetService(reference);
+			verifierFactory = null;
+		}	
+	}
+	
 	@Override
 	public void receive(Map result, Object userObject, String statementName) {
 		// TODO Auto-generated method stub
