@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <agents>
 	<agent>
-		<name>ResponseTime</name>
+		<name>ResponseTimeAgent</name>
 		<description>Response time from invocation</description>
 		<transformer type="mapping">
 			<input-events>
@@ -13,12 +13,29 @@
 			
 			<mappings>
 				<mapping event="ResponseTime">
-					<property id="id" type="Double" generated="true" />
-					<property id="timestamp" type="Double" gererated="true" />
-					<property id="value" type="Double">InvocationEvent.response.timestamp - InvocationEvent.request.timestamp</property>
+					<property id="id" generated="true" />
+					<property id="timestamp" gererated="true" />
+					<property id="responseTime">InvocationEvent.responseTimestamp - InvocationEvent.requestTimestamp</property>
 				</mapping>
 			</mappings>
+		</transformer>
+	</agent>
+
+	<agent>
+		<name>ResponseTimeAgent</name>
+		<description>Availability from service</description>
+		<transformer type="query">
+			<output-events >
+				<event type="ResponseTime"/>
+			</output-events>
 			
+			<query>
+				SELECT InvocationEvent.responseTimestamp - InvocationEvent.requestTimestamp as responseTime
+				FROM InvocationEvent
+			</query>
+		</transformer>
+	</agent>
+
 			<!-- 
 			query timestamp e id gerados (esper)
 			INSERT into ResponseTime 
@@ -27,8 +44,6 @@
 			
 			we could use janino (evaluate expression)
 			 -->
-		</transformer>
-	</agent>
 	<agent>
 		<name>Availability</name>
 		<description>Availability from service</description>
@@ -43,24 +58,4 @@
 			<classname>br.ufpe.cin.dsoa.ping</classname>
 		</transformer>
 	</agent>
-	
-	<agent>
-		<name>ResponseTime</name>
-		<description>Availability from service</description>
-		<transformer type="query">
-			<input-events>
-				<event type="InvocationEvent"/>
-			</input-events>
-			<output-events >
-				<event type="ResponseTime"/>
-			</output-events>
-			
-			<query>
-				INSERT into ResponseTime 
-				SELECT InvocationEvent.response.timestamp - InvocationEvent.request.timestamp as value
-				FROM InvocationEvent
-			</query>
-		</transformer>
-	</agent>
 </agents>
-
