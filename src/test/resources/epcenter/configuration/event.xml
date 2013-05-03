@@ -24,6 +24,12 @@
 			<property id="responseTime" type="java.lang.Double" />
 		</properties>
 	</event>
+	
+	<event type="AvgResponseTimeEvent" extends="DsoaEvent">
+		<properties>
+			<property id="AvgResponseTime" type="java.lang.Double" />
+		</properties>
+	</event>
 
 	<event type="AvailabiltyEvent" extends="DsoaEvent">
 		<properties>
