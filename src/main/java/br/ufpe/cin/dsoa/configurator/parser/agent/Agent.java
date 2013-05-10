@@ -1,7 +1,10 @@
 package br.ufpe.cin.dsoa.configurator.parser.agent;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -9,24 +12,21 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Agent {
 
-	@XmlElement(name = "name")
-	private String name;
+	@XmlAttribute(name = "id")
+	private String id;
 	
 	@XmlElement(name = "description")
 	private String description;
 	
-	@XmlElement(name = "metric")
-	private String metric;
-	
 	@XmlElement(name = "transformer")
 	private Transformer transformer;
 
-	public String getName() {
-		return name;
+	public String getId() {
+		return id;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getDescription() {
@@ -45,11 +45,7 @@ public class Agent {
 		this.transformer = transformer;
 	} 
 	
-	public String getMetric() {
-		return metric;
-	}
-	
-	public void setMetric(String metric) {
-		this.metric = metric;
+	public List<String> getQueries() {
+		return this.transformer.getQueries();
 	}
 }
