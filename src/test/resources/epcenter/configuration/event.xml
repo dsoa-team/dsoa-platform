@@ -1,30 +1,52 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--  TODO: anotar obrigatoriedade dos campos de propriedade -->
+<!-- TODO: anotar obrigatoriedade dos campos de propriedade -->
 <events>
-	<event type="DsoaEvent">
-		<properties>
-			<property id="id" type="java.lang.String" />
-			<property id="timestamp" type="java.lang.Double" />
-		</properties>
+	<event type="DsoaEvent" description="xxx">
+		<header>
+			<attributes>
+				<attribute name="id" description="Attribute identification"
+					type="java.lang.String" required="true"
+					generated="br.ufpe.cin.dsoa.event.EventIdGenerator:nextId(*)" />
+				<attribute name="timestamp" description="Timestamp" type="java.lang.Double"
+					required="true" generated="br.ufpe.cin.dsoa.eventTimestampGenerator:timestamp()" />
+			</attributes>
+		</header>
 	</event>
-	
-	<event type="Request" extends="DsoaEvent"/>
-	
-	<event type="Response" extends="DsoaEvent"/>
-	
-	<event type="InvocationEvent" extends="DsoaEvent">
-		<properties>
-			<property id="request" type="Request" />
-			<property id="response" type="Response" />
-		</properties>
+
+	<event type="InvocationEvent" extends="DsoaEvent" description="yyy">
+		<payload>
+			<attributes>
+				<attribute name="provider" description="" type="java.lang.String"
+					required="true" />
+				<attribute name="service" description="" type="java.lang.String"
+					required="true" />
+				<attribute name="operation" description="" type="java.lang.String"
+					required="true" />
+				<attribute name="success" description="" type="java.lang.Boolean"
+					required="true" />
+				<attribute name="requestTimestamp" description=""
+					type="java.lang.Long" required="true" />
+				<attribute name="responseTimestamp" description=""
+					type="java.lang.Long" required="true" />
+			</attributes>
+		</payload>
 	</event>
-	
+
 	<event type="ResponseTimeEvent" extends="DsoaEvent">
-		<properties>
-			<property id="responseTime" type="java.lang.Double" />
-		</properties>
+		<payload>
+			<attributes>
+				<attribute name="provider" description="" type="java.lang.String"
+					required="true" />
+				<attribute name="service" description="" type="java.lang.String"
+					required="true" />
+				<attribute name="operation" description="" type="java.lang.String"
+					required="true" />
+				<attribute name="value" description=""
+					type="java.lang.Double" required="true" />
+			</attributes>
+		</payload>
 	</event>
-	
+
 	<event type="AvgResponseTimeEvent" extends="DsoaEvent">
 		<properties>
 			<property id="AvgResponseTime" type="java.lang.Double" />

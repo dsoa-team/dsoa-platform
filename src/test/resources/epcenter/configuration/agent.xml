@@ -4,19 +4,20 @@
 		<description>Response time from invocation</description>
 		<transformer type="mapping">
 			<input-events>
-				<event type="InvocationEvent"/>
+				<input-event type="InvocationEvent"/>
 			</input-events>
 			<output-events >
-				<event type="ResponseTime"/>
+				<output-event type="ResponseTime">
+					<mapping>
+						<property id="responseTime">InvocationEvent.responseTimestamp - InvocationEvent.requestTimestamp</property>
+					</mapping>
+				</output-event>
+				<output-event type="AvgResponseTimeEvent">
+					<mapping>
+						<property id="value" statistic="avg">ResponseTime.responseTime</property>
+					</mapping>
+				</output-event>
 			</output-events>
-			
-			<mappings>
-				<mapping event="ResponseTime">
-					<property id="id" generated="true" />
-					<property id="timestamp" gererated="true" />
-					<property id="responseTime">InvocationEvent.responseTimestamp - InvocationEvent.requestTimestamp</property>
-				</mapping>
-			</mappings>
 		</transformer>
 	</agent>
 	
@@ -24,20 +25,18 @@
 		<description>Response time from invocation</description>
 		<transformer type="mapping">
 			<input-events>
-				<event type="ResponseTimeEvent" windowType="length_batch" windowSize="10"/>
+				<input-event type="ResponseTimeEvent" windowType="length_batch" windowSize="10"/>
 			</input-events>
 			
 			<output-events >
-				<event type="AvgResponseTimeEvent"/>
+				<output-event type="AvgResponseTimeEvent">
+					<mapping>
+						<property id="id" generated="true" />
+						<property id="timestamp" generated="true" />
+						<property id="value" statistic="avg">ResponseTime.responseTime</property>
+					</mapping>
+				</output-event>
 			</output-events>
-			
-			<mappings>
-				<mapping event="AvgResponseTimeEvent">
-					<property id="id" generated="true" />
-					<property id="timestamp" gererated="true" />
-					<property id="AvgResponseTime" statistic="avg">ResponseTime.responseTime</property>
-				</mapping>
-			</mappings>
 		</transformer>
 	</agent>
 

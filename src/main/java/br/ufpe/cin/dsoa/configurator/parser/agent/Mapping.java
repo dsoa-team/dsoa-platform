@@ -1,5 +1,6 @@
 package br.ufpe.cin.dsoa.configurator.parser.agent;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,31 +17,11 @@ import br.ufpe.cin.dsoa.configurator.parser.Property;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Mapping {
 
-	@XmlAttribute(name = "event")
-	private String event;
-
 	@XmlElement(name = "property")
-	private List<Property> mapping;
+	private List<Property> properties;
 
-	public String getEvent() {
-		return event;
+	public List<Property> getProperties() {
+		return Collections.unmodifiableList(properties);
 	}
 
-	public void setEvent(String event) {
-		this.event = event;
-	}
-
-	public Map<String, String> getMapping() {
-		Map<String, String> props = new HashMap<String, String>();
-
-		for (Property p : mapping) {
-			props.put(p.getId(), p.getType());
-		}
-		return props;
-	}
-
-	public void setMapping(String event, List<Property> mapping) {
-		this.event = event;
-		this.mapping = mapping;
-	}
 }

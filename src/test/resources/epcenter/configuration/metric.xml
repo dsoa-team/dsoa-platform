@@ -6,12 +6,7 @@
 		<name>AvgResponseTime</name>
 		<scope>operation</scope>
 		<description>Average response time</description>
-		<agent type="query">
-			<query>
-				SELECT avg(InvocationEvent.responseTimestamp - InvocationEvent.requestTimestamp) as value
-				FROM InvocationEvent.win:length(2)
-			</query>
-		</agent>
+		<agent id="ResponseTimeAgent" output-event="AvgResponseTimeEvent"/>
 	</metric>
 	
 	<metric>

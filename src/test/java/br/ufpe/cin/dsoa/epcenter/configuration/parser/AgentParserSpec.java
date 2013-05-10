@@ -51,8 +51,8 @@ public class AgentParserSpec {
 	
 	@Test
 	public void testAgentName() {
-		String name = "ResponseTime";
-		assertEquals("Xml has modified", name, list.getAgents().get(0).getName());
+		String name = "ResponseTimeAgent";
+		assertEquals("Xml has modified", name, list.getAgents().get(0).getId());
 	}
 	
 	@Test
@@ -78,10 +78,11 @@ public class AgentParserSpec {
 	
 	@Test
 	public void testTransformerQuery(){
-		Transformer t = list.getAgents().get(2).getTransformer();
-		String query = t.getQuery();
-		assertNotNull(query);
-		
+		for (Agent agent : list.getAgents()) {
+			Transformer t = agent.getTransformer();
+			List<String> query = t.getQueries();
+			assertNotNull(query);
+		}
 	}
 	
 }

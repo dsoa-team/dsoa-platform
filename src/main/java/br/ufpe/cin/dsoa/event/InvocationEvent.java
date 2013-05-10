@@ -8,6 +8,7 @@ public class InvocationEvent {
 	private boolean success;
 	private long requestTimestamp;
 	private long responseTimestamp;
+	private static Long nextId = 1L;
 
 	public InvocationEvent(String providerId, String service, String operation,
 			boolean success, long requestTimestamp, long responseTimestamp) {
@@ -18,6 +19,10 @@ public class InvocationEvent {
 		this.success = success;
 		this.requestTimestamp = requestTimestamp;
 		this.responseTimestamp = responseTimestamp;
+	}
+	
+	public static Long getNextId() {
+		return	nextId++;
 	}
 
 	public String getProvider() {
@@ -42,5 +47,12 @@ public class InvocationEvent {
 
 	public long getResponseTimestamp() {
 		return responseTimestamp;
+	}
+
+	@Override
+	public String toString() {
+		return "InvocationEvent [provider=" + provider + ", service=" + service + ", operation=" + operation
+				+ ", success=" + success + ", requestTimestamp=" + requestTimestamp + ", responseTimestamp="
+				+ responseTimestamp + "]";
 	}
 }

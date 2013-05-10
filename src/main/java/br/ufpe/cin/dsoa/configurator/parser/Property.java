@@ -13,11 +13,14 @@ public class Property {
 	@XmlAttribute(required = true)
 	private String id;
 	
-	@XmlAttribute(required = true)
+	@XmlAttribute(name = "type")
 	private String type;
 	
 	@XmlAttribute(name = "generated")
 	private boolean generated;
+	
+	@XmlAttribute(name = "statistic")
+	private String statistic;
 	
 	//for agent expression definition
 	@XmlValue
@@ -54,4 +57,14 @@ public class Property {
 	public void setExpression(String expression) {
 		this.expression = expression;
 	}
+
+	public String getStatistic() {
+		return statistic;
+	}
+
+	public void setStatistic(String statistic) {
+		this.statistic = statistic;
+	}
+	
+	
 }
