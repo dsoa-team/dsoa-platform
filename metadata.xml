@@ -11,7 +11,7 @@
 
 	<!-- DSOA Components -->
 	<component classname="br.ufpe.cin.dsoa.handler.dependency.manager.EsperVerifier">
-		<!-- <requires field="eventProcessingService" />  -->
+		<requires field="metricComputingService"  /> 
 		<provides/>
 	</component>
 	

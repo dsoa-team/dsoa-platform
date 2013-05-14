@@ -42,8 +42,8 @@ public class Dependency implements FieldInterceptor {
 		this.constraintList = constraintList;
 		this.blackList = new ArrayList<ServiceReference>();
 		this.status = DependencyStatus.UNRESOLVED;
-		this.manager = new DependencyManager(this);
 		this.loader =  dependencyHandler.getInstanceManager().getClazz().getClassLoader();
+		this.manager = new DependencyManager(this);
 	}
 
 	public BundleContext getContext() {
