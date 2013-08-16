@@ -43,13 +43,11 @@ public class MetricInstanceImpl implements MetricInstance {
 		return  sb.toString();
 	}
 
-	@Override
 	public String getCategory() {
 		// TODO Auto-generated method stub
 		return metric.getCategory();
 	}
 
-	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
 		return metric.getName();

@@ -6,7 +6,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.handler.dependency.ServiceListener;
-import br.ufpe.cin.dsoa.handler.dependency.contract.Constraint;
+import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
 
 
 
@@ -17,7 +17,7 @@ import br.ufpe.cin.dsoa.handler.dependency.contract.Constraint;
 
 public interface Broker {
 	
-	public void getBestService(BundleContext context, String specification, List<Constraint> constraints, 
+	public void getBestService(BundleContext context, String specification, List<Goal> constraints, 
 			List<ServiceReference> blackList, ServiceListener listener);
 	
 }

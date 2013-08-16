@@ -7,43 +7,42 @@ import org.apache.felix.ipojo.FieldInterceptor;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.handler.dependency.contract.Constraint;
+import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceConsumer;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
 import br.ufpe.cin.dsoa.handler.dependency.manager.DependencyManager;
+import br.ufpe.cin.dsoa.metric.MetricId;
 
 public class Dependency implements FieldInterceptor {
 
 	private DependencyHandler handler;
 	
-	private ServiceConsumer consumer;
-	private ServiceProvider serviceProvider;
-	
-	private String field;
-	private Class<?> specification;
+	private ServiceConsumer  		consumer;
+	private String 			 		field;
+	private String 					filter;
+	private Class<?> 		 		specification;
+	private List<Goal> 		 		goalList;
+	private List<MetricId>   		metricList;
+	private ServiceProvider 		serviceProvider;
+	private List<ServiceReference> 	blackList;
+
 	private ClassLoader loader;
-	
-	private String filter;
-	private List<Constraint> constraintList;
-	private List<ServiceReference> blackList;
-	
 	private DependencyStatus status;
-	
 	private DependencyManager manager;
 
 	public Dependency(DependencyHandler dependencyHandler, ServiceConsumer serviceConsumer, String field,
-			Class<?> specification, String filter, List<Constraint> constraintList) {
+			Class<?> specification, String filter, List<Goal> goalList) {
 		super();
 		this.handler = dependencyHandler;
 		this.consumer = serviceConsumer;
 		this.field = field;
 		this.specification = specification;
 		this.filter = filter;
-		this.constraintList = constraintList;
+		this.goalList = goalList;
 		this.blackList = new ArrayList<ServiceReference>();
 		this.status = DependencyStatus.UNRESOLVED;
-		this.manager = new DependencyManager(this);
 		this.loader =  dependencyHandler.getInstanceManager().getClazz().getClassLoader();
+		this.manager = new DependencyManager(this);
 	}
 
 	public BundleContext getContext() {
@@ -66,8 +65,28 @@ public class Dependency implements FieldInterceptor {
 		return filter;
 	}
 
-	public List<Constraint> getConstraintList() {
-		return constraintList;
+	public List<Goal> getGoalList() {
+		return goalList;
+	}
+	
+	public boolean addGoal(Goal goal) {
+		return this.goalList.add(goal);
+	}
+	
+	public boolean removeGoal(Goal goal) {
+		return this.goalList.remove(goal);
+	}
+	
+	public List<MetricId> getMetricList() {
+		return metricList;
+	}
+	
+	public boolean addMetric(MetricId metricId) {
+		return this.metricList.add(metricId);
+	}
+	
+	public boolean removeMetric(MetricId metricId) {
+		return this.metricList.remove(metricId);
 	}
 
 	public DependencyStatus getStatus() {
@@ -155,12 +174,10 @@ public class Dependency implements FieldInterceptor {
 		handler.validate();
 	}
 
-	@Override
 	public void onSet(Object pojo, String fieldName, Object value) {
 		// Just do nothing...
 	}
 
-	@Override
 	public Object onGet(Object pojo, String fieldName, Object value) {
 		return this.serviceProvider.getServiceObject();
 	}

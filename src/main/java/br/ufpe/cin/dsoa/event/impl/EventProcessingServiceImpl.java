@@ -139,7 +139,6 @@ public class EventProcessingServiceImpl implements EventProcessingService {
 		this.epServiceProvider.getEPAdministrator().createEPL(ctxStatement);
 	}
 
-	@Override
 	public void defineStatement(Statement stmt) {
 		this.epServiceProvider.getEPAdministrator().createEPL(stmt.getQuery(), stmt.getName());		
 	}

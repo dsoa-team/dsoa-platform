@@ -33,12 +33,10 @@ public class MetricInstanceVO implements MetricInstance {
 		return operationName;
 	}
 
-	@Override
 	public Metric getMetric() {
 		return null;
 	}
 
-	@Override
 	public String getTarget() {
 		return null;
 	}

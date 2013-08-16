@@ -175,7 +175,6 @@ public class TestEventJoin implements UpdateListener {
 		this.epServiceProvider.destroy();
 	}
 
-	@Override
 	public void update(EventBean[] newEvents, EventBean[] oldEvents) {
 		if (newEvents != null) {
 			System.out.println("New Events: ");

@@ -10,8 +10,10 @@
 	</handler>
 
 	<!-- DSOA Components -->
+	
+	
 	<component classname="br.ufpe.cin.dsoa.handler.dependency.manager.EsperVerifier">
-		<!-- <requires field="eventProcessingService" />  -->
+		<requires field="metricComputingService"  /> 
 		<provides/>
 	</component>
 	
@@ -22,9 +24,12 @@
 		<callback transition="invalidate" method="stop" />
 	</component>
 	
+	
+	
 	<!-- The Management Service is responsible for providing an access point to perform
 	management related activities. It is exposed as remote service in order to allow remote
 	administration -->
+
 	<component classname="br.ufpe.cin.dsoa.management.impl.ManagementServiceImpl">
 		<requires field="metricComputingService" />
 		<requires field="monitoringService" />
@@ -44,6 +49,7 @@
 		<requires field="eventProcessingService" />
 		<provides />
 	</component>
+
 	
 <!-- 	<component classname="br.ufpe.cin.dsoa.monitor.impl.MonitoringDepencencyImpl">
 		<requires field="eventProcessingService" />
