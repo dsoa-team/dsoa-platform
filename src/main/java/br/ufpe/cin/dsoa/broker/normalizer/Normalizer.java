@@ -6,18 +6,18 @@ import java.util.List;
 
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.handler.dependency.contract.Constraint;
+import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
 
 public class Normalizer {
 	
 	private double[][] matrix;
 	
-	private List<Constraint> slos;
+	private List<Goal> slos;
 	private ServiceReference[] references;
 	
 	public Normalizer() {}
 	
-	public Normalizer(List<Constraint> slos, ServiceReference... references) {
+	public Normalizer(List<Goal> slos, ServiceReference... references) {
 		super();
 		this.slos = slos;
 		this.references = references;
@@ -28,7 +28,7 @@ public class Normalizer {
 	double[] max = max(slos, references, matrix);
 	
 
-	public double[][] normalizedMatrix(List<Constraint> slos, ServiceReference[] references) {
+	public double[][] normalizedMatrix(List<Goal> slos, ServiceReference[] references) {
 		double[][] normalized =  new double[references.length][slos.size()];
 		//double[][] matrix = mountMatrix(slos, references);
 		
@@ -64,7 +64,7 @@ public class Normalizer {
 		return normalized;
 	}
 
-	private double[][] mountMatrix(List<Constraint> slos,
+	private double[][] mountMatrix(List<Goal> slos,
 			ServiceReference[] references) {
 		double matrix[][] =  new double[references.length][slos.size()];
 		//double dbmatrix[][] = new double[references.length][slos.size()];
@@ -170,7 +170,7 @@ public class Normalizer {
 		//}
 	}
 	
-	private double[] min(List<Constraint> slos, ServiceReference[] references,
+	private double[] min(List<Goal> slos, ServiceReference[] references,
 			double[][] matrix) {
 		double[] min = new double[slos.size()];
 		
@@ -189,7 +189,7 @@ public class Normalizer {
 		return min;
 	}
 	
-	private double[] max(List<Constraint> slos, ServiceReference[] references,
+	private double[] max(List<Goal> slos, ServiceReference[] references,
 			double[][] matrix) {
 		double[] max = new double[slos.size()];
 		
@@ -204,7 +204,7 @@ public class Normalizer {
 		return max;
 	}
 	
-	public double[] normalizedSlos(List<Constraint> slos) {
+	public double[] normalizedSlos(List<Goal> slos) {
 		double[] norm =  new double[slos.size()];
 		
 		for(int i=0; i<slos.size(); i++) {

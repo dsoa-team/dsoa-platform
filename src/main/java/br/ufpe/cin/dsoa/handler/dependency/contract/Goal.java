@@ -1,6 +1,6 @@
 package br.ufpe.cin.dsoa.handler.dependency.contract;
 
-public class Constraint {
+public class Goal {
 	private String metric;
 	private String operation;
 	private WindowType windowType;
@@ -9,7 +9,7 @@ public class Constraint {
 	private double threashold;
 	private long weight;
 
-	public Constraint(String metric, String operation, Expression expression, double threashold, WindowType type, long size, long wgt) {
+	public Goal(String metric, String operation, Expression expression, double threashold, WindowType type, long size, long wgt) {
 		super();
 		this.metric = metric;
 		this.operation = operation;

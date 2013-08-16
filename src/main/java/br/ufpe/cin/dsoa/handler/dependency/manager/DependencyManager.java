@@ -12,58 +12,56 @@ import br.ufpe.cin.dsoa.handler.dependency.Dependency;
 import br.ufpe.cin.dsoa.handler.dependency.ServiceListener;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
 
-public class DependencyManager implements NotificationListener {
+
+public class DependencyManager implements ServiceListener, NotificationListener {
 
 	/**
 	 * The managed dependency
 	 */
 	private Dependency dependency;
-	
-	private Verifier verifierFactory;
-	
-	/**
-	 * Listens service arrivals and departures notified by the Broker
-	 */
-	private ServiceListener listener;
+	//private DependencyManagerMBean dependency
 	
 	/**
 	 * The component responsible for service selection.
 	 */
 	private Broker broker;
+	private ServiceReference brokerReference;
+	private ServiceTracker brokerTracker;
 	
 	/**
 	 * Signals that it is waiting for a Broker in order to resolve 
 	 * its dependency
 	 */
 	private Boolean waiting;
-
-	private ServiceTracker brokerTracker;
-
+	
+	/**
+	 * The component responsible for analyzing "service contracts" 
+	 */
+	private Verifier verifier;
 	private ServiceTracker verifierTracker;
-
+	
 	public DependencyManager(Dependency dependency) {
 		this.dependency = dependency;
-		this.waiting = false;
-		this.listener = new ServiceListenerImpl();
+		this.waiting = true;
 		this.brokerTracker = new ServiceTracker(dependency.getContext(), Broker.class.getName(), new BrokerTrackerCustomizer());
 		this.verifierTracker = new ServiceTracker(dependency.getContext(), Verifier.class.getName(), new VerifierTrackerCustomizer());
 	}
 
 	public void start() {
-		brokerTracker.open();
-		verifierTracker.open();
-		resolve();
+		this.brokerTracker.open();
+		this.verifierTracker.open();
 	}
 
 	public void stop() {
 		brokerTracker.close();
+		verifierTracker.close();
 		release();
 	}
 	
 	public void resolve() {
 		if (broker != null) {
-			broker.getBestService(dependency.getContext(), dependency.getSpecificationName(), dependency.getConstraintList(),
-				dependency.getBlackList(), listener);
+			broker.getBestService(dependency.getContext(), dependency.getSpecificationName(), dependency.getGoalList(),
+				dependency.getBlackList(), this);
 		} else {
 			synchronized (waiting) {
 				waiting = Boolean.TRUE;
@@ -76,81 +74,158 @@ public class DependencyManager implements NotificationListener {
 		dependency.computeDependencyState();
 	}
 	
-	public void configureVerifierAgents(ServiceProvider provider) {
-		this.verifierFactory.configure(this, provider.getServicePid(), dependency.getConstraintList());
+	private void configureVerifierAgents(ServiceProvider provider) {
+		this.verifier.configure(this, provider.getServicePid(), dependency.getGoalList());
 	}
 	
-	class ServiceListenerImpl implements ServiceListener {
-		@Override
-		public void onArrival(ServiceProvider provider) {
-			configureVerifierAgents(provider);
-			dependency.setServiceProvider(provider);
-			dependency.computeDependencyState();
-		}
+	public void onArrival(ServiceProvider provider) {
+		configureVerifierAgents(provider);
+		dependency.setServiceProvider(provider);
+		dependency.computeDependencyState();
+	}
 
-		@Override
-		public void onDeparture(ServiceProvider provider) {
-			release();
-			resolve();
-		}
+	public void onDeparture(ServiceProvider provider) {
+		release();
+		resolve();
 	}
 	
 	class BrokerTrackerCustomizer implements ServiceTrackerCustomizer {
-		@Override
 		public Object addingService(ServiceReference reference) {
-			broker = (Broker) dependency.getContext().getService(reference);
-			synchronized (waiting) {
-				if (waiting) {
-					broker.getBestService(dependency.getContext(), dependency.getSpecificationName(), dependency.getConstraintList(),
-						dependency.getBlackList(), listener);
-					waiting = Boolean.FALSE;
+			if (broker == null) {
+				broker = (Broker) dependency.getContext().getService(reference);
+			}
+			
+			if (verifier != null) {
+				synchronized (waiting) {
+					if (waiting) {
+						broker.getBestService(dependency.getContext(), dependency.getSpecificationName(), dependency.getGoalList(),
+							dependency.getBlackList(), DependencyManager.this);
+						waiting = Boolean.FALSE;
+					}
 				}
 			}
 			return broker;
 		}
 
-		@Override
 		public void modifiedService(ServiceReference reference, Object service) {
 			// Just do nothing!
 		}
 
-		@Override
 		public void removedService(ServiceReference reference, Object service) {
 			dependency.getContext().ungetService(reference);
+			waiting = Boolean.TRUE;
 			broker = null;
 		}	
 	}
 
 	class VerifierTrackerCustomizer implements ServiceTrackerCustomizer {
-		@Override
 		public Object addingService(ServiceReference reference) {
-			verifierFactory = (Verifier) dependency.getContext().getService(reference);
-			return verifierFactory;
+			verifier = (Verifier) dependency.getContext().getService(reference);
+			if (broker != null) {
+				synchronized (waiting) {
+					if (waiting) {
+						broker.getBestService(dependency.getContext(), dependency.getSpecificationName(), dependency.getGoalList(),
+							dependency.getBlackList(), DependencyManager.this);
+						waiting = Boolean.FALSE;
+					}
+				}
+			}
+			return verifier;
 		}
 
-		@Override
 		public void modifiedService(ServiceReference reference, Object service) {
 			// Just do nothing!
 		}
 
-		@Override
 		public void removedService(ServiceReference reference, Object service) {
 			dependency.getContext().ungetService(reference);
-			verifierFactory = null;
+			verifier = null;
 		}	
 	}
 	
-	@Override
 	public void receive(Map result, Object userObject, String statementName) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void receive(Object result, String statementName) {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
+/*	class BrokerTrackerCustomizer implements ServiceTrackerCustomizer {
+		@Override
+		public Object addingService(ServiceReference reference) {
+			if (broker == null) {
+				broker = (Broker) dependency.getContext().getService(reference);
+			}
+			
+			synchronized (waiting) {
+				if (waiting) {
+					broker.getBestService(dependency.getContext(), dependency.getSpecificationName(), dependency.getConstraintList(),
+						dependency.getBlackList(), DependencyManager.this);
+					waiting = Boolean.FALSE;
+				}
+			}
+			return broker;
+		}*/
+	
+	/*public ServiceConsumer getConsumer() {
+		return consumer;
+	}
+
+	public String getField() {
+		return field;
+	}
+
+	public String getFilter() {
+		return filter;
+	}
+
+	public List<Goal> getGoalList() {
+		return goalList;
+	}
+	
+	public boolean addGoal(Goal goal) {
+		return this.goalList.add(goal);
+	}
+	
+	public boolean removeGoal(Goal goal) {
+		return this.goalList.remove(goal);
+	}
+	
+	public List<MetricId> getMetricList() {
+		return metricList;
+	}
+	
+	public boolean addMetric(MetricId metricId) {
+		return this.metricList.add(metricId);
+	}
+	
+	public boolean removeMetric(MetricId metricId) {
+		return this.metricList.remove(metricId);
+	}
+
+	public DependencyStatus getStatus() {
+		return status;
+	}
+
+	public boolean isValid() {
+		return this.status == DependencyStatus.RESOLVED;
+	}
+
+	public Class<?> getSpecification() {
+		return this.specification;
+	}
+	
+	public String getSpecificationName() {
+		return this.specification.getName();
+	}
+	
+	public List<ServiceReference> getBlackList() {
+		return blackList;
+	}*/
 	
 	/*	
 		public Object getService() {

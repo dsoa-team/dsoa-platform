@@ -20,13 +20,12 @@ public class ManagementServiceImpl implements ManagementService {
 	private MetricComputingService metricComputingService;
 	private MonitoringService monitoringService;
 	
-	@Override
-	public synchronized void onArrival(ServiceReference reference) {
+	public void onArrival(ServiceReference reference) {
 		List<MetricInstance> metricInstances = metricComputingService.getMetricInstances(reference);
 		monitoringService.startMonitoring(reference, metricInstances);
 	}
-	@Override
-	public synchronized void onDeparture(ServiceReference reference) {
+	
+	public void onDeparture(ServiceReference reference) {
 		monitoringService.stopMonitoring(reference);
 	}
 
@@ -48,7 +47,6 @@ public class ManagementServiceImpl implements ManagementService {
 		return metadata;
 	}
 
-	@Override
 	public List<String> getMetricList() {
 		List<String> metricList = new ArrayList<String>();
 		
@@ -58,7 +56,6 @@ public class ManagementServiceImpl implements ManagementService {
 		return metricList;
 	}
 	
-	@Override
 	public void addMetric(String category, String name, String servicePid, String operationName) {
 		MetricId id = new MetricId(category, name);
 		Metric metric = this.metricComputingService.getMetric(id);
@@ -66,7 +63,6 @@ public class ManagementServiceImpl implements ManagementService {
 		this.monitoringService.addMetric(servicePid, metricInstance);
 	}
 	
-	@Override
 	public void addMetricMonitor(String servicePid, String metricName, String metricCategory, String operationName) {
 		Metric metric = this.metricComputingService.getMetric(new MetricId(metricCategory, metricName));
 		MetricInstance metricInstance = new MetricInstanceImpl(metric, servicePid, operationName);

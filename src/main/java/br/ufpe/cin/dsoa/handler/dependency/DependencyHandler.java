@@ -10,11 +10,16 @@ import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
-import br.ufpe.cin.dsoa.handler.dependency.contract.Constraint;
+import br.ufpe.cin.dsoa.broker.Broker;
+import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
 import br.ufpe.cin.dsoa.handler.dependency.contract.Expression;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceConsumer;
 import br.ufpe.cin.dsoa.handler.dependency.contract.WindowType;
+import br.ufpe.cin.dsoa.handler.dependency.manager.DependencyManager;
+import br.ufpe.cin.dsoa.handler.dependency.manager.Verifier;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyHandler extends PrimitiveHandler {
@@ -22,12 +27,22 @@ public class DependencyHandler extends PrimitiveHandler {
 	private List<Dependency> dependencies = new ArrayList<Dependency>();
 	private DependencyHandlerDescription description;
 	private boolean started;
+	
+	private Broker broker;
+	private Verifier verifier;
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
-		String consumerName = metadata.getAttribute(Constants.COMPONENT_NAME_ATT);
+       /* <constraint 	metric="qos.ResponseTime" 
+	 			operation="priceAlert" 
+	  			expression="LT" 
+	 			threashold="800"
+	 			windowType="LENGTH"
+	 			windowSize="20"
+	  			weight="2"  />*/
 		String consumerId = metadata.getAttribute(Constants.COMPONENT_ID_ATT);
+		String consumerName = metadata.getAttribute(Constants.COMPONENT_NAME_ATT);
 		ServiceConsumer serviceConsumer = new ServiceConsumer(consumerId, consumerName);
 		PojoMetadata pojoMetadata = getFactory().getPojoMetadata();
 
@@ -35,7 +50,7 @@ public class DependencyHandler extends PrimitiveHandler {
 		for (Element requiresTag : requiresTags) {
 			String field = (String) requiresTag.getAttribute(Constants.REQUIRES_ATT_FIELD);
 			String filter = requiresTag.getAttribute(Constants.REQUIRES_ATT_FILTER);
-			List<Constraint> constraintList = getConstraintList(requiresTag.getElements(Constants.CONSTRAINT_TAG));
+			List<Goal> constraintList = getConstraintList(requiresTag.getElements(Constants.CONSTRAINT_TAG));
 			FieldMetadata fieldMetadata = pojoMetadata.getField(field);
 			
 	/*		 Class spec = null;
@@ -62,8 +77,8 @@ public class DependencyHandler extends PrimitiveHandler {
 																			// description.
 	}
 
-	private List<Constraint> getConstraintList(Element[] constraintTags) {
-		List<Constraint> constraintList = new ArrayList<Constraint>();
+	private List<Goal> getConstraintList(Element[] constraintTags) {
+		List<Goal> constraintList = new ArrayList<Goal>();
 		String metric = null, operation = null, expression = null, threashold = null, weight = null, windowType = null, windowSize = null;
 		for (Element constraintTag : constraintTags) {
 			metric = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_METRIC);
@@ -78,14 +93,14 @@ public class DependencyHandler extends PrimitiveHandler {
 		return constraintList;
 	}
 
-	private Constraint defineConstraint(String metric, String operation, String expression, String threashold,
+	private Goal defineConstraint(String metric, String operation, String expression, String threashold,
 			String weight, String windowTypeName, String windowSize) {
 		Expression exp = Expression.valueOf(expression);
 		WindowType type = WindowType.valueOf(windowTypeName);
 		long size = Long.parseLong(windowSize);
 		double thr = Double.parseDouble(threashold);
 		long wgt = Long.parseLong(weight);
-		return new Constraint(metric, operation, exp, thr, type, size, wgt);
+		return new Goal(metric, operation, exp, thr, type, size, wgt);
 	}
 
 	private void register(FieldMetadata fieldmeta, Dependency dependency) {

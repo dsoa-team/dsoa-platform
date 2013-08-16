@@ -22,13 +22,13 @@ import br.ufpe.cin.dsoa.broker.normalizer.Normalizer;
 import br.ufpe.cin.dsoa.broker.rank.Rank;
 import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.handler.dependency.ServiceListener;
-import br.ufpe.cin.dsoa.handler.dependency.contract.Constraint;
+import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
 
 
 public class BrokerImpl implements Broker {
 
-	public void getBestService(BundleContext context, String specification, List<Constraint> constraints, 
+	public void getBestService(BundleContext context, String specification, List<Goal> constraints, 
 			List<ServiceReference> blackList, final ServiceListener listener) {
 
 		ServiceReference[] references = null;
@@ -67,14 +67,12 @@ public class BrokerImpl implements Broker {
 		} else {
 			//ServiceReference[] candidates = verifyBlackList(trash, references);
 			ServiceReference reference = findBestService(context, constraints, candidates);
-			String servicePid = (String)reference.getProperty(Constants.SERVICE_PID);
-			Object serviceObject = context.getService(reference);
-			listener.onArrival(new ServiceProvider(servicePid, reference, serviceObject));
+			final ServiceProvider provider = new ServiceProvider(context, reference);
+			listener.onArrival(provider);
 			ServiceTracker s = new ServiceTracker(context, reference, null) {
 				@Override
 				public void removedService(ServiceReference reference, Object object) {
-					String servicePid = (String)reference.getProperty(Constants.SERVICE_PID);
-					listener.onDeparture(new ServiceProvider(servicePid, reference, object));
+					listener.onDeparture(provider);
 					super.removedService(reference, object);
 					this.close();
 				}
@@ -83,11 +81,11 @@ public class BrokerImpl implements Broker {
 		}
 	}
 	
-	private List<FilterBuilder> getFilters(String spe, List<Constraint> constraints) {
+	private List<FilterBuilder> getFilters(String spe, List<Goal> constraints) {
 		List<FilterBuilder> filter = new ArrayList<FilterBuilder>();
 		filter.add(new IFilter(Constants.OBJECTCLASS, spe));
 		//metric.QoS.ResponseTime.priceAlert
-		for(Constraint constraint: constraints) {
+		for(Goal constraint: constraints) {
 			if(constraint.getOperation() != null) {
 				filter.add(new DFilter(Metric.METRIC_PREFIX +constraint.getMetric() + "." + constraint.getOperation(), 
 						constraint.getExpression(), constraint.getThreashold()));
@@ -98,7 +96,7 @@ public class BrokerImpl implements Broker {
 		return filter;
 	}
 
-	private ServiceReference findBestService(BundleContext context, List<Constraint> constraints, List<ServiceReference> candidates) {
+	private ServiceReference findBestService(BundleContext context, List<Goal> constraints, List<ServiceReference> candidates) {
 		ServiceReference service = null;
 		ServiceReference[] references = candidates.toArray(new ServiceReference[candidates.size()]);
 		//double[][] norm = normalizer.normalizedMatrix(slos, candidates);
