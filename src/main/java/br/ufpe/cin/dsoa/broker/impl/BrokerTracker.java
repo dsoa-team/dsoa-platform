@@ -28,12 +28,12 @@ public class BrokerTracker extends ServiceTracker {
 		if (!blackList.contains(reference)) {
 			String servicePid = (String)reference.getProperty(Constants.SERVICE_PID);
 			serviceObject = context.getService(reference);
-			qdl.onArrival(new ServiceProvider(servicePid, reference, serviceObject));
+//			qdl.onArrival(new ServiceProvider(servicePid, reference, serviceObject));
 			ServiceTracker s =new ServiceTracker(context, reference, null) {
 				@Override
 				public void removedService(ServiceReference reference, Object object) {
 					String servicePid = (String)reference.getProperty(Constants.SERVICE_PID);
-					qdl.onDeparture(new ServiceProvider(servicePid, reference, object));
+//					qdl.onDeparture(new ServiceProvider(servicePid, reference, object));
 					super.removedService(reference, object);
 					this.close();
 				}

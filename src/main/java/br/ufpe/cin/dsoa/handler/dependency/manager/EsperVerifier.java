@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
 import br.ufpe.cin.dsoa.event.EventProcessingService;
 import br.ufpe.cin.dsoa.event.NotificationListener;
-import br.ufpe.cin.dsoa.handler.dependency.contract.Constraint;
+import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
 import br.ufpe.cin.dsoa.metric.MetricComputingService;
 import br.ufpe.cin.dsoa.metric.MetricId;
 import br.ufpe.cin.dsoa.metric.MetricInstance;
@@ -18,9 +18,8 @@ public class EsperVerifier implements Verifier {
 	private MetricComputingService metricComputingService;
 	private EventProcessingService epService;
 	
-	@Override
-	public void configure(NotificationListener listener, String servicePid, List<Constraint> constraints) {
-		for (Constraint constraint : constraints) {
+	public void configure(NotificationListener listener, String servicePid, List<Goal> constraints) {
+		for (Goal constraint : constraints) {
 			MetricInstance instance = this.getMetricInstance(servicePid, constraint);
 			String statement = this.addFilters(instance.getMetric().getQuery(), servicePid, constraint);
 			
@@ -31,18 +30,18 @@ public class EsperVerifier implements Verifier {
 		}
 	}
 	
-	private String addFilters(String query, String servicePid, Constraint constraint) {
+	private String addFilters(String query, String servicePid, Goal constraint) {
 		StringBuffer statement = new StringBuffer(query);
 		statement.append(" ");
 		statement.append(this.getThreasholdClause(constraint));
 		return null;
 	}
 
-	private String getThreasholdClause(Constraint constraint) {
+	private String getThreasholdClause(Goal constraint) {
 		return " ";
 	}
 	
-	private MetricInstance getMetricInstance(String servicePid, Constraint constraint) {
+	private MetricInstance getMetricInstance(String servicePid, Goal constraint) {
 		// prefix.category.metric.target
 		// metric.QoS.ResponseTime.priceAlert
 		//[metric=qos.ResponseTime, operation=priceAlert, windowType=LENGTH, windowSize=20, expression=LT, threashold=800.0, weight=2]
@@ -61,7 +60,7 @@ public class EsperVerifier implements Verifier {
 		return instance;
 	}
 
-	private String buildStatement(String consumerId, String servicePid, Constraint constraint) {
+	private String buildStatement(String consumerId, String servicePid, Goal constraint) {
 		// TODO Auto-generated method stub
 		return null;
 	}

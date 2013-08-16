@@ -13,17 +13,14 @@ public class MetricAddCommand implements Command {
 		return ACTION_NAME;
 	}
 
-	@Override
 	public String getUsage() {
 		return ACTION_NAME + "";
 	}
 
-	@Override
 	public String getShortDescription() {
 		return "*";
 	}
 
-	@Override
 	public void execute(String line, PrintStream out, PrintStream err) {
 		// TODO Auto-generated method stub
 		

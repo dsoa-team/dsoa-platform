@@ -137,13 +137,11 @@ public class TestEventProcessingService implements NotificationListener {
 		}
 	}
 
-	@Override
 	public void receive(Map result, Object userObject, String statementName) {
 		// TODO Auto-generated method stub
 		System.out.println(result);
 	}
 
-	@Override
 	public void receive(Object result, String statementName) {
 		// TODO Auto-generated method stub
 		System.out.println("Stmt: " + statementName);

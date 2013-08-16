@@ -85,7 +85,7 @@ public class MonitoredService implements Monitorable {
 		}
 		Dictionary dict = copyProperties(reference);
 		Object proxy = Proxy.newProxyInstance(cl, classes,
-				new ServiceProxy(new ServiceProvider(Util.getPid(reference),reference, reference.getBundle().getBundleContext().getService(reference))));
+				new ServiceProxy(/*new ServiceProvider(Util.getPid(reference),reference, reference.getBundle().getBundleContext().getService(reference)))*/ null));
 		this.proxyRegistration = this.reference.getBundle().getBundleContext().registerService(classNames, proxy, dict);
 	}
 	
