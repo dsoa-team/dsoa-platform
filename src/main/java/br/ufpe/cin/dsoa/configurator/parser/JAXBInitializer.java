@@ -8,9 +8,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import br.ufpe.cin.dsoa.configurator.parser.agent.AgentList;
+import br.ufpe.cin.dsoa.configurator.parser.attribute.AttributeList;
 import br.ufpe.cin.dsoa.configurator.parser.contextmodel.ContextModel;
 import br.ufpe.cin.dsoa.configurator.parser.event.EventList;
-import br.ufpe.cin.dsoa.configurator.parser.metric.MetricList;
 
 public class JAXBInitializer {
 
@@ -22,7 +22,7 @@ public class JAXBInitializer {
 			contexts.put(EventList.CONFIG, JAXBInitializer.initEvent());
 			contexts.put(AgentList.CONFIG, JAXBInitializer.initAgent());
 			contexts.put(ContextModel.CONFIG, JAXBInitializer.initContextModel());
-			contexts.put(MetricList.CONFIG, JAXBInitializer.initMetrics());
+			contexts.put(AttributeList.CONFIG, JAXBInitializer.initMetrics());
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
@@ -36,7 +36,7 @@ public class JAXBInitializer {
 	}
 	
 	private static Unmarshaller initMetrics() throws JAXBException {
-		JAXBContext context = JAXBContext.newInstance(MetricList.class);
+		JAXBContext context = JAXBContext.newInstance(AttributeList.class);
 		return context.createUnmarshaller();
 	}
 

@@ -1,13 +1,13 @@
-package br.ufpe.cin.dsoa.metric;
+package br.ufpe.cin.dsoa.attribute;
 
 import br.ufpe.cin.dsoa.util.Constants;
 
-public class MetricId {
+public class AttributeId {
 
 	private String category;
 	private String name;
 
-	public MetricId(String category, String name) {
+	public AttributeId(String category, String name) {
 		this.category = category;
 		this.name = name;
 	}
@@ -38,7 +38,7 @@ public class MetricId {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MetricId other = (MetricId) obj;
+		AttributeId other = (AttributeId) obj;
 		if (category == null) {
 			if (other.category != null)
 				return false;

@@ -1,9 +1,13 @@
 package br.ufpe.cin.dsoa.util;
 
+import java.nio.Buffer;
+
 import org.osgi.framework.ServiceReference;
 
-public class Util {
+import br.ufpe.cin.dsoa.attribute.AttributableId;
 
+public class Util {
+	
 	public static boolean isRemote(ServiceReference reference) {
 		return reference.getProperty(Constants.REMOTE_SERVICE) != null;
 	}
@@ -20,4 +24,13 @@ public class Util {
 		Object pid = reference.getProperty(org.osgi.framework.Constants.SERVICE_PID);
 		return pid == null ? null : pid.toString();
 	}
+	
+	public static AttributableId getAttributableId(String serviceId, String operationName) {
+		StringBuffer buf = new StringBuffer(serviceId);
+		if (operationName != null) {
+			buf.append(Constants.TOKEN).append(operationName);
+		}
+		return new AttributableId(buf.toString());
+	}
+	
 }

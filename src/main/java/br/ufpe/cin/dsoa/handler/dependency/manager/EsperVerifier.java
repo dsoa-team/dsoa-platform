@@ -4,24 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
+import br.ufpe.cin.dsoa.attribute.AttributableId;
+import br.ufpe.cin.dsoa.attribute.AttributeCatalog;
+import br.ufpe.cin.dsoa.attribute.AttributeId;
+import br.ufpe.cin.dsoa.attribute.mappers.AttributeAttributableMapper;
+import br.ufpe.cin.dsoa.configurator.parser.attribute.Attribute;
 import br.ufpe.cin.dsoa.event.EventProcessingService;
 import br.ufpe.cin.dsoa.event.NotificationListener;
 import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
-import br.ufpe.cin.dsoa.metric.MetricComputingService;
-import br.ufpe.cin.dsoa.metric.MetricId;
-import br.ufpe.cin.dsoa.metric.MetricInstance;
-import br.ufpe.cin.dsoa.metric.MetricInstanceImpl;
+import br.ufpe.cin.dsoa.util.Constants;
 
 public class EsperVerifier implements Verifier {
 
-	private MetricComputingService metricComputingService;
+	private AttributeCatalog attributeCatalog;
 	private EventProcessingService epService;
 	
 	public void configure(NotificationListener listener, String servicePid, List<Goal> constraints) {
 		for (Goal constraint : constraints) {
-			MetricInstance instance = this.getMetricInstance(servicePid, constraint);
-			String statement = this.addFilters(instance.getMetric().getQuery(), servicePid, constraint);
+			AttributeAttributableMapper instance = this.getMetricInstance(servicePid, constraint);
+			AttributeId attId = instance.getAtttributeId();
+			Attribute attribute = attributeCatalog.getAttribute(attId);
+			String statement = this.addFilters(attribute.getQuery(), servicePid, constraint);
 			
 			//this.epService.defineStatement(name, statement)
 			//Statement stmt = buildStatement(consumerId, servicePid, constraint);
@@ -41,22 +44,21 @@ public class EsperVerifier implements Verifier {
 		return " ";
 	}
 	
-	private MetricInstance getMetricInstance(String servicePid, Goal constraint) {
+	private AttributeAttributableMapper getMetricInstance(String servicePid, Goal constraint) {
 		// prefix.category.metric.target
 		// metric.QoS.ResponseTime.priceAlert
 		//[metric=qos.ResponseTime, operation=priceAlert, windowType=LENGTH, windowSize=20, expression=LT, threashold=800.0, weight=2]
-		MetricInstance instance = null;
 		List<String> nameParts = new ArrayList<String>();
 		String metricName = constraint.getMetric();
-		StringTokenizer st = new StringTokenizer(metricName, ".");
+		StringTokenizer st = new StringTokenizer(metricName, Constants.TOKEN);
 		while (st.hasMoreTokens()) {
 			nameParts.add(st.nextToken());
 		}
-		MetricId metricId = new MetricId(nameParts.get(0), nameParts.get(1));
-		Metric metric = metricComputingService.getMetric(metricId);
-		if (null != metric) {
-			instance = new MetricInstanceImpl(metric, servicePid, constraint.getOperation());
-		}
+		
+		AttributeId attributeId = new AttributeId(nameParts.get(0), nameParts.get(1));
+		AttributeAttributableMapper instance = null;
+		String operationName = constraint.getOperation();
+		instance = new AttributeAttributableMapper(attributeId, new AttributableId(servicePid, operationName));
 		return instance;
 	}
 

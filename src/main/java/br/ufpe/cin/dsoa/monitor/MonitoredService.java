@@ -13,10 +13,8 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.monitor.Monitorable;
 import org.osgi.service.monitor.StatusVariable;
 
+import br.ufpe.cin.dsoa.attribute.AttributeMonitor;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
-import br.ufpe.cin.dsoa.management.ServiceProxy;
-import br.ufpe.cin.dsoa.metric.MetricMonitor;
-import br.ufpe.cin.dsoa.util.Util;
 
 public class MonitoredService implements Monitorable {
 	private static final String REFERED_SERVICE_ID = "refered.service.id";
@@ -24,8 +22,8 @@ public class MonitoredService implements Monitorable {
 	
 	private Logger log;
 	private MonitoredServiceMetadata metadata;
-	// <target, MetricMonitor>
-	private Map<String, MetricMonitor> metricMonitorMap;
+	// <target, AttributeMonitor>
+	private Map<String, AttributeMonitor> metricMonitorMap;
 	private boolean started;
 	
 	private ServiceReference reference;
@@ -37,7 +35,7 @@ public class MonitoredService implements Monitorable {
 		this.log = Logger.getLogger(getClass().getSimpleName());
 		this.reference = reference;
 		this.metadata = new MonitoredServiceMetadata(reference);
-		this.metricMonitorMap = new HashMap<String, MetricMonitor>();
+		this.metricMonitorMap = new HashMap<String, AttributeMonitor>();
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -85,7 +83,7 @@ public class MonitoredService implements Monitorable {
 		}
 		Dictionary dict = copyProperties(reference);
 		Object proxy = Proxy.newProxyInstance(cl, classes,
-				new ServiceProxy(/*new ServiceProvider(Util.getPid(reference),reference, reference.getBundle().getBundleContext().getService(reference)))*/ null));
+				new MonitoredServiceProxy(new ServiceProvider(reference.getBundle().getBundleContext(), reference)));
 		this.proxyRegistration = this.reference.getBundle().getBundleContext().registerService(classNames, proxy, dict);
 	}
 	
@@ -101,8 +99,8 @@ public class MonitoredService implements Monitorable {
 		return dict;
 	}
 	
-	public void addMetricMonitor(MetricMonitor monitor) {
-		this.metricMonitorMap.put(monitor.getTarget(), monitor);
+	public void addMetricMonitor(AttributeMonitor monitor) {
+		this.metricMonitorMap.put(monitor.getStatusVariableId(), monitor);
 	}
 	
 	private String getMonitoredServicePid() {
@@ -147,12 +145,12 @@ public class MonitoredService implements Monitorable {
 
 	public String getDescription(String id) throws IllegalArgumentException {
 		if (metricMonitorMap.containsKey(id)) {
-			return metricMonitorMap.get(id).getDescription();
+			return metricMonitorMap.get(id).getAttributeDescription();
 		}
 		throw new IllegalArgumentException("Variable " + id + " does not exist");
 	}
 
-	public Map<String, MetricMonitor> getMetricVariableMap() {
+	public Map<String, AttributeMonitor> getMetricVariableMap() {
 		return this.metricMonitorMap;
 	}
 

@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.management;
+package br.ufpe.cin.dsoa.monitor;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -10,13 +10,13 @@ import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
 /**
  * A Service Proxy that intercepts requests at the client side. It generates
  * events that represent service invocation (InvocationEvent) and forwards them
- * to the Event Processing Center. There some Metric Computing Agents are
+ * to the Event Processing Center. There some Property Computing Agents are
  * responsible for metric derivation.
  * 
  * @author fabions
  * 
  */
-public class ServiceProxy implements InvocationHandler {
+public class MonitoredServiceProxy implements InvocationHandler {
 
 	// The log service
 	private Logger log;
@@ -39,7 +39,7 @@ public class ServiceProxy implements InvocationHandler {
 	 */
 	private Method m_toStringMethod;
 
-	public ServiceProxy(ServiceProvider service) {
+	public MonitoredServiceProxy(ServiceProvider service) {
 		this.service = service;
 		this.log = Logger.getLogger(getClass().getSimpleName());
 		try {

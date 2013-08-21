@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.event.legancy;
+package br.ufpe.cin.dsoa.event.legacy;
 
 import java.util.HashMap;
 

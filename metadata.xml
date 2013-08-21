@@ -24,39 +24,12 @@
 		<callback transition="invalidate" method="stop" />
 	</component>
 	
-	
-	
-	<!-- The Management Service is responsible for providing an access point to perform
-	management related activities. It is exposed as remote service in order to allow remote
-	administration -->
-
-	<component classname="br.ufpe.cin.dsoa.management.impl.ManagementServiceImpl">
-		<requires field="metricComputingService" />
-		<requires field="monitoringService" />
-		<provides >
-			<property name="org.apache.cxf.ws.address"   value="http://localhost:9090/ManagementService"  	type="java.lang.String"/>
-			<property name="service.exported.interfaces"  value="*"  type="java.lang.String"/>
-			<property name="service.exported.configs"  value="org.apache.cxf.ws"  type="java.lang.String"/>
-		</provides>
-		<wbp:wbp 
-   	      filter="(service.managed=*)" 
-          onArrival="onArrival" 
-          onDeparture="onDeparture" 
-         />
-	</component>
-
-	<component classname="br.ufpe.cin.dsoa.monitor.impl.MonitoringServiceImpl">
-		<requires field="eventProcessingService" />
-		<provides />
-	</component>
-
-	
 <!-- 	<component classname="br.ufpe.cin.dsoa.monitor.impl.MonitoringDepencencyImpl">
 		<requires field="eventProcessingService" />
 		<provides />
 	</component> -->
 	
-	<component classname="br.ufpe.cin.dsoa.metric.impl.MetricComputingServiceImpl">
+	<component classname="br.ufpe.cin.dsoa.attribute.impl.AttributeCatalogImpl">
 		<requires field="eventProcessingService" />
 		<provides />
 	</component>
@@ -70,6 +43,47 @@
 	<component classname="br.ufpe.cin.dsoa.broker.impl.BrokerImpl">
 		<provides />
 	</component>	
+		
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 			DSOA MONITORING COMPONENTS				   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
+	<!--  -->
+	<component classname="br.ufpe.cin.dsoa.monitor.impl.MonitoringServiceImpl">
+		<requires field="eventProcessingService" />
+		<provides />
+	</component>
+	
+	<component classname="br.ufpe.cin.dsoa.monitor.impl.MonitoredServiceListenerImpl">
+		<requires field="monitoringService" />
+		<provides />
+		<wbp:wbp 
+   	      filter="(monitored.service=*)" 
+          onArrival="onArrival" 
+          onDeparture="onDeparture" 
+         />
+	</component>
+		
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 			DSOA MANAGEMENT COMPONENTS				   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
+	<!-- 
+		The ManagementService component is the DSOA's management Facade. It is responsible for providing an access point
+		to perform management related activities. It is exposed as remote service in order to allow remote management. The
+		other components are shell commands intended to allow local administration. 
+	-->
+	<component classname="br.ufpe.cin.dsoa.management.impl.ManagementServiceImpl">
+		<requires field="metricComputingService" />
+		<requires field="monitoringService" />
+		<provides >
+			<property name="org.apache.cxf.ws.address"   value="http://localhost:9090/ManagementService"  	type="java.lang.String"/>
+			<property name="service.exported.interfaces"  value="*"  type="java.lang.String"/>
+			<property name="service.exported.configs"  value="org.apache.cxf.ws"  type="java.lang.String"/>
+		</provides>
+	</component>
 		
 	<component classname="br.ufpe.cin.dsoa.management.shell.DsoaCommand">
 		<provides />
@@ -95,14 +109,20 @@
 		<provides />
 	</component>
 	
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 			DSOA COMPONENT INSTANCES				   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
 	<!-- Dsoa Main components -->
 	<instance component="br.ufpe.cin.dsoa.configurator.PlatformConfigurator" />
 	<instance component="br.ufpe.cin.dsoa.management.impl.ManagementServiceImpl" />
 	<instance component="br.ufpe.cin.dsoa.event.impl.EventProcessingServiceImpl" />
 	<instance component="br.ufpe.cin.dsoa.monitor.impl.MonitoringServiceImpl" />
-	<instance component="br.ufpe.cin.dsoa.metric.impl.MetricComputingServiceImpl" />
+	<instance component="br.ufpe.cin.dsoa.attribute.impl.AttributeCatalogImpl" />
 	<instance component="br.ufpe.cin.dsoa.broker.impl.BrokerImpl"/>
 	<instance component="br.ufpe.cin.dsoa.handler.dependency.manager.EsperVerifier"/>
+	<instance component="br.ufpe.cin.dsoa.monitor.impl.MonitoredServiceListenerImpl"/>
 	<!-- <instance component="br.ufpe.cin.dsoa.configurator.hook.DsoaFindHook" />  -->
 	
 	<!-- Dsoa commands -->

@@ -14,21 +14,21 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.util.tracker.BundleTracker;
 
+import br.ufpe.cin.dsoa.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.configurator.parser.JAXBInitializer;
+import br.ufpe.cin.dsoa.configurator.parser.attribute.AttributeList;
 import br.ufpe.cin.dsoa.configurator.parser.contextmodel.Context;
 import br.ufpe.cin.dsoa.configurator.parser.contextmodel.ContextMapping;
 import br.ufpe.cin.dsoa.configurator.parser.contextmodel.ContextModel;
 import br.ufpe.cin.dsoa.configurator.parser.event.Event;
 import br.ufpe.cin.dsoa.configurator.parser.event.EventList;
-import br.ufpe.cin.dsoa.configurator.parser.metric.MetricList;
 import br.ufpe.cin.dsoa.event.EventProcessingService;
-import br.ufpe.cin.dsoa.metric.MetricComputingService;
 
 public class DsoaBundleListener extends BundleTracker {
 
 	private Map<String, Unmarshaller> JAXBContexts;
 	private EventProcessingService epService;
-	private MetricComputingService mcService;
+	private AttributeCatalog mcService;
 	private Map<String, Event> eventMap;
 	
 	private static Logger logger = Logger.getLogger(DsoaBundleListener.class.getName());
@@ -108,11 +108,11 @@ public class DsoaBundleListener extends BundleTracker {
 	}
 	
 	private void handleMetricDefinitions(Bundle bundle) throws JAXBException {
-		URL url = bundle.getEntry(MetricList.CONFIG);
+		URL url = bundle.getEntry(AttributeList.CONFIG);
 		if(url != null) {
-			Unmarshaller u = JAXBContexts.get(MetricList.CONFIG);
-			MetricList list = (MetricList)u.unmarshal(url);
-			this.mcService.addMetrics(list);
+			Unmarshaller u = JAXBContexts.get(AttributeList.CONFIG);
+			AttributeList list = (AttributeList)u.unmarshal(url);
+			this.mcService.addAttributes(list);
 		}
 	}
 	
@@ -145,8 +145,8 @@ public class DsoaBundleListener extends BundleTracker {
 		}
 	}
 
-	public void setMetricComputingService(MetricComputingService metricCatalog) {
-		this.mcService = metricCatalog;
+	public void setMetricComputingService(AttributeCatalog attributeCatalog) {
+		this.mcService = attributeCatalog;
 	}
 
 	public void setEventProcessingService(EventProcessingService epCenter) {

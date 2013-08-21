@@ -7,11 +7,11 @@ import org.apache.felix.ipojo.FieldInterceptor;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import br.ufpe.cin.dsoa.attribute.AttributeId;
 import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceConsumer;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
 import br.ufpe.cin.dsoa.handler.dependency.manager.DependencyManager;
-import br.ufpe.cin.dsoa.metric.MetricId;
 
 public class Dependency implements FieldInterceptor {
 
@@ -22,7 +22,7 @@ public class Dependency implements FieldInterceptor {
 	private String 					filter;
 	private Class<?> 		 		specification;
 	private List<Goal> 		 		goalList;
-	private List<MetricId>   		metricList;
+	private List<AttributeId>   		metricList;
 	private ServiceProvider 		serviceProvider;
 	private List<ServiceReference> 	blackList;
 
@@ -77,16 +77,16 @@ public class Dependency implements FieldInterceptor {
 		return this.goalList.remove(goal);
 	}
 	
-	public List<MetricId> getMetricList() {
+	public List<AttributeId> getMetricList() {
 		return metricList;
 	}
 	
-	public boolean addMetric(MetricId metricId) {
-		return this.metricList.add(metricId);
+	public boolean addMetric(AttributeId attributeId) {
+		return this.metricList.add(attributeId);
 	}
 	
-	public boolean removeMetric(MetricId metricId) {
-		return this.metricList.remove(metricId);
+	public boolean removeMetric(AttributeId attributeId) {
+		return this.metricList.remove(attributeId);
 	}
 
 	public DependencyStatus getStatus() {

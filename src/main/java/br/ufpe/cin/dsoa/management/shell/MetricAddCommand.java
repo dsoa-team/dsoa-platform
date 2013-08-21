@@ -2,21 +2,12 @@ package br.ufpe.cin.dsoa.management.shell;
 
 import java.io.PrintStream;
 
-import org.apache.felix.shell.Command;
+public class MetricAddCommand  extends AbstractDsoaCommand {
 
-public class MetricAddCommand implements Command {
-
-	private static final String ACTION_NAME = "metric-add";
-	
-	
-	public String getName() {
-		return ACTION_NAME;
+	public final String getName() {
+		return "metric-add";
 	}
-
-	public String getUsage() {
-		return ACTION_NAME + "";
-	}
-
+	
 	public String getShortDescription() {
 		return "*";
 	}

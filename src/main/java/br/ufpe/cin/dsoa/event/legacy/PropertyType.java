@@ -1,11 +1,11 @@
-package br.ufpe.cin.dsoa.event.legancy;
+package br.ufpe.cin.dsoa.event.legacy;
 
-public class AttributeType {
+public class PropertyType {
 	private Class<?> type;
 	private String name;
 	private boolean required;
 	
-	public AttributeType(String name, Class<?> type, boolean required) {
+	public PropertyType(String name, Class<?> type, boolean required) {
 		super();
 		this.name = name;
 		this.type = type;
@@ -26,7 +26,7 @@ public class AttributeType {
 
 	@Override
 	public String toString() {
-		return "AttributeType [type=" + type + ", name=" + name + ", required="
+		return "PropertyType [type=" + type + ", name=" + name + ", required="
 				+ required + "]";
 	}
 
@@ -46,7 +46,7 @@ public class AttributeType {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AttributeType other = (AttributeType) obj;
+		PropertyType other = (PropertyType) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

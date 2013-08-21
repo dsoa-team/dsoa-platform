@@ -2,28 +2,18 @@ package br.ufpe.cin.dsoa.management.shell;
 
 import java.io.PrintStream;
 
-import org.apache.felix.shell.Command;
 import org.osgi.framework.Constants;
 
-import br.ufpe.cin.dsoa.management.ManagementService;
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 
-public class ServiceListCommand implements Command {
-
-	private static final String ACTION_NAME = "service-list";
-
-	private ManagementService managementService;
+public class ServiceListCommand extends AbstractDsoaCommand {
 
 	public String getName() {
-		return ACTION_NAME;
+		return  "service-list";
 	}
 
 	public String getShortDescription() {
 		return "List all provided services on plaform";
-	}
-
-	public String getUsage() {
-		return "dsoa service-list";
 	}
 
 	public void execute(String line, PrintStream out, PrintStream err) {

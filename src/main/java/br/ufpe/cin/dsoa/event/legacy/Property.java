@@ -1,12 +1,12 @@
-package br.ufpe.cin.dsoa.event.legancy;
+package br.ufpe.cin.dsoa.event.legacy;
 
-public class Attribute {
-	private AttributeType attributeType;
+public class Property {
+	private PropertyType propertyType;
 	private Object value;
 	
-	public Attribute(Object value, AttributeType type) {
+	public Property(Object value, PropertyType type) {
 		this.value = value;
-		this.attributeType = type;
+		this.propertyType = type;
 		isValid();
 	}
 
@@ -14,13 +14,13 @@ public class Attribute {
 		return value;
 	}
 	
-	public AttributeType getAttributeType() {
-		return attributeType;
+	public PropertyType getAttributeType() {
+		return propertyType;
 	}
 	
 	private void isValid() throws IllegalArgumentException {
 		if (value != null) {
-			Class<?> type = this.attributeType.getType();
+			Class<?> type = this.propertyType.getType();
 			if (!type.isAssignableFrom(value.getClass())) {
 				throw new IllegalArgumentException("Value " + value + " is not an instance of " + type);
 			}
@@ -29,7 +29,7 @@ public class Attribute {
 
 	@Override
 	public String toString() {
-		return "Attribute [attributeType=" + attributeType + ", value=" + value
+		return "Property [propertyType=" + propertyType + ", value=" + value
 				+ "]";
 	}
 	

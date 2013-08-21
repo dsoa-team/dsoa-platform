@@ -20,7 +20,7 @@ import br.ufpe.cin.dsoa.broker.filter.FilterBuilder;
 import br.ufpe.cin.dsoa.broker.filter.IFilter;
 import br.ufpe.cin.dsoa.broker.normalizer.Normalizer;
 import br.ufpe.cin.dsoa.broker.rank.Rank;
-import br.ufpe.cin.dsoa.configurator.parser.metric.Metric;
+import br.ufpe.cin.dsoa.configurator.parser.attribute.Attribute;
 import br.ufpe.cin.dsoa.handler.dependency.ServiceListener;
 import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
@@ -87,7 +87,7 @@ public class BrokerImpl implements Broker {
 		//metric.QoS.ResponseTime.priceAlert
 		for(Goal constraint: constraints) {
 			if(constraint.getOperation() != null) {
-				filter.add(new DFilter(Metric.METRIC_PREFIX +constraint.getMetric() + "." + constraint.getOperation(), 
+				filter.add(new DFilter(Attribute.ATTRIBUTE_PREFIX +constraint.getMetric() + "." + constraint.getOperation(), 
 						constraint.getExpression(), constraint.getThreashold()));
 			} else {
 				filter.add(new DFilter(constraint.getMetric(), constraint.getExpression(), constraint.getThreashold()));

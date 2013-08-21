@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.metric.MetricInstance;
+import br.ufpe.cin.dsoa.attribute.mappers.AttributeAttributableMapper;
 
 
 public interface MonitoringService {
-	void startMonitoring(ServiceReference reference, List<MetricInstance> metricInstances);
+	void startMonitoring(ServiceReference reference, List<AttributeAttributableMapper> attributeAttributableMappers);
 	void stopMonitoring(ServiceReference reference);
 	List<MonitoredService> getMonitoredServices();
 	MonitoredService getMonitoredService(String id);
-	void addMetric(String servicePid, MetricInstance metricInstance);
+	void addMetric(String servicePid, AttributeAttributableMapper attributeAttributableMapper);
 	
 }

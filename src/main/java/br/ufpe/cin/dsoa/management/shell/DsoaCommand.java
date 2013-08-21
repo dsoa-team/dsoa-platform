@@ -9,6 +9,14 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
+/**
+ * This class is the root of DSOA's command shell. Every DSOA command should be enacted through 'dsoa' prefix,
+ * so that this class is called to handle the command. In fact, it just delegate the resposibility of executing
+ * the command itself to the OSGI's ShellCommand.
+ * 
+ * @author dsoa-team
+ *
+ */
 public class DsoaCommand implements Command, ServiceTrackerCustomizer {
 
 	private static final String ACTION_NAME = "dsoa";
@@ -40,7 +48,7 @@ public class DsoaCommand implements Command, ServiceTrackerCustomizer {
 	}
 
 	public String getShortDescription() {
-		return "main command of dsoa platform";
+		return "Main command of dsoa platform";
 	}
 
 	public String getUsage() {

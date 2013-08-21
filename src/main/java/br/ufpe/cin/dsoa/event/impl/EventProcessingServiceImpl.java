@@ -12,7 +12,6 @@ import br.ufpe.cin.dsoa.event.EventProcessingService;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
 import br.ufpe.cin.dsoa.event.NotificationListener;
 import br.ufpe.cin.dsoa.event.Statement;
-import br.ufpe.cin.dsoa.metric.MetricMonitor;
 
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPPreparedStatement;
@@ -68,8 +67,9 @@ public class EventProcessingServiceImpl implements EventProcessingService {
 	}
 	
 	public void defineStatement(String name, String statement) {
-		EPPreparedStatement prepared = epServiceProvider.getEPAdministrator().prepareEPL(statement);
-		this.mapPreparedStmts.put(name, prepared);
+		/*EPPreparedStatement prepared = epServiceProvider.getEPAdministrator().prepareEPL(statement);
+		this.mapPreparedStmts.put(name, prepared);*/
+		epServiceProvider.getEPAdministrator().createEPL(statement);
 	}
 	
 	public void destroyStatement(String name) {
@@ -84,29 +84,6 @@ public class EventProcessingServiceImpl implements EventProcessingService {
 		this.epServiceProvider.getEPAdministrator().getConfiguration().
 			addEventType(eventName, eventProperties);
 		
-	}
-	
-	public void subscribe(String statementName, List<Object> parameters, final NotificationListener eventConsumer) {
-		EPPreparedStatement preparedStmt = this.mapPreparedStmts.get(statementName);
-		int index = 0;
-		for (Object parameter : parameters) {
-			preparedStmt.setObject(++index, parameter);
-		}
-		
-		StringBuffer stmtName = new StringBuffer(statementName).append("[");
-		boolean firstParam = true;
-		for (Object parameter : parameters) {
-			if(!firstParam) {
-				stmtName.append(",");
-			} else {
-				firstParam = false;
-			}
-			stmtName.append(parameter);
-		}
-		stmtName.append("]");
-		EPStatement statement = this.epServiceProvider.getEPAdministrator().create(preparedStmt, stmtName.toString());
-		this.mapStmts.put(stmtName.toString(), statement);
-		statement.addListener(new EventNotifier(eventConsumer));
 	}
 	
 	public void unsubscribe(String statementName, NotificationListener eventConsumer) {
@@ -141,6 +118,29 @@ public class EventProcessingServiceImpl implements EventProcessingService {
 
 	public void defineStatement(Statement stmt) {
 		this.epServiceProvider.getEPAdministrator().createEPL(stmt.getQuery(), stmt.getName());		
+	}
+	
+	public void subscribe(String statementName, List<Object> parameters, final NotificationListener eventConsumer) {
+		EPPreparedStatement preparedStmt = this.mapPreparedStmts.get(statementName);
+		int index = 0;
+		for (Object parameter : parameters) {
+			preparedStmt.setObject(++index, parameter);
+		}
+		
+		StringBuffer stmtName = new StringBuffer(statementName).append("[");
+		boolean firstParam = true;
+		for (Object parameter : parameters) {
+			if(!firstParam) {
+				stmtName.append(",");
+			} else {
+				firstParam = false;
+			}
+			stmtName.append(parameter);
+		}
+		stmtName.append("]");
+		EPStatement statement = this.epServiceProvider.getEPAdministrator().create(preparedStmt, stmtName.toString());
+		this.mapStmts.put(stmtName.toString(), statement);
+		statement.addListener(new EventNotifier(eventConsumer));
 	}
 	
 	public void subscribe(String statementName, final NotificationListener eventConsumer) {

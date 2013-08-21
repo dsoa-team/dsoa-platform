@@ -19,7 +19,7 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 	 * The managed dependency
 	 */
 	private Dependency dependency;
-	//private DependencyManagerMBean dependency
+	//private DependencyManagerMBean dependencys
 	
 	/**
 	 * The component responsible for service selection.
@@ -195,15 +195,15 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 		return this.goalList.remove(goal);
 	}
 	
-	public List<MetricId> getMetricList() {
+	public List<AttributeId> getMetricList() {
 		return metricList;
 	}
 	
-	public boolean addMetric(MetricId metricId) {
+	public boolean addMetric(AttributeId metricId) {
 		return this.metricList.add(metricId);
 	}
 	
-	public boolean removeMetric(MetricId metricId) {
+	public boolean removeMetric(AttributeId metricId) {
 		return this.metricList.remove(metricId);
 	}
 

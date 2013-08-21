@@ -2,28 +2,9 @@ package br.ufpe.cin.dsoa.management.shell;
 
 import java.io.PrintStream;
 
-import org.apache.felix.shell.Command;
-
-import br.ufpe.cin.dsoa.management.ManagementService;
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 
-public class ServiceOperationsCommand implements Command {
-
-	private static final String ACTION_NAME = "service-operations";
-
-	private ManagementService managementService;
-
-	public String getName() {
-		return ACTION_NAME;
-	}
-
-	public String getShortDescription() {
-		return "Show service operations for every interface that service provider implements";
-	}
-
-	public String getUsage() {
-		return "dsoa service-operations [service_pid]";
-	}
+public class ServiceOperationsCommand extends AbstractDsoaCommand {
 
 	public void execute(String line, PrintStream out, PrintStream err) {
 		if (line.split(" ").length > 1) {
@@ -50,6 +31,14 @@ public class ServiceOperationsCommand implements Command {
 		} else {
 			err.println("Incorrect number of parameters");
 		}
+	}
+
+	public String getName() {
+		return  "service-operations";
+	}
+
+	public String getShortDescription() {
+		return getName();
 	}
 
 }

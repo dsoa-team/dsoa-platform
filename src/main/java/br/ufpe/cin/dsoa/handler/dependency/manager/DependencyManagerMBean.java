@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.osgi.framework.ServiceReference;
 
+import br.ufpe.cin.dsoa.attribute.AttributeId;
 import br.ufpe.cin.dsoa.handler.dependency.DependencyStatus;
 import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceConsumer;
-import br.ufpe.cin.dsoa.metric.MetricId;
 
 public interface DependencyManagerMBean {
 	/*public ServiceConsumer getConsumer() {
@@ -34,15 +34,15 @@ public interface DependencyManagerMBean {
 		return this.goalList.remove(goal);
 	}
 	
-	public List<MetricId> getMetricList() {
+	public List<AttributeId> getMetricList() {
 		return metricList;
 	}
 	
-	public boolean addMetric(MetricId metricId) {
+	public boolean addMetric(AttributeId metricId) {
 		return this.metricList.add(metricId);
 	}
 	
-	public boolean removeMetric(MetricId metricId) {
+	public boolean removeMetric(AttributeId metricId) {
 		return this.metricList.remove(metricId);
 	}
 

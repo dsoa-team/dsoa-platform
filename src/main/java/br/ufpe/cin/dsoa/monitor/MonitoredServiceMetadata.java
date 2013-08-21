@@ -41,7 +41,6 @@ public class MonitoredServiceMetadata {
 			log.info("Service Interface: " + clazz);
 			List<String> operations = new ArrayList<String>();
 			try {
-				
 				for(Method method : reference.getBundle().loadClass(clazz).getDeclaredMethods()){
 					if(Modifier.isPublic(method.getModifiers())){
 						log.info("Operation: " + method.getName());

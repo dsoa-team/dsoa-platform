@@ -2,14 +2,14 @@ package br.ufpe.cin.dsoa.configurator;
 
 import org.osgi.framework.BundleContext;
 
+import br.ufpe.cin.dsoa.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.configurator.hook.DsoaBundleListener;
 import br.ufpe.cin.dsoa.event.EventProcessingService;
-import br.ufpe.cin.dsoa.metric.MetricComputingService;
 
 public class PlatformConfigurator {
 
 	private DsoaBundleListener listener;
-	private MetricComputingService metricComputingService;
+	private AttributeCatalog attributeCatalog;
 	private EventProcessingService eventProcessingService;
 	private BundleContext context;
 
@@ -20,7 +20,7 @@ public class PlatformConfigurator {
 	public void start() {
 		listener = new DsoaBundleListener(context);
 		listener.setEventProcessingService(eventProcessingService);
-		listener.setMetricComputingService(metricComputingService);
+		listener.setMetricComputingService(attributeCatalog);
 		listener.open();
 	}
 

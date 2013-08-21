@@ -6,11 +6,13 @@ import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 
+/**
+ * This intends to be the DSOA's management facade. 
+ * 
+ * @author dsoa-team
+ *
+ */
 public interface ManagementService {
-
-	void onArrival(ServiceReference reference);
-
-	void onDeparture(ServiceReference reference);
 
 	List<String> getMetricList();
 	

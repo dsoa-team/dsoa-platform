@@ -2,23 +2,15 @@ package br.ufpe.cin.dsoa.management.shell;
 
 import java.io.PrintStream;
 
-import org.apache.felix.shell.Command;
-
-import br.ufpe.cin.dsoa.management.ManagementService;
-
-public class MonitorCommand implements Command {
-
-	private static final String ACTION_NAME = "monitor";
+public class MonitorCommand extends AbstractDsoaCommand {
 
 	private static final int PID = 0;
 	private static final int CATEGORY = 1;
 	private static final int ATTRIBUTE = 2;
 	private static final int OPERATION = 3;
 	
-	private ManagementService managementService;
-
-	public String getName() {
-		return ACTION_NAME;
+	public final String getName() {
+		return "monitor";
 	}
 
 	public String getShortDescription() {
@@ -26,7 +18,7 @@ public class MonitorCommand implements Command {
 	}
 
 	public String getUsage() {
-		return "dsoa monitor [service-pid] [metric-category] [metric-name] <operation>";
+		return "dsoa " + getName() + " [service-pid] [metric-category] [metric-name] <operation>";
 	}
 
 	//dsoa monitor 
