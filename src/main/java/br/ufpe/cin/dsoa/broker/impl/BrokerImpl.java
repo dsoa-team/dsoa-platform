@@ -12,6 +12,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
+import br.ufpe.cin.dsoa.attribute.Attribute;
 import br.ufpe.cin.dsoa.broker.Broker;
 import br.ufpe.cin.dsoa.broker.InvalidConstraintException;
 import br.ufpe.cin.dsoa.broker.filter.AndFilter;
@@ -20,7 +21,6 @@ import br.ufpe.cin.dsoa.broker.filter.FilterBuilder;
 import br.ufpe.cin.dsoa.broker.filter.IFilter;
 import br.ufpe.cin.dsoa.broker.normalizer.Normalizer;
 import br.ufpe.cin.dsoa.broker.rank.Rank;
-import br.ufpe.cin.dsoa.configurator.parser.attribute.Attribute;
 import br.ufpe.cin.dsoa.handler.dependency.ServiceListener;
 import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceProvider;
@@ -87,10 +87,10 @@ public class BrokerImpl implements Broker {
 		//metric.QoS.ResponseTime.priceAlert
 		for(Goal constraint: constraints) {
 			if(constraint.getOperation() != null) {
-				filter.add(new DFilter(Attribute.ATTRIBUTE_PREFIX +constraint.getMetric() + "." + constraint.getOperation(), 
+				filter.add(new DFilter(Attribute.ATTRIBUTE_PREFIX +constraint.getAttributeId() + "." + constraint.getOperation(), 
 						constraint.getExpression(), constraint.getThreashold()));
 			} else {
-				filter.add(new DFilter(constraint.getMetric(), constraint.getExpression(), constraint.getThreashold()));
+				filter.add(new DFilter(constraint.getAttributeId(), constraint.getExpression(), constraint.getThreashold()));
 			}
 		}
 		return filter;

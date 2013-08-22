@@ -41,7 +41,7 @@ public class MonitoredService implements Monitorable {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void start() {
 		registerMonitor();
-		registerProxy();
+		//registerProxy();
 		this.started = true;
 	}
 	

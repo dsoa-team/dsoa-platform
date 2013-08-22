@@ -10,16 +10,11 @@ import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 
-import br.ufpe.cin.dsoa.broker.Broker;
-import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
 import br.ufpe.cin.dsoa.handler.dependency.contract.Expression;
+import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
 import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceConsumer;
 import br.ufpe.cin.dsoa.handler.dependency.contract.WindowType;
-import br.ufpe.cin.dsoa.handler.dependency.manager.DependencyManager;
-import br.ufpe.cin.dsoa.handler.dependency.manager.Verifier;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyHandler extends PrimitiveHandler {
@@ -28,9 +23,6 @@ public class DependencyHandler extends PrimitiveHandler {
 	private DependencyHandlerDescription description;
 	private boolean started;
 	
-	private Broker broker;
-	private Verifier verifier;
-
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {

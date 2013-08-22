@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.configurator.parser.attribute;
+package br.ufpe.cin.dsoa.attribute;
 
 import java.util.List;
 
@@ -13,16 +13,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AttributeList {
 
-	public static final String CONFIG = "DSOA-INF/metric.xml";
+	public static final String CONFIG = "DSOA-INF/attribute.xml";
 	
 	@XmlElement(name = "attribute")
 	private List<Attribute> attributes;
 
-	public List<Attribute> getMetrics() {
+	public List<Attribute> getAttributes() {
 		return attributes;
 	}
 
-	public void setMetrics(List<Attribute> attributes) {
+	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
 	}
 }

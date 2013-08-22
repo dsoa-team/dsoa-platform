@@ -1,7 +1,6 @@
-package br.ufpe.cin.dsoa.attribute.mappers;
+package br.ufpe.cin.dsoa.mapper;
 
 import br.ufpe.cin.dsoa.attribute.AttributableId;
-import br.ufpe.cin.dsoa.attribute.AttributeId;
 import br.ufpe.cin.dsoa.util.Constants;
 
 /**
@@ -12,15 +11,15 @@ import br.ufpe.cin.dsoa.util.Constants;
  */
 public class AttributeAttributableMapper {
 
-	private final AttributeId attributeId;
+	private final String attributeId;
 	private final AttributableId attributableId;
 	
-	public AttributeAttributableMapper(AttributeId attributeId, AttributableId attributableId) {
+	public AttributeAttributableMapper(String attributeId, AttributableId attributableId) {
 		this.attributeId = attributeId;
 		this.attributableId = attributableId;
 	}
 
-	public AttributeId getAtttributeId() {
+	public String getAtttributeId() {
 		return this.attributeId;
 	}
 	
@@ -30,7 +29,7 @@ public class AttributeAttributableMapper {
 	
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer(attributeId.toString());
+		StringBuffer sb = new StringBuffer(attributeId);
 		sb.append(Constants.TOKEN).append(attributableId.toString());
 		return  sb.toString();
 	}

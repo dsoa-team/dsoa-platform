@@ -2,8 +2,6 @@ package br.ufpe.cin.dsoa.management;
 
 import java.util.List;
 
-import org.osgi.framework.ServiceReference;
-
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 
 /**

@@ -8,19 +8,22 @@ import java.util.Map;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.attribute.AttributableId;
+import br.ufpe.cin.dsoa.attribute.Attribute;
 import br.ufpe.cin.dsoa.attribute.AttributeCatalog;
-import br.ufpe.cin.dsoa.attribute.AttributeId;
 import br.ufpe.cin.dsoa.attribute.AttributeMonitor;
-import br.ufpe.cin.dsoa.attribute.mappers.AttributeAttributableMapper;
-import br.ufpe.cin.dsoa.configurator.parser.attribute.Attribute;
+import br.ufpe.cin.dsoa.attribute.AttributeParser;
 import br.ufpe.cin.dsoa.event.EventProcessingService;
+import br.ufpe.cin.dsoa.mapper.AttributeAttributableMapper;
 import br.ufpe.cin.dsoa.monitor.MonitoredService;
 import br.ufpe.cin.dsoa.monitor.MonitoringService;
+import br.ufpe.cin.dsoa.util.Constants;
 import br.ufpe.cin.dsoa.util.Util;
 
 /**
- * This component is responsible for creating and maintaining "monitored services". Each monitored service is,
- * in fact, a service that maintains metric data related to a specific business service.
+ * 
+ * This component is responsible for listening for the registration of services that are intended to be monitored (As
+ * indicated by the monitored.service property). For each service that is registered, it creates and maintains a "monitored service",
+ * which is a service that maintains metrics related to a corresponding business service. 
  *  
  * @author fabions
  *
@@ -69,17 +72,48 @@ public class MonitoringServiceImpl implements MonitoringService {
 	}
 	
 	private void addMetricMonitor(MonitoredService monitoredService, AttributeAttributableMapper attributeAttributableMapper) {
-		AttributeId attributeId = attributeAttributableMapper.getAtttributeId();
+		String attributeId = attributeAttributableMapper.getAtttributeId();
 		Attribute attribute = attributeCatalog.getAttribute(attributeId);
 		if (attribute != null) {
 			AttributableId attributableId = attributeAttributableMapper.getAttributableId();
 			AttributeMonitor monitor = new AttributeMonitor(attributableId, attribute);
 			monitoredService.addMetricMonitor(monitor);
 			String stmtName = monitor.getStatusVariableId();
-			String stmt = attribute.getQuery();
+			//String stmt = attribute.getQuery();
 			List<Object> parameters = new ArrayList<Object>();
 			parameters.add(attributableId.getId());
 			eventProcessingService.subscribe(attributeAttributableMapper.toString(), parameters, monitor);
 		}
+	}
+	
+	/**
+	 * This method is called when a is registered and it has a property with name monitored.service set.
+	 * It is responsible for parsing the metrics that should be monitored (indicated through the service's properties)
+	 * and starting monitoring them. To do that, it creates proxy service that intercepts requests and creates an 
+	 * InvocationEvent that is sent to the EventProcessingService. There, there are Property Computing Agents that do the
+	 * real metric computation. For each service that is monitored, the Monitoring Service also creates a MonitoredService
+	 * that stores corresponding metrics and implements Monitorable interface (see OSGi spec).
+	 */
+	public void onArrival(ServiceReference reference) {
+		Boolean isProxy = ((Boolean)reference.getProperty(Constants.SERVICE_PROXY)==null ? false : Boolean.valueOf(reference.getProperty(Constants.SERVICE_PROXY).toString()));
+		if (!isProxy) {
+			AttributeAttributableMapper attributeAttributableMapper = null;
+			String servicePid = Util.getPid(reference);
+			String keys[] = reference.getPropertyKeys();
+			List<AttributeAttributableMapper> attributeAttributableMappers = new ArrayList<AttributeAttributableMapper>();
+			for (String key : keys) {
+				attributeAttributableMapper = AttributeParser.parse(servicePid, key);
+				if (attributeAttributableMapper != null) {
+					attributeAttributableMappers.add(attributeAttributableMapper);
+				}
+			}
+			if (!attributeAttributableMappers.isEmpty()) {
+				this.startMonitoring(reference, attributeAttributableMappers);
+			}
+		}
+	}
+	
+	public void onDeparture(ServiceReference reference) {
+		this.stopMonitoring(reference);
 	}
 }

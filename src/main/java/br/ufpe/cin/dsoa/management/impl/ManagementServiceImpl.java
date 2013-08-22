@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.ufpe.cin.dsoa.attribute.AttributableId;
+import br.ufpe.cin.dsoa.attribute.Attribute;
 import br.ufpe.cin.dsoa.attribute.AttributeCatalog;
-import br.ufpe.cin.dsoa.attribute.AttributeId;
-import br.ufpe.cin.dsoa.attribute.mappers.AttributeAttributableMapper;
-import br.ufpe.cin.dsoa.configurator.parser.attribute.Attribute;
+import br.ufpe.cin.dsoa.attribute.AttributeParser;
 import br.ufpe.cin.dsoa.management.ManagementService;
+import br.ufpe.cin.dsoa.mapper.AttributeAttributableMapper;
 import br.ufpe.cin.dsoa.monitor.MonitoredService;
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 import br.ufpe.cin.dsoa.monitor.MonitoringService;
@@ -61,14 +61,13 @@ public class ManagementServiceImpl implements ManagementService {
 	}
 	
 	public void addMetric(String category, String name, String servicePid, String operationName) {
-		AttributeId attributeId = new AttributeId(category, name);
 		AttributableId attributableId = new AttributableId(servicePid, operationName);
-		AttributeAttributableMapper attributeAttributableMapper = new AttributeAttributableMapper(attributeId, attributableId);
+		AttributeAttributableMapper attributeAttributableMapper = new AttributeAttributableMapper(AttributeParser.format(category, name), attributableId);
 		this.monitoringService.addMetric(servicePid, attributeAttributableMapper);
 	}
 	
-	public void addMetricMonitor(String servicePid, String metricName, String metricCategory, String operationName) {
-		Attribute attribute = this.attributeCatalog.getAttribute(new AttributeId(metricCategory, metricName));
+	public void addMetricMonitor(String servicePid, String attName, String attCategory, String operationName) {
+		Attribute attribute = this.attributeCatalog.getAttribute(AttributeParser.format(attCategory, attName));
 		AttributeAttributableMapper attributeAttributableMapper = new AttributeAttributableMapper(attribute.getId(), Util.getAttributableId(servicePid, operationName));
 		this.monitoringService.addMetric(servicePid, attributeAttributableMapper);
 	}

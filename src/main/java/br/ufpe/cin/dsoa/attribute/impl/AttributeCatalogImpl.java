@@ -4,19 +4,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.ufpe.cin.dsoa.attribute.Attribute;
+import br.ufpe.cin.dsoa.attribute.AttributeAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.attribute.AttributeCatalog;
-import br.ufpe.cin.dsoa.attribute.AttributeId;
-import br.ufpe.cin.dsoa.configurator.parser.attribute.Attribute;
-import br.ufpe.cin.dsoa.configurator.parser.attribute.AttributeList;
+import br.ufpe.cin.dsoa.attribute.AttributeCategory;
 
 /**
  * This component maintains the attribute catalog. 
  */
 public class AttributeCatalogImpl implements AttributeCatalog {
 	
-	private Map<AttributeId,Attribute> attributeMap = new HashMap<AttributeId,Attribute>();
+	private Map<String,Attribute> attributeMap = new HashMap<String,Attribute>();
+	private Map<String,AttributeCategory> attributeCategoryMap = new HashMap<String,AttributeCategory>();
 	
-	public Attribute getAttribute(AttributeId id) {
+	public Attribute getAttribute(String id) {
 		return this.attributeMap.get(id);
 	}
 
@@ -24,14 +25,20 @@ public class AttributeCatalogImpl implements AttributeCatalog {
 		return this.attributeMap.values();
 	}
 
-	public void addAttribute(Attribute attribute) {
+	public synchronized void addAttribute(Attribute attribute) throws AttributeAlreadyCatalogedException {
+		if (this.attributeMap.containsKey(attribute.getId())) {
+			throw new AttributeAlreadyCatalogedException(attribute);
+		}
+		attribute.getCategory().addAttribute(attribute);
 		this.attributeMap.put(attribute.getId(), attribute);
 	}
 
-	public void addAttributes(AttributeList metrics) {
-		for (Attribute attribute : metrics.getMetrics()) {
-			this.addAttribute(attribute);
-		}
+	public AttributeCategory getCategory(String catId) {
+		return attributeCategoryMap.get(catId);
 	}
-	
+
+	public void addCategory(AttributeCategory cat) {
+		attributeCategoryMap.put(cat.getId(), cat);
+	}
+
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.attribute.mappers.AttributeAttributableMapper;
+import br.ufpe.cin.dsoa.mapper.AttributeAttributableMapper;
 
 
 public interface MonitoringService {

@@ -1,4 +1,4 @@
-Import-Package: * 
-Export-Package: br.ufpe.cin.dsoa.management 
-Private-Package: br.ufpe.cin.dsoa.*
+--Import-Package: * ,br.ufpe.cin.dsoa.monitor,br.ufpe.cin.dsoa.attribute
+Export-Package: br.ufpe.cin.dsoa.management, br.ufpe.cin.dsoa.monitor,br.ufpe.cin.dsoa.attribute
+Private-Package: !br.ufpe.cin.dsoa.management,!br.ufpe.cin.dsoa.monitor,!br.ufpe.cin.dsoa.attribute, br.ufpe.cin.dsoa.*
 DynamicImport-Package: *

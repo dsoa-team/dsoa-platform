@@ -2,8 +2,19 @@ package br.ufpe.cin.dsoa.management.shell;
 
 import java.io.PrintStream;
 
-public class MetricListCommand extends AbstractDsoaCommand {
+import org.apache.felix.shell.Command;
 
+import br.ufpe.cin.dsoa.management.ManagementService;
+
+public class ListAttributesCommand implements Command  {
+
+	protected ManagementService managementService;
+
+	public String getUsage() {
+		return "dsoa " + getName();
+	}
+	
+	
 	public final String getName() {
 		return "metric-list";
 	}

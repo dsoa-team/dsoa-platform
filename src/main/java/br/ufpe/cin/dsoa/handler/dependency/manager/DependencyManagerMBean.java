@@ -1,13 +1,5 @@
 package br.ufpe.cin.dsoa.handler.dependency.manager;
 
-import java.util.List;
-
-import org.osgi.framework.ServiceReference;
-
-import br.ufpe.cin.dsoa.attribute.AttributeId;
-import br.ufpe.cin.dsoa.handler.dependency.DependencyStatus;
-import br.ufpe.cin.dsoa.handler.dependency.contract.Goal;
-import br.ufpe.cin.dsoa.handler.dependency.contract.ServiceConsumer;
 
 public interface DependencyManagerMBean {
 	/*public ServiceConsumer getConsumer() {

@@ -2,10 +2,20 @@ package br.ufpe.cin.dsoa.management.shell;
 
 import java.io.PrintStream;
 
+import org.apache.felix.shell.Command;
+
+import br.ufpe.cin.dsoa.management.ManagementService;
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 
-public class ServiceOperationsCommand extends AbstractDsoaCommand {
+public class ListServiceOperationsCommand implements Command {
 
+	protected ManagementService managementService;
+
+	public String getUsage() {
+		return "dsoa " + getName() + " service-pid";
+	}
+	
+	
 	public void execute(String line, PrintStream out, PrintStream err) {
 		if (line.split(" ").length > 1) {
 			try {

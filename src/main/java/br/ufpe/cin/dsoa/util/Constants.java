@@ -18,7 +18,7 @@ public interface Constants {
 	/** 
 	 * Tag Constraint
 	 */
-	public static final String CONSTRAINT_TAG		    	= "constraint";
+	public static final String CONSTRAINT_TAG		    	= "goal";
 	public static final String CONSTRAINT_ATT_METRIC 		= "metric";
 	public static final String CONSTRAINT_ATT_OPERATION		= "operation";
 	public static final String CONSTRAINT_ATT_EXPRESSION    = "expression";

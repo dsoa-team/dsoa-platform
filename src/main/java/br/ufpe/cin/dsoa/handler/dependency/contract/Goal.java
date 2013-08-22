@@ -1,35 +1,23 @@
 package br.ufpe.cin.dsoa.handler.dependency.contract;
 
 public class Goal {
-	private String metric;
+	private String attributeId;
 	private String operation;
-	private WindowType windowType;
-	private long windowSize;
 	private Expression expression;
 	private double threashold;
 	private long weight;
 
-	public Goal(String metric, String operation, Expression expression, double threashold, WindowType type, long size, long wgt) {
+	public Goal(String attributeId, String operation, Expression expression, double threashold, WindowType type, long size, long wgt) {
 		super();
-		this.metric = metric;
+		this.attributeId = attributeId;
 		this.operation = operation;
 		this.expression = expression;
 		this.threashold = threashold;
 		this.weight = wgt;
-		this.windowType = type;
-		this.windowSize = size;
 	}
 
-	public WindowType getWindowType() {
-		return windowType;
-	}
-
-	public long getWindowSize() {
-		return windowSize;
-	}
-
-	public String getMetric() {
-		return metric;
+	public String getAttributeId() {
+		return attributeId;
 	}
 
 	public String getOperation() {
@@ -50,8 +38,7 @@ public class Goal {
 
 	@Override
 	public String toString() {
-		return "Constraint [metric=" + metric + ", operation=" + operation + ", windowType=" + windowType
-				+ ", windowSize=" + windowSize + ", expression=" + expression + ", threashold=" + threashold
+		return "Goal [attributeId=" + this.attributeId + ", operation=" + this.operation + ", expression=" + this.expression + ", threashold=" + this.threashold
 				+ ", weight=" + weight + "]";
 	}
 
