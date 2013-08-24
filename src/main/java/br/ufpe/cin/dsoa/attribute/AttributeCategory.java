@@ -67,4 +67,10 @@ public class AttributeCategory {
 		this.subcategoryList.add(cat);
 	}
 
+	@Override
+	public String toString() {
+		return "AttributeCategory [id=" + id + ", subcategoryList=" + subcategoryList + ", attributeList="
+				+ attributeList + "]";
+	}
+
 }

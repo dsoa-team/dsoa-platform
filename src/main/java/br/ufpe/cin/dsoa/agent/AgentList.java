@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.configurator.parser.agent;
+package br.ufpe.cin.dsoa.agent;
 
 import java.util.List;
 
@@ -16,13 +16,13 @@ public class AgentList {
 	public static final String CONFIG = "DSOA-INF/agent.xml";
 	
 	@XmlElement(name = "agent")
-	private List<Agent> agents;
+	private List<EventProcessingAgent> agentList;
 
-	public List<Agent> getAgents() {
-		return agents;
+	public List<EventProcessingAgent> getAgents() {
+		return agentList;
 	}
 
-	public void setAgents(List<Agent> agents) {
-		this.agents = agents;
+	public void setAgents(List<EventProcessingAgent> agentList) {
+		this.agentList = agentList;
 	}
 }

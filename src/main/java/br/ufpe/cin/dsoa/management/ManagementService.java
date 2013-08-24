@@ -12,13 +12,15 @@ import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
  */
 public interface ManagementService {
 
-	List<String> getMetricList();
+	List<String> getAttributeList();
 	
-	void addMetric(String category, String metric, String servicePid, String operationName);
+	void addAttribute(String category, String metric, String servicePid, String operationName);
 	
-	void addMetricMonitor(String servicePid, String metricName, String metricCategory, String operationName);
+	void addAttributeMonitor(String servicePid, String attName, String attCategory, String operationName);
 	
 	public MonitoredServiceMetadata getManagedServiceMetadata(String id);
 	
 	public List<MonitoredServiceMetadata> getManagedServicesMetadata();
+	
+	public List<String> getAgentList();
 }

@@ -34,4 +34,11 @@ public class AttributePropertyType {
 	public void setClazz(Class<?> clazz) {
 		this.clazz = clazz;
 	}
+	
+	@Override
+	public String toString() {
+		return "AttributePropertyType [id=" + id + ", type=" + type + ", clazz=" + clazz + "]";
+	}
+	
+	
 }

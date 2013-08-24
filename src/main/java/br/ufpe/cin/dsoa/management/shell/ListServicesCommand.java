@@ -1,27 +1,24 @@
 package br.ufpe.cin.dsoa.management.shell;
 
 import java.io.PrintStream;
+import java.util.List;
 
-import org.apache.felix.shell.Command;
 import org.osgi.framework.Constants;
 
 import br.ufpe.cin.dsoa.management.ManagementService;
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 
-public class ListServicesCommand implements Command {
-	private static final String ACTION_NAME = "service-list";
+public class ListServicesCommand extends DsoaBaseCommand {
+	private static final String DESCRIPTION = "List all provided services on plaform";
+	private static final String COMMAND = "lstsrv";
 	protected ManagementService managementService;
 
-	public String getUsage() {
-		return "dsoa " + getName();
-	}
-	
 	public String getName() {
-		return ACTION_NAME;
+		return COMMAND;
 	}
 	
 	public String getShortDescription() {
-		return "List all provided services on plaform";
+		return DESCRIPTION;
 	}
 
 	public void execute(String line, PrintStream out, PrintStream err) {
@@ -32,6 +29,11 @@ public class ListServicesCommand implements Command {
 		}
 		out.println("Total: "
 				+ this.managementService.getManagedServicesMetadata().size());
+	}
+
+	@Override
+	public List<String> getParameters() {
+		return null;
 	}
 
 }

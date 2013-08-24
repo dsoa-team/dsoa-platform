@@ -1,29 +1,32 @@
 package br.ufpe.cin.dsoa.management.shell;
 
 import java.io.PrintStream;
+import java.util.List;
 
-import org.apache.felix.shell.Command;
 import br.ufpe.cin.dsoa.management.ManagementService;
 
-public class AddAttributeCommand implements Command {
+public class AddAttributeCommand extends DsoaBaseCommand {
 
 	protected ManagementService managementService;
 
-	public String getUsage() {
-		return "dsoa " + getName();
-	}
-	
+	private static final String COMMAND		 	= "addatt";
+	private static final String DESCRIPTION 	= "Add a new QoS attribute definition";
+
 	public final String getName() {
-		return "metric-add";
+		return COMMAND;
 	}
 	
 	public String getShortDescription() {
-		return "*";
+		return DESCRIPTION;
 	}
 
 	public void execute(String line, PrintStream out, PrintStream err) {
-		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public List<String> getParameters() {
+		return null;
 	}
 
 }

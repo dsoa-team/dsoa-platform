@@ -1,12 +1,16 @@
 package br.ufpe.cin.dsoa.management.shell;
 
 import java.io.PrintStream;
-
-import org.apache.felix.shell.Command;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.ufpe.cin.dsoa.management.ManagementService;
 
-public class AddMonitorCommand implements Command {
+public class AddMonitorCommand  extends DsoaBaseCommand {
+
+	private static final String DESCRIPTION = "Configures monitoring configuration for the provided service";
+
+	private static final String COMMAND = "addmon";
 
 	protected ManagementService managementService;
 
@@ -16,15 +20,11 @@ public class AddMonitorCommand implements Command {
 	private static final int OPERATION = 3;
 	
 	public final String getName() {
-		return "monitor";
+		return COMMAND;
 	}
 
 	public String getShortDescription() {
-		return "Configures monitoring configuration for the provided service";
-	}
-
-	public String getUsage() {
-		return "dsoa " + getName() + " [service-pid] [attribute-category] [attribute-name] <operation>";
+		return DESCRIPTION;
 	}
 
 	//dsoa monitor 
@@ -35,14 +35,24 @@ public class AddMonitorCommand implements Command {
 			String category = params[CATEGORY];
 			String attribute = params[ATTRIBUTE];
 			String operation = params[OPERATION];
-			this.managementService.addMetricMonitor(pid, attribute, category, operation);
+			this.managementService.addAttributeMonitor(pid, attribute, category, operation);
 			
 		} else if(params.length == 3) {//service monitor
 			String pid = params[PID];
 			String category = params[CATEGORY];
 			String attribute = params[ATTRIBUTE];
-			this.managementService.addMetricMonitor(pid, attribute, category, null);
+			this.managementService.addAttributeMonitor(pid, attribute, category, null);
 		}
+	}
+
+	@Override
+	public List<String> getParameters() {
+		List<String> params = new ArrayList<String>();
+		params.add("service-pid");
+		params.add("attribute-category");
+		params.add("attribute-name");
+		params.add("[operation]");
+		return params;
 	}
 
 }

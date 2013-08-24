@@ -7,6 +7,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import br.ufpe.cin.dsoa.agent.AgentList;
 import br.ufpe.cin.dsoa.attribute.AttributeList;
 import br.ufpe.cin.dsoa.mapper.AttributeEventMapperList;
 
@@ -18,6 +19,7 @@ public class JAXBInitializer {
 			//contexts.put(EventList.CONFIG, JAXBInitializer.initEvent());
 			//contexts.put(AgentList.CONFIG, JAXBInitializer.initAgent());
 			//contexts.put(ContextModel.CONFIG, JAXBInitializer.initContextModel());
+			contexts.put(AgentList.CONFIG, JAXBInitializer.createUnmarshaller(AgentList.class));
 			contexts.put(AttributeList.CONFIG, createUnmarshaller(AttributeList.class));
 			contexts.put(AttributeEventMapperList.CONFIG, createUnmarshaller(AttributeEventMapperList.class));
 		} catch (JAXBException e) {

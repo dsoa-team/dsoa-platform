@@ -43,7 +43,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 	public void startMonitoring(ServiceReference reference, List<AttributeAttributableMapper> attributeAttributableMappers) {
 		MonitoredService monitoredService = new MonitoredService(reference);
 		for (AttributeAttributableMapper attributeAttributableMapper : attributeAttributableMappers) {
-			this.addMetricMonitor(monitoredService, attributeAttributableMapper);
+			this.addAttributeMonitor(monitoredService, attributeAttributableMapper);
 		}
 		synchronized (monitoredServiceMap) {
 			monitoredServiceMap.put(monitoredService.getPid(), monitoredService);
@@ -57,7 +57,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 	}
 	
 	public void addMetric(String servicePid, AttributeAttributableMapper attributeAttributableMapper) {
-		this.addMetricMonitor(monitoredServiceMap.get(servicePid), attributeAttributableMapper);
+		this.addAttributeMonitor(monitoredServiceMap.get(servicePid), attributeAttributableMapper);
 	}
 	
 	
@@ -71,13 +71,13 @@ public class MonitoringServiceImpl implements MonitoringService {
 		return services;
 	}
 	
-	private void addMetricMonitor(MonitoredService monitoredService, AttributeAttributableMapper attributeAttributableMapper) {
+	private void addAttributeMonitor(MonitoredService monitoredService, AttributeAttributableMapper attributeAttributableMapper) {
 		String attributeId = attributeAttributableMapper.getAtttributeId();
 		Attribute attribute = attributeCatalog.getAttribute(attributeId);
 		if (attribute != null) {
 			AttributableId attributableId = attributeAttributableMapper.getAttributableId();
 			AttributeMonitor monitor = new AttributeMonitor(attributableId, attribute);
-			monitoredService.addMetricMonitor(monitor);
+			monitoredService.addAttributeMonitor(monitor);
 			String stmtName = monitor.getStatusVariableId();
 			//String stmt = attribute.getQuery();
 			List<Object> parameters = new ArrayList<Object>();

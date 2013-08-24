@@ -99,7 +99,7 @@ public class MonitoredService implements Monitorable {
 		return dict;
 	}
 	
-	public void addMetricMonitor(AttributeMonitor monitor) {
+	public void addAttributeMonitor(AttributeMonitor monitor) {
 		this.metricMonitorMap.put(monitor.getStatusVariableId(), monitor);
 	}
 	

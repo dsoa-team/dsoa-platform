@@ -43,7 +43,7 @@ public class AttributeMonitor implements NotificationListener {
 	
 	public String getStatusVariableId() {
 		if (statusVariableId == null) {
-			statusVariableId = this.attribute.getId().toString() + Constants.TOKEN + this.attributableId.toString();
+			statusVariableId = this.attribute.getId() + Constants.TOKEN + this.attributableId.toString();
 		}
 		return statusVariableId;
 	}

@@ -1,54 +1,55 @@
 package br.ufpe.cin.dsoa.management.shell;
 
 import java.io.PrintStream;
-
-import org.apache.felix.shell.Command;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.ufpe.cin.dsoa.management.ManagementService;
 import br.ufpe.cin.dsoa.monitor.MonitoredServiceMetadata;
 
-public class ListServiceOperationsCommand implements Command {
+public class ListServiceOperationsCommand extends DsoaBaseCommand {
 
 	protected ManagementService managementService;
-
-	public String getUsage() {
-		return "dsoa " + getName() + " service-pid";
-	}
-	
+	private static final String COMMAND 		= "lstsrvop";
+	private static final String DESCRIPTION 	= "List monitored service operations";
+	private static final String PARAMETER 		= "service-pid";
 	
 	public void execute(String line, PrintStream out, PrintStream err) {
 		if (line.split(" ").length > 1) {
-			try {
-				String servicePid = line.split(" ")[1];
-				MonitoredServiceMetadata metadata = this.managementService
-						.getManagedServiceMetadata(servicePid + "");
-				
-				if (null != metadata) {
-					out.println("Operations: ");
-					out.println("Service Pid: " + metadata.getPid());
-					for (String it : metadata.getOperationsMap().keySet()) {
-						out.println(" * " + it);
-						for (String operation : metadata.getOperationsMap()
-								.get(it)) {
-							out.println(" - " + operation);
-						}
+			String servicePid = line.split(" ")[1];
+			MonitoredServiceMetadata metadata = this.managementService
+					.getManagedServiceMetadata(servicePid);
+			
+			if (null != metadata) {
+				out.println("Operations: ");
+				out.println("Service Pid: " + metadata.getPid());
+				for (String it : metadata.getOperationsMap().keySet()) {
+					out.println(" * " + it);
+					for (String operation : metadata.getOperationsMap()
+							.get(it)) {
+						out.println(" - " + operation);
 					}
-
 				}
-			} catch (NumberFormatException e) {
-				err.println("Parameter error: You should give a number of service id");
+
 			}
 		} else {
-			err.println("Incorrect number of parameters");
+			err.println("You should inform a service-pid");
 		}
 	}
 
 	public String getName() {
-		return  "service-operations";
+		return  COMMAND;
 	}
 
 	public String getShortDescription() {
-		return getName();
+		return DESCRIPTION;
+	}
+
+	@Override
+	public List<String> getParameters() {
+		List<String> params = new ArrayList<String>();
+		params.add(PARAMETER);
+		return params;
 	}
 
 }

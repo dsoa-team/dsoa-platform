@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.configurator.parser.event;
+package br.ufpe.cin.dsoa.event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-import br.ufpe.cin.dsoa.configurator.parser.Property;
 
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -1,35 +1,20 @@
 package br.ufpe.cin.dsoa.event;
 
-import java.util.List;
-import java.util.Map;
+import br.ufpe.cin.dsoa.agent.EventProcessingAgent;
+
 
 public interface EventProcessingService {
 
-	public void defineEvent(Class<?> event);
+	public void subscribe(String consumerId, Subscription subscription);
 	
-	public void defineEvent(String eventName, Map<String, Object> eventProperties);
-
-	public void publishEvent(Object event);
-
-	public void publishEvent(Map<?,?> event, String eventName);
-
-	public void defineStatement(String name, String statement, List<String> userObject);
+	public void publish(Event event);
 	
-	public void defineStatement(String name, String statement);
+	public boolean registerConsumer(EventConsumer consumer);
 	
-	public void destroyStatement(String name);
+	public boolean registerAgent(EventProcessingAgent agent);
 	
-	public void subscribe(String statementName, List<Object> parameters, NotificationListener eventConsumer);
+	public boolean unRegisterConsumer(String consumerId);
 	
-	public void unsubscribe(String statementName, NotificationListener eventConsumer);
-
-	public void undefineEvents();
+	public boolean unRegisterAgent(String agentId);
 	
-	public void undefineEvent(String eventName);
-	
-	public void undefineEvent(Class eventClass);
-
-	public void defineStatement(Statement stmt1);
-
-	public void subscribe(String statementName, NotificationListener eventConsumer);
 }

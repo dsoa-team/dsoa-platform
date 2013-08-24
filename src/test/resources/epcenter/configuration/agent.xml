@@ -1,77 +1,62 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <agents>
-	<agent id="ResponseTimeAgent">
-		<description>Response time from invocation</description>
-		<transformer type="mapping">
-			<input-events>
-				<input-event type="InvocationEvent"/>
-			</input-events>
-			<output-events >
-				<output-event type="ResponseTime">
-					<mapping>
-						<property id="responseTime">InvocationEvent.responseTimestamp - InvocationEvent.requestTimestamp</property>
-					</mapping>
-				</output-event>
-				<output-event type="AvgResponseTimeEvent">
-					<mapping>
-						<property id="value" statistic="avg">ResponseTime.responseTime</property>
-					</mapping>
-				</output-event>
-			</output-events>
-		</transformer>
-	</agent>
-	
 	<agent id="AvgResponseTimeAgent">
-		<description>Response time from invocation</description>
-		<transformer type="mapping">
-			<input-events>
-				<input-event type="ResponseTimeEvent" windowType="length_batch" windowSize="10"/>
-			</input-events>
-			
-			<output-events >
-				<output-event type="AvgResponseTimeEvent">
-					<mapping>
-						<property id="id" generated="true" />
-						<property id="timestamp" generated="true" />
-						<property id="value" statistic="avg">ResponseTime.responseTime</property>
-					</mapping>
-				</output-event>
-			</output-events>
-		</transformer>
+		<description>Calculates avg response time attribute</description>
+		<mapping id="AvgResponseTimeMapping">
+			<input-event type="InvocationEvent" alias="event">
+				<window type="lenght" size="10" />
+			</input-event>
+			<output-event type="AvgResponseTimeEvent">
+				<metadata>
+					<property id="id" expression="id" />
+					<property id="timestamp" expression="timestamp" />
+				</metadata>
+				<data>
+					<property id="value"
+						expression="avg(event.data.responseTimestamp - event.data.requestTimestamp)" />
+				</data>
+			</output-event>
+		</mapping>
 	</agent>
 
-	<agent>
-		<name>ResponseTimeAgent</name>
-		<description>Availability from service</description>
-		<transformer type="query">
-			<query>
-				INSERT INTO ResponseTimeEvent(id, timestamp, responseTime)
-				SELECT id, timestamp, InvocationEvent.responseTimestamp - InvocationEvent.requestTimestamp as responseTime
-				FROM InvocationEvent
-			</query>
-		</transformer>
+	<agent id="MinResponseTimeAgent">
+		<description>Calculates min response time attribute</description>
+		<query id="MinResponseTimeQuery">
+			<command>
+				SELECT min (InvocationEvent.responseTimestamp -
+				InvocationEvent.requestTimestamp) as value
+				FROM
+				InvocationEvent.win:time(10 sec)
+			</command>
+		</query>
 	</agent>
 
-			<!-- 
-			query timestamp e id gerados (esper)
-			INSERT into ResponseTime 
-			SELECT InvocationEvent.response.timestamp - InvocationEvent.request.timestamp as value
-			FROM InvocationEvent
-			
-			we could use janino (evaluate expression)
-			 -->
-	<agent>
-		<name>Availability</name>
-		<description>Availability from service</description>
-		<transformer type="class">
-			<input-events>
-				<event type="InvocationEvent"/>
-			</input-events>
-			<output-events >
-				<event type="Availabilty"/>
-			</output-events>
-			
-			<classname>br.ufpe.cin.dsoa.ping</classname>
-		</transformer>
-	</agent>
+	<!-- <event type="DsoaEvent"> <metadata> <property id="id" type="java.lang.String" 
+		/> <property id="timestamp" type="java.lang.Double" /> </metadata> </event> 
+		<event type="AvgResponseTimeEvent" extends="DsoaEvent"> <data> <property 
+		id="value" type="java.lang.Double" /> </data> </event> -->
+
+
+
+	<!-- <metric name="ResponseTime" description="Response time from invocation"> 
+		<category name=performance"/> <input event="invocationEvent" alias="invocation"/> 
+		<output event="avgResponseTime" alias "avgResp"/> <window type="length_batch" 
+		size="100" /> <mapping event="ResponseTime"> <property id="id" type="Double" 
+		generated="true" /> <property id="timestamp" type="Double" gererated="true" 
+		/> <property id="value" statistic="avg" type="Double"> InvocationEvent.response.timestamp 
+		- InvocationEvent.request.timestamp </property> </mapping> </metric> -->
+
+
+	<!-- <agent> <name>AvailabilityAgent</name> <description>Availability attribute</description> 
+		<metric>Availability</metric> <transformer type="class"> <query> SELECT InvocationEvent.responseTimestamp 
+		- InvocationEvent.requestTimestamp as value FROM InvocationEvent </query> 
+		</transformer> </agent> <agent> <name>ResponseTimeAgent</name> <description>Calculates 
+		response time attribute</description> <metric>ResponseTime</metric> <transformer 
+		type="query"> <query> SELECT InvocationEvent.responseTimestamp - InvocationEvent.requestTimestamp 
+		as value FROM InvocationEvent </query> </transformer> </agent> <agent> <name>MeanResponseTimeAgent</name> 
+		<description>Calculates mean response time attribute</description> <metric>MeanResponseTime</metric> 
+		<transformer type="query"> <query> SELECT avg(InvocationEvent.responseTimestamp 
+		- InvocationEvent.requestTimestamp) as value FROM InvocationEvent:win(30s) 
+		</query> </transformer> </agent> -->
 </agents>
+

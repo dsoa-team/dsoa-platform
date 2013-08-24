@@ -15,8 +15,8 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ufpe.cin.dsoa.configurator.parser.event.Event;
-import br.ufpe.cin.dsoa.configurator.parser.event.EventList;
+import br.ufpe.cin.dsoa.event.Event;
+import br.ufpe.cin.dsoa.event.EventList;
 
 public class EventParserSpec {
 

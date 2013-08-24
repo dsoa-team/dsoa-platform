@@ -72,4 +72,12 @@ public class Attribute  {
 		return data;
 	}
 
+	@Override
+	public String toString() {
+		return "Attribute [id=" + id + ", description=" + description + ", metadata=" + metadata + ", data=" + data
+				+ "]";
+	}
+
+
+	
 }

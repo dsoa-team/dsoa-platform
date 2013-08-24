@@ -3,6 +3,8 @@ package br.ufpe.cin.dsoa.management.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.ufpe.cin.dsoa.agent.EventProcessingAgent;
+import br.ufpe.cin.dsoa.agent.AgentCatalog;
 import br.ufpe.cin.dsoa.attribute.AttributableId;
 import br.ufpe.cin.dsoa.attribute.Attribute;
 import br.ufpe.cin.dsoa.attribute.AttributeCatalog;
@@ -31,6 +33,7 @@ import br.ufpe.cin.dsoa.util.Util;
 public class ManagementServiceImpl implements ManagementService {
 
 	private AttributeCatalog attributeCatalog;
+	private AgentCatalog agentCatalog;
 	private MonitoringService monitoringService;
 
 	public List<MonitoredServiceMetadata> getManagedServicesMetadata() {
@@ -51,24 +54,34 @@ public class ManagementServiceImpl implements ManagementService {
 		return metadata;
 	}
 
-	public List<String> getMetricList() {
-		List<String> metricList = new ArrayList<String>();
+	public List<String> getAttributeList() {
+		List<String> attributeList = new ArrayList<String>();
 		
 		for(Attribute m : this.attributeCatalog.getAttributes()){
-			metricList.add(m.toString());
+			attributeList.add(m.toString());
 		}
-		return metricList;
+		return attributeList;
 	}
 	
-	public void addMetric(String category, String name, String servicePid, String operationName) {
+	public List<String> getAgentList() {
+		List<String> agentList = new ArrayList<String>();
+		
+		for(EventProcessingAgent eventProcessingAgent : this.agentCatalog.getAgents()){
+			agentList.add(eventProcessingAgent.toString());
+		}
+		return agentList;
+	}
+	
+	public void addAttribute(String category, String name, String servicePid, String operationName) {
 		AttributableId attributableId = new AttributableId(servicePid, operationName);
 		AttributeAttributableMapper attributeAttributableMapper = new AttributeAttributableMapper(AttributeParser.format(category, name), attributableId);
 		this.monitoringService.addMetric(servicePid, attributeAttributableMapper);
 	}
 	
-	public void addMetricMonitor(String servicePid, String attName, String attCategory, String operationName) {
+	public void addAttributeMonitor(String servicePid, String attName, String attCategory, String operationName) {
 		Attribute attribute = this.attributeCatalog.getAttribute(AttributeParser.format(attCategory, attName));
 		AttributeAttributableMapper attributeAttributableMapper = new AttributeAttributableMapper(attribute.getId(), Util.getAttributableId(servicePid, operationName));
 		this.monitoringService.addMetric(servicePid, attributeAttributableMapper);
 	}
+
 }

@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.configurator.parser;
+package br.ufpe.cin.dsoa.event;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Property {
 
-	@XmlAttribute(required = true)
+	@XmlAttribute(name="id", required = true)
 	private String id;
 	
 	@XmlAttribute(name = "type")
@@ -23,7 +23,7 @@ public class Property {
 	private String statistic;
 	
 	//for agent expression definition
-	@XmlValue
+	@XmlAttribute(name = "expression")
 	private String expression;
 
 	public String getId() {
@@ -64,6 +64,12 @@ public class Property {
 
 	public void setStatistic(String statistic) {
 		this.statistic = statistic;
+	}
+
+	@Override
+	public String toString() {
+		return "Property [id=" + id + ", type=" + type + ", generated=" + generated + ", statistic=" + statistic
+				+ ", expression=" + expression + "]";
 	}
 	
 	

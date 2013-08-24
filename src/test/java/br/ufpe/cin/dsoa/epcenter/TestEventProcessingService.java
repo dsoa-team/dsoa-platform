@@ -11,11 +11,11 @@ import org.junit.Test;
 import br.ufpe.cin.dsoa.event.InvocationEvent;
 import br.ufpe.cin.dsoa.event.NotificationListener;
 import br.ufpe.cin.dsoa.event.Statement;
-import br.ufpe.cin.dsoa.event.impl.EventProcessingServiceImpl;
+import br.ufpe.cin.dsoa.event.impl.EsperProcessingService;
 
 public class TestEventProcessingService implements NotificationListener {
 
-	EventProcessingServiceImpl epCenter;
+	EsperProcessingService epCenter;
 	String[] providers = { "provider-1", "provider-2", "provider-3" };
 	String[] services = { "service-1", "service-2", "service-3", "service-4", "service-5" };
 	String[] operations = { "foo", "bar" };
@@ -64,7 +64,7 @@ public class TestEventProcessingService implements NotificationListener {
 
 	@Before
 	public void setUp() {
-		epCenter = new EventProcessingServiceImpl();
+		epCenter = new EsperProcessingService();
 		epCenter.start();
 		Statement stmt1, stmt2, stmt3, stmt4;
 		stmt1 = new Statement("stmt1", "insert into ResponseTime(service, operation, time) "
@@ -99,7 +99,7 @@ public class TestEventProcessingService implements NotificationListener {
 
 	@Test
 	public void testConfigPath() {
-/*		epCenter = new EventProcessingServiceImpl();
+/*		epCenter = new EsperProcessingService();
 		epCenter.start();
 		Statement stmt1, stmt2, stmt3;
 		stmt1 = new Statement("stmt1", "insert into ResponseTime(service, operation, time) "
