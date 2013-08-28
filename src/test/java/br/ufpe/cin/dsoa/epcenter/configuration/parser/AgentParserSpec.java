@@ -14,9 +14,9 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ufpe.cin.dsoa.agent.EventProcessingAgent;
-import br.ufpe.cin.dsoa.agent.AgentList;
-import br.ufpe.cin.dsoa.agent.Processing;
+import br.ufpe.cin.dsoa.event.agent.AgentList;
+import br.ufpe.cin.dsoa.event.agent.EventProcessingAgent;
+import br.ufpe.cin.dsoa.event.agent.Processing;
 
 public class AgentParserSpec {
 

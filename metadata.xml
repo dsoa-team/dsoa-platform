@@ -2,40 +2,6 @@
 
 	<!-- ============================================================================================================ -->		
 	<!-- ============================================================================================================ -->
-	<!-- ========================== 			DSOA PLATFORM CONFIGURATOR			   	   ========================== -->
-	<!-- ============================================================================================================ -->
-	<!-- ============================================================================================================ -->
-	<!-- 
-		This component is responsible for continuously looking for declarative extensions. In fact, it inspects started
-		bundles and searches its entries trying to find configuration files. It is an implementation of the
-		"Extender Pattern".
-		-->		
-	<component name="Configurator.PlatformConfigurator" classname="br.ufpe.cin.dsoa.configurator.PlatformConfigurator">
-		<requires field="attributeCatalog" />
-		<requires field="attributeEventMapperCatalog" />
-		<requires field="agentCatalog" />
-		<callback transition="validate" method="start" />
-		<callback transition="invalidate" method="stop" />
-	</component>
-	
-	<component classname="br.ufpe.cin.dsoa.handler.dependency.manager.EsperVerifier">
-		<requires field="attributeCatalog"  /> 
-		<requires field="eventProcessingService"  /> 
-		<provides/>
-	</component>
-	
-	<component name="Event.EPCenter" classname="br.ufpe.cin.dsoa.event.impl.EsperProcessingService" >
-		<provides />
-		<callback transition="validate" method="start" />
-		<callback transition="invalidate" method="stop" />
-	</component>
-	
-	<component classname="br.ufpe.cin.dsoa.broker.impl.BrokerImpl">
-		<provides />
-	</component>	
-	
-	<!-- ============================================================================================================ -->		
-	<!-- ============================================================================================================ -->
 	<!-- ========================== 			DSOA HANDLER COMPONENTS				   	   ========================== -->
 	<!-- ============================================================================================================ -->
 	<!-- ============================================================================================================ -->
@@ -57,60 +23,134 @@
 		 searches for a replacement service.
 		 
 	-->
-	<handler classname="br.ufpe.cin.dsoa.handler.provider.ProviderManager"
-		name="provides" namespace="br.ufpe.cin.dsoa">
+	<handler name="provides" namespace="br.ufpe.cin.dsoa" 
+		classname="br.ufpe.cin.dsoa.platform.handler.provider.ProviderManager"  >
 	</handler>
 
-	<handler classname="br.ufpe.cin.dsoa.handler.dependency.DependencyHandler"
-		name="requires" namespace="br.ufpe.cin.dsoa">
+	<handler name="requires" namespace="br.ufpe.cin.dsoa"
+		classname="br.ufpe.cin.dsoa.platform.handler.dependency.DependencyHandler" >
 	</handler>
 	
 	<!-- ============================================================================================================ -->		
 	<!-- ============================================================================================================ -->
-	<!-- ========================== 			DSOA CATALOG COMPONENTS				   	   ========================== -->
-	<!-- ============================================================================================================ -->
-	<!-- ============================================================================================================ -->
-	<!--  
-		 These components implement DSOA Catalogs. They are used to store Dsoa declarative extensions, including: agents,
-		 QoS attributes and mappers.
-	-->
-	<component name="Catalog.AttributeCatalog" classname="br.ufpe.cin.dsoa.attribute.impl.AttributeCatalogImpl">
-		<provides />
-	</component>
-	
-	<component name="Catalog.AgentCatalog" classname="br.ufpe.cin.dsoa.agent.impl.AgentCatalogImpl">
-		<requires field="epService" />
-		<provides />
-	</component>
-		
-	<component name="Catalog.AttributeEventMapperCatalog" classname="br.ufpe.cin.dsoa.mapper.impl.AttributeEventMapperCatalogImpl">
-		<provides />
-	</component>
-		
-	<!-- ============================================================================================================ -->		
-	<!-- ============================================================================================================ -->
-	<!-- ========================== 			DSOA MONITORING COMPONENT				   ========================== -->
+	<!-- ========================== 			DSOA EVENT AGENT CATALOG			   	   ========================== -->
 	<!-- ============================================================================================================ -->
 	<!-- ============================================================================================================ -->
 	<!-- 
-		 This component is responsible for listening service registration. When a remote service is registered, it reads
-		 service non-functional "specification" and starts a monitor responsible for evaluating the attributes that this
-		 service intends to provide.
-	 -->
-	<component name="Monitor.MonitoringService" classname="br.ufpe.cin.dsoa.monitor.impl.MonitoringServiceImpl">
-		<requires field="eventProcessingService" />
-		<requires field="attributeCatalog" />
+		This component implements a catalog that register the agents that are known by the platform and that can be used
+		to build Event Processing Networks. 
+	 	-->
+	<component name="Catalog.AgentCatalog" classname="br.ufpe.cin.dsoa.platform.event.impl.AgentCatalogImpl">
+		<requires field="epService" />
 		<provides />
-		<wbp:wbp 
-   	      filter="(monitored.service=*)" 
-          onArrival="onArrival" 
-          onDeparture="onDeparture" 
-         />
 	</component>
+
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 			DSOA ATTRIBUTE CATALOG				   	   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
+	<!--  
+		 This component implements DSOA Attributes Catalog. It maintains a register of QoS attributes that are supported
+		 by the platform.
+	-->
+	<component name="Catalog.AttributeCatalog" classname="br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCatalogImpl">
+		<provides />
+	</component>
+		
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 			DSOA MAPPER CATALOG					   	   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
+	<!--  
+		 This component register which event signals a change in an attribute value. It should be consulted in order to
+		 register listeners that are triggered when an attribute value changes.
+	-->
+	<component name="Catalog.AttributeEventMapperCatalog" classname="br.ufpe.cin.dsoa.platform.attribute.mapper.impl.AttributeEventMapperCatalogImpl">
+		<provides />
+	</component>
+		
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 			DSOA SERVICE DISCOVERY	SERVICE		   	   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
+	<!-- 
+		This component enables service discovery based on a non-functional specification containing QoS attributes. It
+		ranks services according to a configurable RankingPolicy which can be modified at runtime
+		-->
+	<component name="Platform.RegistryService" classname="br.ufpe.cin.dsoa.platform.registry.impl.BrokerImpl">
+		<provides />
+	</component>	
+		
+		
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 			DSOA PLATFORM MONITORING SERVICE	   	   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
+	<!-- 
+		This component is responsible for monitoring services that are registered in the platform. It reads the service
+		non-functional specification, identify declared QoS attributes, and starts a monitor (an agent processing instance)
+		that computes corresponding attribute values. It is important to mention that its monitoring action is passive, in the
+		sense that the service DOESN'T generate artificial requests. It computes metrics based on InvocationEvents that
+		are generated when the service is requested. In fact, it register agents in the EventProcessingService, which are 
+		able to compute the corresponding metrics.
+		-->
+	<component name="Platform.MonitoringService" classname="br.ufpe.cin.dsoa.platform.monitor.impl.MonitoringServiceImpl">
+		<requires field="eventProcessingService"  /> 
+		<requires field="attributeCatalog"  /> 
+		<requires field="attributeMapperCatalog"  />
+		<provides/>
+	</component>
+	
 	
 	<!-- ============================================================================================================ -->		
 	<!-- ============================================================================================================ -->
-	<!-- ========================== 			DSOA MANAGEMENT COMPONENTS				   ========================== -->
+	<!-- ========================== 			DSOA EVENT PROCESSING CENTER		   	   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
+	<!-- 
+		This component implements DSOA event processing capability. It receives events from Event Producers through Event
+		Channels. These events comprise streams that are connected through Event Processing Agents. These components filter,
+		aggregate, and transform events generating new Event Streams that can be forwarded to Event Consumers that subscribe
+		themselves to listen those events. The collection of Event Producers, Event Processing Agents, and Event Consumers 
+		connected together compose Event Processing Networks. 
+	 	-->
+	<component name="Platform.EventProcessingService" classname="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" >
+		<provides />
+		<callback transition="validate" method="start" />
+		<callback transition="invalidate" method="stop" />
+	</component>
+	
+	
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 			DSOA PLATFORM CONFIGURATOR 				   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
+	<!-- 
+		This component is responsible for configuring the components that listen for platform extensions. It starts a 
+		bundle listener that is responsible for continuously looking for declarative extensions (attributes, events, 
+		and agents). This listener inspects	started	bundles and searches its entries trying to find configuration files. 
+		In this context, it is an implementation of the "Extender Pattern". 
+		The management service also starts a service tracker that listen service registrations in order to starting
+		monitoring new services. So, when a remote service is registered, triggers the MonitoringService to start 
+		service monitoring.
+	 -->
+	<component name="Platform.ConfiguratorService" classname="br.ufpe.cin.dsoa.platform.configurator.PlatformConfigurator">
+		<requires field="attributeCatalog" />
+		<requires field="attributeEventMapperCatalog" />
+		<requires field="agentCatalog" />
+		<requires field="monitoringService" />
+		<callback transition="validate" method="start" />
+		<callback transition="invalidate" method="stop" />
+	</component>
+
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 			DSOA PLATFORM MANAGEMENT SERVICE		   ========================== -->
 	<!-- ============================================================================================================ -->
 	<!-- ============================================================================================================ -->
 	<!-- 
@@ -118,7 +158,8 @@
 		to perform management related activities. It is exposed as remote service in order to allow remote management. The
 		other components are shell commands intended to allow local administration. 
 	-->
-	<component name="Management.ManagementServiceImpl" classname="br.ufpe.cin.dsoa.management.impl.ManagementServiceImpl">
+	<component name="Platform.ManagementService" 
+				classname="br.ufpe.cin.dsoa.platform.management.impl.PlatformManagementServiceImpl">
 		<requires field="attributeCatalog" />
 		<requires field="agentCatalog" />
 		<requires field="monitoringService" />
@@ -129,34 +170,53 @@
 		</provides>
 	</component>
 			
-	<component name="Management.DsoaShell" classname="br.ufpe.cin.dsoa.management.shell.DsoaShell">
-		<callback transition="validate" method="start" />
-		<callback transition="invalidate" method="stop" />
+	
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 			DSOA MANAGEMENT SHELL 	 				   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
+	<!-- 
+		This class is the root of DSOA's command shell. Every DSOA command should be enacted through 'dsoa' prefix,
+ 		so that this class is called to handle the command. In fact, it just delegate the resposibility of executing
+ 		the command itself to the OSGI's ShellCommand.
+	-->
+	<component name="Platform.Shell.DsoaShell" classname="br.ufpe.cin.dsoa.platform.management.shell.DsoaShell">
 		<requires field="shellService" />
 		<provides />
+		<callback transition="validate" method="start" />
+		<callback transition="invalidate" method="stop" />
 	</component>
 	
-	<component name="Management.ListAttributesCmd" classname="br.ufpe.cin.dsoa.management.shell.ListAttributesCommand">
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 			DSOA MANAGEMENT SHELL COMMANDS			   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
+	<!-- 
+		Various shell components intended to enable local platform administration.
+	-->
+	<component name="Platform.Shell.ListAttributesCmd" classname="br.ufpe.cin.dsoa.platform.management.shell.ListAttributesCommand">
 		<requires field="managementService"/>
 		<provides />
 	</component>
 	
-	<component name="Management.ListAgentsCmd" classname="br.ufpe.cin.dsoa.management.shell.ListAgentsCommand">
+	<component name="Platform.Shell.ListAgentsCmd" classname="br.ufpe.cin.dsoa.platform.management.shell.ListAgentsCommand">
 		<requires field="managementService"/>
 		<provides />
 	</component>
 	
-	<component name="Management.ListServicesCmd" classname="br.ufpe.cin.dsoa.management.shell.ListServicesCommand">
+	<component name="Platform.Shell.ListServicesCmd" classname="br.ufpe.cin.dsoa.platform.management.shell.ListServicesCommand">
 		<requires field="managementService"/>
 		<provides />
 	</component>
 	
-	<component name="Management.ListServiceOperationsCmd" classname="br.ufpe.cin.dsoa.management.shell.ListServiceOperationsCommand">
+	<component name="Platform.Shell.ListServiceOperationsCmd" classname="br.ufpe.cin.dsoa.platform.management.shell.ListServiceOperationsCommand">
 		<requires field="managementService"/>
 		<provides />
 	</component>
 	
-	<component name="Management.AddMonitorCmd" classname="br.ufpe.cin.dsoa.management.shell.AddMonitorCommand">
+	<component name="Platform.Shell.AddMonitorCmd" classname="br.ufpe.cin.dsoa.platform.management.shell.AddMonitorCommand">
 		<requires field="managementService"/>
 		<provides />
 	</component>
@@ -167,53 +227,44 @@
 	<!-- ============================================================================================================ -->
 	<!-- ============================================================================================================ -->
 
-	<!-- Instantiates the platform configurator -->
-	<instance component="Configurator.PlatformConfigurator" />
+	<instance component="Platform.Service.QoSRegistryService" />
+	<instance component="Platform.Service.MonitoringService" />
+	<instance component="Platform.Service.EventProcessingService" />
+	<instance component="Platform.Service.ConfiguratorService" />
+	<instance component="Platform.Service.ManagementService" />
 	
-	<!-- Instantiates management components -->
-	<instance component="Management.DsoaShell" />
-	<instance component="Management.ManagementServiceImpl" />
-	<instance component="Management.ListAgentsCmd" />
-	<instance component="Management.ListAttributesCmd" />
-	<instance component="Management.ListServicesCmd" />
-	<instance component="Management.ListServiceOperationsCmd" />
-	<instance component="Management.AddMonitorCmd" />
-	
-	<!-- Instantiates catalog components -->
-	<instance component="Catalog.AgentCatalog" />
-	<instance component="Catalog.AttributeCatalog" />
-	<instance component="Catalog.AttributeEventMapperCatalog" />
-	
-	<!-- Instantiates monitoring component -->
-	<instance component="Monitor.MonitoringService" />
-	
-	<!-- Instantiates Event Processing component -->
-	<instance component="Event.EPCenter" />
-	
-	
-	
-	
-	
-	<!-- <instance component="br.ufpe.cin.dsoa.management.impl.ManagementServiceImpl" /> -->
-<!-- 	<instance component="br.ufpe.cin.dsoa.attribute.impl.AttributeCatalogImpl" />
-	<instance component="br.ufpe.cin.dsoa.monitor.impl.MonitoringServiceImpl" />
-	<instance component="br.ufpe.cin.dsoa.event.impl.EsperProcessingService" /> -->
-	<!-- <instance component="br.ufpe.cin.dsoa.broker.impl.BrokerImpl"/>
-	<instance component="br.ufpe.cin.dsoa.handler.dependency.manager.EsperVerifier"/>
-	<instance component="br.ufpe.cin.dsoa.monitor.impl.MonitoredServiceListenerImpl"/> -->
-	<!-- <instance component="br.ufpe.cin.dsoa.configurator.hook.DsoaFindHook" />  -->
+	<instance component="Platform.Catalog.AgentCatalog" />
+	<instance component="Platform.Catalog.AttributeCatalog" />
+	<instance component="Platform.Catalog.AttributeEventMapperCatalog" />
+	<!-- <instance component="Platform.Catalog.EventCatalog" />  -->
+
+	<instance component="Platform.Shell.DsoaShell" />
+	<instance component="Platform.Shell.ListAttributesCmd" />
+	<instance component="Platform.Shell.ListAgentsCmd" />
+	<instance component="Platform.Shell.ListServicesCmd" />
+	<instance component="Platform.Shell.ListServiceOperationsCmd" />
+	<instance component="Platform.Shell.AddMonitorCmd" />
+
+	<!-- <instance component="br.ufpe.cin.dsoa.platform.management.impl.PlatformManagementServiceImpl" /> -->
+<!-- 	<instance component="br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCatalogImpl" />
+	<instance component="br.ufpe.cin.dsoa.platform.configurator.DsoaServiceTracker" />
+	<instance component="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" /> -->
+	<!-- <instance component="br.ufpe.cin.dsoa.platform.registry.impl.BrokerImpl"/>
+	<instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.EsperVerifier"/>
+	<instance component="br.ufpe.cin.dsoa.resource.impl.MonitoredServiceListenerImpl"/> -->
+	<!-- <instance component="br.ufpe.cin.dsoa.platform.configurator.DsoaFindHook" />  -->
 	
 	<!-- 	<composite name="Management.ManagementService">
 		
 		<subservice action="import" specification="org.apache.felix.shell.ShellService"/>
-		<subservice action="import" specification="br.ufpe.cin.dsoa.attribute.AttributeCatalog"/>
-		<subservice action="import" specification="br.ufpe.cin.dsoa.monitor.MonitoringService"/>
+		<subservice action="import" specification="br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog"/>
+		<subservice action="import" specification="br.ufpe.cin.dsoa.resource.ResourceManagementService"/>
 
 		<instance component="Management.DsoaShell" />
 		<instance component="Management.ManagementServiceImpl" />
 		
 		<provides action="export" specification="org.apache.felix.shell.Command"/>
-		<provides action="export" specification="br.ufpe.cin.dsoa.management.ManagementService"/>
+		<provides action="export" specification="br.ufpe.cin.dsoa.platform.management.PlatformManagementService"/>
 		
 	</composite>	 -->
 	

@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import br.ufpe.cin.dsoa.attribute.impl.AttributeCategoryAdapter;
+import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCategoryAdapter;
 import br.ufpe.cin.dsoa.util.Constants;
 
 
@@ -17,13 +17,16 @@ import br.ufpe.cin.dsoa.util.Constants;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Attribute  {
 
-	public static final String ATTRIBUTE_PREFIX	= "attribute.";
-	public static final String CATEGORY 		= "category";
-	public static final String NAME 			= "name";
-	public static final String DESCRIPTION 		= "description";
-	public static final String METADATA 		= "metadata";
-	public static final String DATA 			= "data";
-	public static final String PROPERTY 		= "property";
+	// constraint.operation.qos.performance.avgResponseTime.getCotation.LT = 500
+	// constraint.service.qos.availability.LT = 99
+	public static final String SERVICE_CONSTRAINT	= "constraint.service";
+	public static final String OPERATION_CONSTRAINT	= "constraint.operation";
+	public static final String CATEGORY 			= "category";
+	public static final String NAME 				= "name";
+	public static final String DESCRIPTION 			= "description";
+	public static final String METADATA 			= "metadata";
+	public static final String DATA 				= "data";
+	public static final String PROPERTY 			= "property";
 	
 	private String id;
 	

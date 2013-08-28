@@ -8,16 +8,16 @@ import java.util.Map;
 
 public class Event {
 	private EventType eventType;
-	private Map<String, Property> metadataProperties;
-	private Map<String, Property> dataProperties;
+	private Map<String, Property> metadata;
+	private Map<String, Property> data;
 	
 	public Event(EventType eventType,
 			Map<String, Property> metadataProperties,
 			Map<String, Property> dataProperties) {
 		super();
 		this.eventType = eventType;
-		this.metadataProperties = metadataProperties;
-		this.dataProperties = dataProperties;
+		this.metadata = metadataProperties;
+		this.data = dataProperties;
 		validate();
 	}
 
@@ -28,9 +28,9 @@ public class Event {
 	public Property getProperty(String name) {
 		Property property = null;
 		if (name != null) {
-			property = metadataProperties.get(name);
+			property = metadata.get(name);
 			if (property == null) {
-				property = dataProperties.get(name);
+				property = data.get(name);
 			}
 		}
 		return property;
@@ -45,11 +45,11 @@ public class Event {
 	}
 	
 	public List<Property> getMetadataProperties() {
-		return getPropertyList(metadataProperties);
+		return getPropertyList(metadata);
 	}
 	
 	public List<Property> getDataProperties() {
-		return getPropertyList(dataProperties);
+		return getPropertyList(data);
 	}
 	
 	private void validate() throws IllegalArgumentException {

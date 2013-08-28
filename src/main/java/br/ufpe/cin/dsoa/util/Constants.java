@@ -31,4 +31,8 @@ public interface Constants {
 	public static final String CONTEXT = "context";
 	public static final String CONSTRAINT_ATT_WINDOW_SIZE = "windowSize";
 	public static final String CONSTRAINT_ATT_WINDOW_TYPE = "windowType";
+	
+	public static final String NON_FUNCTIONAL_SPECIFICATION = "nonfunctional.specification";
+	
+	public static final String MANAGED_SERVICE = "(managed=*)";
 }

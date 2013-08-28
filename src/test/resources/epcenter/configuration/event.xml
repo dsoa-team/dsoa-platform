@@ -6,7 +6,7 @@
 			<attributes>
 				<attribute name="id" description="Attribute identification"
 					type="java.lang.String" required="true"
-					generated="br.ufpe.cin.dsoa.event.EventIdGenerator:nextId(*)" />
+					generated="br.ufpe.cin.dsoa.platform.event.impl.EventIdGenerator:nextId(*)" />
 				<attribute name="timestamp" description="Timestamp" type="java.lang.Double"
 					required="true" generated="br.ufpe.cin.dsoa.eventTimestampGenerator:timestamp()" />
 			</attributes>
