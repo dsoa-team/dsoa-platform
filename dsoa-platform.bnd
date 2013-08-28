@@ -1,4 +1,4 @@
 --Import-Package: * ,br.ufpe.cin.dsoa.resource,br.ufpe.cin.dsoa.attribute
-Export-Package: br.ufpe.cin.dsoa.attribute, br.ufpe.cin.dsoa.event, br.ufpe.cin.dsoa.service, br.ufpe.cin.dsoa.platform.event
-Private-Package: !br.ufpe.cin.dsoa.attribute,!br.ufpe.cin.dsoa.event, !br.ufpe.cin.dsoa.service, !br.ufpe.cin.dsoa.platform.event, br.ufpe.cin.dsoa.*
+Export-Package: br.ufpe.cin.dsoa.attribute, br.ufpe.cin.dsoa.platform.attribute, br.ufpe.cin.dsoa.platform.attribute.mapper, br.ufpe.cin.dsoa.event, br.ufpe.cin.dsoa.service, br.ufpe.cin.dsoa.platform.event
+Private-Package: !br.ufpe.cin.dsoa.attribute,!br.ufpe.cin.dsoa.platform.attribute, !br.ufpe.cin.dsoa.platform.attribute.mapper, !br.ufpe.cin.dsoa.event, !br.ufpe.cin.dsoa.service, !br.ufpe.cin.dsoa.platform.event, br.ufpe.cin.dsoa.*
 DynamicImport-Package: *

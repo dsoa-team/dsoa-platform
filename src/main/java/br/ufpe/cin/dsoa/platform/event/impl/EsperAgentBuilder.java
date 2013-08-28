@@ -69,7 +69,7 @@ public class EsperAgentBuilder implements QueryBuilder {
 			}
 			first = false;
 			Property p = iterator.next();
-			result.append(p.getExpression() + " as metadata" + Constants.TOKEN + p.getId() + " ");
+			result.append(p.getExpression() + " as metadata" + /*Constants.TOKEN + */p.getId() + " ");
 		}
 		return result.toString();
 	}
