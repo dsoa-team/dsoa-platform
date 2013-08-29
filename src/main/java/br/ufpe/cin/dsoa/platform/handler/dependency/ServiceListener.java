@@ -7,5 +7,7 @@ public interface ServiceListener {
 	void onArrival(Service service);
 	
 	void onDeparture(Service service);
+	
+	void onError(Exception e);
 
 }

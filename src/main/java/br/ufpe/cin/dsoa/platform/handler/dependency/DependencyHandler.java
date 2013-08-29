@@ -13,7 +13,9 @@ import org.apache.felix.ipojo.parser.PojoMetadata;
 
 import br.ufpe.cin.dsoa.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.service.Expression;
+import br.ufpe.cin.dsoa.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.service.ServiceConsumer;
+import br.ufpe.cin.dsoa.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyHandler extends PrimitiveHandler {
@@ -25,13 +27,6 @@ public class DependencyHandler extends PrimitiveHandler {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
-       /* <constraint 	metric="qos.ResponseTime" 
-	 			operation="priceAlert" 
-	  			expression="LT" 
-	 			threashold="800"
-	 			windowType="LENGTH"
-	 			windowSize="20"
-	  			weight="2"  />*/
 		String consumerId = metadata.getAttribute(Constants.COMPONENT_ID_ATT);
 		String consumerName = metadata.getAttribute(Constants.COMPONENT_NAME_ATT);
 		ServiceConsumer serviceConsumer = new ServiceConsumer(consumerId, consumerName);
@@ -43,24 +38,17 @@ public class DependencyHandler extends PrimitiveHandler {
 			List<AttributeConstraint> constraintList = getConstraintList(requiresTag.getElements(Constants.CONSTRAINT_TAG));
 			FieldMetadata fieldMetadata = pojoMetadata.getField(field);
 			
-	/*		 Class spec = null;
-		        try {
-		            spec = context.getBundle().loadClass(specification);
-		        } catch (ClassNotFoundException e) {
-		            throw new ConfigurationException("A required specification cannot be loaded : " + specification);
-		        }
-		        return spec;*/
-			
 			Class<?> specification = null;
+			String className = fieldMetadata.getFieldType();
+			NonFunctionalSpecification nonFunctionalSpecification = new NonFunctionalSpecification(constraintList);
+
 			try {
-				
-				//specification = getInstanceManager().getContext().getBundle().loadClass(fieldMetadata.getFieldType());
-				specification = getInstanceManager().getClazz().getClassLoader().loadClass(fieldMetadata.getFieldType());
+				specification = getInstanceManager().getClazz().getClassLoader().loadClass(className);
+				Dependency dependency  = new Dependency(this, serviceConsumer, new ServiceSpecification(specification, className, nonFunctionalSpecification));
+				this.register(fieldMetadata, dependency);
 			} catch (ClassNotFoundException e) {
 				throw new ConfigurationException("The required service interface cannot be loaded : " + e.getMessage());
 			}
-			Dependency dependency = new Dependency(this, serviceConsumer, field, specification, constraintList);
-			register(fieldMetadata, dependency);
 		}
 		description = new DependencyHandlerDescription(this, dependencies); // Initialize
 																			// the

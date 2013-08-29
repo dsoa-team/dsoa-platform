@@ -4,45 +4,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.felix.ipojo.FieldInterceptor;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.platform.handler.dependency.manager.DependencyManager;
 import br.ufpe.cin.dsoa.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.service.Service;
 import br.ufpe.cin.dsoa.service.ServiceConsumer;
+import br.ufpe.cin.dsoa.service.ServiceSpecification;
 
 public class Dependency implements FieldInterceptor {
 
 	private DependencyHandler handler;
 	
 	private ServiceConsumer  			consumer;
-	private String 			 			field;
-	private Class<?> 		 			specification;
-	private List<AttributeConstraint> 	attConstraintList;
+	private ServiceSpecification		specification;
 	private Service						service;
-	private List<ServiceReference> 		blackList;
+	private List<String>		 		blackList;
 
 	private DependencyStatus status;
 	private DependencyManager manager;
 
-	public Dependency(DependencyHandler dependencyHandler, ServiceConsumer serviceConsumer, String field,
-			Class<?> specification, List<AttributeConstraint> attConstraintList) {
+	public Dependency(DependencyHandler dependencyHandler, ServiceConsumer serviceConsumer,
+			ServiceSpecification specification) {
 		super();
 		this.handler = dependencyHandler;
 		this.consumer = serviceConsumer;
-		this.field = field;
 		this.specification = specification;
-		this.attConstraintList = attConstraintList;
-		this.blackList = new ArrayList<ServiceReference>();
+		this.blackList = new ArrayList<String>();
 		this.status = DependencyStatus.UNRESOLVED;
 		this.manager = new DependencyManager(this);
 	}
 
-	public BundleContext getContext() {
-		return handler.getInstanceManager().getContext();
-	}
-	
 	public DependencyHandler getHandler() {
 		return handler;
 	}
@@ -51,20 +42,18 @@ public class Dependency implements FieldInterceptor {
 		return consumer;
 	}
 
-	public String getField() {
-		return field;
-	}
-
 	public List<AttributeConstraint> getAttributeConstraintList() {
-		return attConstraintList;
+		return this.specification.getNonFunctionalSpecification().getAttributeConstraints();
 	}
 	
 	public boolean addAttributeConstraint(AttributeConstraint attributeConstraint) {
-		return this.attConstraintList.add(attributeConstraint);
+		//TODO: update query
+		return this.getAttributeConstraintList().add(attributeConstraint);
 	}
 	
 	public boolean removeAttributeConstraint(AttributeConstraint attributeConstraint) {
-		return this.attConstraintList.remove(attributeConstraint);
+		//TODO: update query
+		return this.getAttributeConstraintList().remove(attributeConstraint);
 	}
 	
 	public DependencyStatus getStatus() {
@@ -75,15 +64,11 @@ public class Dependency implements FieldInterceptor {
 		return this.status == DependencyStatus.RESOLVED;
 	}
 
-	public Class<?> getSpecification() {
+	public ServiceSpecification getSpecification() {
 		return this.specification;
 	}
 	
-	public String getSpecificationName() {
-		return this.specification.getName();
-	}
-	
-	public List<ServiceReference> getBlackList() {
+	public List<String> getBlackList() {
 		return blackList;
 	}
 	

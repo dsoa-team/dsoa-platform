@@ -9,7 +9,7 @@ public interface Service {
 
 	ServiceSpecification getSpecification();
 	
-	public Dictionary getProperties();
+	public Dictionary<?, ?> getProperties();
 
 	Object getServiceObject();
 

@@ -2,6 +2,7 @@ package br.ufpe.cin.dsoa.platform.handler.dependency.manager;
 
 import java.util.Map;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
@@ -9,7 +10,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import br.ufpe.cin.dsoa.event.NotificationListener;
 import br.ufpe.cin.dsoa.platform.handler.dependency.Dependency;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
-import br.ufpe.cin.dsoa.platform.registry.Broker;
+import br.ufpe.cin.dsoa.platform.registry.ServiceRegistry;
 import br.ufpe.cin.dsoa.service.Service;
 
 
@@ -24,8 +25,8 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 	/**
 	 * The component responsible for service selection.
 	 */
-	private Broker broker;
-	private ServiceReference brokerReference;
+	private BundleContext context;
+	private ServiceRegistry serviceRegistry;
 	private ServiceTracker brokerTracker;
 	
 	/**
@@ -42,9 +43,10 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 	
 	public DependencyManager(Dependency dependency) {
 		this.dependency = dependency;
+		this.context = dependency.getHandler().getInstanceManager().getContext();
 		this.waiting = true;
-		this.brokerTracker = new ServiceTracker(dependency.getContext(), Broker.class.getName(), new BrokerTrackerCustomizer());
-		this.verifierTracker = new ServiceTracker(dependency.getContext(), Verifier.class.getName(), new VerifierTrackerCustomizer());
+		//this.brokerTracker = new ServiceTracker(dependency.getContext(), ServiceRegistry.class.getName(), new BrokerTrackerCustomizer());
+		//this.verifierTracker = new ServiceTracker(dependency.getContext(), Verifier.class.getName(), new VerifierTrackerCustomizer());
 	}
 
 	public void start() {
@@ -59,9 +61,8 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 	}
 	
 	public void resolve() {
-		if (broker != null) {
-			broker.getBestService(dependency.getContext(), dependency.getSpecificationName(), dependency.getAttributeConstraintList(),
-				dependency.getBlackList(), this);
+		if (serviceRegistry != null) {
+			serviceRegistry.getBestService(dependency.getSpecification(), dependency.getBlackList(), this);
 		} else {
 			synchronized (waiting) {
 				waiting = Boolean.TRUE;
@@ -89,21 +90,26 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 		resolve();
 	}
 	
+
+	public void onError(Exception e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	class BrokerTrackerCustomizer implements ServiceTrackerCustomizer {
 		public Object addingService(ServiceReference reference) {
 			synchronized(DependencyManager.this) {
-				if (broker == null) {
-					broker = (Broker) dependency.getContext().getService(reference);
+				if (serviceRegistry == null) {
+					serviceRegistry = (ServiceRegistry) DependencyManager.this.context.getService(reference);
 				}
 				
 				if (verifier != null) {
 					if (waiting) {
-						broker.getBestService(dependency.getContext(), dependency.getSpecificationName(), dependency.getAttributeConstraintList(),
-							dependency.getBlackList(), DependencyManager.this);
+						serviceRegistry.getBestService(dependency.getSpecification(), dependency.getBlackList(), DependencyManager.this);
 						waiting = Boolean.FALSE;
 					}
 				}
-				return broker;
+				return serviceRegistry;
 			}
 		}
 
@@ -113,9 +119,9 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 
 		public void removedService(ServiceReference reference, Object service) {
 			synchronized(DependencyManager.this) {
-				dependency.getContext().ungetService(reference);
+				DependencyManager.this.context.ungetService(reference);
 				waiting = Boolean.TRUE;
-				broker = null;
+				serviceRegistry = null;
 			}
 		}	
 	}
@@ -123,12 +129,11 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 	class VerifierTrackerCustomizer implements ServiceTrackerCustomizer {
 		public Object addingService(ServiceReference reference) {
 			synchronized(DependencyManager.this) {
-				verifier = (Verifier) dependency.getContext().getService(reference);
-				if (broker != null) {
+				verifier = (Verifier) DependencyManager.this.context.getService(reference);
+				if (serviceRegistry != null) {
 					synchronized (waiting) {
 						if (waiting) {
-							broker.getBestService(dependency.getContext(), dependency.getSpecificationName(), dependency.getAttributeConstraintList(),
-								dependency.getBlackList(), DependencyManager.this);
+							serviceRegistry.getBestService(dependency.getSpecification(), dependency.getBlackList(), DependencyManager.this);
 							waiting = Boolean.FALSE;
 						}
 					}
@@ -143,7 +148,7 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 
 		public void removedService(ServiceReference reference, Object service) {
 			synchronized(DependencyManager.this) {
-				dependency.getContext().ungetService(reference);
+				DependencyManager.this.context.ungetService(reference);
 				verifier = null;
 			}
 		}	
@@ -158,7 +163,6 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 		// TODO Auto-generated method stub
 		
 	}
-	
 	
 /*	class BrokerTrackerCustomizer implements ServiceTrackerCustomizer {
 		@Override

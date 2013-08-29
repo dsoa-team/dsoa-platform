@@ -1,11 +1,26 @@
 package br.ufpe.cin.dsoa.platform.registry;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
+import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
 import br.ufpe.cin.dsoa.service.Service;
+import br.ufpe.cin.dsoa.service.ServiceSpecification;
 
-public class ServiceRegistry {
+public interface ServiceRegistry {
+	
+
+	public void getBestService(ServiceSpecification specification,
+			List<String> blackList, ServiceListener listener);
+	
+	public boolean addService(Service service);
+
+	public Service getService(String id);
+	
+	public List<Service> getServices();
+	
+	public List<Service> getServices(String[] classNames);
+
+	/*
 	private Map<String,Service> serviceMap = new HashMap<String, Service>();
 	
 	public synchronized boolean addService(Service service) {
@@ -21,4 +36,5 @@ public class ServiceRegistry {
 	public Service getService(String id) {
 		return serviceMap.get(id);
 	}
+	*/
 }

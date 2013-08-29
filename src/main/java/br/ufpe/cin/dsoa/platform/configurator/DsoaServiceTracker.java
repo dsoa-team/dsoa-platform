@@ -45,9 +45,15 @@ public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 				.valueOf(reference.getProperty(Constants.SERVICE_PROXY).toString()));
 		Object tracked = null;
 		if (!isProxy) {
-			Service service = new OsgiService(reference);
-			//this.registry.addService(service);
-			tracked = monitoringService.startMonitoring(service);
+			Service service;
+			try {
+				service = new OsgiService(reference);
+				//this.registry.addService(service);
+				tracked = monitoringService.startMonitoring(service);
+			} catch (ClassNotFoundException e) {
+				//this should never happen
+				e.printStackTrace();
+			}
 		}
 		return tracked;
 	}

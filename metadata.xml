@@ -70,7 +70,7 @@
 		ranks services according to a configurable RankingPolicy which can be modified at runtime
 		-->
 	<component 	name="Platform.Registry.QoSAwareRegistryComponent" 
-				classname="br.ufpe.cin.dsoa.platform.registry.impl.BrokerImpl">
+				classname="br.ufpe.cin.dsoa.platform.registry.impl.OsgiServiceRegistry">
 		<provides />
 	</component>	
 		
@@ -262,7 +262,8 @@
 <!-- 	<instance component="br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCatalogImpl" />
 	<instance component="br.ufpe.cin.dsoa.platform.configurator.DsoaServiceTracker" />
 	<instance component="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" /> -->
-	<!-- <instance component="br.ufpe.cin.dsoa.platform.registry.impl.BrokerImpl"/>
+	<!-- 
+	<instance component="Platform.Registry.QoSAwareRegistryComponent"/>
 	<instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.EsperVerifier"/>
 	<instance component="br.ufpe.cin.dsoa.resource.impl.MonitoredServiceListenerImpl"/> -->
 	<!-- <instance component="br.ufpe.cin.dsoa.platform.configurator.DsoaFindHook" />  -->

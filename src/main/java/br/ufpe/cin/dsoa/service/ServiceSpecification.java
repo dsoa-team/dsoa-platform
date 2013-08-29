@@ -1,11 +1,33 @@
 package br.ufpe.cin.dsoa.service;
 
-public interface ServiceSpecification {
 
-	String[] getClassNames();
+public class ServiceSpecification {
 	
-	Class<?>[] getClasses();
+	private Class<?> clazz;
+	private String serviceInterface;
+	private NonFunctionalSpecification nonFunctionalSpecification;
 	
-	NonFunctionalSpecification getNonFunctionalSpecification();
+	
+	public ServiceSpecification(Class<?> clazz, String serviceInterface,
+			NonFunctionalSpecification nonFunctionalSpecification) {
+		super();
+		this.clazz = clazz;
+		this.serviceInterface = serviceInterface;
+		this.nonFunctionalSpecification = nonFunctionalSpecification;
+	}
 
+	
+	public NonFunctionalSpecification getNonFunctionalSpecification() {
+		return nonFunctionalSpecification;
+	}
+
+
+	public Class<?> getClazz() {
+		return clazz;
+	}
+
+
+	public String getServiceInterface() {
+		return serviceInterface;
+	}
 }

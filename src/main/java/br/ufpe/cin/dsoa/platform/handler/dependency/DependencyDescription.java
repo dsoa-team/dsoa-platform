@@ -23,7 +23,7 @@ public class DependencyDescription {
 	public Element getInfo() {
 		Element elDependency = new Element(Constants.REQUIRES_TAG, Constants.REQUIRES_TAG_NAMESPACE);
 		elDependency.addAttribute(new Attribute(DEPENDENCY_ATT_VALID, String.valueOf(dependency.isValid())));
-		elDependency.addAttribute(new Attribute(DEPENDENCY_ATT_SPECIFICATION, dependency.getSpecification().getName()));
+		elDependency.addAttribute(new Attribute(DEPENDENCY_ATT_SPECIFICATION, dependency.getSpecification().getServiceInterface()));
 		return elDependency;
 	}
 }

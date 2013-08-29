@@ -68,7 +68,7 @@ public class ServiceMonitor implements Monitorable {
 		this.monitorRegistration = this.ctx.registerService(clazzes, this, ht);
 	}
 	
-	@SuppressWarnings("rawtypes")
+	/*@SuppressWarnings("rawtypes")
 	private void registerProxy() {
 		log.info("Registering proxy...");
 		log.info("A new remote service was registered: "
@@ -78,7 +78,7 @@ public class ServiceMonitor implements Monitorable {
 		Dictionary dict = this.service.getProperties();
 		dict.put(br.ufpe.cin.dsoa.util.Constants.SERVICE_PROXY, "true");
 		//this.proxyRegistration = this.ctx.registerService(service.getSpecification().getClassNames(), service.getProxy(), dict);
-	}
+	}*/
 	
 	public void addAttributeMonitor(MonitoredAttribute monitor) {
 		this.attributeMonitorMap.put(monitor.getStatusVariableId(), monitor);
