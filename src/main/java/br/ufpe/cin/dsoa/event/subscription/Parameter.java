@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.event;
+package br.ufpe.cin.dsoa.event.subscription;
 
 public class Parameter {
 

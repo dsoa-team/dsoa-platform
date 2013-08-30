@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.event.agent;
+package br.ufpe.cin.dsoa.event.agent.meta;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-import br.ufpe.cin.dsoa.event.Property;
+import br.ufpe.cin.dsoa.event.meta.Property;
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OutputEvent {

@@ -12,7 +12,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import br.ufpe.cin.dsoa.attribute.Attribute;
+import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
 import br.ufpe.cin.dsoa.platform.registry.InvalidConstraintException;
 import br.ufpe.cin.dsoa.platform.registry.filter.AndFilter;

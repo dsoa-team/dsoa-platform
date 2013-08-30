@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.ufpe.cin.dsoa.event.agent.AgentAlreadyCatalogedException;
-import br.ufpe.cin.dsoa.event.agent.EventProcessingAgent;
+import br.ufpe.cin.dsoa.event.agent.excetpion.AgentAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.event.agent.meta.EventProcessingAgent;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 

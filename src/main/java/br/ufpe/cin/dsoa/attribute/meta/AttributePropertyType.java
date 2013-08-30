@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.attribute;
+package br.ufpe.cin.dsoa.attribute.meta;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

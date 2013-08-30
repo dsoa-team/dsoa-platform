@@ -3,8 +3,8 @@ package br.ufpe.cin.dsoa.platform.management.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.ufpe.cin.dsoa.attribute.Attribute;
-import br.ufpe.cin.dsoa.event.agent.EventProcessingAgent;
+import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
+import br.ufpe.cin.dsoa.event.agent.meta.EventProcessingAgent;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.management.PlatformManagementService;
@@ -12,6 +12,7 @@ import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.platform.monitor.ServiceMetadata;
 import br.ufpe.cin.dsoa.platform.monitor.ServiceMonitor;
 import br.ufpe.cin.dsoa.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.util.AttributeParser;
 
 /**
  * The Management Service is responsible for providing an access point to perform
@@ -42,7 +43,8 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 		ServiceMonitor service = this.monitoringService.getMonitoredService(id);
 		ServiceMetadata metadata = null;
 		if(null != service) {
-			metadata = service.getMetadata();
+			//TODO: CORRIGIR
+			//metadata = service.getMetadata();
 		}
 		
 		return metadata;
@@ -51,7 +53,7 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 	public List<String> getAttributeList() {
 		List<String> attributeList = new ArrayList<String>();
 		
-		for(Attribute m : this.attributeCatalog.getAttributes()){
+		for(AttributeType m : this.attributeCatalog.getAttributes()){
 			attributeList.add(m.toString());
 		}
 		return attributeList;
@@ -80,7 +82,7 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 	}
 
 	public void addAttributeMonitor(String servicePid, String attName, String attCategory, String operationName) {
-		Attribute attribute = this.attributeCatalog.getAttribute(AttributeConstraint.format(attCategory, attName));
+		AttributeType attribute = this.attributeCatalog.getAttribute(AttributeParser.format(attCategory, attName));
 		AttributeConstraint attributeConstraint = null; 
 		// TODO: terminar
 		//new AttributeConstraint(attribute.getId(), Util.getAttributableId(servicePid, operationName));

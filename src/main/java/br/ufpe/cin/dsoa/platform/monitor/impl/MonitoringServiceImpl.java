@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.attribute.AttributableId;
-import br.ufpe.cin.dsoa.attribute.Attribute;
 import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapper;
+import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
 import br.ufpe.cin.dsoa.event.EventConsumer;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.mapper.AttributeEventMapperCatalog;
@@ -116,7 +116,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 
 	private void addAttributeMonitor(ServiceMonitor serviceMonitor, AttributeConstraint attributeConstraint) {
 		String attributeId = attributeConstraint.getAttributeId();
-		Attribute attribute = attributeCatalog.getAttribute(attributeId);
+		AttributeType attribute = attributeCatalog.getAttribute(attributeId);
 		if (attribute != null) {
 			AttributableId attributableId = new AttributableId(serviceMonitor.getServiceId(), attributeConstraint.getOperation());
 			MonitoredAttribute monitor = new MonitoredAttribute(attributableId, attribute);

@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter.configuration.parser;
+/*package br.ufpe.cin.dsoa.epcenter.configuration.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -75,3 +75,4 @@ public class EventParserSpec {
 	}
 
 }
+*/

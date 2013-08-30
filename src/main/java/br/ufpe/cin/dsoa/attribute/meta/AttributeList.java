@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.attribute;
+package br.ufpe.cin.dsoa.attribute.meta;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+
 @XmlRootElement(name = "attributes")
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -16,13 +17,13 @@ public class AttributeList {
 	public static final String CONFIG = "DSOA-INF/attribute.xml";
 	
 	@XmlElement(name = "attribute")
-	private List<Attribute> attributes;
+	private List<AttributeType> attributes;
 
-	public List<Attribute> getAttributes() {
+	public List<AttributeType> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(List<Attribute> attributes) {
+	public void setAttributes(List<AttributeType> attributes) {
 		this.attributes = attributes;
 	}
 }

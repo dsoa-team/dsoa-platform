@@ -1,18 +1,8 @@
 package br.ufpe.cin.dsoa.platform.event;
 
-import java.util.HashMap;
-import java.util.Map;
+import br.ufpe.cin.dsoa.event.meta.EventType;
 
-import br.ufpe.cin.dsoa.event.legacy.EventType;
+public interface EventCatalog {
 
-public class EventCatalog {
-	private static Map<String, EventType> eventTypes = new HashMap<String, EventType>();
-	
-	public static void put(String name, EventType eventType) {
-		eventTypes.put(name, eventType);
-	}
-	
-	public static EventType get(String name) {
-		return eventTypes.get(name);
-	}
+	public boolean addEvent(EventType event);
 }

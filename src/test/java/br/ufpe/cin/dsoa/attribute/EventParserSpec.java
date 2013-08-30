@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.attribute;
+/*package br.ufpe.cin.dsoa.attribute;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -75,3 +75,4 @@ public class EventParserSpec {
 	}
 
 }
+*/

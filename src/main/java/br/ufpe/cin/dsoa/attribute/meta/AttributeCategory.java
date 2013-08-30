@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.attribute;
+package br.ufpe.cin.dsoa.attribute.meta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class AttributeCategory {
 	
 	private AttributeCategory supercategory;
 	private List<AttributeCategory> subcategoryList  = new ArrayList<AttributeCategory>();
-	private List<Attribute> attributeList  = new ArrayList<Attribute>();
+	private List<AttributeType> attributeList  = new ArrayList<AttributeType>();
 	
 	public AttributeCategory(String name, AttributeCategory supercat) {
 		this.supercategory = supercat;
@@ -59,7 +59,7 @@ public class AttributeCategory {
 		return name;
 	}
 	
-	public void addAttribute(Attribute att) {
+	public void addAttribute(AttributeType att) {
 		this.attributeList.add(att);
 	}
 	

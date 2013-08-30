@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.event;
+package br.ufpe.cin.dsoa.event.meta;
 
 import java.util.List;
 
@@ -12,18 +12,19 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "events")
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EventList {
-
-	@XmlElement(name = "event")
-	private List<Event> events;
+public class EventTypeList {
 
 	public static final String CONFIG = "DSOA-INF/event.xml";
 	
-	public List<Event> getEvents() {
+	@XmlElement(name = "event")
+	private List<EventType> events;
+
+	public List<EventType> getEvents() {
 		return events;
 	}
 
-	public void setEvents(List<Event> events) {
+	public void setEvents(List<EventType> events) {
 		this.events = events;
 	}
+	
 }

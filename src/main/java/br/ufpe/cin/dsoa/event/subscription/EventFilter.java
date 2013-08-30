@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.event;
+package br.ufpe.cin.dsoa.event.subscription;
 
 import java.util.ArrayList;
 import java.util.List;

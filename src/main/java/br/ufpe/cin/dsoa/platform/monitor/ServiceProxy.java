@@ -2,11 +2,14 @@ package br.ufpe.cin.dsoa.platform.monitor;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
-import br.ufpe.cin.dsoa.event.InvocationEvent;
+import br.ufpe.cin.dsoa.event.meta.EventType;
+import br.ufpe.cin.dsoa.event.meta.PropertyType;
 import br.ufpe.cin.dsoa.service.Service;
-import br.ufpe.cin.dsoa.service.ServiceSpecification;
+import br.ufpe.cin.dsoa.util.Constants;
 
 /**
  * A Service Proxy that intercepts requests at the client side. It generates
@@ -39,6 +42,35 @@ public class ServiceProxy implements InvocationHandler {
 	 * toStirng method.
 	 */
 	private Method m_toStringMethod;
+	
+	private static final EventType EVENT_TYPE;
+	
+	
+	//move to proxy factory
+	static{
+		
+		List<PropertyType> metadata = new ArrayList<PropertyType>();
+		List<PropertyType> data = new ArrayList<PropertyType>();
+
+		//add metadata
+		metadata.add(new PropertyType("id", String.class, true));
+		metadata.add(new PropertyType("timestamp", Long.class, true));
+		
+		//add data
+		data.add(new PropertyType("consumerId", String.class, false));
+		data.add(new PropertyType("serviceId", String.class, true));
+		data.add(new PropertyType("operationName", String.class, true));
+		data.add(new PropertyType("resquestTimestamp", Long.class, true));
+		data.add(new PropertyType("responseTimestamp", Long.class, true));
+		data.add(new PropertyType("parameterTypes", Class[].class,	true));
+		data.add(new PropertyType("parameterValues", Object[].class, true));
+		data.add(new PropertyType("returnType", Class.class, true));
+		data.add( new PropertyType("returnValue", Object.class, true));
+		data.add(new PropertyType("success", Boolean.class, true));
+		data.add(new PropertyType("exception", Exception.class, false));
+		
+		EVENT_TYPE = new EventType(Constants.INVOCATION_EVENT, metadata, data);
+	}
 
 	public ServiceProxy(Service service) {
 		this.service = service;
@@ -80,7 +112,8 @@ public class ServiceProxy implements InvocationHandler {
 				throw new InternalError("Unexpected Object method dispatched: " + method);
 			}
 		}
-		InvocationEvent ie = null;
+		
+		//InvocationEvent ie = null;
 		long requestTime = System.nanoTime(), responseTime;
 		Object result = null;
 		boolean success = true;
@@ -91,13 +124,13 @@ public class ServiceProxy implements InvocationHandler {
 			throw exc;
 		} finally {
 			responseTime = System.nanoTime();
-			notifyInvocation(new InvocationEvent(null, service.getServiceId(),
-					method.getName(), success, requestTime, responseTime));
+			//notifyInvocation(new InvocationEvent(null, service.getServiceId(),
+			//		method.getName(), success, requestTime, responseTime));
 		}
 		return result;
 	}
 
-	private void notifyInvocation(InvocationEvent invocation) {
-		
-	}
+	//private void notifyInvocation(InvocationEvent invocation) {
+	//
+	//}
 }

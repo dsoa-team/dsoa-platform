@@ -3,20 +3,18 @@ package br.ufpe.cin.dsoa.platform.event.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.ufpe.cin.dsoa.event.InvocationEvent;
-
-import com.espertech.esper.client.EventBean;
+import br.ufpe.cin.dsoa.util.Constants;
 
 public final class EventIdGenerator {
-	
+
 	private static Map<String, Long> keyMap = new HashMap<String, Long>();
-	
-	public static String nextId(InvocationEvent eventBean) {
-		//String eventType = eventBean.getEventType().getName();
-		String eventType = eventBean.getClass().getSimpleName();
+
+	public static String nextId(Map<String, Object> eventBean) {
+		String eventType = (String) eventBean.get(Constants.EVENT_TYPE);
 		Long key = null;
 		synchronized (keyMap) {
-			key = keyMap.containsKey(eventType) ? ((Long)keyMap.get(eventType)+1) : 1;
+			key = keyMap.containsKey(eventType) ? ((Long) keyMap.get(eventType) + 1)
+					: 1;
 			keyMap.put(eventType, key);
 		}
 		return eventType + "#" + key;
