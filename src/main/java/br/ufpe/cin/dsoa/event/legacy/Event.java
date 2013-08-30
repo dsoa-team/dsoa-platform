@@ -121,7 +121,7 @@ public class Event {
 		applicationAttributeTypes.put(resquestTimestampType.getName(), resquestTimestampType);
 		applicationAttributeTypes.put(responseTimestampType.getName(), responseTimestampType);
 		
-		EventType invocationEventType = new EventType("InvocationEvent", false, headerAttributeTypes, applicationAttributeTypes);
+		EventType invocationEventType = new EventType("InvocationEvent", headerAttributeTypes, applicationAttributeTypes);
 		System.out.println(invocationEventType.toString());
 		System.out.println(invocationEventType.getMetadataAttributeTypeList());
 		System.out.println(invocationEventType.getRequiredMetadataAttributeTypeList());

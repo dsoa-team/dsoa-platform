@@ -13,9 +13,7 @@ import java.util.Set;
  */
 public class EventType {
 	
-	private String id;
-	
-	private boolean composite;
+	private String name;
 	
 	private Map<String, PropertyType> metadataAttributeTypes;
 	
@@ -23,31 +21,26 @@ public class EventType {
 	
 	private EventType superType = null;
 
-	public EventType(String id, boolean composite,
+	public EventType(String name,
 			Map<String, PropertyType> headerAttributes,
 			Map<String, PropertyType> applicationAttributes) {
 		super();
-		this.id = id;
-		this.composite = composite;
+		this.name = name;
 		this.metadataAttributeTypes = headerAttributes;
 		this.dataAttributeTypes = applicationAttributes;
 	}
 	
-	public EventType(String id, boolean composite,
+	public EventType(String name,
 			Map<String, PropertyType> metadataAttributes,
 			Map<String, PropertyType> dataAttributes, EventType superType) {
-		this(id, composite, metadataAttributes, dataAttributes);
+		this(name, metadataAttributes, dataAttributes);
 		this.superType = superType;
 	}
 
-	public String getId() {
-		return id;
+	public String getName() {
+		return name;
 	}
 
-	public boolean isComposite() {
-		return composite;
-	}
-	
 	private List<PropertyType> getAttributeTypeList(Map<String, PropertyType> propertyTypes, 
 			Map<String, PropertyType> superAttrTypes) {
 		Set<PropertyType> attributeTypesSet = new HashSet<PropertyType>();
@@ -108,7 +101,7 @@ public class EventType {
 	
 	@Override
 	public String toString() {
-		return "EventType [id=" + id + ", composite=" + composite
+		return "EventType [id=" + name 
 				+ ", metadataAttributeTypes=" + metadataAttributeTypes
 				+ ", dataAttributeTypes=" + dataAttributeTypes
 				+ ", superType=" + superType + "]";
@@ -118,7 +111,7 @@ public class EventType {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
@@ -131,10 +124,10 @@ public class EventType {
 		if (getClass() != obj.getClass())
 			return false;
 		EventType other = (EventType) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (name == null) {
+			if (other.name != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}
@@ -171,7 +164,7 @@ public class EventType {
 		applicationAttributeTypes.put(resquestTimestampType.getName(), resquestTimestampType);
 		applicationAttributeTypes.put(responseTimestampType.getName(), responseTimestampType);
 		
-		EventType invocationEventType = new EventType("InvocationEvent", false, headerAttributeTypes, applicationAttributeTypes);
+		EventType invocationEventType = new EventType("InvocationEvent", headerAttributeTypes, applicationAttributeTypes);
 		System.out.println(invocationEventType.toString());
 		System.out.println(invocationEventType.getMetadataAttributeTypeList());
 		System.out.println(invocationEventType.getRequiredMetadataAttributeTypeList());
@@ -189,7 +182,7 @@ public class EventType {
 		PropertyType addressType 		= new PropertyType("addressType", String.class, true);
 		appAttributeTypes.put(addressType.getName(), addressType);
 		
-		EventType invocationWSEventType 	= new EventType("InvocationEvent", false, hdrAttributeTypes, appAttributeTypes, invocationEventType);
+		EventType invocationWSEventType 	= new EventType("InvocationEvent", hdrAttributeTypes, appAttributeTypes, invocationEventType);
 		System.out.println(invocationWSEventType.toString());
 		System.out.println(invocationWSEventType.getMetadataAttributeTypeList());
 		System.out.println(invocationWSEventType.getRequiredMetadataAttributeTypeList());
