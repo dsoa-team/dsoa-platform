@@ -8,7 +8,7 @@ import java.util.Map;
 import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapper;
 import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.platform.attribute.mapper.AttributeEventMapperCatalog;
-import br.ufpe.cin.dsoa.util.AttributeParser;
+import br.ufpe.cin.dsoa.service.AttributeConstraint;
 
 /**
  * This component maintains the mapper catalog. Each mapper relates a QoS attribute with the event
@@ -28,7 +28,7 @@ public class AttributeEventMapperCatalogImpl implements AttributeEventMapperCata
 	}
 
 	public synchronized void addAttributeEventMapper(AttributeEventMapper mapper) throws AttributeEventMapperAlreadyCatalogedException {
-		String attId = AttributeParser.format(mapper.getCategory(), mapper.getName());
+		String attId = AttributeConstraint.format(mapper.getCategory(), mapper.getName());
 		if (this.attributeEventMapperMap.containsKey(attId)) {
 			throw new AttributeEventMapperAlreadyCatalogedException(mapper);
 		}

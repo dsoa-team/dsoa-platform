@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import br.ufpe.cin.dsoa.attribute.AttributeCategory;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
-import br.ufpe.cin.dsoa.util.AttributeParser;
+import br.ufpe.cin.dsoa.service.AttributeConstraint;
 
 public class AttributeCategoryAdapter extends XmlAdapter<String, AttributeCategory> {
 
@@ -18,7 +18,7 @@ public class AttributeCategoryAdapter extends XmlAdapter<String, AttributeCatego
 	public AttributeCategory unmarshal(String catId) throws Exception {
 		AttributeCategory attCat = attributeCatalog.getCategory(catId);
 		if (attCat == null) {
-			attCat = AttributeParser.parseCategory(attributeCatalog, catId);
+			attCat = AttributeConstraint.parseCategory(attributeCatalog, catId);
 		}
 		return attCat;
 	}

@@ -4,6 +4,8 @@ import br.ufpe.cin.dsoa.service.Service;
 
 public interface ServiceListener {
 
+	String getServiceInterface();
+	
 	void onArrival(Service service);
 	
 	void onDeparture(Service service);

@@ -40,7 +40,8 @@ public abstract class StreamProcessingService {
 		boolean added = this.register(agent.getId(), agent, this.agents);
 
 		if (added) {
-			this.startQuery(query);
+			//TODO VER
+//			this.startQuery(query);
 		}
 
 		return added;

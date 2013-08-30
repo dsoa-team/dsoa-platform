@@ -1,10 +1,8 @@
 package br.ufpe.cin.dsoa.platform.configurator;
 
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
@@ -19,7 +17,10 @@ import br.ufpe.cin.dsoa.attribute.Attribute;
 import br.ufpe.cin.dsoa.attribute.AttributeAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.attribute.AttributeList;
 import br.ufpe.cin.dsoa.attribute.AttributePropertyType;
-import br.ufpe.cin.dsoa.event.Event;
+import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapper;
+import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapperList;
+import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventPropertyMapper;
 import br.ufpe.cin.dsoa.event.EventList;
 import br.ufpe.cin.dsoa.event.agent.AgentAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.event.agent.AgentList;
@@ -52,7 +53,7 @@ public class DsoaBundleListener extends BundleTracker {
 	private static Logger logger = Logger.getLogger(DsoaBundleListener.class.getName());
 
 	public DsoaBundleListener(BundleContext context) {
-		super(context, Bundle.ACTIVE, null);
+		super(context, Bundle.INSTALLED, null);
 		this.JAXBContexts = JAXBInitializer.initJAXBContexts();
 	}
 
@@ -64,14 +65,59 @@ public class DsoaBundleListener extends BundleTracker {
 
 	@Override
 	public Object addingBundle(Bundle bundle, BundleEvent event) {
-		this.handleEventDefinitions();
+		this.handleEventDefinitions(bundle);
 		this.handleAgentDefinitions(bundle);
+		this.handleAttributeDefinitions(bundle);
+		this.handleAttributeEventMapperDefinitions(bundle);
+
 		return super.addingBundle(bundle, event);
 	}
 
-	
-	
-	private void handleEventDefinitions() {
+
+	private void handleAttributeEventMapperDefinitions(Bundle bundle) {
+		URL url = bundle.getEntry(AttributeEventMapperList.CONFIG);
+		if (url != null) {
+			Unmarshaller u = JAXBContexts.get(AttributeEventMapperList.CONFIG);
+			AttributeEventMapperList attList = null;
+			try {
+				attList = (AttributeEventMapperList) u.unmarshal(url);
+				for (AttributeEventMapper mapper : attList.getAttributesEventMappers()) {
+					logger.fine(String.format("Attribute Category: %s ", mapper.getCategory()));// LOG
+					logger.fine(String.format("Attribute Name: %s ", mapper.getName()));// LOG
+					logger.fine(String.format("Attribute Name: %s ", mapper.getEventType()));// LOG
+					logger.fine(String.format("Attribute Name: %s ", mapper.getEventAlias()));// LOG
+
+					List<AttributeEventPropertyMapper> metaPropList = mapper.getMetadata();
+					for (AttributeEventPropertyMapper prop : metaPropList) {
+						logger.fine(String.format("AttributeEventMapper Meta-Prop id: %s ", prop.getId()));// LOG
+						logger.fine(String.format("AttributeEventMapper Meta-Prop type: %s ", prop.getExpression()));// LOG
+					}
+
+					List<AttributeEventPropertyMapper> dataPropList = mapper.getData();
+					for (AttributeEventPropertyMapper prop : dataPropList) {
+						logger.fine(String.format("AttributeEventMapper Meta-Prop id: %s ", prop.getId()));// LOG
+						logger.fine(String.format("AttributeEventMapper Meta-Prop type: %s ", prop.getExpression()));// LOG
+					}
+					try {
+						this.attributeEventMapperCatalog.addAttributeEventMapper(mapper);
+					} catch (AttributeEventMapperAlreadyCatalogedException e) {
+						logger.warning(e.getMessage());
+					}
+				}
+			} catch (JAXBException e1) {
+				logger.warning("There was an error while processing file " + url
+						+ ". Corresponding mapper definitions will not be considered!");
+				e1.printStackTrace();
+			}
+		}
+	}
+
+
+	private void handleEventDefinitions(Bundle bundle) {
+		URL url = bundle.getEntry(EventList.CONFIG);
+		if(url != null){
+			Unmarshaller u = JAXBContexts.get(EventList.class);
+		}
 		//Map<String, Object> 
 		/*<event type="DsoaEvent" description="xxx">
 		<header>
@@ -103,7 +149,7 @@ public class DsoaBundleListener extends BundleTracker {
 			</attributes>
 		</payload>
 	</event>*/
-		
+
 	}
 
 	@Override
@@ -123,7 +169,7 @@ public class DsoaBundleListener extends BundleTracker {
 			AgentList agentList;
 			try {
 				agentList = (AgentList) u.unmarshal(url);
-				
+
 				for (EventProcessingAgent eventProcessingAgent : agentList.getAgents()) {
 					try {
 						this.agentCatalog.addAgent(eventProcessingAgent);
@@ -138,7 +184,7 @@ public class DsoaBundleListener extends BundleTracker {
 			}
 		}
 	}
-	
+
 	private void handleAttributeDefinitions(Bundle bundle) {
 		URL url = bundle.getEntry(AttributeList.CONFIG);
 		if (url != null) {
@@ -199,7 +245,7 @@ public class DsoaBundleListener extends BundleTracker {
 			}
 		}
 	}
-	
+
 	public void setAttributeCatalog(AttributeCatalog attributeCatalog) {
 		this.attributeCatalog = attributeCatalog;
 	}

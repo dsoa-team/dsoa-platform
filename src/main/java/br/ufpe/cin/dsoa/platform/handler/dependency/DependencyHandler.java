@@ -3,7 +3,9 @@ package br.ufpe.cin.dsoa.platform.handler.dependency;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.PrimitiveHandler;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
@@ -23,6 +25,7 @@ public class DependencyHandler extends PrimitiveHandler {
 	private List<Dependency> dependencies = new ArrayList<Dependency>();
 	private DependencyHandlerDescription description;
 	private boolean started;
+	private Logger log = Logger.getLogger(DependencyHandler.class.getName());
 	
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -30,8 +33,8 @@ public class DependencyHandler extends PrimitiveHandler {
 		String consumerId = metadata.getAttribute(Constants.COMPONENT_ID_ATT);
 		String consumerName = metadata.getAttribute(Constants.COMPONENT_NAME_ATT);
 		ServiceConsumer serviceConsumer = new ServiceConsumer(consumerId, consumerName);
+		
 		PojoMetadata pojoMetadata = getFactory().getPojoMetadata();
-
 		Element[] requiresTags = metadata.getElements(Constants.REQUIRES_TAG, Constants.REQUIRES_TAG_NAMESPACE);
 		for (Element requiresTag : requiresTags) {
 			String field = (String) requiresTag.getAttribute(Constants.REQUIRES_ATT_FIELD);
@@ -41,7 +44,6 @@ public class DependencyHandler extends PrimitiveHandler {
 			Class<?> specification = null;
 			String className = fieldMetadata.getFieldType();
 			NonFunctionalSpecification nonFunctionalSpecification = new NonFunctionalSpecification(constraintList);
-
 			try {
 				specification = getInstanceManager().getClazz().getClassLoader().loadClass(className);
 				Dependency dependency  = new Dependency(this, serviceConsumer, new ServiceSpecification(specification, className, nonFunctionalSpecification));
@@ -57,24 +59,30 @@ public class DependencyHandler extends PrimitiveHandler {
 
 	private List<AttributeConstraint> getConstraintList(Element[] constraintTags) {
 		List<AttributeConstraint> constraintList = new ArrayList<AttributeConstraint>();
-		String metric = null, operation = null, expression = null, threashold = null, weight = null;
+		String attribute = null, operation = null, expression = null, threashold = null, weight = null;
 		for (Element constraintTag : constraintTags) {
-			metric = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_METRIC);
+			attribute = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_METRIC);
 			operation = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_OPERATION);
 			expression = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_EXPRESSION);
 			threashold = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_THREASHOLD);
 			weight = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_WEIGHT);
-			constraintList.add(defineConstraint(metric, operation, expression, threashold, weight));
+			constraintList.add(defineConstraint(attribute, operation, expression, threashold, weight));
 		}
 		return constraintList;
 	}
 
-	private AttributeConstraint defineConstraint(String metric, String operation, String expression, String threashold,
+	private AttributeConstraint defineConstraint(String attribute, String operation, String expression, String threashold,
 			String weight) {
 		Expression exp = Expression.valueOf(expression);
 		double thr = Double.parseDouble(threashold);
-		long wgt = Long.parseLong(weight);
-		return new AttributeConstraint(metric, operation, exp, thr, wgt);
+		long wgt;
+		if (NumberUtils.isNumber(weight)) {
+			wgt = Long.parseLong(weight);
+		} else {
+			log.warning("Weight was not recognized as a valid number, so a default value (1) was used.");
+				wgt = 1;
+		}
+		return new AttributeConstraint(attribute, operation, exp, thr, wgt);
 	}
 
 	private void register(FieldMetadata fieldmeta, Dependency dependency) {

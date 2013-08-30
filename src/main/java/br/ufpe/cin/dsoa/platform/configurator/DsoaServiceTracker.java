@@ -1,10 +1,22 @@
 package br.ufpe.cin.dsoa.platform.configurator;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.felix.ipojo.ComponentInstance;
+import org.apache.felix.ipojo.Pojo;
+import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
+import org.apache.felix.ipojo.architecture.InstanceDescription;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
+import br.ufpe.cin.dsoa.attribute.Attribute;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
+import br.ufpe.cin.dsoa.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.service.Service;
+import br.ufpe.cin.dsoa.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.service.impl.OsgiService;
 import br.ufpe.cin.dsoa.util.Constants;
 import br.ufpe.cin.dsoa.util.Util;
@@ -29,33 +41,50 @@ public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 	}
 
 	/**
-	 * This method is called when a service is registered and it has a property with
-	 * name monitored.service set. It is responsible for parsing the metrics
-	 * that should be monitored (indicated through the service's properties) and
-	 * starting monitoring them. To do that, it creates proxy service that
-	 * intercepts requests and creates an InvocationEvent that is sent to the
-	 * EventProcessingService. There, there are Property Computing Agents that
-	 * do the real metric computation. For each service that is monitored, the
-	 * Monitoring Service also creates a ServiceMonitor that stores
-	 * corresponding metrics and implements Monitorable interface (see OSGi
-	 * spec).
+	 * This method is called when a service is registered and it has a property
+	 * with name monitored.service set. It is responsible for parsing the
+	 * metrics that should be monitored (indicated through the service's
+	 * properties) and starting monitoring them. To do that, it creates proxy
+	 * service that intercepts requests and creates an InvocationEvent that is
+	 * sent to the EventProcessingService. There, there are Property Computing
+	 * Agents that do the real metric computation. For each service that is
+	 * monitored, the Monitoring Service also creates a ServiceMonitor that
+	 * stores corresponding metrics and implements Monitorable interface (see
+	 * OSGi spec).
 	 */
 	public Object addingService(ServiceReference reference) {
 		Boolean isProxy = ((Boolean) reference.getProperty(Constants.SERVICE_PROXY) == null ? false : Boolean
 				.valueOf(reference.getProperty(Constants.SERVICE_PROXY).toString()));
 		Object tracked = null;
 		if (!isProxy) {
-			Service service;
 			try {
-				service = new OsgiService(reference);
-				//this.registry.addService(service);
-				tracked = monitoringService.startMonitoring(service);
+				// / Testes
+				BundleContext ctx = reference.getBundle().getBundleContext();
+				Object componentObject = (Object) ctx.getService(reference);
+				try {
+					Pojo pojo = (Pojo) componentObject;
+					ComponentInstance componentInstance = pojo.getComponentInstance();
+					String componentName = componentInstance.getInstanceName();
+					InstanceDescription desc = componentInstance.getInstanceDescription();
+					ComponentTypeDescription compType = desc.getComponentDescription();
+					String compTypeName = compType.getName();
+					String[] providedSpec = compType.getprovidedServiceSpecification();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				// / FIM TESTES
+				// service = OsgiService.get
+				// this.registry.addService(service);
+				List<OsgiService> services = OsgiService.getOsgiServices(reference);
+				for (Service service : services) {
+					tracked = monitoringService.startMonitoring(service);
+				}
 			} catch (ClassNotFoundException e) {
-				//this should never happen
+				// this should never happen
 				e.printStackTrace();
 			}
 		}
-		return tracked;
+		return reference;
 	}
 
 	public void modifiedService(ServiceReference reference, Object service) {

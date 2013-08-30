@@ -13,13 +13,12 @@ public interface Constants {
 	public static final String REQUIRES_TAG_NAMESPACE	= "br.ufpe.cin.dsoa";
 	public static final String REQUIRES_TAG    			= "requires";
 	public static final String REQUIRES_ATT_FIELD		= "field";
-	public static final String REQUIRES_ATT_FILTER		= "filter";
 	
 	/** 
 	 * Tag Constraint
 	 */
-	public static final String CONSTRAINT_TAG		    	= "goal";
-	public static final String CONSTRAINT_ATT_METRIC 		= "metric";
+	public static final String CONSTRAINT_TAG		    	= "constraint";
+	public static final String CONSTRAINT_ATT_METRIC 		= "attribute";
 	public static final String CONSTRAINT_ATT_OPERATION		= "operation";
 	public static final String CONSTRAINT_ATT_EXPRESSION    = "expression";
 	public static final String CONSTRAINT_ATT_THREASHOLD	= "threashold";

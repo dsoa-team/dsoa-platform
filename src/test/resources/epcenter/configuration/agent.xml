@@ -8,8 +8,8 @@
 			</input-event>
 			<output-event type="AvgResponseTimeEvent">
 				<metadata>
-					<property id="id" expression="event.id" />
-					<property id="timestamp" expression="event.timestamp" />
+					<property id="id" expression="id" />
+					<property id="timestamp" expression="timestamp" />
 				</metadata>
 				<data>
 					<property id="value"

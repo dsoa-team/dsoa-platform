@@ -45,8 +45,8 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 		this.dependency = dependency;
 		this.context = dependency.getHandler().getInstanceManager().getContext();
 		this.waiting = true;
-		//this.brokerTracker = new ServiceTracker(dependency.getContext(), ServiceRegistry.class.getName(), new BrokerTrackerCustomizer());
-		//this.verifierTracker = new ServiceTracker(dependency.getContext(), Verifier.class.getName(), new VerifierTrackerCustomizer());
+		this.brokerTracker = new ServiceTracker(this.context, ServiceRegistry.class.getName(), new BrokerTrackerCustomizer());
+		this.verifierTracker = new ServiceTracker(this.context, Verifier.class.getName(), new VerifierTrackerCustomizer());
 	}
 
 	public void start() {
@@ -79,6 +79,10 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 		this.verifier.configure(this, service.getServiceId(), dependency.getAttributeConstraintList());
 	}
 	
+	public String getServiceInterface() {
+		return dependency.getSpecification().getServiceInterface();
+	}
+	
 	public void onArrival(Service service) {
 		configureVerifierAgents(service);
 		dependency.setService(service);
@@ -103,12 +107,12 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 					serviceRegistry = (ServiceRegistry) DependencyManager.this.context.getService(reference);
 				}
 				
-				if (verifier != null) {
-					if (waiting) {
+				//if (verifier != null) {
+					//if (waiting) {
 						serviceRegistry.getBestService(dependency.getSpecification(), dependency.getBlackList(), DependencyManager.this);
 						waiting = Boolean.FALSE;
-					}
-				}
+					//}
+				//}
 				return serviceRegistry;
 			}
 		}

@@ -45,7 +45,8 @@ public class OutputEvent {
 
 	@Override
 	public String toString() {
-		return "OutputEvent [metadata=" + metadata + ", data=" + data + "]";
+		return "OutputEvent [type=" + type + ", metadata=" + metadata + ", data=" + data + "]";
 	}
+
 	
 }

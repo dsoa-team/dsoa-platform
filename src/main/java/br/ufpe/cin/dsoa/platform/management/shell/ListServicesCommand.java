@@ -24,7 +24,7 @@ public class ListServicesCommand extends DsoaBaseCommand {
 	public void execute(String line, PrintStream out, PrintStream err) {
 		for (ServiceMetadata metadata : this.managementService
 				.getManagedServicesMetadata()) {
-			out.println(String.format(" - Pid: %s :: %s", metadata.getPid(),
+			out.println(String.format(" - Pid: %s :: %s", metadata.getId(),
 					metadata.getProperty(Constants.SERVICE_DESCRIPTION)));
 		}
 		out.println("Total: "

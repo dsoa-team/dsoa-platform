@@ -56,7 +56,7 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
 				this.registerError(e, listener);
 			}
 		} else {
-			Service bestService = this.rankServices(services, nfs.getAttributeConstraints());
+			Service bestService = this.rankServices(serviceInterface, services, nfs.getAttributeConstraints());
 			this.trackService(bestService, listener);
 		}
 	}
@@ -82,7 +82,7 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
 
 	public abstract List<Service> findService(String serviceInterface);
 
-	public abstract Service rankServices(List<Service> services, List<AttributeConstraint> constraints);
+	public abstract Service rankServices(String serviceInterface, List<Service> services, List<AttributeConstraint> constraints);
 
 	public abstract void trackService(Service bestService,
 			ServiceListener listener);

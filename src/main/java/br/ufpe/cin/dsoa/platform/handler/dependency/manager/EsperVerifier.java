@@ -2,8 +2,6 @@ package br.ufpe.cin.dsoa.platform.handler.dependency.manager;
 
 import java.util.List;
 
-import br.ufpe.cin.dsoa.attribute.AttributableId;
-import br.ufpe.cin.dsoa.attribute.Attribute;
 import br.ufpe.cin.dsoa.event.NotificationListener;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;

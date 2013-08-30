@@ -3,92 +3,59 @@ package br.ufpe.cin.dsoa.platform.monitor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
-import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceReference;
-
-import br.ufpe.cin.dsoa.util.Util;
+import br.ufpe.cin.dsoa.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.service.Service;
 
 public class ServiceMetadata {
 	
 	/** Numeric Id and String pid */
 	private String id;
-	private String pid;
-	private ServiceReference reference;
 	/** (className, List<operationName>) */
-	private Map<String, List<String>> operationsMap;
+	private List<String> operationsList;
 	private Logger log;
+	private Service service;
 	
-	public ServiceMetadata(ServiceReference reference) {
+	public ServiceMetadata(Service service) {
 		this.log = Logger.getLogger(getClass().getSimpleName());
-		this.reference = reference;
-		this.id = Util.getId(reference);
-		this.pid = Util.getId(reference);
-		this.operationsMap = new HashMap<String, List<String>>();
+		this.id = service.getServiceId();
+		this.operationsList = new ArrayList<String>();
+		this.service = service;
 		this.parseOperations();
 	}
 
 	private void parseOperations() {
 		log.fine("ServiceId: " + id);
-		log.info("ServicePid: " + pid);
-		for(String clazz : (String[]) reference.getProperty(Constants.OBJECTCLASS)){
-			log.info("Service Interface: " + clazz);
-			List<String> operations = new ArrayList<String>();
-			try {
-				for(Method method : reference.getBundle().loadClass(clazz).getDeclaredMethods()){
-					if(Modifier.isPublic(method.getModifiers())){
-						log.info("Operation: " + method.getName());
-						operations.add(method.getName());
-					}
-				}
-				this.operationsMap.put(clazz, operations);
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+		Class<?> clazz = service.getSpecification().getClazz();
+		log.info("Service Interface: " + clazz);
+		for(Method method : clazz.getDeclaredMethods()){
+			if(Modifier.isPublic(method.getModifiers())){
+				log.info("Operation: " + method.getName());
+				operationsList.add(method.getName());
 			}
-			
 		}
-	}
-	
-	public String getPid() {
-		return pid;
 	}
 	
 	public String getId() {
 		return id;
 	}
 	
-	public List<String> getClassNames() {
-		return new ArrayList<String>(operationsMap.keySet());
+	public String getClassName() {
+		return service.getSpecification().getServiceInterface();
 	}
 	
-	public Map<String, List<String>> getOperationsMap() {
-		return operationsMap;
-	}
-
 	public List<String> getOperations(){
-		
-		Set<String> operations = new HashSet<String>();
-		for(List<String> values : operationsMap.values()){
-			operations.addAll(values);
-		}
-		
-		return new ArrayList<String>(operations);
+		return new ArrayList<String>(operationsList);
 	}
 
 	public Object getProperty(String name) {
-		return reference.getProperty(name);
+		return service.getProperties().get(name);
 	}
 	
-	ServiceReference getReference() {
-		return reference;
+	public List<AttributeConstraint> getAttributeConstraints() {
+		List<AttributeConstraint> attConsts = service.getSpecification().getNonFunctionalSpecification().getAttributeConstraints();
+		return attConsts;
 	}
-
 }

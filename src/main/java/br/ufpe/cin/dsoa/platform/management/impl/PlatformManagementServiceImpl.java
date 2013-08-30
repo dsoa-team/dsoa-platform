@@ -12,7 +12,6 @@ import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.platform.monitor.ServiceMetadata;
 import br.ufpe.cin.dsoa.platform.monitor.ServiceMonitor;
 import br.ufpe.cin.dsoa.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.util.AttributeParser;
 
 /**
  * The Management Service is responsible for providing an access point to perform
@@ -43,8 +42,7 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 		ServiceMonitor service = this.monitoringService.getMonitoredService(id);
 		ServiceMetadata metadata = null;
 		if(null != service) {
-			//TODO: CORRIGIR
-			//metadata = service.getMetadata();
+			metadata = service.getMetadata();
 		}
 		
 		return metadata;
@@ -82,7 +80,7 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 	}
 
 	public void addAttributeMonitor(String servicePid, String attName, String attCategory, String operationName) {
-		Attribute attribute = this.attributeCatalog.getAttribute(AttributeParser.format(attCategory, attName));
+		Attribute attribute = this.attributeCatalog.getAttribute(AttributeConstraint.format(attCategory, attName));
 		AttributeConstraint attributeConstraint = null; 
 		// TODO: terminar
 		//new AttributeConstraint(attribute.getId(), Util.getAttributableId(servicePid, operationName));

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.osgi.framework.BundleContext;
 
@@ -21,6 +22,8 @@ import br.ufpe.cin.dsoa.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.service.Service;
 
+
+
 /**
  * This component is responsible for monitoring services that are registered in the platform. It reads the service
  * non-functional specification, identify declared QoS attributes, and starts a monitor (an agent processing instance)
@@ -34,6 +37,8 @@ import br.ufpe.cin.dsoa.service.Service;
  */
 public class MonitoringServiceImpl implements MonitoringService {
 
+	private Logger log;
+	
 	private BundleContext ctx;
 	
 	private EventProcessingService eventProcessingService;
@@ -46,18 +51,28 @@ public class MonitoringServiceImpl implements MonitoringService {
 	 * Maps a service.pid to the service that is created to store the metrics
 	 * associated to the service. That is: Map<service.pid, ServiceMonitor>
 	 */
-	private Map<String, ServiceMonitor> serviceMonitorsMap = new HashMap<String, ServiceMonitor>();
+	private Map<String, List<ServiceMonitor>> serviceMonitorsMap = new HashMap<String, List<ServiceMonitor>>();
 
 	public MonitoringServiceImpl(BundleContext ctx) {
 		this.ctx = ctx;
+		this.log = Logger.getLogger(MonitoringService.class.getName());
 	}
 	
 	public List<ServiceMonitor> getMonitoredServices() {
-		return new ArrayList<ServiceMonitor>(serviceMonitorsMap.values());
+		 List<ServiceMonitor> list = new ArrayList<ServiceMonitor>();
+		 for (List<ServiceMonitor> providedList : serviceMonitorsMap.values()) {
+			 list.addAll(providedList);
+		 }
+		 return list;
 	}
 	
-	public ServiceMonitor getMonitoredService(String id) {
-		return this.serviceMonitorsMap.get(id);
+	public ServiceMonitor getMonitoredService(String providedId) {
+		List<ServiceMonitor> compInstanceList = this.serviceMonitorsMap.get(providedId);
+		if (providedId != null && !compInstanceList.isEmpty()) {
+			return compInstanceList.get(0);
+		} else {
+			return null;
+		}
 	}
 	
 	public ServiceMonitor startMonitoring(Service service) {
@@ -69,20 +84,34 @@ public class MonitoringServiceImpl implements MonitoringService {
 				this.addAttributeMonitor(serviceMonitor, attributeConstraint);
 			}
 			synchronized (serviceMonitorsMap) {
-				serviceMonitorsMap.put(service.getServiceId(), serviceMonitor);
+				String providedServiceId = service.getServiceId();
+				List<ServiceMonitor> monitors = serviceMonitorsMap.get(providedServiceId);
+				if (monitors == null) {
+					monitors = new ArrayList<ServiceMonitor>();
+					serviceMonitorsMap.put(providedServiceId, monitors);
+				}
+				monitors.add(serviceMonitor);
 			}
 			serviceMonitor.start();
 		}
 		return serviceMonitor;
 	}
 
-	public void stopMonitoring(String serviceId) {
-		ServiceMonitor serviceMonitor = serviceMonitorsMap.get(serviceId);
-		serviceMonitor.stop();
+	public void stopMonitoring(String providedServiceId) {
+		List<ServiceMonitor> serviceMonitors = serviceMonitorsMap.get(providedServiceId);
+		for (ServiceMonitor serviceMonitor : serviceMonitors) {
+			serviceMonitor.stop();
+		}
 	}
 
 	public void addAttributeConstraint(String servicePid, AttributeConstraint attributeConstraint) {
-		this.addAttributeMonitor(serviceMonitorsMap.get(servicePid), attributeConstraint);
+		List<ServiceMonitor> monitors = serviceMonitorsMap.get(servicePid);
+		if (monitors == null || monitors.isEmpty()) {
+			log.warning("There is no monitors related to service " + servicePid);
+			return;
+		}
+		ServiceMonitor monitor = monitors.get(0);
+		this.addAttributeMonitor(monitor, attributeConstraint);
 	}
 
 	private void addAttributeMonitor(ServiceMonitor serviceMonitor, AttributeConstraint attributeConstraint) {
@@ -93,8 +122,11 @@ public class MonitoringServiceImpl implements MonitoringService {
 			MonitoredAttribute monitor = new MonitoredAttribute(attributableId, attribute);
 			serviceMonitor.addAttributeMonitor(monitor);
 			AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
-			String eventType = mapper.getEventType();
-			EventConsumer consumer;
+			if (mapper != null) {
+				String eventType = mapper.getEventType();
+				EventConsumer consumer;
+				
+			}
 			//eventProcessingService.registerConsumer(consumer);
 		// String stmtName = monitor.getStatusVariableId();
 		// AttributeEventMapper attEventMapper =

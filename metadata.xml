@@ -250,6 +250,8 @@
 	<instance component="Platform.Shell.ListServiceOperationsCmd" />
 	<instance component="Platform.Shell.AddMonitorCmd" />
 	
+	<instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.EsperVerifier"/>
+	
 	<!-- 	<instance component="Platform.Catalog.AgentCatalog" />
 	<instance component="Platform.Catalog.AttributeCatalog" />
 	<instance component="Platform.Catalog.AttributeEventMapperCatalog" />

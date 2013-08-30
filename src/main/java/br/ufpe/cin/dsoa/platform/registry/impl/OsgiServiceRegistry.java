@@ -46,8 +46,7 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 			ServiceReference[] references = this.context.getServiceReferences(serviceInterface, filter.toString());
 			for(ServiceReference reference : references){
 				try {
-					OsgiService service = new OsgiService(reference);
-					services.add(service);
+					services.add(OsgiService.getOsgiService(serviceInterface,reference));
 				} catch (ClassNotFoundException e) {
 					logger.log(Level.WARNING, e.getMessage());
 				}
@@ -69,7 +68,7 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 		ServiceReference reference = this.context.getServiceReference(serviceInterface);
 		if(null != reference){
 			try {
-				services.add(new OsgiService(reference));
+				services.add(OsgiService.getOsgiService(serviceInterface,reference));
 			} catch (ClassNotFoundException e) {
 				logger.log(Level.WARNING, e.getMessage());
 			}
@@ -78,11 +77,11 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 	}
 
 	@Override
-	public Service rankServices(List<Service> services, List<AttributeConstraint> constraints) {
+	public Service rankServices(String serviceInterface, List<Service> services, List<AttributeConstraint> constraints) {
 		
 		Service service = null;
 		
-		List<ServiceReference> referenceList  =new ArrayList<ServiceReference>();
+		List<ServiceReference> referenceList  = new ArrayList<ServiceReference>();
 		for(Service s :  services){
 			referenceList.add(((OsgiService) s).getReference());
 		}
@@ -101,7 +100,7 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 		}
 		
 		try {
-			service = new OsgiService(reference);
+			service = OsgiService.getOsgiService(serviceInterface, reference);
 		} catch (ClassNotFoundException e) {
 			logger.log(Level.WARNING, e.getMessage());
 		}
@@ -153,7 +152,7 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 
 			if (!blackList.contains(reference)) {
 				try {
-					service = new OsgiService(reference);
+					service = OsgiService.getOsgiService(listener.getServiceInterface(), reference);
 					this.listener.onArrival(service);
 					// open tracker for departures
 					openTracker(reference, listener);
@@ -201,17 +200,7 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 		filter.add(new IFilter(Constants.OBJECTCLASS, spe));
 
 		for (AttributeConstraint constraint : constraints) {
-			if (constraint.getOperation() != null) {
-				filter.add(new DFilter(Attribute.SERVICE_CONSTRAINT
-						+ br.ufpe.cin.dsoa.util.Constants.TOKEN
-						+ constraint.getAttributeId()
-						+ br.ufpe.cin.dsoa.util.Constants.TOKEN
-						+ constraint.getOperation(),
-						constraint.getExpression(), constraint.getThreashold()));
-			} else {
-				filter.add(new DFilter(constraint.getAttributeId(), constraint
-						.getExpression(), constraint.getThreashold()));
-			}
+			filter.add(new DFilter(constraint.format(),	constraint.getExpression(), constraint.getThreashold()));
 		}
 		return filter;
 	}

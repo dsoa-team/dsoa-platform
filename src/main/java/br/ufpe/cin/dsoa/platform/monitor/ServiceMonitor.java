@@ -1,6 +1,5 @@
 package br.ufpe.cin.dsoa.platform.monitor;
 
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -33,12 +32,14 @@ public class ServiceMonitor implements Monitorable {
 	
 	private boolean started;
 
+	private ServiceMetadata metadata;
 	
 	public ServiceMonitor(BundleContext ctx, Service service) {
 		this.log = Logger.getLogger(getClass().getSimpleName());
 		this.attributeMonitorMap = new HashMap<String, MonitoredAttribute>();
 		this.service = service;
 		this.ctx = ctx;
+		this.metadata = new ServiceMetadata(service);
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -92,6 +93,10 @@ public class ServiceMonitor implements Monitorable {
 		return this.service.getServiceId();
 	}
 	
+	public ServiceMetadata getMetadata() {
+		return metadata;
+	}
+
 	public boolean isStarted() {
 		return this.started;
 	}

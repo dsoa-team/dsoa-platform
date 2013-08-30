@@ -5,14 +5,12 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.service.Service;
 import br.ufpe.cin.dsoa.service.ServiceSpecification;
-import br.ufpe.cin.dsoa.util.AttributeParser;
 import br.ufpe.cin.dsoa.util.Util;
 
 public class OsgiService implements Service {
@@ -22,38 +20,34 @@ public class OsgiService implements Service {
 	private ServiceReference reference;
 	private ServiceSpecification spec;
 
-	public OsgiService(ServiceReference reference)
-			throws ClassNotFoundException {
-		super();
-		this.serviceId = Util.getId(reference);
-
-		String keys[] = reference.getPropertyKeys();
-		List<AttributeConstraint> attConstraints = new ArrayList<AttributeConstraint>();
-		for (String key : keys) {
-			Object value = reference.getProperty(key);
-			AttributeConstraint attConstraint = AttributeParser.parse(key,
-					value);
-			if (attConstraint != null) {
-				attConstraints.add(attConstraint);
-			}
+	public static List<OsgiService> getOsgiServices(ServiceReference reference) throws ClassNotFoundException {
+		List<OsgiService> svcList = new ArrayList<OsgiService>();
+		String[] serviceInterfaces = (String[]) reference.getProperty(org.osgi.framework.Constants.OBJECTCLASS);
+		for (String serviceInterface : serviceInterfaces) {
+			svcList.add(getOsgiService(serviceInterface, reference));
 		}
-
+		return svcList;
+	}
+		
+	public static OsgiService getOsgiService(String spec, ServiceReference reference) throws ClassNotFoundException {
+		List<AttributeConstraint> attConstraints = AttributeConstraint.getAttributeConstraints(reference);
 		NonFunctionalSpecification nonFunctionalSpecification = null;
-		String serviceInterface = null;
-		Class<?> clazz = null;
-
 		if (!attConstraints.isEmpty()) {
 			nonFunctionalSpecification = new NonFunctionalSpecification(
 					attConstraints);
 		}
-		serviceInterface = (String) reference
-				.getProperty(Constants.OBJECTCLASS);
-		clazz = reference.getBundle().loadClass(serviceInterface);
-
-		this.spec = new ServiceSpecification(clazz, serviceInterface,
-				nonFunctionalSpecification);
+		Class<?> clazz = reference.getBundle().loadClass(spec);
+		ServiceSpecification serviceSpec = new ServiceSpecification(clazz, spec, nonFunctionalSpecification);
+		String serviceId = Util.getId(reference);
+		return new OsgiService(serviceId, serviceSpec, reference);
+	}
+	
+	private OsgiService(String id, ServiceSpecification spec, ServiceReference reference)
+			throws ClassNotFoundException {
+		super();
+		this.serviceId = id;
+		this.spec = spec;
 		this.reference = reference;
-
 	}
 
 	public String getServiceId() {

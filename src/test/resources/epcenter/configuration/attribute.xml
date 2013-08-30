@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<attributes>
+
+	<attribute>
+		<category>qos.performance.responseTime</category>
+		<name>AvgResponseTime</name>
+		<description>Average response time</description>
+		<metadata>
+			<property id="source" 		type="java.lang.String" />
+			<property id="timestamp" 	type="java.lang.Double" />
+		</metadata>
+		<data>
+			<property id="value" 		type="java.lang.Long" />
+		</data>
+	</attribute>
+	
+	<attribute>
+		<category>qos.performance.responseTime</category>
+		<name>MinResponseTime</name>
+		<description>Minimum response time</description>
+		<metadata>
+			<property id="source" 		type="java.lang.String" />
+			<property id="timestamp" 	type="java.lang.Double" />
+		</metadata>
+		<data>
+			<property id="value" 		type="java.lang.Long" />
+		</data>
+	</attribute>
+	
+	<attribute>
+		<category>qos</category>
+		<name>Availability</name>
+		<description>Availability</description>
+		<metadata>
+			<property id="source" 		type="java.lang.String" />
+			<property id="timestamp" 	type="java.lang.Double" />
+		</metadata>
+		<data>
+			<property id="value" 		type="java.lang.Long" />
+		</data>
+	</attribute>
+</attributes>
+

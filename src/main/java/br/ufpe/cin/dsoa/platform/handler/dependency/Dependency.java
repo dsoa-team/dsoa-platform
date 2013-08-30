@@ -16,7 +16,7 @@ public class Dependency implements FieldInterceptor {
 	private DependencyHandler handler;
 	
 	private ServiceConsumer  			consumer;
-	private ServiceSpecification		specification;
+	private ServiceSpecification		requiredSpecification;
 	private Service						service;
 	private List<String>		 		blackList;
 
@@ -28,7 +28,7 @@ public class Dependency implements FieldInterceptor {
 		super();
 		this.handler = dependencyHandler;
 		this.consumer = serviceConsumer;
-		this.specification = specification;
+		this.requiredSpecification = specification;
 		this.blackList = new ArrayList<String>();
 		this.status = DependencyStatus.UNRESOLVED;
 		this.manager = new DependencyManager(this);
@@ -43,7 +43,7 @@ public class Dependency implements FieldInterceptor {
 	}
 
 	public List<AttributeConstraint> getAttributeConstraintList() {
-		return this.specification.getNonFunctionalSpecification().getAttributeConstraints();
+		return this.requiredSpecification.getNonFunctionalSpecification().getAttributeConstraints();
 	}
 	
 	public boolean addAttributeConstraint(AttributeConstraint attributeConstraint) {
@@ -65,7 +65,7 @@ public class Dependency implements FieldInterceptor {
 	}
 
 	public ServiceSpecification getSpecification() {
-		return this.specification;
+		return this.requiredSpecification;
 	}
 	
 	public List<String> getBlackList() {

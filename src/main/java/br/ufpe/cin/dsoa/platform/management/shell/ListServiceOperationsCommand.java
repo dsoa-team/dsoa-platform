@@ -2,10 +2,12 @@ package br.ufpe.cin.dsoa.platform.management.shell;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import br.ufpe.cin.dsoa.platform.management.PlatformManagementService;
 import br.ufpe.cin.dsoa.platform.monitor.ServiceMetadata;
+import br.ufpe.cin.dsoa.service.AttributeConstraint;
 
 public class ListServiceOperationsCommand extends DsoaBaseCommand {
 
@@ -21,16 +23,19 @@ public class ListServiceOperationsCommand extends DsoaBaseCommand {
 					.getManagedServiceMetadata(servicePid);
 			
 			if (null != metadata) {
+				out.println("Service: ");
+				out.println("Service Pid: " + metadata.getId());
+				out.println("Service interface: " + metadata.getClassName());
 				out.println("Operations: ");
-				out.println("Service Pid: " + metadata.getPid());
-				for (String it : metadata.getOperationsMap().keySet()) {
-					out.println(" * " + it);
-					for (String operation : metadata.getOperationsMap()
-							.get(it)) {
-						out.println(" - " + operation);
-					}
+				for (String operation : metadata.getOperations()) {
+					out.println(" - " + operation);
 				}
-
+				out.println("Attribute constraints:");
+				List<AttributeConstraint> constraints = metadata.getAttributeConstraints();
+				Iterator<AttributeConstraint> itrConstraints = constraints.iterator();
+				while (itrConstraints.hasNext()) {
+					out.println(" - " + itrConstraints.next());
+				}
 			}
 		} else {
 			err.println("You should inform a service-pid");
