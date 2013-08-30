@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.event.legacy;
+package br.ufpe.cin.dsoa.event.meta;
 
 public class Property {
 	private PropertyType propertyType;
@@ -14,7 +14,7 @@ public class Property {
 		return value;
 	}
 	
-	public PropertyType getAttributeType() {
+	public PropertyType getPropertyType() {
 		return propertyType;
 	}
 	

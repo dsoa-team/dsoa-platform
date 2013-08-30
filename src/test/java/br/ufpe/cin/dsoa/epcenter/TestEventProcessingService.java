@@ -8,7 +8,6 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ufpe.cin.dsoa.event.InvocationEvent;
 import br.ufpe.cin.dsoa.event.NotificationListener;
 import br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService;
 import br.ufpe.cin.dsoa.platform.event.impl.Statement;

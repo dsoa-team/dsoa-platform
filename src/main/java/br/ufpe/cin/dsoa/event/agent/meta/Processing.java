@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.event.agent;
+package br.ufpe.cin.dsoa.event.agent.meta;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

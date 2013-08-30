@@ -2,19 +2,19 @@ package br.ufpe.cin.dsoa.platform.attribute;
 
 import java.util.Collection;
 
-import br.ufpe.cin.dsoa.attribute.Attribute;
-import br.ufpe.cin.dsoa.attribute.AttributeAlreadyCatalogedException;
-import br.ufpe.cin.dsoa.attribute.AttributeCategory;
+import br.ufpe.cin.dsoa.attribute.exception.AttributeAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.attribute.meta.AttributeCategory;
+import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
 
 
 
 public interface AttributeCatalog {
 
-	public Attribute getAttribute(String id);
+	public AttributeType getAttribute(String id);
 
-	public Collection<Attribute> getAttributes();
+	public Collection<AttributeType> getAttributes();
 
-	public void addAttribute(Attribute attribute) throws AttributeAlreadyCatalogedException;
+	public void addAttribute(AttributeType attribute) throws AttributeAlreadyCatalogedException;
 
 	public AttributeCategory getCategory(String catId);
 

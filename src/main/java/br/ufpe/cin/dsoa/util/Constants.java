@@ -35,4 +35,12 @@ public interface Constants {
 	public static final String NON_FUNCTIONAL_SPECIFICATION = "nonfunctional.specification";
 	
 	public static final String MANAGED_SERVICE = "(managed=*)";
+	
+	/**
+	 * Event
+	 */
+	public static final String EVENT_TYPE				= "type";
+	public static final String INVOCATION_EVENT			= "InvocationEvent";
+	public static final String EVENT_METADATA 			= "metadata";
+	public static final String EVENT_DATA 				= "data";
 }

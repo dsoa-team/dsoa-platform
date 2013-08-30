@@ -1,5 +1,7 @@
 package br.ufpe.cin.dsoa.event;
 
+import br.ufpe.cin.dsoa.event.subscription.EventFilter;
+
 public class Subscription {
 
 	private String eventType;

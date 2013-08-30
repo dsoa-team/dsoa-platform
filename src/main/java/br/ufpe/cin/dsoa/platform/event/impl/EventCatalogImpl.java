@@ -3,7 +3,7 @@ package br.ufpe.cin.dsoa.platform.event.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.ufpe.cin.dsoa.event.legacy.EventType;
+import br.ufpe.cin.dsoa.event.meta.EventType;
 
 public class EventCatalogImpl {
 	private static Map<String, EventType> eventTypes = new HashMap<String, EventType>();

@@ -7,7 +7,7 @@ import org.osgi.service.monitor.StatusVariable;
 
 import br.ufpe.cin.dsoa.attribute.AttributableId;
 import br.ufpe.cin.dsoa.attribute.Attribute;
-import br.ufpe.cin.dsoa.attribute.AttributeValue;
+import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
 import br.ufpe.cin.dsoa.event.NotificationListener;
 import br.ufpe.cin.dsoa.util.Constants;
 
@@ -20,12 +20,12 @@ import br.ufpe.cin.dsoa.util.Constants;
 public class MonitoredAttribute implements NotificationListener {
 	
 	private String				statusVariableId;	
-	private Attribute 			attribute;
+	private AttributeType 			attribute;
 	private AttributableId	 	attributableId;
-	private AttributeValue 		attributeValue;
+	private Attribute 		attributeValue;
 	private Logger 				log;
 	
-	public MonitoredAttribute(AttributableId attributableId, Attribute attribute) {
+	public MonitoredAttribute(AttributableId attributableId, AttributeType attribute) {
 		this.log = Logger.getLogger(getClass().getSimpleName());
 		this.attributableId = attributableId;
 		this.attribute = attribute;

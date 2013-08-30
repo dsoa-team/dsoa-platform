@@ -1,6 +1,6 @@
 package br.ufpe.cin.dsoa.platform.event;
 
-import br.ufpe.cin.dsoa.event.legacy.EventType;
+import br.ufpe.cin.dsoa.event.meta.EventType;
 
 public interface EventCatalog {
 

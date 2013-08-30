@@ -1,4 +1,6 @@
-package br.ufpe.cin.dsoa.attribute;
+package br.ufpe.cin.dsoa.attribute.exception;
+
+import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
 
 
 public class AttributeAlreadyCatalogedException extends Exception {
@@ -10,7 +12,7 @@ public class AttributeAlreadyCatalogedException extends Exception {
 	
 	private static final String ERROR_MSG = "Attribute already cataloged: %s.%s";
 	
-	public AttributeAlreadyCatalogedException(Attribute attribute) {
+	public AttributeAlreadyCatalogedException(AttributeType attribute) {
 		super(String.format(ERROR_MSG, attribute.getCategory(), attribute.getName()));
 	}
 

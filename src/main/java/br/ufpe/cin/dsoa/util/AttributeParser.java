@@ -2,8 +2,8 @@ package br.ufpe.cin.dsoa.util;
 
 import java.util.StringTokenizer;
 
-import br.ufpe.cin.dsoa.attribute.Attribute;
-import br.ufpe.cin.dsoa.attribute.AttributeCategory;
+import br.ufpe.cin.dsoa.attribute.meta.AttributeCategory;
+import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.service.Expression;
@@ -13,20 +13,20 @@ public class AttributeParser {
 	public static AttributeConstraint parse(String key, Object value) {
 		AttributeConstraint attributeConstraint = null;
 		if (key != null) {
-			if (key.toLowerCase().startsWith(Attribute.SERVICE_CONSTRAINT) || key.toLowerCase().startsWith(Attribute.OPERATION_CONSTRAINT) ) {
+			if (key.toLowerCase().startsWith(AttributeType.SERVICE_CONSTRAINT) || key.toLowerCase().startsWith(AttributeType.OPERATION_CONSTRAINT) ) {
 				double val = (Double)value;
 				int index = key.lastIndexOf('.');
 				String expStr = key.substring(index+1);
 				Expression exp = Expression.valueOf(expStr);
 				String attributeId = key.substring(0, index);
 				String operationName = null;
-				if (attributeId.toLowerCase().startsWith(Attribute.OPERATION_CONSTRAINT)) {
-					attributeId = attributeId.replaceFirst(Attribute.OPERATION_CONSTRAINT + Constants.TOKEN, "");
+				if (attributeId.toLowerCase().startsWith(AttributeType.OPERATION_CONSTRAINT)) {
+					attributeId = attributeId.replaceFirst(AttributeType.OPERATION_CONSTRAINT + Constants.TOKEN, "");
 					index = attributeId.lastIndexOf('.');
 					operationName = attributeId.substring(index+1);
 					attributeId = attributeId.substring(0, index);
 				} else {
-					attributeId = attributeId.replaceFirst(Attribute.SERVICE_CONSTRAINT + Constants.TOKEN, "");
+					attributeId = attributeId.replaceFirst(AttributeType.SERVICE_CONSTRAINT + Constants.TOKEN, "");
 				}
 				attributeConstraint = new AttributeConstraint(operationName, attributeId, exp, val);
 			}

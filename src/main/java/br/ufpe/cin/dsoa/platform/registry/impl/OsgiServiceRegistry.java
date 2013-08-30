@@ -12,7 +12,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import br.ufpe.cin.dsoa.attribute.Attribute;
+import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
 import br.ufpe.cin.dsoa.platform.registry.InvalidConstraintException;
 import br.ufpe.cin.dsoa.platform.registry.filter.AndFilter;
@@ -202,7 +202,7 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 
 		for (AttributeConstraint constraint : constraints) {
 			if (constraint.getOperation() != null) {
-				filter.add(new DFilter(Attribute.SERVICE_CONSTRAINT
+				filter.add(new DFilter(AttributeType.SERVICE_CONSTRAINT
 						+ br.ufpe.cin.dsoa.util.Constants.TOKEN
 						+ constraint.getAttributeId()
 						+ br.ufpe.cin.dsoa.util.Constants.TOKEN

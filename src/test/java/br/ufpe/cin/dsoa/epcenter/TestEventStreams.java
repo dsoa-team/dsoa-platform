@@ -1,14 +1,10 @@
 package br.ufpe.cin.dsoa.epcenter;
 
-import java.util.Iterator;
 import java.util.Random;
-import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import br.ufpe.cin.dsoa.event.InvocationEvent;
 
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPServiceProvider;
@@ -16,7 +12,6 @@ import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
-import com.espertech.esper.client.ConfigurationPlugInSingleRowFunction.ValueCache;
 
 public class TestEventStreams implements UpdateListener {
 
@@ -32,7 +27,7 @@ public class TestEventStreams implements UpdateListener {
 	@Before
 	public void setUp() {
 		Configuration config = new Configuration();
-		config.addEventType(InvocationEvent.class);
+		//config.addEventType(InvocationEvent.class);
 		config.addPlugInSingleRowFunction("nextId", "br.ufpe.cin.dsoa.event.EventIdGenerator", "nextId");
 		
 		epServiceProvider = EPServiceProviderManager.getProvider("EngineInstance", config);
@@ -80,10 +75,10 @@ public class TestEventStreams implements UpdateListener {
 			success = true;
 			requestTimestamp = i;
 			responseTimestamp = i + n++;
-			InvocationEvent invocation = new InvocationEvent(provider, service, operation, success, requestTimestamp,
-					responseTimestamp);
-			System.out.println(invocation);
-			this.epServiceProvider.getEPRuntime().sendEvent(invocation);
+			//InvocationEvent invocation = new InvocationEvent(provider, service, operation, success, requestTimestamp,
+			//		responseTimestamp);
+			//System.out.println(invocation);
+			//this.epServiceProvider.getEPRuntime().sendEvent(invocation);
 			/*System.out.println("----------------------------------------------------------------------------------------------------------");
 			Iterator itr = stmt.iterator();
 			while(itr.hasNext()) {

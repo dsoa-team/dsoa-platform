@@ -7,9 +7,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import br.ufpe.cin.dsoa.attribute.AttributeList;
 import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapperList;
-import br.ufpe.cin.dsoa.event.agent.AgentList;
+import br.ufpe.cin.dsoa.attribute.meta.AttributeList;
+import br.ufpe.cin.dsoa.event.agent.meta.AgentList;
 
 public class JAXBInitializer {
 	public static Map<String, Unmarshaller> initJAXBContexts() {

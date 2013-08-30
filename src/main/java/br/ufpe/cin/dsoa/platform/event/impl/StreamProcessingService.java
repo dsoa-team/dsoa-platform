@@ -3,9 +3,9 @@ package br.ufpe.cin.dsoa.platform.event.impl;
 import java.util.concurrent.ConcurrentHashMap;
 
 import br.ufpe.cin.dsoa.event.EventConsumer;
-import br.ufpe.cin.dsoa.event.agent.EventProcessingAgent;
-import br.ufpe.cin.dsoa.event.agent.ProcessingMapping;
-import br.ufpe.cin.dsoa.event.agent.ProcessingQuery;
+import br.ufpe.cin.dsoa.event.agent.meta.EventProcessingAgent;
+import br.ufpe.cin.dsoa.event.agent.meta.ProcessingMapping;
+import br.ufpe.cin.dsoa.event.agent.meta.ProcessingQuery;
 
 public abstract class StreamProcessingService {
 

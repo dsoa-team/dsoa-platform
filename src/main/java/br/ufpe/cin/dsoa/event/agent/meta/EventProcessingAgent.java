@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.event.agent;
+package br.ufpe.cin.dsoa.event.agent.meta;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+
 
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,7 +19,7 @@ public class EventProcessingAgent {
 	@XmlElement(name = "description")
 	private String description;
 	
-	@XmlElementRefs({@XmlElementRef(type=br.ufpe.cin.dsoa.event.agent.ProcessingQuery.class),@XmlElementRef(type=br.ufpe.cin.dsoa.event.agent.ProcessingMapping.class)})
+	@XmlElementRefs({@XmlElementRef(type=br.ufpe.cin.dsoa.event.agent.meta.ProcessingQuery.class),@XmlElementRef(type=br.ufpe.cin.dsoa.event.agent.meta.ProcessingMapping.class)})
 	private Processing processing;
 
 	public String getId() {
