@@ -2,12 +2,12 @@ package br.ufpe.cin.dsoa.platform.handler.dependency.manager;
 
 import java.util.List;
 
-import br.ufpe.cin.dsoa.attribute.AttributableId;
-import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
-import br.ufpe.cin.dsoa.event.NotificationListener;
+import br.ufpe.cin.dsoa.api.attribute.AttributableId;
+import br.ufpe.cin.dsoa.api.attribute.Attribute;
+import br.ufpe.cin.dsoa.api.event.NotificationListener;
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
 
 public class EsperVerifier implements Verifier {
 

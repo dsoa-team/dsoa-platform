@@ -3,16 +3,15 @@ package br.ufpe.cin.dsoa.platform.management.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
-import br.ufpe.cin.dsoa.event.agent.meta.EventProcessingAgent;
+import br.ufpe.cin.dsoa.api.attribute.Attribute;
+import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.management.PlatformManagementService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.platform.monitor.ServiceMetadata;
-import br.ufpe.cin.dsoa.platform.monitor.ServiceMonitor;
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.util.AttributeParser;
+import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;
 
 /**
  * The Management Service is responsible for providing an access point to perform
@@ -32,7 +31,7 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 	
 	public List<ServiceMetadata> getManagedServicesMetadata() {
 		List<ServiceMetadata> metadata = new ArrayList<ServiceMetadata>();
-		for (ServiceMonitor serviceMonitor : this.monitoringService.getMonitoredServices()) {
+		for (MonitoredService monitoredService : this.monitoringService.getMonitoredServices()) {
 			//TODO: CORRIGIR
 			//metadata.add(serviceMonitor.getMetadata());
 		}
@@ -40,11 +39,10 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 	}
 	
 	public ServiceMetadata getManagedServiceMetadata(String id){
-		ServiceMonitor service = this.monitoringService.getMonitoredService(id);
+		MonitoredService service = this.monitoringService.getMonitoredService(id);
 		ServiceMetadata metadata = null;
 		if(null != service) {
-			//TODO: CORRIGIR
-			//metadata = service.getMetadata();
+			metadata = service.getMetadata();
 		}
 		
 		return metadata;
@@ -53,7 +51,7 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 	public List<String> getAttributeList() {
 		List<String> attributeList = new ArrayList<String>();
 		
-		for(AttributeType m : this.attributeCatalog.getAttributes()){
+		for(Attribute m : this.attributeCatalog.getAttributes()){
 			attributeList.add(m.toString());
 		}
 		return attributeList;
@@ -69,11 +67,11 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 		return agentList;
 	}
 	
-	public List<ServiceMonitor> getMonitoredServices() {
+	public List<MonitoredService> getMonitoredServices() {
 		return monitoringService.getMonitoredServices();
 	}
 
-	public ServiceMonitor getMonitoredService(String id) {
+	public MonitoredService getMonitoredService(String id) {
 		return monitoringService.getMonitoredService(id);
 	}
 
@@ -82,7 +80,7 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 	}
 
 	public void addAttributeMonitor(String servicePid, String attName, String attCategory, String operationName) {
-		AttributeType attribute = this.attributeCatalog.getAttribute(AttributeParser.format(attCategory, attName));
+		Attribute attribute = this.attributeCatalog.getAttribute(AttributeConstraint.format(attCategory, attName));
 		AttributeConstraint attributeConstraint = null; 
 		// TODO: terminar
 		//new AttributeConstraint(attribute.getId(), Util.getAttributableId(servicePid, operationName));

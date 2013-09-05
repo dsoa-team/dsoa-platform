@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.osgi.framework.ServiceReference;
 
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.platform.registry.normalizer.Normalizer;
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
 
 
 

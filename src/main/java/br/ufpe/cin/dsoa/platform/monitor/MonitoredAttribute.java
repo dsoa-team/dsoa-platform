@@ -5,10 +5,10 @@ import java.util.logging.Logger;
 
 import org.osgi.service.monitor.StatusVariable;
 
-import br.ufpe.cin.dsoa.attribute.AttributableId;
-import br.ufpe.cin.dsoa.attribute.Attribute;
-import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
-import br.ufpe.cin.dsoa.event.NotificationListener;
+import br.ufpe.cin.dsoa.api.attribute.AttributableId;
+import br.ufpe.cin.dsoa.api.attribute.Attribute;
+import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
+import br.ufpe.cin.dsoa.api.event.NotificationListener;
 import br.ufpe.cin.dsoa.util.Constants;
 
 /**
@@ -20,12 +20,12 @@ import br.ufpe.cin.dsoa.util.Constants;
 public class MonitoredAttribute implements NotificationListener {
 	
 	private String				statusVariableId;	
-	private AttributeType 			attribute;
+	private Attribute 			attribute;
 	private AttributableId	 	attributableId;
-	private Attribute 		attributeValue;
+	private AttributeValue 		attributeValue;
 	private Logger 				log;
 	
-	public MonitoredAttribute(AttributableId attributableId, AttributeType attribute) {
+	public MonitoredAttribute(AttributableId attributableId, Attribute attribute) {
 		this.log = Logger.getLogger(getClass().getSimpleName());
 		this.attributableId = attributableId;
 		this.attribute = attribute;
@@ -58,7 +58,15 @@ public class MonitoredAttribute implements NotificationListener {
 		// TODO Auto-generated method stub
 	}
 
-	public void update(Object value) {
+	@Override
+	public void receive(AttributeValue value) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+
+/*	public void update(Object value) {
 		log.info("Property status: " + this.getAttributeName());
 		log.info("Property description: " + this.getAttributeDescription());
 		//this.attributeValue = this.attribute.getAttributeEventMapper().mapEventAttribute((Event)value);
@@ -73,6 +81,6 @@ public class MonitoredAttribute implements NotificationListener {
 		log.info("Status variable: " + this.getStatusVariable());
 		log.info("Status: " + this.getStatusVariable().getString());
 		log.info("Status: " + this.getStatusVariable().getTimeStamp());
-	}
+	}*/
 
 }

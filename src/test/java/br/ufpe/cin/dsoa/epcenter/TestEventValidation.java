@@ -8,10 +8,10 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ufpe.cin.dsoa.event.meta.Event;
-import br.ufpe.cin.dsoa.event.meta.EventType;
-import br.ufpe.cin.dsoa.event.meta.Property;
-import br.ufpe.cin.dsoa.event.meta.PropertyType;
+import br.ufpe.cin.dsoa.api.event.Event;
+import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.Property;
+import br.ufpe.cin.dsoa.api.event.PropertyType;
 
 public class TestEventValidation {
 

@@ -151,6 +151,7 @@
 		<requires field="attributeCatalog" />
 		<requires field="attributeEventMapperCatalog" />
 		<requires field="agentCatalog" />
+		<requires field="epService" />
 		<requires field="monitoringService" />
 		<callback transition="validate" method="start" />
 		<callback transition="invalidate" method="stop" />

@@ -2,10 +2,10 @@ package br.ufpe.cin.dsoa.platform.event.impl;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import br.ufpe.cin.dsoa.event.EventConsumer;
-import br.ufpe.cin.dsoa.event.agent.meta.EventProcessingAgent;
-import br.ufpe.cin.dsoa.event.agent.meta.ProcessingMapping;
-import br.ufpe.cin.dsoa.event.agent.meta.ProcessingQuery;
+import br.ufpe.cin.dsoa.api.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
+import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
+import br.ufpe.cin.dsoa.api.event.agent.ProcessingQuery;
 
 public abstract class StreamProcessingService {
 
@@ -17,11 +17,7 @@ public abstract class StreamProcessingService {
 		this.agents = new ConcurrentHashMap<String, EventProcessingAgent>();
 	}
 	
-	public boolean registerConsumer(EventConsumer consumer) {
-		return this.register(consumer.getId(), consumer, this.consumers);
-	}
-
-	public boolean registerAgent(EventProcessingAgent agent) {
+	public void registerAgent(EventProcessingAgent agent) {
 		String id = null;
 		String queryString = null;
 		Query query = null;
@@ -41,10 +37,9 @@ public abstract class StreamProcessingService {
 
 		if (added) {
 			//TODO VER
-//			this.startQuery(query);
+			this.startQuery(query);
 		}
 
-		return added;
 	}
 
 	private <T> boolean register(String subjectId, T subject, ConcurrentHashMap<String, T> map) {

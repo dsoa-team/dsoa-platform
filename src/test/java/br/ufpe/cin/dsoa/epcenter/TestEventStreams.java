@@ -28,7 +28,7 @@ public class TestEventStreams implements UpdateListener {
 	public void setUp() {
 		Configuration config = new Configuration();
 		//config.addEventType(InvocationEvent.class);
-		config.addPlugInSingleRowFunction("nextId", "br.ufpe.cin.dsoa.event.EventIdGenerator", "nextId");
+		config.addPlugInSingleRowFunction("nextId", "br.ufpe.cin.dsoa.api.event.EventIdGenerator", "nextId");
 		
 		epServiceProvider = EPServiceProviderManager.getProvider("EngineInstance", config);
 		String epl = null;

@@ -2,8 +2,8 @@ package br.ufpe.cin.dsoa.platform.event;
 
 import java.util.Collection;
 
-import br.ufpe.cin.dsoa.event.agent.excetpion.AgentAlreadyCatalogedException;
-import br.ufpe.cin.dsoa.event.agent.meta.EventProcessingAgent;
+import br.ufpe.cin.dsoa.api.event.agent.AgentAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 
 public interface AgentCatalog {
 	public EventProcessingAgent getAgent(String id);

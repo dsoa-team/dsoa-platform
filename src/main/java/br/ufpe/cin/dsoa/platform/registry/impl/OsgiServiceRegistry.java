@@ -12,7 +12,11 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
+import br.ufpe.cin.dsoa.api.service.Service;
+import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
+import br.ufpe.cin.dsoa.api.service.impl.OsgiService;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
 import br.ufpe.cin.dsoa.platform.registry.InvalidConstraintException;
 import br.ufpe.cin.dsoa.platform.registry.filter.AndFilter;
@@ -21,11 +25,6 @@ import br.ufpe.cin.dsoa.platform.registry.filter.FilterBuilder;
 import br.ufpe.cin.dsoa.platform.registry.filter.IFilter;
 import br.ufpe.cin.dsoa.platform.registry.normalizer.Normalizer;
 import br.ufpe.cin.dsoa.platform.registry.rank.Rank;
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.service.NonFunctionalSpecification;
-import br.ufpe.cin.dsoa.service.Service;
-import br.ufpe.cin.dsoa.service.ServiceSpecification;
-import br.ufpe.cin.dsoa.service.impl.OsgiService;
 
 public class OsgiServiceRegistry extends AbstractServiceRegistry {
 

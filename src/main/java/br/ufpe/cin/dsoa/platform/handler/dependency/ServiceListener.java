@@ -1,6 +1,6 @@
 package br.ufpe.cin.dsoa.platform.handler.dependency;
 
-import br.ufpe.cin.dsoa.service.Service;
+import br.ufpe.cin.dsoa.api.service.Service;
 
 public interface ServiceListener {
 

@@ -15,13 +15,13 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ufpe.cin.dsoa.event.agent.excetpion.AgentAlreadyCatalogedException;
-import br.ufpe.cin.dsoa.event.agent.meta.AgentList;
-import br.ufpe.cin.dsoa.event.agent.meta.EventProcessingAgent;
-import br.ufpe.cin.dsoa.event.meta.Event;
-import br.ufpe.cin.dsoa.event.meta.EventType;
-import br.ufpe.cin.dsoa.event.meta.Property;
-import br.ufpe.cin.dsoa.event.meta.PropertyType;
+import br.ufpe.cin.dsoa.api.event.Event;
+import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.Property;
+import br.ufpe.cin.dsoa.api.event.PropertyType;
+import br.ufpe.cin.dsoa.api.event.agent.AgentAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.event.agent.AgentList;
+import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService;
 
@@ -34,12 +34,11 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
 
 public class TestEventGeneration {
 
-	private EPServiceProvider esperProvider;
-	
 	List<PropertyType> metadata;
 	List<PropertyType> data;
 	EventType invocationEventType;
-	EventProcessingService epService;
+	EsperProcessingService epService;
+	private EPServiceProvider esperProvider;
 	
 
 	@Before
@@ -47,8 +46,9 @@ public class TestEventGeneration {
 		metadata = new ArrayList<PropertyType>();
 		data = new ArrayList<PropertyType>();
 		this.defineInvocationEventType();
-		esperProvider = EPServiceProviderManager.getProvider("EngineTest", new Configuration());
+		this.esperProvider = EPServiceProviderManager.getProvider("Dsoa-EsperEngine", new Configuration());
 		epService = new EsperProcessingService(esperProvider);
+		epService.start();
 	}
 
 	public void testGeneration() {

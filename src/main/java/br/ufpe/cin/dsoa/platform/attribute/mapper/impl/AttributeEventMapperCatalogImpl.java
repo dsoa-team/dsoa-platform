@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapper;
-import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
+import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.platform.attribute.mapper.AttributeEventMapperCatalog;
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
 
 /**
  * This component maintains the mapper catalog. Each mapper relates a QoS attribute with the event

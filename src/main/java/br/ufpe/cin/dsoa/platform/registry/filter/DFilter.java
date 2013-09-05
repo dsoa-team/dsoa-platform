@@ -1,6 +1,6 @@
 package br.ufpe.cin.dsoa.platform.registry.filter;
 
-import br.ufpe.cin.dsoa.service.Expression;
+import br.ufpe.cin.dsoa.api.service.Expression;
 
 
 

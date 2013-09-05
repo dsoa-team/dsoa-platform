@@ -2,9 +2,9 @@ package br.ufpe.cin.dsoa.platform.attribute.impl;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import br.ufpe.cin.dsoa.attribute.meta.AttributeCategory;
+import br.ufpe.cin.dsoa.api.attribute.AttributeCategory;
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
 
 public class AttributeCategoryAdapter extends XmlAdapter<String, AttributeCategory> {
 

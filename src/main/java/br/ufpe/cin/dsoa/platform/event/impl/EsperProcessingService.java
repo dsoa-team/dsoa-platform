@@ -1,11 +1,17 @@
 package br.ufpe.cin.dsoa.platform.event.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import br.ufpe.cin.dsoa.event.Subscription;
-import br.ufpe.cin.dsoa.event.agent.meta.EventProcessingAgent;
-import br.ufpe.cin.dsoa.event.meta.Event;
-import br.ufpe.cin.dsoa.event.meta.EventType;
+import org.osgi.framework.BundleContext;
+
+import br.ufpe.cin.dsoa.api.event.Event;
+import br.ufpe.cin.dsoa.api.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.Subscription;
+import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 
 import com.espertech.esper.client.Configuration;
@@ -28,68 +34,105 @@ import com.espertech.esper.client.EPServiceProviderManager;
 public class EsperProcessingService extends StreamProcessingService implements
 		EventProcessingService {
 
+	private BundleContext ctx;
+	
 	private EPServiceProvider epServiceProvider;
+	
+	private Map<String, EventType> eventTypeMap = new HashMap<String, EventType>();
+
+	private Map<String, EventListener> listenerMap = new HashMap<String, EventListener>();
 
 	
-	//TODO REMOVE
-	public EsperProcessingService(EPServiceProvider provider) {
-		epServiceProvider = provider;
+	public EsperProcessingService(BundleContext ctx) {
+		this.ctx = ctx;
 	}
-	//TODO REMOVE
 	
+	//TODO REMOVE
+	public EsperProcessingService(EPServiceProvider esperProvider) {
+		// TODO Auto-generated constructor stub
+	}
+
 	public void start() {
-		this.epServiceProvider = EPServiceProviderManager.getProvider(
-				"EngineInstance", new Configuration());
+		this.epServiceProvider = EPServiceProviderManager.getProvider("Dsoa-EsperEngine", new Configuration());
 	}
 
 	public void stop() {
 		this.epServiceProvider.destroy();
 	}
-
-	public void subscribe(String consumerId, Subscription subscription) {
-
-	}
-
+	
 	public void publish(Event event) {
 		String name = event.getEventType().getName();
 		Map<String, Object> eventMap = event.toMap();
 		this.epServiceProvider.getEPRuntime().sendEvent(eventMap, name);
 	}	
-
-	public boolean unRegisterConsumer(String consumerId) {
-		// TODO Auto-generated method stub
-		return false;
+	
+	public synchronized void subscribe(EventConsumer consumer, Subscription subscription) {
+		String eventTypeName = subscription.getEventTypeName();
+		EventType eventType = this.eventTypeMap.get(eventTypeName);
+		if (eventType != null && eventType.isValid(subscription.getFilter())) {
+			EventListener listener = new EventListener(ctx, consumer, subscription);
+			listener.start();
+			this.listenerMap.put(consumer.getId(), listener);
+		}
+	}
+	
+	public void unsubscribe(EventConsumer consumer, Subscription subscription) {
+		
+	}
+	
+	public void registerEventType(EventType eventType) {
+		String eventTypeName = eventType.getName();
+		if (!eventTypeMap.containsKey(eventTypeName)) {
+			Map<String, Object> definition = eventType.toMap();
+			try {
+				this.epServiceProvider.getEPAdministrator().getConfiguration()
+						.addEventType(eventTypeName, definition);
+				this.eventTypeMap.put(eventTypeName, eventType);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException("Error while configuring event: " + eventTypeName);
+			}
+		}
 	}
 
-	public boolean unRegisterAgent(String agentId) {
-		// TODO Auto-generated method stub
-		return false;
+	public void unregisterEventType(EventType eventType) {
+		String eventTypeName = eventType.getName();
+		if (eventTypeMap.containsKey(eventTypeName)) {
+			try {
+				this.epServiceProvider.getEPAdministrator().getConfiguration()
+						.removeEventType(eventTypeName, true);
+				this.eventTypeMap.remove(eventTypeName);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Override
+	public EventType getEventType(String eventTypeName) {
+		return this.eventTypeMap.get(eventTypeName);
+	}
+	
+	@Override
+	public List<EventType> getEventTypes() {
+		return new ArrayList<EventType>(this.eventTypeMap.values());
 	}
 
 	@Override
-	public QueryBuilder getQueryBuilder(EventProcessingAgent agent) {
+	protected QueryBuilder getQueryBuilder(EventProcessingAgent agent) {
 		return new EsperAgentBuilder(agent);
 	}
 
 	@Override
-	public void startQuery(Query query) {
+	protected void startQuery(Query query) {
 		this.epServiceProvider.getEPAdministrator().createEPL(
 				query.getQueryString(), query.getId());
 	}
 
 	@Override
-	public boolean registerEventType(EventType eventType) {
-		Map<String, Object> definition = eventType.toMap();
-		String eventTypeName = eventType.getName();
-		boolean registered = true;
-		try {
-			this.epServiceProvider.getEPAdministrator().getConfiguration()
-					.addEventType(eventTypeName, definition);
-		} catch (Exception e) {
-			registered = false;
-		}
-
-		return registered;
+	public void unRegisterAgent(String agentId) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

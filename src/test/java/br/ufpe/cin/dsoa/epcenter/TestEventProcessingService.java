@@ -1,16 +1,13 @@
 package br.ufpe.cin.dsoa.epcenter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ufpe.cin.dsoa.event.NotificationListener;
+import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
+import br.ufpe.cin.dsoa.api.event.NotificationListener;
 import br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService;
-import br.ufpe.cin.dsoa.platform.event.impl.Statement;
 
 public class TestEventProcessingService implements NotificationListener {
 
@@ -145,5 +142,11 @@ public class TestEventProcessingService implements NotificationListener {
 		// TODO Auto-generated method stub
 		System.out.println("Stmt: " + statementName);
 		System.out.println("Result: " + result);
+	}
+
+	@Override
+	public void receive(AttributeValue value) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.ufpe.cin.dsoa.attribute.exception.AttributeAlreadyCatalogedException;
-import br.ufpe.cin.dsoa.attribute.meta.AttributeCategory;
-import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
+import br.ufpe.cin.dsoa.api.attribute.Attribute;
+import br.ufpe.cin.dsoa.api.attribute.AttributeAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.attribute.AttributeCategory;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 
 /**
@@ -16,18 +16,18 @@ import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
  **/
 public class AttributeCatalogImpl implements AttributeCatalog {
 	
-	private Map<String,AttributeType> attributeMap = new HashMap<String,AttributeType>();
+	private Map<String,Attribute> attributeMap = new HashMap<String,Attribute>();
 	private Map<String,AttributeCategory> attributeCategoryMap = new HashMap<String,AttributeCategory>();
 	
-	public AttributeType getAttribute(String id) {
+	public Attribute getAttribute(String id) {
 		return this.attributeMap.get(id);
 	}
 
-	public Collection<AttributeType> getAttributes() {
+	public Collection<Attribute> getAttributes() {
 		return this.attributeMap.values();
 	}
 
-	public synchronized void addAttribute(AttributeType attribute) throws AttributeAlreadyCatalogedException {
+	public synchronized void addAttribute(Attribute attribute) throws AttributeAlreadyCatalogedException {
 		if (this.attributeMap.containsKey(attribute.getId())) {
 			throw new AttributeAlreadyCatalogedException(attribute);
 		}

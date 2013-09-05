@@ -3,7 +3,8 @@ package br.ufpe.cin.dsoa.platform.event.impl;
 
 import java.util.Map;
 
-import br.ufpe.cin.dsoa.event.NotificationListener;
+import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
+import br.ufpe.cin.dsoa.api.event.NotificationListener;
 
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
@@ -27,8 +28,13 @@ public class EventNotifier implements StatementAwareUpdateListener{
 			if (result instanceof Map<?, ?>) {
 				((Map) result).put("id", UuidGenerator.generate());
 				((Map) result).put("timestamp", System.currentTimeMillis());
+				this.consumer.receive(this.buildAttributeValue(newEvents[i]));
 			}
-			this.consumer.receive(result, statement.getName());
 		}
+	}
+
+	private AttributeValue buildAttributeValue(EventBean eventBean) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -3,11 +3,11 @@ package br.ufpe.cin.dsoa.platform.event.impl;
 import java.util.Iterator;
 import java.util.List;
 
-import br.ufpe.cin.dsoa.event.agent.meta.EventProcessingAgent;
-import br.ufpe.cin.dsoa.event.agent.meta.InputEvent;
-import br.ufpe.cin.dsoa.event.agent.meta.OutputEvent;
-import br.ufpe.cin.dsoa.event.agent.meta.ProcessingMapping;
-import br.ufpe.cin.dsoa.event.meta.Property;
+import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
+import br.ufpe.cin.dsoa.api.event.agent.InputEvent;
+import br.ufpe.cin.dsoa.api.event.agent.MappedProperty;
+import br.ufpe.cin.dsoa.api.event.agent.OutputEvent;
+import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
 
 public class EsperAgentBuilder implements QueryBuilder {
 
@@ -62,22 +62,18 @@ public class EsperAgentBuilder implements QueryBuilder {
 		return query;
 	}
 
-	private String extractSelect(List<Property> properties, String prefix) {
-		String alias = in.getAlias();
+	private String extractSelect(List<MappedProperty> properties, String prefix) {
 		StringBuilder result = new StringBuilder();
-		Iterator<Property> iterator = properties.iterator();
+		Iterator<MappedProperty> iterator = properties.iterator();
 		boolean first = true;
 		while (iterator.hasNext()) {
 			if (!first) {
 				result.append(", ");
 			}
 			first = false;
-			Property p = iterator.next();
+			MappedProperty p = iterator.next();
 			// empty string is: Constants.TOKEN
-			result.append(String
-					.format("%s as %s%s%s ", p.getPropertyType()
-							.getExpression(), alias, "", p.getPropertyType()
-							.getName()));
+			result.append(String.format("%s as %s ", p.getExpression(), p.getId()));
 		}
 		return result.toString();
 	}

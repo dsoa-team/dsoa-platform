@@ -1,4 +1,4 @@
-/*package br.ufpe.cin.dsoa.attribute;
+/*package br.ufpe.cin.dsoa.api.attribute;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -15,8 +15,8 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ufpe.cin.dsoa.event.Event;
-import br.ufpe.cin.dsoa.event.EventList;
+import br.ufpe.cin.dsoa.api.event.Event;
+import br.ufpe.cin.dsoa.api.event.EventList;
 
 public class EventParserSpec {
 

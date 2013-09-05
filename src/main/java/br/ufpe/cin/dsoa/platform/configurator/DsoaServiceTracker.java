@@ -1,6 +1,5 @@
 package br.ufpe.cin.dsoa.platform.configurator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.felix.ipojo.ComponentInstance;
@@ -11,13 +10,9 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-import br.ufpe.cin.dsoa.attribute.Attribute;
+import br.ufpe.cin.dsoa.api.service.Service;
+import br.ufpe.cin.dsoa.api.service.impl.OsgiService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.service.NonFunctionalSpecification;
-import br.ufpe.cin.dsoa.service.Service;
-import br.ufpe.cin.dsoa.service.ServiceSpecification;
-import br.ufpe.cin.dsoa.service.impl.OsgiService;
 import br.ufpe.cin.dsoa.util.Constants;
 import br.ufpe.cin.dsoa.util.Util;
 
@@ -48,14 +43,13 @@ public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 	 * service that intercepts requests and creates an InvocationEvent that is
 	 * sent to the EventProcessingService. There, there are Property Computing
 	 * Agents that do the real metric computation. For each service that is
-	 * monitored, the Monitoring Service also creates a ServiceMonitor that
+	 * monitored, the Monitoring Service also creates a MonitoredService that
 	 * stores corresponding metrics and implements Monitorable interface (see
 	 * OSGi spec).
 	 */
 	public Object addingService(ServiceReference reference) {
 		Boolean isProxy = ((Boolean) reference.getProperty(Constants.SERVICE_PROXY) == null ? false : Boolean
 				.valueOf(reference.getProperty(Constants.SERVICE_PROXY).toString()));
-		Object tracked = null;
 		if (!isProxy) {
 			try {
 				// / Testes
@@ -77,7 +71,7 @@ public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 				// this.registry.addService(service);
 				List<OsgiService> services = OsgiService.getOsgiServices(reference);
 				for (Service service : services) {
-					tracked = monitoringService.startMonitoring(service);
+					monitoringService.startMonitoring(service);
 				}
 			} catch (ClassNotFoundException e) {
 				// this should never happen

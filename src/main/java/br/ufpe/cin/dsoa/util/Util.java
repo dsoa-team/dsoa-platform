@@ -2,7 +2,7 @@ package br.ufpe.cin.dsoa.util;
 
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.attribute.AttributableId;
+import br.ufpe.cin.dsoa.api.attribute.AttributableId;
 
 public class Util {
 	

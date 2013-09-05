@@ -13,17 +13,17 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.util.tracker.BundleTracker;
 
-import br.ufpe.cin.dsoa.attribute.exception.AttributeAlreadyCatalogedException;
-import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapper;
-import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
-import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapperList;
-import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventPropertyMapper;
-import br.ufpe.cin.dsoa.attribute.meta.AttributeList;
-import br.ufpe.cin.dsoa.attribute.meta.AttributePropertyType;
-import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
-import br.ufpe.cin.dsoa.event.agent.excetpion.AgentAlreadyCatalogedException;
-import br.ufpe.cin.dsoa.event.agent.meta.AgentList;
-import br.ufpe.cin.dsoa.event.agent.meta.EventProcessingAgent;
+import br.ufpe.cin.dsoa.api.attribute.Attribute;
+import br.ufpe.cin.dsoa.api.attribute.AttributeAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.attribute.AttributeList;
+import br.ufpe.cin.dsoa.api.attribute.AttributePropertyType;
+import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
+import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperList;
+import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventPropertyMapper;
+import br.ufpe.cin.dsoa.api.event.agent.AgentAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.event.agent.AgentList;
+import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCategoryAdapter;
 import br.ufpe.cin.dsoa.platform.attribute.mapper.AttributeEventMapperCatalog;
@@ -113,10 +113,7 @@ public class DsoaBundleListener extends BundleTracker {
 
 
 	private void handleEventDefinitions(Bundle bundle) {
-		URL url = bundle.getEntry(EventList.CONFIG);
-		if(url != null){
-			Unmarshaller u = JAXBContexts.get(EventList.class);
-		}
+		
 		//Map<String, Object> 
 		/*<event type="DsoaEvent" description="xxx">
 		<header>
@@ -193,7 +190,7 @@ public class DsoaBundleListener extends BundleTracker {
 			try {
 				attList = (AttributeList) u.unmarshal(url);
 
-				for (AttributeType att : attList.getAttributes()) {
+				for (Attribute att : attList.getAttributes()) {
 					logger.fine(String.format("Attribute Category: %s ", att.getCategory()));// LOG
 					logger.fine(String.format("Attribute Name: %s ", att.getName()));// LOG
 

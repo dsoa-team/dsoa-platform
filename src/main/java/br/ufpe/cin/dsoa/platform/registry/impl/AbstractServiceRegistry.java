@@ -7,13 +7,14 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
+import br.ufpe.cin.dsoa.api.service.Service;
+import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
+import br.ufpe.cin.dsoa.platform.monitor.DynamicProxyFactory;
 import br.ufpe.cin.dsoa.platform.registry.InvalidConstraintException;
 import br.ufpe.cin.dsoa.platform.registry.ServiceRegistry;
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.service.NonFunctionalSpecification;
-import br.ufpe.cin.dsoa.service.Service;
-import br.ufpe.cin.dsoa.service.ServiceSpecification;
 
 public abstract class AbstractServiceRegistry implements ServiceRegistry {
 
@@ -57,6 +58,8 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
 			}
 		} else {
 			Service bestService = this.rankServices(serviceInterface, services, nfs.getAttributeConstraints());
+			DynamicProxyFactory proxyFactory = new DynamicProxyFactory(bestService);
+			listener.onArrival(proxyFactory.getProxy());
 			this.trackService(bestService, listener);
 		}
 	}

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.service.Service;
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.api.service.Service;
 
 public class ServiceMetadata {
 	

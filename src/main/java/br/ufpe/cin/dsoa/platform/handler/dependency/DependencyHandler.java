@@ -13,11 +13,11 @@ import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
 
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.service.Expression;
-import br.ufpe.cin.dsoa.service.NonFunctionalSpecification;
-import br.ufpe.cin.dsoa.service.ServiceConsumer;
-import br.ufpe.cin.dsoa.service.ServiceSpecification;
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.api.service.Expression;
+import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
+import br.ufpe.cin.dsoa.api.service.ServiceConsumer;
+import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyHandler extends PrimitiveHandler {

@@ -8,8 +8,8 @@
 			</input-event>
 			<output-event type="AvgResponseTimeEvent">
 				<metadata>
-					<property id="id" expression="id" />
-					<property id="timestamp" expression="timestamp" />
+					<property id="id" expression="event.metadata.id" />
+					<property id="timestamp" expression="event.metadata.timestamp" />
 				</metadata>
 				<data>
 					<property id="value"
@@ -23,10 +23,10 @@
 		<description>Calculates min response time attribute</description>
 		<query id="MinResponseTimeQuery">
 			<command>
-				SELECT min (InvocationEvent.responseTimestamp -
-				InvocationEvent.requestTimestamp) as value
+				SELECT min (event.data.responseTimestamp -
+				event.data.requestTimestamp) as value
 				FROM
-				InvocationEvent.win:time(10 sec)
+				InvocationEvent.win:time(10 sec) as event
 			</command>
 		</query>
 	</agent>

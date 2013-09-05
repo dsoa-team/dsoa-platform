@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 
 public class Normalizer {
 	

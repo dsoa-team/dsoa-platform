@@ -8,19 +8,19 @@ import java.util.logging.Logger;
 
 import org.osgi.framework.BundleContext;
 
-import br.ufpe.cin.dsoa.attribute.AttributableId;
-import br.ufpe.cin.dsoa.attribute.mapper.AttributeEventMapper;
-import br.ufpe.cin.dsoa.attribute.meta.AttributeType;
-import br.ufpe.cin.dsoa.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.attribute.AttributableId;
+import br.ufpe.cin.dsoa.api.attribute.Attribute;
+import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
+import br.ufpe.cin.dsoa.api.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
+import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.mapper.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredAttribute;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
-import br.ufpe.cin.dsoa.platform.monitor.ServiceMonitor;
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.service.NonFunctionalSpecification;
-import br.ufpe.cin.dsoa.service.Service;
+import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;
 
 
 
@@ -49,25 +49,25 @@ public class MonitoringServiceImpl implements MonitoringService {
 	
 	/**
 	 * Maps a service.pid to the service that is created to store the metrics
-	 * associated to the service. That is: Map<service.pid, ServiceMonitor>
+	 * associated to the service. That is: Map<service.pid, MonitoredService>
 	 */
-	private Map<String, List<ServiceMonitor>> serviceMonitorsMap = new HashMap<String, List<ServiceMonitor>>();
+	private Map<String, List<MonitoredService>> serviceMonitorsMap = new HashMap<String, List<MonitoredService>>();
 
 	public MonitoringServiceImpl(BundleContext ctx) {
 		this.ctx = ctx;
 		this.log = Logger.getLogger(MonitoringService.class.getName());
 	}
 	
-	public List<ServiceMonitor> getMonitoredServices() {
-		 List<ServiceMonitor> list = new ArrayList<ServiceMonitor>();
-		 for (List<ServiceMonitor> providedList : serviceMonitorsMap.values()) {
+	public List<MonitoredService> getMonitoredServices() {
+		 List<MonitoredService> list = new ArrayList<MonitoredService>();
+		 for (List<MonitoredService> providedList : serviceMonitorsMap.values()) {
 			 list.addAll(providedList);
 		 }
 		 return list;
 	}
 	
-	public ServiceMonitor getMonitoredService(String providedId) {
-		List<ServiceMonitor> compInstanceList = this.serviceMonitorsMap.get(providedId);
+	public MonitoredService getMonitoredService(String providedId) {
+		List<MonitoredService> compInstanceList = this.serviceMonitorsMap.get(providedId);
 		if (providedId != null && !compInstanceList.isEmpty()) {
 			return compInstanceList.get(0);
 		} else {
@@ -75,56 +75,55 @@ public class MonitoringServiceImpl implements MonitoringService {
 		}
 	}
 	
-	public ServiceMonitor startMonitoring(Service service) {
+	public MonitoredService startMonitoring(Service service) {
 		NonFunctionalSpecification nfs = service.getSpecification().getNonFunctionalSpecification();
-		ServiceMonitor serviceMonitor = null;
+		MonitoredService monitoredService = null;
 		if (nfs != null) {
-			serviceMonitor = new ServiceMonitor(ctx, service);
+			monitoredService = new MonitoredService(ctx, service);
 			for (AttributeConstraint attributeConstraint : service.getSpecification().getNonFunctionalSpecification().getAttributeConstraints()) {
-				this.addAttributeMonitor(serviceMonitor, attributeConstraint);
+				this.addAttributeMonitor(monitoredService, attributeConstraint);
 			}
 			synchronized (serviceMonitorsMap) {
 				String providedServiceId = service.getServiceId();
-				List<ServiceMonitor> monitors = serviceMonitorsMap.get(providedServiceId);
+				List<MonitoredService> monitors = serviceMonitorsMap.get(providedServiceId);
 				if (monitors == null) {
-					monitors = new ArrayList<ServiceMonitor>();
+					monitors = new ArrayList<MonitoredService>();
 					serviceMonitorsMap.put(providedServiceId, monitors);
 				}
-				monitors.add(serviceMonitor);
+				monitors.add(monitoredService);
 			}
-			serviceMonitor.start();
+			monitoredService.start();
 		}
-		return serviceMonitor;
+		return monitoredService;
 	}
 
 	public void stopMonitoring(String providedServiceId) {
-		List<ServiceMonitor> serviceMonitors = serviceMonitorsMap.get(providedServiceId);
-		for (ServiceMonitor serviceMonitor : serviceMonitors) {
-			serviceMonitor.stop();
+		List<MonitoredService> monitoredServices = serviceMonitorsMap.get(providedServiceId);
+		for (MonitoredService monitoredService : monitoredServices) {
+			monitoredService.stop();
 		}
 	}
 
 	public void addAttributeConstraint(String servicePid, AttributeConstraint attributeConstraint) {
-		List<ServiceMonitor> monitors = serviceMonitorsMap.get(servicePid);
+		List<MonitoredService> monitors = serviceMonitorsMap.get(servicePid);
 		if (monitors == null || monitors.isEmpty()) {
 			log.warning("There is no monitors related to service " + servicePid);
 			return;
 		}
-		ServiceMonitor monitor = monitors.get(0);
+		MonitoredService monitor = monitors.get(0);
 		this.addAttributeMonitor(monitor, attributeConstraint);
 	}
 
-	private void addAttributeMonitor(ServiceMonitor serviceMonitor, AttributeConstraint attributeConstraint) {
+	private void addAttributeMonitor(MonitoredService monitoredService, AttributeConstraint attributeConstraint) {
 		String attributeId = attributeConstraint.getAttributeId();
-		AttributeType attribute = attributeCatalog.getAttribute(attributeId);
+		Attribute attribute = attributeCatalog.getAttribute(attributeId);
 		if (attribute != null) {
-			AttributableId attributableId = new AttributableId(serviceMonitor.getServiceId(), attributeConstraint.getOperation());
-			MonitoredAttribute monitor = new MonitoredAttribute(attributableId, attribute);
-			serviceMonitor.addAttributeMonitor(monitor);
+			AttributableId attributableId = new AttributableId(monitoredService.getServiceId(), attributeConstraint.getOperation());
+			MonitoredAttribute monitoredAttribute = new MonitoredAttribute(attributableId, attribute);
+			monitoredService.addAttributeMonitor(monitoredAttribute);
 			AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
 			if (mapper != null) {
-				String eventType = mapper.getEventType();
-				EventConsumer consumer;
+				EventConsumer consumer = new EventConsumerImpl(monitoredAttribute);
 				
 			}
 			//eventProcessingService.registerConsumer(consumer);

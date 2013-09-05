@@ -1,25 +1,32 @@
 package br.ufpe.cin.dsoa.platform.event;
 
-import br.ufpe.cin.dsoa.event.EventConsumer;
-import br.ufpe.cin.dsoa.event.Subscription;
-import br.ufpe.cin.dsoa.event.agent.meta.EventProcessingAgent;
-import br.ufpe.cin.dsoa.event.meta.Event;
-import br.ufpe.cin.dsoa.event.meta.EventType;
+import java.util.List;
+
+import br.ufpe.cin.dsoa.api.event.Event;
+import br.ufpe.cin.dsoa.api.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.Subscription;
+import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 
 
 public interface EventProcessingService {
+	
+	public EventType getEventType(String eventTypeName);
+	
+	public List<EventType> getEventTypes();
 
-	public void subscribe(String consumerId, Subscription subscription);
+	public void registerEventType(EventType eventType);
+	
+	public void unregisterEventType(EventType eventType);
 	
 	public void publish(Event event);
 	
-	public boolean registerConsumer(EventConsumer consumer);
+	public void subscribe(EventConsumer consumer, Subscription subscription);
 	
-	public boolean registerAgent(EventProcessingAgent agent);
+	public void unsubscribe(EventConsumer consumer, Subscription subscription);
 	
-	public boolean unRegisterConsumer(String consumerId);
+	public void registerAgent(EventProcessingAgent agent);
 	
-	public boolean unRegisterAgent(String agentId);
+	public void unRegisterAgent(String agentId);
 	
-	public boolean registerEventType(EventType eventType);
 }

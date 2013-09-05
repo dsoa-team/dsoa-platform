@@ -1,17 +1,16 @@
 package br.ufpe.cin.dsoa.platform.handler.dependency.manager;
 
-import java.util.Map;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-import br.ufpe.cin.dsoa.event.NotificationListener;
+import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
+import br.ufpe.cin.dsoa.api.event.NotificationListener;
+import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.platform.handler.dependency.Dependency;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
 import br.ufpe.cin.dsoa.platform.registry.ServiceRegistry;
-import br.ufpe.cin.dsoa.service.Service;
 
 
 public class DependencyManager implements ServiceListener, NotificationListener {
@@ -158,12 +157,8 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 		}	
 	}
 	
-	public void receive(Map result, Object userObject, String statementName) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void receive(Object result, String statementName) {
+	@Override
+	public void receive(AttributeValue value) {
 		// TODO Auto-generated method stub
 		
 	}

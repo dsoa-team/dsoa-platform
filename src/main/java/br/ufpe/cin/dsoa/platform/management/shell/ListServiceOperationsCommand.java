@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.platform.management.PlatformManagementService;
 import br.ufpe.cin.dsoa.platform.monitor.ServiceMetadata;
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
 
 public class ListServiceOperationsCommand extends DsoaBaseCommand {
 

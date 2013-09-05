@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.apache.felix.ipojo.FieldInterceptor;
 
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.api.service.Service;
+import br.ufpe.cin.dsoa.api.service.ServiceConsumer;
+import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.handler.dependency.manager.DependencyManager;
-import br.ufpe.cin.dsoa.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.service.Service;
-import br.ufpe.cin.dsoa.service.ServiceConsumer;
-import br.ufpe.cin.dsoa.service.ServiceSpecification;
 
 public class Dependency implements FieldInterceptor {
 
