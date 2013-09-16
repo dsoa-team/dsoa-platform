@@ -1,11 +1,13 @@
 package br.ufpe.cin.dsoa.platform.event.impl;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 import br.ufpe.cin.dsoa.api.event.agent.InputEvent;
-import br.ufpe.cin.dsoa.api.event.agent.MappedProperty;
 import br.ufpe.cin.dsoa.api.event.agent.OutputEvent;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
 
@@ -34,11 +36,14 @@ public class EsperAgentBuilder implements QueryBuilder {
 	public void buildSelectClause() {
 		this.queryString.append(" INSERT INTO " + this.out.getType());
 		this.queryString.append(" SELECT ");
-		this.queryString.append(extractSelect(this.out.getMetadata(),
-				"metadata") + ", ");
-		this.queryString.append(extractSelect(this.out.getData(), "data"));
+		this.queryString.append(this.in.getAlias() + ".metadata as metadata, ");
+		this.queryString.append(this.in.getAlias() + ".data as data ");
+		//this.queryString.append(extractSelect(this.out.getMetadata(),
+		//		"metadata") + ", ");
+		//this.queryString.append(extractSelect(this.out.getData(), "data"));
 	}
-
+	
+	
 	public void buildFromClause() {
 		this.queryString.append(" FROM ");
 		this.queryString
@@ -62,18 +67,18 @@ public class EsperAgentBuilder implements QueryBuilder {
 		return query;
 	}
 
-	private String extractSelect(List<MappedProperty> properties, String prefix) {
+	private String extractSelect(List<PropertyType> properties, String prefix) {
 		StringBuilder result = new StringBuilder();
-		Iterator<MappedProperty> iterator = properties.iterator();
+		Iterator<PropertyType> iterator = properties.iterator();
 		boolean first = true;
 		while (iterator.hasNext()) {
 			if (!first) {
 				result.append(", ");
 			}
 			first = false;
-			MappedProperty p = iterator.next();
+			PropertyType p = iterator.next();
 			// empty string is: Constants.TOKEN
-			result.append(String.format("%s as %s ", p.getExpression(), p.getId()));
+			result.append(String.format("%s %s.%s ", p.getExpression(), prefix, p.getName()));
 		}
 		return result.toString();
 	}

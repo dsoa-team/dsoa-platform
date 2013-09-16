@@ -6,10 +6,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
-import br.ufpe.cin.dsoa.api.event.NotificationListener;
+import br.ufpe.cin.dsoa.api.attribute.AttributeChangeListener;
 import br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService;
 
-public class TestEventProcessingService implements NotificationListener {
+public class TestEventProcessingService implements AttributeChangeListener {
 
 	EsperProcessingService epCenter;
 	String[] providers = { "provider-1", "provider-2", "provider-3" };
@@ -106,7 +106,7 @@ public class TestEventProcessingService implements NotificationListener {
 		stmt2 = new Statement("stmt2", "select * from ResponseTime");
 		epCenter.defineStatement(stmt2);
 
-		epCenter.subscribe(stmt2.getName(), (NotificationListener) this);*/
+		epCenter.subscribe(stmt2.getName(), (AttributeChangeListener) this);*/
 		
 		/*String provider;
 		String service;
@@ -145,7 +145,7 @@ public class TestEventProcessingService implements NotificationListener {
 	}
 
 	@Override
-	public void receive(AttributeValue value) {
+	public void update(AttributeValue value) {
 		// TODO Auto-generated method stub
 		
 	}

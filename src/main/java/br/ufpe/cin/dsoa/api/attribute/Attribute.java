@@ -1,6 +1,8 @@
 package br.ufpe.cin.dsoa.api.attribute;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,6 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCategoryAdapter;
 import br.ufpe.cin.dsoa.util.Constants;
 
@@ -42,11 +45,15 @@ public class Attribute  {
 	
 	@XmlElementWrapper(name = METADATA)
 	@XmlElement(name = PROPERTY)
-	private List<AttributePropertyType> metadata;
+	private List<PropertyType> metadataList;
+	
+	private Map<String, PropertyType> metadata = new HashMap<String, PropertyType>();
 
 	@XmlElementWrapper(name = DATA)
 	@XmlElement(name = PROPERTY, required=true)
-	private List<AttributePropertyType> data;
+	private List<PropertyType> dataList;
+	
+	private Map<String, PropertyType> data = new HashMap<String, PropertyType>();
 	
 	public String getId() {
 		if (id == null) {
@@ -67,17 +74,34 @@ public class Attribute  {
 		return description;
 	}
 
-	public List<AttributePropertyType> getMetadata() {
+	public Map<String, PropertyType> getMetadata() {
 		return metadata;
 	}
-
-	public List<AttributePropertyType> getData() {
+	
+	public List<PropertyType> getMetadataList() {
+		return metadataList;
+	}
+	
+	public void addMetadata(PropertyType propertyType) {
+		this.metadata.put(propertyType.getName(), propertyType);
+	}
+	
+	public Map<String, PropertyType> getData() {
 		return data;
 	}
 
+	public List<PropertyType> getDataList() {
+		return dataList;
+	}
+	
+	public void addData(PropertyType propertyType) {
+		this.data.put(propertyType.getName(), propertyType);
+	}
+	
+
 	@Override
 	public String toString() {
-		return "Attribute [id=" + id + ", description=" + description + ", metadata=" + metadata + ", data=" + data
+		return "Attribute [id=" + id + ", description=" + description + ", metadataList=" + metadataList + ", dataList=" + dataList
 				+ "]";
 	}
 

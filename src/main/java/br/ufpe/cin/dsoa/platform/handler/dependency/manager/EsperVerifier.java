@@ -4,7 +4,7 @@ import java.util.List;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributableId;
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
-import br.ufpe.cin.dsoa.api.event.NotificationListener;
+import br.ufpe.cin.dsoa.api.attribute.AttributeChangeListener;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
@@ -14,7 +14,7 @@ public class EsperVerifier implements Verifier {
 	private AttributeCatalog attributeCatalog;
 	private EventProcessingService eventProcessingService;
 	
-	public void configure(NotificationListener listener, String servicePid, List<AttributeConstraint> constraints) {
+	public void configure(AttributeChangeListener listener, String servicePid, List<AttributeConstraint> constraints) {
 		for (AttributeConstraint constraint : constraints) {
 			AttributeConstraint instance = this.getMetricInstance(servicePid, constraint);
 			//String attId = instance.getAtttributeId();

@@ -10,8 +10,8 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
+import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
-import br.ufpe.cin.dsoa.platform.attribute.mapper.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
@@ -67,6 +67,7 @@ public class PlatformConfigurator {
 		tracker.open();
 		
 		listener = new DsoaBundleListener(this.context);
+		listener.setEventProcessingService(this.epService);
 		listener.setAttributeCatalog(this.attributeCatalog);
 		listener.setAttributeEventMapperCatalog(this.attributeEventMapperCatalog);
 		listener.setAgentCatalog(this.agentCatalog);
@@ -74,7 +75,7 @@ public class PlatformConfigurator {
 	}
 
 	private void configurePrimitiveEvents() {
-		List<PropertyType> metadata = new ArrayList<PropertyType>();
+/*		List<PropertyType> metadata = new ArrayList<PropertyType>();
 		List<PropertyType> data = new ArrayList<PropertyType>();
 
 		//add metadata
@@ -95,7 +96,7 @@ public class PlatformConfigurator {
 		data.add(new PropertyType("exception", Exception.class, false));
 		
 		EventType invocationEventType = new EventType(Constants.INVOCATION_EVENT, metadata, data);
-		epService.registerEventType(invocationEventType);
+		epService.registerEventType(invocationEventType);*/
 	}
 
 	public void stop() throws Exception {

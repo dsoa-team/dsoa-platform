@@ -6,14 +6,14 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
-import br.ufpe.cin.dsoa.api.event.NotificationListener;
+import br.ufpe.cin.dsoa.api.attribute.AttributeChangeListener;
 import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.platform.handler.dependency.Dependency;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
 import br.ufpe.cin.dsoa.platform.registry.ServiceRegistry;
 
 
-public class DependencyManager implements ServiceListener, NotificationListener {
+public class DependencyManager implements ServiceListener, AttributeChangeListener {
 
 	/**
 	 * The managed dependency
@@ -158,7 +158,7 @@ public class DependencyManager implements ServiceListener, NotificationListener 
 	}
 	
 	@Override
-	public void receive(AttributeValue value) {
+	public void update(AttributeValue value) {
 		// TODO Auto-generated method stub
 		
 	}

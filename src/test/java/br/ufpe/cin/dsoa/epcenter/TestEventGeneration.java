@@ -2,7 +2,6 @@ package br.ufpe.cin.dsoa.epcenter;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,10 +18,7 @@ import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.Property;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
-import br.ufpe.cin.dsoa.api.event.agent.AgentAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.event.agent.AgentList;
-import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
-import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService;
 
 import com.espertech.esper.client.Configuration;
@@ -77,7 +73,7 @@ public class TestEventGeneration {
 		Event invocationEvent = new Event(invocationEventType, metadataValue, dataValue);
 		
 		
-		Map<String, Object> definition = invocationEventType.toMap();
+		Map<String, Object> definition = invocationEventType.toDefinitionMap();
 		String name = invocationEventType.getName();
 		
 		Map<String, Object> event =  invocationEvent.toMap();
@@ -164,7 +160,7 @@ public class TestEventGeneration {
 		data.add(new PropertyType("success", Boolean.class, true));
 		data.add(new PropertyType("exception", Exception.class, false));
 		
-		invocationEventType = new EventType("InvocationEvent", metadata, data);
+		//invocationEventType = new EventType("InvocationEvent", metadata, data);
 	}
 	
 	@Test

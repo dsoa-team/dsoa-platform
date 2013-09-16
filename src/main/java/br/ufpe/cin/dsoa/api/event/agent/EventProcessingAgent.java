@@ -39,5 +39,4 @@ public class EventProcessingAgent {
 		return "EventProcessingAgent [id=" + id + ", description=" + description + ", processing=" + processing + "]";
 	}
 
-	
 }

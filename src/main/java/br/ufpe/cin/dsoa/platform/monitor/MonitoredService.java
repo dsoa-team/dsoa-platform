@@ -81,7 +81,7 @@ public class MonitoredService implements Monitorable {
 		//this.proxyRegistration = this.ctx.registerService(service.getSpecification().getClassNames(), service.getProxy(), dict);
 	}*/
 	
-	public synchronized void addAttributeMonitor(MonitoredAttribute monitor) {
+	public synchronized void addMonitoredAttribute(MonitoredAttribute monitor) {
 		this.attributeMonitorMap.put(monitor.getStatusVariableId(), monitor);
 	}
 	

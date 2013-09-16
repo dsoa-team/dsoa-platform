@@ -1,10 +1,35 @@
 package br.ufpe.cin.dsoa.api.event;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlType(name = "")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyType {
-	private Class<?> type;
+	
+	public static final String ID 	= "id";
+	public static final String TYPE 	= "type";
+	
+	@XmlAttribute(name = ID)
 	private String name;
-	private boolean required;
+	
+	@XmlAttribute(name = TYPE)
+	private String typeName;
+	
+	@XmlAttribute(name = "generated")
+	private boolean generated;
+	
+	// for agent expression definition
+	@XmlAttribute(name = "expression")
 	private String expression;
+	
+	private Class<?> type;
+	
+	private boolean required;
+	
+
 
 	PropertyType() {}
 	
@@ -28,11 +53,19 @@ public class PropertyType {
 	public String getName() {
 		return name;
 	}
-
+	
+	public String getTypeName() {
+		return typeName;
+	}
+	
 	public Class<?> getType() {
 		return type;
 	}
 
+	public void setClazz(Class<?> clazz) {
+		this.type = clazz;
+	}
+	
 	public boolean isRequired() {
 		return required;
 	}
@@ -40,11 +73,15 @@ public class PropertyType {
 	public String getExpression() {
 		return expression;
 	}
+	
+	public boolean isGenerated() {
+		return generated;
+	}
 
 	@Override
 	public String toString() {
-		return "PropertyType [type=" + type + ", name=" + name + ", required="
-				+ required + ", expression=" + expression + "]";
+		return "PropertyType [name=" + name + ", typeName=" + typeName + ", generated=" + generated + ", expression="
+				+ expression + ", type=" + type + ", required=" + required + "]";
 	}
 
 	@Override
@@ -87,5 +124,6 @@ public class PropertyType {
 			return false;
 		return true;
 	}
+
 
 }

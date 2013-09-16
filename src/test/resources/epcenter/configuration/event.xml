@@ -3,16 +3,21 @@
 <events>
 	<event type="DsoaEvent">
 		<metadata>
-			<property id="id" type="java.lang.String" optional="false"/>
-			<property id="source" type="java.lang.String" optional="true"/>
-			<property id="timestamp" type="java.lang.Double" />
+			<property id="id" type="java.lang.String" />
+			<property id="source" type="java.lang.String" />
+			<property id="timestamp" type="java.lang.Long" />
 		</metadata>
 	</event>
 	
 	<event type="InvocationEvent" extends="DsoaEvent">
 		<data>
-			<property id="requestTimestamp" 	type="java.lang.Long" />
-			<property id="responseTimestamp" 	type="java.lang.Long" />
+			<property id="consumerId" type="java.lang.String" />
+			<property id="serviceId" type="java.lang.String" />
+			<property id="operationName" type="java.lang.String" />
+			<property id="requestTimestamp" type="java.lang.Long" />
+			<property id="responseTimestamp" type="java.lang.Long" />
+			<property id="success" type="java.lang.Boolean" />
+			<property id="exception" type="java.lang.Exception" />
 		</data>
 	</event>
 	
@@ -22,42 +27,4 @@
 		</data>
 	</event>
 	
-	<!-- <event type="Request" extends="DsoaEvent"/>
-	
-	<event type="Response" extends="DsoaEvent"/>
-	
-	<event type="InvocationEvent" extends="DsoaEvent">
-		<properties>
-			<property id="request" type="Request" />
-			<property id="response" type="Response" />
-		</properties>
-	</event> -->
-	
-<!-- 	
-	<event type="DsoaEvent">
-		<properties>
-			<property id="id" type="java.lang.String" />
-			<property id="timestamp" type="java.lang.Double" />
-		</properties>
-	</event>
-
-
-<event type="ResponseTime" extends="DsoaEvent">
-		<properties>
-			<property id="value" type="java.lang.Double" />
-		</properties>
-	</event>
-
-	<event type="Availabilty" extends="DsoaEvent">
-		<properties>
-			<property id="value" type="java.lang.Double" />
-		</properties>
-	</event>
-
-	<event type="LoginEvent" extends="DsoaEvent">
-		<properties>
-			<property id="group" type="java.lang.String" />
-			<property id="user" type="java.lang.String" />
-		</properties>
-	</event> -->
 </events>

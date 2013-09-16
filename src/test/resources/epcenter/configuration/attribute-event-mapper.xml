@@ -1,6 +1,6 @@
 <attribute-event-mappers>
 	<attribute-event-mapper 
-		attribute-category="qos"
+		attribute-category="qos.performance.responseTime"
 		attribute-name="AvgResponseTime"  
 		event-type="AvgResponseTimeEvent" 
 		event-alias="event">

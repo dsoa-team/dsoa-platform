@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
+import br.ufpe.cin.dsoa.api.event.PropertyType;
+
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OutputEvent {
@@ -24,17 +26,17 @@ public class OutputEvent {
 	
 	@XmlElementWrapper(name = METADATA)
 	@XmlElement(name = PROPERTY)
-	private List<MappedProperty> metadata;
+	private List<PropertyType> metadata;
 	
 	@XmlElementWrapper(name = DATA)
 	@XmlElement(name = PROPERTY)
-	private List<MappedProperty> data;
+	private List<PropertyType> data;
 	
-	public List<MappedProperty> getMetadata() {
+	public List<PropertyType> getMetadata() {
 		return metadata;
 	}
 
-	public List<MappedProperty> getData() {
+	public List<PropertyType> getData() {
 		return data;
 	}
 

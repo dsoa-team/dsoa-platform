@@ -41,13 +41,13 @@
 		<instance component="Platform.Metric.AttributeCatalog" />
 		<instance component="Platform.Metric.AttributeEventMapperCatalog" />
 		<provides action="export" specification="br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog"/>
-		<provides action="export" specification="br.ufpe.cin.dsoa.platform.attribute.mapper.AttributeEventMapperCatalog"/>
+		<provides action="export" specification="br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog"/>
 	</composite>
 	<!--  
 		 This component implements DSOA Attributes Catalog. It maintains a register of QoS attributes that are supported
 		 by the platform.
 	-->
-	<component name="Platform.Metric.AttributeCatalog" classname="br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCatalogImpl">
+	<component name="Platform.Metric.AttributeCatalog" classname="br.ufpe.cin.dsoa.platform.attribute.impl.AttributeManagementServiceImpl">
 		<provides />
 	</component>
 		
@@ -262,7 +262,7 @@
 	
 
 	<!-- <instance component="br.ufpe.cin.dsoa.platform.management.impl.PlatformManagementServiceImpl" /> -->
-<!-- 	<instance component="br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCatalogImpl" />
+<!-- 	<instance component="br.ufpe.cin.dsoa.platform.attribute.impl.AttributeManagementServiceImpl" />
 	<instance component="br.ufpe.cin.dsoa.platform.configurator.DsoaServiceTracker" />
 	<instance component="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" /> -->
 	<!-- 

@@ -6,16 +6,32 @@ import br.ufpe.cin.dsoa.api.event.Property;
 
 
 public class AttributeValue {
-/*
-	@XmlElementWrapper(name = METADATA)
-	@XmlElement(name = PROPERTY)
-	private List<AttributePropertyType> metadata;
 
-	@XmlElementWrapper(name = DATA)
-	@XmlElement(name = PROPERTY, required=true)
-	private List<AttributePropertyType> data;*/
-	
 	private Attribute attribute;
 	private Map<String, Property> metadata;
 	private Map<String, Property> data;
+	
+	
+	public AttributeValue(Attribute attribute, Map<String, Property> attMetadata, Map<String, Property> attData) {
+		this.attribute = attribute;
+		this.metadata = attMetadata;
+		this.data = attData;
+	}
+
+
+	public Attribute getAttribute() {
+		return attribute;
+	}
+
+
+	public Map<String, Property> getMetadata() {
+		return metadata;
+	}
+
+
+	public Map<String, Property> getData() {
+		return data;
+	}
+	
+	
 }

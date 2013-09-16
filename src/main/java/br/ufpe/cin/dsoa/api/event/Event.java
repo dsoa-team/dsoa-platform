@@ -73,7 +73,7 @@ public class Event {
 	}
 	
 	public String get(String key){
-		return this.metadata.get(key).getValue().toString();
+		return this.metadata.get("key").getValue().toString();
 	}
 	
 	
@@ -102,7 +102,7 @@ public class Event {
 			Iterator<PropertyType> it = typeList.iterator();
 			while(it.hasNext()){
 				PropertyType propertyType = it.next();
-				map.put(propertyType.getName(), values.get(propertyType.getName()).getValue());
+				map.put(propertyType.getName(), (values.get(propertyType.getName()) == null)? null : values.get(propertyType.getName()).getValue());
 			}
 		}
 		

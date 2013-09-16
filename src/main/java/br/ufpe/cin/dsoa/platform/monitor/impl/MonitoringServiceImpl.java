@@ -15,8 +15,8 @@ import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.Service;
+import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
-import br.ufpe.cin.dsoa.platform.attribute.mapper.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredAttribute;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
@@ -120,10 +120,10 @@ public class MonitoringServiceImpl implements MonitoringService {
 		if (attribute != null) {
 			AttributableId attributableId = new AttributableId(monitoredService.getServiceId(), attributeConstraint.getOperation());
 			MonitoredAttribute monitoredAttribute = new MonitoredAttribute(attributableId, attribute);
-			monitoredService.addAttributeMonitor(monitoredAttribute);
+			monitoredService.addMonitoredAttribute(monitoredAttribute);
 			AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
 			if (mapper != null) {
-				EventConsumer consumer = new EventConsumerImpl(monitoredAttribute);
+				EventConsumer consumer = new EventConsumerImpl(mapper, monitoredAttribute);
 				
 			}
 			//eventProcessingService.registerConsumer(consumer);

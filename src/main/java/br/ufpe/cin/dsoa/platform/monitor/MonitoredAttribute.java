@@ -8,7 +8,7 @@ import org.osgi.service.monitor.StatusVariable;
 import br.ufpe.cin.dsoa.api.attribute.AttributableId;
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
 import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
-import br.ufpe.cin.dsoa.api.event.NotificationListener;
+import br.ufpe.cin.dsoa.api.attribute.AttributeChangeListener;
 import br.ufpe.cin.dsoa.util.Constants;
 
 /**
@@ -17,7 +17,7 @@ import br.ufpe.cin.dsoa.util.Constants;
  * 
  * @author fabions
  */
-public class MonitoredAttribute implements NotificationListener {
+public class MonitoredAttribute implements AttributeChangeListener {
 	
 	private String				statusVariableId;	
 	private Attribute 			attribute;
@@ -54,33 +54,8 @@ public class MonitoredAttribute implements NotificationListener {
 		return new StatusVariable(getStatusVariableId(),StatusVariable.CM_GAUGE, attributeValue.toString());
 	}
 	
-	public void receive(Map result, Object userObject, String statementName) {
-		// TODO Auto-generated method stub
-	}
-
 	@Override
-	public void receive(AttributeValue value) {
-		// TODO Auto-generated method stub
-		
+	public void update(AttributeValue value) {
+		this.attributeValue = value;
 	}
-	
-	
-
-/*	public void update(Object value) {
-		log.info("Property status: " + this.getAttributeName());
-		log.info("Property description: " + this.getAttributeDescription());
-		//this.attributeValue = this.attribute.getAttributeEventMapper().mapEventAttribute((Event)value);
-		log.info("Property metricValue: " + value);
-	}
-	
-	public void receive(Object result, String statementName) {
-		log.info("Property status: " + this.getAttributeName());
-		log.info("Property description: " + this.getAttributeDescription());
-		//this.attributeValue = this.attribute.getAttributeEventMapper().mapEventAttribute((Event)result);
-		log.info("Metri metricValue: " + result);
-		log.info("Status variable: " + this.getStatusVariable());
-		log.info("Status: " + this.getStatusVariable().getString());
-		log.info("Status: " + this.getStatusVariable().getTimeStamp());
-	}*/
-
 }

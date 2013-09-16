@@ -22,7 +22,7 @@ public class TestEventValidation {
 	@Test
 	public void test() {
 	
-		List<PropertyType> metadata = new ArrayList<PropertyType>();
+		/*List<PropertyType> metadata = new ArrayList<PropertyType>();
 		List<PropertyType> data = new ArrayList<PropertyType>();
 
 		//add metadata
@@ -42,7 +42,7 @@ public class TestEventValidation {
 		data.add(new PropertyType("success", Boolean.class, true));
 		data.add(new PropertyType("exception", Exception.class, false));
 		
-		EventType invocationEventType = new EventType("InvocationEvent", metadata, data);
+		//EventType invocationEventType = new EventType("InvocationEvent", metadata, data);
 		
 		System.out.println(invocationEventType.toString());
 		System.out.println(invocationEventType.getMetadataList());
@@ -74,7 +74,7 @@ public class TestEventValidation {
 		dataValue.put(invocationEventType.getDataPropertyType("success").getName(),new Property(true, invocationEventType.getDataPropertyType("success")));
 		dataValue.put(invocationEventType.getDataPropertyType("exception").getName(),new Property(null, invocationEventType.getDataPropertyType("exception")));
 		
-		Event invocationEvent = new Event(invocationEventType, metadataValue, dataValue);
+		Event invocationEvent = new Event(invocationEventType, metadataValue, dataValue);*/
 	}
 
 }
