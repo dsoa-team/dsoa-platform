@@ -14,13 +14,13 @@ public class ResourceManagerImpl implements ResourceManager {
 	private MonitoringService monitoringService;
 	private Map<String, ServiceManager> managedServices = new HashMap<String, ServiceManager>();
 	
-	public void manage(Service service) {
+	public synchronized void manage(Service service) {
 		ServiceManager serviceManager = new ServiceManager(service);
 		serviceManager.start();
 		this.managedServices.put(service.getServiceId(), serviceManager);
 	}
 	
-	public void release(String serviceId) {
+	public synchronized void release(String serviceId) {
 		ServiceManager manager = this.managedServices.get(serviceId);
 		manager.stop();
 	}

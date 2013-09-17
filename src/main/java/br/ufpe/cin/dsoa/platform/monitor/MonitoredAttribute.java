@@ -45,7 +45,7 @@ public class MonitoredAttribute implements AttributeChangeListener {
 	
 	public String getStatusVariableId() {
 		if (statusVariableId == null) {
-			statusVariableId = this.attribute.getId() + Constants.TOKEN + this.attributableId.toString();
+			statusVariableId = this.attributableId.toString() + Constants.TOKEN + this.attribute.getId();
 		}
 		return statusVariableId;
 	}

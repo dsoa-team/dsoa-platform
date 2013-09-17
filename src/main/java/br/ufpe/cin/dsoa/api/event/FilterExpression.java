@@ -4,17 +4,17 @@ import br.ufpe.cin.dsoa.api.service.Expression;
 
 public class FilterExpression {
 
-	private Parameter parameter;
+	private Property property;
 	private Expression expression;
 
-	public FilterExpression(Parameter parameter, Expression expression) {
+	public FilterExpression(Property property, Expression expression) {
 		super();
-		this.parameter = parameter;
+		this.property = property;
 		this.expression = expression;
 	}
 
-	public Parameter getParameter() {
-		return parameter;
+	public Property getProperty() {
+		return property;
 	}
 
 	public Expression getExpression() {

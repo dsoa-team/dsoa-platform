@@ -12,15 +12,23 @@ import br.ufpe.cin.dsoa.api.attribute.AttributableId;
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.event.EventFilter;
+import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.FilterExpression;
+import br.ufpe.cin.dsoa.api.event.Property;
+import br.ufpe.cin.dsoa.api.event.PropertyType;
+import br.ufpe.cin.dsoa.api.event.Subscription;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.api.service.Expression;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.Service;
-import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
+import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredAttribute;
-import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;
+import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
+import br.ufpe.cin.dsoa.util.Constants;
 
 
 
@@ -77,9 +85,8 @@ public class MonitoringServiceImpl implements MonitoringService {
 	
 	public MonitoredService startMonitoring(Service service) {
 		NonFunctionalSpecification nfs = service.getSpecification().getNonFunctionalSpecification();
-		MonitoredService monitoredService = null;
+		MonitoredService monitoredService = new MonitoredService(ctx, service);
 		if (nfs != null) {
-			monitoredService = new MonitoredService(ctx, service);
 			for (AttributeConstraint attributeConstraint : service.getSpecification().getNonFunctionalSpecification().getAttributeConstraints()) {
 				this.addAttributeMonitor(monitoredService, attributeConstraint);
 			}
@@ -124,7 +131,15 @@ public class MonitoringServiceImpl implements MonitoringService {
 			AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
 			if (mapper != null) {
 				EventConsumer consumer = new EventConsumerImpl(mapper, monitoredAttribute);
-				
+				EventType eventType = mapper.getEventType();
+				PropertyType sourceType = eventType.getMetadataPropertyType(Constants.EVENT_SOURCE);
+				FilterExpression filterExp = new FilterExpression(new Property(attributableId.getId(), sourceType), Expression.EQ);
+				List<FilterExpression> filterList = new ArrayList<FilterExpression>();
+				filterList.add(filterExp);
+				EventFilter filter = new EventFilter(filterList);
+				String id = sourceType + "." + attributeId;
+				Subscription subscription = new Subscription(id, eventType, filter);
+				eventProcessingService.subscribe(consumer, subscription);
 			}
 			//eventProcessingService.registerConsumer(consumer);
 		// String stmtName = monitor.getStatusVariableId();
