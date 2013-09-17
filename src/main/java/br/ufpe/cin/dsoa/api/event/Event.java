@@ -56,6 +56,13 @@ public class Event {
 		return eventMap;
 	}
 	
+
+	public static Event fromMap(Map<String, Object> underlyingEvent){
+		
+		
+		return null;
+	}
+	
 	public List<Property> getMetadataProperties() {
 		return getPropertyList(metadata);
 	}

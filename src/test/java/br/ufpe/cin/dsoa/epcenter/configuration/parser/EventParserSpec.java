@@ -76,7 +76,7 @@ public class EventParserSpec {
 		this.u = context.createUnmarshaller();
 		this.list = (EventTypeList) u.unmarshal(new FileInputStream("src/test/resources/epcenter/configuration/event.xml"));
 		this.esperProvider = EPServiceProviderManager.getProvider("Dsoa-EsperEngine", new Configuration());
-		this.epService = new EsperProcessingService(esperProvider);
+		this.epService = new EsperProcessingService();
 		this.epService.start();
 		String[] types = {"DsoaEvent", "InvocationEvent", "AvgResponseTimeEvent" };
 		this.validTypes = Arrays.asList(types);
@@ -101,7 +101,7 @@ public class EventParserSpec {
 		data.add(new PropertyType("success", Boolean.class, true));
 		data.add(new PropertyType("exception", Exception.class, false));
 		
-		//invocationEventType = new EventType("InvocationEvent", metadata, data);
+		//avgResponseTimeEventType = new EventType("InvocationEvent", metadata, data);
 	}*/
 	
 	private void registerEvents() {

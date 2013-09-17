@@ -13,6 +13,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.api.service.impl.OsgiService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
+import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 import br.ufpe.cin.dsoa.util.Constants;
 import br.ufpe.cin.dsoa.util.Util;
 
@@ -29,10 +30,10 @@ import br.ufpe.cin.dsoa.util.Util;
  */
 public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 
-	private MonitoringService monitoringService;
+	private ResourceManager resourceManagerImpl;
 
-	public DsoaServiceTracker(MonitoringService monitoringService) {
-		this.monitoringService = monitoringService;
+	public DsoaServiceTracker(ResourceManager resourceManagerImpl) {
+		this.resourceManagerImpl = resourceManagerImpl;
 	}
 
 	/**
@@ -71,7 +72,7 @@ public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 				// this.registry.addService(service);
 				List<OsgiService> services = OsgiService.getOsgiServices(reference);
 				for (Service service : services) {
-					monitoringService.startMonitoring(service);
+					resourceManagerImpl.manage(service);
 				}
 			} catch (ClassNotFoundException e) {
 				// this should never happen
@@ -87,11 +88,11 @@ public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 
 	public void removedService(ServiceReference reference, Object service) {
 		String serviceId = Util.getId(reference);
-		monitoringService.stopMonitoring(serviceId);
+		resourceManagerImpl.release(serviceId);
 	}
 
-	public void setMonitoringService(MonitoringService monitoringServiceImpl) {
-		this.monitoringService = monitoringServiceImpl;
+	public void setMonitoringService(ResourceManager resourceManagerImpl) {
+		this.resourceManagerImpl = resourceManagerImpl;
 	}
 
 }

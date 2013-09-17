@@ -20,7 +20,7 @@ import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
  * the QoS attributes that are supported by the platform.
  * 
  **/
-public class AttributeManagementServiceImpl implements AttributeCatalog, AttributeEventMapperCatalog {
+public class AttributeManager implements AttributeCatalog, AttributeEventMapperCatalog {
 	
 	private Map<String,Attribute> attributeMap = new HashMap<String,Attribute>();
 	private Map<String,AttributeCategory> attributeCategoryMap = new HashMap<String,AttributeCategory>();

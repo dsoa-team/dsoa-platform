@@ -37,28 +37,14 @@
 	<!-- ========================== 			DSOA METRIC COMPUTING COMPONENT		   	   ========================== -->
 	<!-- ============================================================================================================ -->
 	<!-- ============================================================================================================ -->
-	<composite name="Platform.Metric.MetricComputingComponent">
-		<instance component="Platform.Metric.AttributeCatalog" />
-		<instance component="Platform.Metric.AttributeEventMapperCatalog" />
-		<provides action="export" specification="br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog"/>
-		<provides action="export" specification="br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog"/>
-	</composite>
+	<component 	name="Platform.Metric.MetricComputingComponent"
+				classname="br.ufpe.cin.dsoa.platform.attribute.impl.AttributeManager">
+		<provides />
+	</component>
 	<!--  
 		 This component implements DSOA Attributes Catalog. It maintains a register of QoS attributes that are supported
 		 by the platform.
 	-->
-	<component name="Platform.Metric.AttributeCatalog" classname="br.ufpe.cin.dsoa.platform.attribute.impl.AttributeManagementServiceImpl">
-		<provides />
-	</component>
-		
-	<!--  
-		 This component register which event signals a change in an attribute value. It should be consulted in order to
-		 register listeners that are triggered when an attribute value changes.
-	-->
-	<component 	name="Platform.Metric.AttributeEventMapperCatalog" 
-				classname="br.ufpe.cin.dsoa.platform.attribute.mapper.impl.AttributeEventMapperCatalogImpl">
-		<provides />
-	</component>
 		
 	<!-- ============================================================================================================ -->		
 	<!-- ============================================================================================================ -->
@@ -152,7 +138,7 @@
 		<requires field="attributeEventMapperCatalog" />
 		<requires field="agentCatalog" />
 		<requires field="epService" />
-		<requires field="monitoringService" />
+		<requires field="resourceManager" />
 		<callback transition="validate" method="start" />
 		<callback transition="invalidate" method="stop" />
 	</component>
@@ -178,6 +164,12 @@
 			<property name="service.exported.interfaces"  value="*"  type="java.lang.String"/>
 			<property name="service.exported.configs"  value="org.apache.cxf.ws"  type="java.lang.String"/>
 		</provides>
+	</component>
+	
+	<component 	name="Platform.Management.ResourceManagerComponent" 
+				classname="br.ufpe.cin.dsoa.platform.resource.impl.ResourceManagerImpl">
+		<requires field="monitoringService" />
+		<provides />
 	</component>
 			
 	
@@ -243,6 +235,7 @@
 	<instance component="Platform.Registry.QoSAwareRegistryComponent" />
 	<instance component="Platform.Configuration.ConfiguratorComponent" />
 	<instance component="Platform.Management.ManagementComponent" />
+	<instance component="Platform.Management.ResourceManagerComponent" />
 	
 	<instance component="Platform.Shell.DsoaShell" />
 	<instance component="Platform.Shell.ListAttributesCmd" />
@@ -262,7 +255,7 @@
 	
 
 	<!-- <instance component="br.ufpe.cin.dsoa.platform.management.impl.PlatformManagementServiceImpl" /> -->
-<!-- 	<instance component="br.ufpe.cin.dsoa.platform.attribute.impl.AttributeManagementServiceImpl" />
+<!-- 	<instance component="br.ufpe.cin.dsoa.platform.attribute.impl.AttributeManager" />
 	<instance component="br.ufpe.cin.dsoa.platform.configurator.DsoaServiceTracker" />
 	<instance component="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" /> -->
 	<!-- 

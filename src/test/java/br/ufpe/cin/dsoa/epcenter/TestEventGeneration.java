@@ -43,7 +43,7 @@ public class TestEventGeneration {
 		data = new ArrayList<PropertyType>();
 		this.defineInvocationEventType();
 		this.esperProvider = EPServiceProviderManager.getProvider("Dsoa-EsperEngine", new Configuration());
-		epService = new EsperProcessingService(esperProvider);
+		epService = new EsperProcessingService();
 		epService.start();
 	}
 

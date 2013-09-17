@@ -20,11 +20,4 @@
 			<property id="exception" type="java.lang.Exception" />
 		</data>
 	</event>
-	
-	<event type="AvgResponseTimeEvent" extends="DsoaEvent">
-		<data>
-			<property id="value" type="java.lang.Double" />
-		</data>
-	</event>
-	
 </events>

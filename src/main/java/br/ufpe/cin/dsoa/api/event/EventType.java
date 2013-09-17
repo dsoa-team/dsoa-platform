@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
+import br.ufpe.cin.dsoa.util.Constants;
+
 /**
  * 
  * Represent an event type (Type Object Pattern). Each new event type will be an
@@ -98,7 +100,7 @@ public class EventType {
 	 * public void addMetadata(PropertyType propertyType) {
 		this.metadata.put(propertyType.getName(), propertyType);
 	}
-
+*/
 	public EventType(String name, List<PropertyType> metadata,
 			List<PropertyType> data) {
 		this.name = name;
@@ -107,7 +109,7 @@ public class EventType {
 		this.loadMap(metadata, metadataMap);
 		this.loadMap(data, dataMap);
 	}
-	
+	/*
 	public Map<String, PropertyType> getData() {
 		return data;
 	}
@@ -222,9 +224,9 @@ public class EventType {
 			}
 		}
 		
-		map.put("name", String.class);
-		map.put("metadata", metadataDef);
-		map.put("data", dataDef);
+		map.put(Constants.EVENT_TYPE, String.class);
+		map.put(Constants.EVENT_METADATA, metadataDef);
+		map.put(Constants.EVENT_DATA, dataDef);
 		
 		return map;
 	}
@@ -247,13 +249,13 @@ public class EventType {
 		return new ArrayList<PropertyType>(propertyTypesSet);
 	}
 
-	private void loadMap(List<PropertyType> metadata,
-			Map<String, PropertyType> metadataMap) {
+	private void loadMap(List<PropertyType> lista,
+			Map<String, PropertyType> mapa) {
 		
-		Iterator<PropertyType> it = metadata.iterator();
+		Iterator<PropertyType> it = lista.iterator();
 		while (it.hasNext()) {
 			PropertyType property = it.next();
-			metadataMap.put(property.getName(), property);
+			mapa.put(property.getName(), property);
 		}
 	}
 

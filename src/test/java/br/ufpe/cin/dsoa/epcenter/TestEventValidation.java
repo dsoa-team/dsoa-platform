@@ -42,39 +42,39 @@ public class TestEventValidation {
 		data.add(new PropertyType("success", Boolean.class, true));
 		data.add(new PropertyType("exception", Exception.class, false));
 		
-		//EventType invocationEventType = new EventType("InvocationEvent", metadata, data);
+		//EventType avgResponseTimeEventType = new EventType("InvocationEvent", metadata, data);
 		
-		System.out.println(invocationEventType.toString());
-		System.out.println(invocationEventType.getMetadataList());
-		System.out.println(invocationEventType.getRequiredMetadataAttributeTypeList());
-		System.out.println(invocationEventType.getOptionalMetadataAttributeTypeList());
+		System.out.println(avgResponseTimeEventType.toString());
+		System.out.println(avgResponseTimeEventType.getMetadataList());
+		System.out.println(avgResponseTimeEventType.getRequiredMetadataAttributeTypeList());
+		System.out.println(avgResponseTimeEventType.getOptionalMetadataAttributeTypeList());
 		
-		System.out.println(invocationEventType.getDataList());
-		System.out.println(invocationEventType.getRequiredDataAttributeTypeList());
-		System.out.println(invocationEventType.getOptionalDataAttributeTypeList());
+		System.out.println(avgResponseTimeEventType.getDataList());
+		System.out.println(avgResponseTimeEventType.getRequiredDataAttributeTypeList());
+		System.out.println(avgResponseTimeEventType.getOptionalDataAttributeTypeList());
 		
 
 		Map<String, Property> metadataValue = new HashMap<String, Property>();
 		Map<String, Property> dataValue = new HashMap<String, Property>();
 		
 		//metadata values
-		metadataValue.put(invocationEventType.getMetadataPropertyType("id").getName(), new Property("123", invocationEventType.getMetadataPropertyType("id")));
-		metadataValue.put(invocationEventType.getMetadataPropertyType("timestamp").getName(),new Property(System.nanoTime() , invocationEventType.getMetadataPropertyType("timestamp")));
+		metadataValue.put(avgResponseTimeEventType.getMetadataPropertyType("id").getName(), new Property("123", avgResponseTimeEventType.getMetadataPropertyType("id")));
+		metadataValue.put(avgResponseTimeEventType.getMetadataPropertyType("timestamp").getName(),new Property(System.nanoTime() , avgResponseTimeEventType.getMetadataPropertyType("timestamp")));
 		
 		//data values
-		dataValue.put(invocationEventType.getDataPropertyType("consumerId").getName(),new Property("consumer1", invocationEventType.getDataPropertyType("consumerId")));
-		dataValue.put(invocationEventType.getDataPropertyType("serviceId").getName(),new Property("34", invocationEventType.getDataPropertyType("serviceId")));
-		dataValue.put(invocationEventType.getDataPropertyType("operationName").getName(),new Property("fizz", invocationEventType.getDataPropertyType("operationName")));
-		dataValue.put(invocationEventType.getDataPropertyType("resquestTimestamp").getName(),new Property(1351L, invocationEventType.getDataPropertyType("resquestTimestamp")));
-		dataValue.put(invocationEventType.getDataPropertyType("responseTimestamp").getName(),new Property(2313L, invocationEventType.getDataPropertyType("responseTimestamp")));
-		//dataValue.put(invocationEventType.getDataPropertyType("parameterTypes").getName(),new Property("parameterTypes", invocationEventType.getDataPropertyType("parameterTypes")));
-		//dataValue.put(invocationEventType.getDataPropertyType("parameterValues").getName(),new Property("parameterValues", invocationEventType.getDataPropertyType("parameterValues")));
-		dataValue.put(invocationEventType.getDataPropertyType("returnType").getName(),new Property(String.class, invocationEventType.getDataPropertyType("returnType")));
-		dataValue.put(invocationEventType.getDataPropertyType("returnValue").getName(),new Property("return", invocationEventType.getDataPropertyType("returnValue")));
-		dataValue.put(invocationEventType.getDataPropertyType("success").getName(),new Property(true, invocationEventType.getDataPropertyType("success")));
-		dataValue.put(invocationEventType.getDataPropertyType("exception").getName(),new Property(null, invocationEventType.getDataPropertyType("exception")));
+		dataValue.put(avgResponseTimeEventType.getDataPropertyType("consumerId").getName(),new Property("consumer1", avgResponseTimeEventType.getDataPropertyType("consumerId")));
+		dataValue.put(avgResponseTimeEventType.getDataPropertyType("serviceId").getName(),new Property("34", avgResponseTimeEventType.getDataPropertyType("serviceId")));
+		dataValue.put(avgResponseTimeEventType.getDataPropertyType("operationName").getName(),new Property("fizz", avgResponseTimeEventType.getDataPropertyType("operationName")));
+		dataValue.put(avgResponseTimeEventType.getDataPropertyType("resquestTimestamp").getName(),new Property(1351L, avgResponseTimeEventType.getDataPropertyType("resquestTimestamp")));
+		dataValue.put(avgResponseTimeEventType.getDataPropertyType("responseTimestamp").getName(),new Property(2313L, avgResponseTimeEventType.getDataPropertyType("responseTimestamp")));
+		//dataValue.put(avgResponseTimeEventType.getDataPropertyType("parameterTypes").getName(),new Property("parameterTypes", avgResponseTimeEventType.getDataPropertyType("parameterTypes")));
+		//dataValue.put(avgResponseTimeEventType.getDataPropertyType("parameterValues").getName(),new Property("parameterValues", avgResponseTimeEventType.getDataPropertyType("parameterValues")));
+		dataValue.put(avgResponseTimeEventType.getDataPropertyType("returnType").getName(),new Property(String.class, avgResponseTimeEventType.getDataPropertyType("returnType")));
+		dataValue.put(avgResponseTimeEventType.getDataPropertyType("returnValue").getName(),new Property("return", avgResponseTimeEventType.getDataPropertyType("returnValue")));
+		dataValue.put(avgResponseTimeEventType.getDataPropertyType("success").getName(),new Property(true, avgResponseTimeEventType.getDataPropertyType("success")));
+		dataValue.put(avgResponseTimeEventType.getDataPropertyType("exception").getName(),new Property(null, avgResponseTimeEventType.getDataPropertyType("exception")));
 		
-		Event invocationEvent = new Event(invocationEventType, metadataValue, dataValue);*/
+		Event invocationEvent = new Event(avgResponseTimeEventType, metadataValue, dataValue);*/
 	}
 
 }

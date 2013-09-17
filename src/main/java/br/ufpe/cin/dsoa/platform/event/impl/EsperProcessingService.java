@@ -56,11 +56,6 @@ public class EsperProcessingService  implements
 	//TODO REMOVE
 	public EsperProcessingService() {}
 	
-	//TODO REMOVE
-	public EsperProcessingService(EPServiceProvider esperProvider) {
-		// TODO Auto-generated constructor stub
-	}
-	
 	public void start() {
 		this.epServiceProvider = EPServiceProviderManager.getProvider("Dsoa-EsperEngine", new Configuration());
 	}
@@ -174,4 +169,7 @@ public class EsperProcessingService  implements
 		return (null == stored) ? true : false;
 	}
 
+	public EPServiceProvider getEpProvider() {
+		return this.epServiceProvider;
+	}
 }

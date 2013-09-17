@@ -48,7 +48,7 @@ public class AgentParserSpec {
 		"src/test/resources/epcenter/configuration/event.xml"));
 		
 		this.esperProvider = EPServiceProviderManager.getProvider("Dsoa-EsperEngine", new Configuration());
-		this.epService = new EsperProcessingService(esperProvider);
+		this.epService = new EsperProcessingService();
 		this.epService.start();
 		this.registerEvents();
 	}
