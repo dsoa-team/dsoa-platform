@@ -1,0 +1,65 @@
+package br.ufpe.cin.dsoa.platform.event.impl;
+
+import java.util.Iterator;
+import java.util.List;
+
+import br.ufpe.cin.dsoa.api.event.EventFilter;
+import br.ufpe.cin.dsoa.api.event.FilterExpression;
+import br.ufpe.cin.dsoa.api.event.Subscription;
+
+public class EsperSubscriptionBuilder  implements QueryBuilder  {
+
+		private Query query;
+		private StringBuilder queryString;
+		private Subscription subscription;
+
+		public EsperSubscriptionBuilder(Subscription subscription) {
+			this.queryString = new StringBuilder();
+			this.subscription = subscription;
+		}
+
+		public void buildSelectClause() {
+			this.queryString.append("SELECT * ");
+		}
+		
+		
+		public void buildFromClause() {
+			this.queryString.append(" FROM " + subscription.getEventType().getName() + " ");
+			EventFilter filter  = subscription.getFilter();
+			if (filter != null) {
+				List<FilterExpression> expressions = filter.getFilterExpressions();
+				boolean first = true;
+				if (expressions != null) {
+					Iterator<FilterExpression> iterator = expressions.iterator();
+					while (iterator.hasNext()) {
+						FilterExpression exp = iterator.next();
+						if (!first) {
+							this.queryString.append(" AND ");
+						} else {
+							this.queryString.append("(");
+						}
+						first = false;
+						this.queryString.append(exp.getProperty().getPropertyType().getName());
+						this.queryString.append(exp.getProperty().getPropertyType().getExpression().toString());
+						this.queryString.append(exp.getProperty().getValue());
+					}
+					this.queryString.append(") ");
+				}
+			}
+		}
+
+		public void buildWhereClause() {
+		}
+
+		public void buildGroupByClause() {
+		}
+
+		public void buildHavingClause() {
+		}
+
+		public Query getQuery() {
+			this.query = new Query(subscription.getId(), this.queryString.toString());
+			return query;
+		}
+
+	}

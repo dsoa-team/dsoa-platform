@@ -233,23 +233,6 @@ public class EventType {
 		return required;
 	}
 
-	public boolean isValid(EventFilter filter) {
-		Map<String, PropertyType> propMap = getPropertiesMap();
-		List<FilterExpression> expressions = filter.getFilterExpressions();
-		if (expressions != null) {
-			for (FilterExpression filterExpression : expressions) {
-				Parameter param = filterExpression.getParameter();
-				PropertyType propType = propMap.get(param.getName());
-				if (propType == null
-						|| !propType.getClass().isAssignableFrom(
-								param.getClass())) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
 	public Map<String, PropertyType> getPropertiesMap() {
 		List<PropertyType> propertyList = new ArrayList<PropertyType>();
 

@@ -3,24 +3,32 @@ package br.ufpe.cin.dsoa.api.event;
 
 public class Subscription {
 
-	private String eventTypeName;
+	private EventType eventType;
 	
 	private EventFilter filter;
 
-	public Subscription(String eventTypeId, EventFilter filter) {
-		if (eventTypeId == null) {
+	private String id;
+
+	public Subscription(String id, EventType eventType, EventFilter filter) {
+		if (eventType == null) {
 			throw new IllegalArgumentException();
 		}
-		this.eventTypeName = eventTypeId;
+		this.id = id;
+		this.eventType = eventType;
 		this.filter = filter;
 	}
 
-	public String getEventTypeName() {
-		return this.eventTypeName;
+	public EventType getEventType() {
+		return this.eventType;
 	}
 	
 	public EventFilter getFilter() {
 		return this.filter;
 	}
+
+	public String getId() {
+		return id;
+	}
+	
 	
 }

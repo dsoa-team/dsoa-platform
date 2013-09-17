@@ -25,6 +25,7 @@ import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
+import com.espertech.esper.client.EPStatement;
 
 /**
  * Esper implementation of EventProcessingService. This component implements
@@ -47,7 +48,7 @@ public class EsperProcessingService implements EventProcessingService {
 
 	private Map<String, EventType> eventTypeMap = new HashMap<String, EventType>();
 
-	private Map<String, EventListener> listenerMap = new HashMap<String, EventListener>();
+	private Map<String, EventSubscriber> listenerMap = new HashMap<String, EventSubscriber>();
 
 	private ConcurrentHashMap<String, EventConsumer> consumers = new ConcurrentHashMap<String, EventConsumer>();
 
@@ -70,6 +71,12 @@ public class EsperProcessingService implements EventProcessingService {
 		this.epServiceProvider.destroy();
 	}
 
+	public void publish(Event event) {
+		String name = event.getEventType().getName();
+		Map<String, Object> eventMap = event.toMap();
+		this.epServiceProvider.getEPRuntime().sendEvent(eventMap, name);
+	}	
+	
 	public void registerAgent(EventProcessingAgent agent) {
 		String id = null;
 		String queryString = null;
@@ -109,23 +116,18 @@ public class EsperProcessingService implements EventProcessingService {
 		 * this.registerEventType(eventType);
 		 */
 	}
-
-	public void publish(Event event) {
-		String name = event.getEventType().getName();
-		Map<String, Object> eventMap = event.toMap();
-		this.epServiceProvider.getEPRuntime().sendEvent(eventMap, name);
-	}
-
-	public synchronized void subscribe(EventConsumer consumer,
-			Subscription subscription) {
-		String eventTypeName = subscription.getEventTypeName();
-		EventType eventType = this.eventTypeMap.get(eventTypeName);
-		if (eventType != null && eventType.isValid(subscription.getFilter())) {
-			EventListener listener = new EventListener(ctx, consumer,
-					subscription);
-			listener.start();
-			this.listenerMap.put(consumer.getId(), listener);
-		}
+	
+	public synchronized void subscribe(EventConsumer consumer, Subscription subscription) {
+		Query query = null;
+		QueryBuilder builder = this.getQueryBuilder(subscription);
+		QueryDirector director = new QueryDirector(builder);
+		director.construct();
+		query = director.getQuery();
+		EventSubscriber listener = new EventSubscriber(ctx, consumer, subscription);
+		EPStatement statement = this.startQuery(query);
+		statement.setSubscriber(listener);
+		
+		this.listenerMap.put(consumer.getId(), listener);
 	}
 
 	public void unsubscribe(EventConsumer consumer, Subscription subscription) {
@@ -239,12 +241,16 @@ public class EsperProcessingService implements EventProcessingService {
 	protected QueryBuilder getQueryBuilder(EventProcessingAgent agent) {
 		return new EsperAgentBuilder(agent);
 	}
-
-	protected void startQuery(Query query) {
-		this.epServiceProvider.getEPAdministrator().createEPL(
-				query.getQueryString(), query.getId());
+	
+	protected QueryBuilder getQueryBuilder(Subscription subscription) {
+		return new EsperSubscriptionBuilder(subscription);
 	}
 
+	protected EPStatement startQuery(Query query) {
+		return this.epServiceProvider.getEPAdministrator().createEPL(
+				query.getQueryString(), query.getId());
+	}
+	
 	@Override
 	public void unRegisterAgent(String agentId) {
 		// TODO Auto-generated method stub

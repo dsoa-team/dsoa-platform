@@ -42,4 +42,6 @@ public interface Constants {
 	public static final String INVOCATION_EVENT			= "InvocationEvent";
 	public static final String EVENT_METADATA 			= "metadata";
 	public static final String EVENT_DATA 				= "data";
+	
+	public static final String EVENT_SOURCE = "source";
 }

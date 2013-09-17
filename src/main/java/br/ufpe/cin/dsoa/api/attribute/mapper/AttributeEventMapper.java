@@ -56,6 +56,10 @@ public class AttributeEventMapper {
 	public void setEventType(EventType eventType) {
 		this.eventType = eventType;
 	}
+	
+	public EventType getEventType() {
+		return this.eventType;
+	}
 
 	public String getCategory() {
 		return category;
