@@ -83,7 +83,7 @@ public class Event {
 		return this.metadata.get("key").getValue().toString();
 	}
 	
-	
+
 	@Override
 	public String toString() {
 		return "Event [eventType=" + eventType + ", metadata=" + metadata

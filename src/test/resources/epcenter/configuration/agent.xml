@@ -12,7 +12,7 @@
 					<property id="timestamp" expression="event.metadata.timestamp" />
 				</metadata>
 				<data>
-					<property id="value"
+					<property id="value" type="java.lang.Double"
 						expression="avg(event.data.responseTimestamp - event.data.requestTimestamp)" />
 				</data>
 			</output-event>

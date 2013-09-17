@@ -1,9 +1,7 @@
 package br.ufpe.cin.dsoa.platform.event.impl;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
@@ -36,11 +34,9 @@ public class EsperAgentBuilder implements QueryBuilder {
 	public void buildSelectClause() {
 		this.queryString.append(" INSERT INTO " + this.out.getType());
 		this.queryString.append(" SELECT ");
-		this.queryString.append(this.in.getAlias() + ".metadata as metadata, ");
-		this.queryString.append(this.in.getAlias() + ".data as data ");
-		//this.queryString.append(extractSelect(this.out.getMetadata(),
-		//		"metadata") + ", ");
-		//this.queryString.append(extractSelect(this.out.getData(), "data"));
+		this.queryString.append(extractSelect(this.out.getMetadata(),
+				"metadata") + ", ");
+		this.queryString.append(extractSelect(this.out.getData(), "data"));
 	}
 	
 	
@@ -78,7 +74,7 @@ public class EsperAgentBuilder implements QueryBuilder {
 			first = false;
 			PropertyType p = iterator.next();
 			// empty string is: Constants.TOKEN
-			result.append(String.format("%s %s.%s ", p.getExpression(), prefix, p.getName()));
+			result.append(String.format("%s as %s_%s ", p.getExpression(), prefix, p.getName()));
 		}
 		return result.toString();
 	}

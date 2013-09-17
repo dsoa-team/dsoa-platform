@@ -124,6 +124,11 @@ public class PropertyType {
 			return false;
 		return true;
 	}
-
+	
+	public Property createProperty(Object value){
+		Property property = new Property(value, this);
+		
+		return property;
+	}
 
 }

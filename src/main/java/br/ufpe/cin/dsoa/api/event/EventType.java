@@ -30,27 +30,25 @@ import br.ufpe.cin.dsoa.util.Constants;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class EventType {
 
-	public static final String METADATA 			= "metadata";
-	public static final String DATA 				= "data";
-	public static final String PROPERTY 			= "property";
-	
-	@XmlAttribute(name="type", required = true)
+	public static final String METADATA = "metadata";
+	public static final String DATA = "data";
+	public static final String PROPERTY = "property";
+
+	@XmlAttribute(name = "type", required = true)
 	private String name;
 
-	//@XmlJavaTypeAdapter(EventTypeAdapter.class)
+	// @XmlJavaTypeAdapter(EventTypeAdapter.class)
 	private EventType superType = null;
-	
-	@XmlAttribute(name="extends")
-	private String superTypeName;
 
+	@XmlAttribute(name = "extends")
+	private String superTypeName;
 
 	private List<PropertyType> metadata;
 	private Map<String, PropertyType> metadataMap = new HashMap<String, PropertyType>();
 
 	private List<PropertyType> data;
 	private Map<String, PropertyType> dataMap = new HashMap<String, PropertyType>();
-	
-	
+
 	EventType() {
 		this.metadata = new ArrayList<PropertyType>() {
 			@Override
@@ -65,7 +63,7 @@ public class EventType {
 				}
 			}
 		};
-		
+
 		this.data = new ArrayList<PropertyType>() {
 			@Override
 			public boolean add(PropertyType propType) {
@@ -79,7 +77,7 @@ public class EventType {
 				}
 			}
 		};
-		
+
 	}
 
 	@XmlElementWrapper(name = METADATA)
@@ -87,20 +85,13 @@ public class EventType {
 	private List<PropertyType> getMetadata() {
 		return metadata;
 	}
-	
-	//private List<PropertyType> data;
-	
+
 	@XmlElementWrapper(name = DATA)
 	@XmlElement(name = PROPERTY)
 	private List<PropertyType> getData() {
 		return data;
 	}
 
-	/*
-	 * public void addMetadata(PropertyType propertyType) {
-		this.metadata.put(propertyType.getName(), propertyType);
-	}
-*/
 	public EventType(String name, List<PropertyType> metadata,
 			List<PropertyType> data) {
 		this.name = name;
@@ -109,25 +100,6 @@ public class EventType {
 		this.loadMap(metadata, metadataMap);
 		this.loadMap(data, dataMap);
 	}
-	/*
-	public Map<String, PropertyType> getData() {
-		return data;
-	}
-
-	public List<PropertyType> getDataList() {
-		return dataList;
-	}
-	
-	public void addData(PropertyType propertyType) {
-		this.data.put(propertyType.getName(), propertyType);
-	}
-	
-	public EventType(String name, List<PropertyType> metadata,
-			List<PropertyType> data, EventType superType) {
-		this(name, metadata, data);
-		this.superType = superType;
-	}
-	 */
 
 	public String getName() {
 		return name;
@@ -141,15 +113,6 @@ public class EventType {
 		return superTypeName;
 	}
 
-/*	public List<PropertyType> getMetadata() {
-		return metadata;
-	}
-
-	public List<PropertyType> getData() {
-		return data;
-	}
-	*/
-
 	public Map<String, PropertyType> getMetadataMap() {
 		return metadataMap;
 	}
@@ -161,11 +124,10 @@ public class EventType {
 	public PropertyType getMetadataPropertyType(String name) {
 		return this.metadataMap.get(name);
 	}
-	
+
 	public PropertyType getDataPropertyType(String name) {
 		return this.dataMap.get(name);
 	}
-	
 
 	public List<PropertyType> getRequiredMetadataAttributeTypeList() {
 		return getRequiredPropertyTypeList(getMetadataList());
@@ -190,47 +152,45 @@ public class EventType {
 	}
 
 	public List<PropertyType> getMetadataList() {
-		return getPropertyTypeList(new ArrayList<PropertyType>(metadataMap.values()), superType == null ? null
-				: new ArrayList<PropertyType>(superType.metadataMap.values()));
+		return getPropertyTypeList(
+				new ArrayList<PropertyType>(metadataMap.values()),
+				superType == null ? null : new ArrayList<PropertyType>(
+						superType.metadataMap.values()));
 	}
 
 	public List<PropertyType> getDataList() {
-		return getPropertyTypeList(new ArrayList<PropertyType>(dataMap.values()), superType == null ? null
-				: new ArrayList<PropertyType>(superType.dataMap.values()));
+		return getPropertyTypeList(
+				new ArrayList<PropertyType>(dataMap.values()),
+				superType == null ? null : new ArrayList<PropertyType>(
+						superType.dataMap.values()));
 	}
-	
-	
-	public final Map<String, Object> toDefinitionMap(){
+
+	public final Map<String, Object> toDefinitionMap() {
 		Map<String, Object> map = new HashMap<String, Object>();
-		
-		//metadata
+
+		// metadata
 		Map<String, Object> metadataDef = new HashMap<String, Object>();
 		if (!metadataMap.isEmpty()) {
 			for (PropertyType property : metadataMap.values()) {
 				metadataDef.put(property.getName(), property.getType());
 			}
 		}
-		/*Iterator<PropertyType> metadata = this.metadata.iterator();
-		while(metadata.hasNext()){
-			PropertyType p = metadata.next();
-			metadataDef.put(p.getName(), p.getType());
-		}*/
-		
-		//data
+
+		// data
 		Map<String, Object> dataDef = new HashMap<String, Object>();
 		if (!dataMap.isEmpty()) {
 			for (PropertyType property : dataMap.values()) {
 				dataDef.put(property.getName(), property.getType());
 			}
 		}
-		
+
 		map.put(Constants.EVENT_TYPE, String.class);
 		map.put(Constants.EVENT_METADATA, metadataDef);
 		map.put(Constants.EVENT_DATA, dataDef);
-		
+
 		return map;
 	}
-	
+
 	private List<PropertyType> getPropertyTypeList(
 			List<PropertyType> propertyTypes, List<PropertyType> superPropTypes) {
 
@@ -251,7 +211,7 @@ public class EventType {
 
 	private void loadMap(List<PropertyType> lista,
 			Map<String, PropertyType> mapa) {
-		
+
 		Iterator<PropertyType> it = lista.iterator();
 		while (it.hasNext()) {
 			PropertyType property = it.next();
@@ -280,7 +240,9 @@ public class EventType {
 			for (FilterExpression filterExpression : expressions) {
 				Parameter param = filterExpression.getParameter();
 				PropertyType propType = propMap.get(param.getName());
-				if (propType == null || !propType.getClass().isAssignableFrom(param.getClass())) {
+				if (propType == null
+						|| !propType.getClass().isAssignableFrom(
+								param.getClass())) {
 					return false;
 				}
 			}
@@ -290,12 +252,70 @@ public class EventType {
 
 	public Map<String, PropertyType> getPropertiesMap() {
 		List<PropertyType> propertyList = new ArrayList<PropertyType>();
+
 		propertyList.addAll(this.getMetadataList());
 		propertyList.addAll(this.getDataList());
-		Map <String, PropertyType> propMap = new HashMap<String, PropertyType>();
+
+		Map<String, PropertyType> propMap = new HashMap<String, PropertyType>();
+
 		for (PropertyType propertyType : propertyList) {
 			propMap.put(propertyType.getName(), propertyType);
 		}
+
 		return propMap;
+	}
+
+	public Event createEvent(Map<String, Object> metadata,
+			Map<String, Object> data) {
+
+		Map<String, Property> metadataValue = this.loadValues(metadata, true);
+		Map<String, Property> dataValue = this.loadValues(data, false);
+
+		Event event = new Event(this, metadataValue, dataValue);
+
+		return event;
+	}
+
+	private Map<String, Property> loadValues(Map<String, Object> valueMap,
+			boolean isMetadata) {
+
+		Map<String, Property> propertyMap = new HashMap<String, Property>();
+
+		for (String key : valueMap.keySet()) {
+			PropertyType propertyType = this.getPropertyType(key, isMetadata);
+
+			if (null != propertyMap) {
+				Object value = valueMap.get(key);
+				Property property = propertyType.createProperty(value);
+				propertyMap.put(key, property);
+			}
+		}
+		return propertyMap;
+	}
+
+	@Override
+	public String toString() {
+		return "EventType [name=" + name + ", superTypeName=" + superTypeName
+				+ "]";
+	}
+
+	/**
+	 * returns the propertyType from data or metadata map
+	 * 
+	 * @param isMetadata
+	 * @return
+	 */
+	private PropertyType getPropertyType(String propertyTypeName,
+			boolean isMetadata) {
+
+		PropertyType propertyType = null;
+
+		if (isMetadata) {
+			propertyType = this.getMetadataPropertyType(propertyTypeName);
+		} else {
+			propertyType = this.getDataPropertyType(propertyTypeName);
+		}
+
+		return propertyType;
 	}
 }

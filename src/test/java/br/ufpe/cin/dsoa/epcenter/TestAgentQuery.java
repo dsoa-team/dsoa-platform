@@ -97,7 +97,7 @@ public class TestAgentQuery {
 	}
 
 	@Test
-	public void testAgent() {
+	public void testAgentQuery() {
 		EPServiceProvider provider = this.epService.getEpProvider();
 		
 		//epService.registerEventType(defineAvgResponseTimeType());
@@ -106,7 +106,15 @@ public class TestAgentQuery {
 		EPStatement stmt = provider.getEPAdministrator().createEPL(
 				"INSERT INTO AvgResponseTimeType SELECT event.type as type, event.metadata.id as metadata_id, event.metadata.source as metadata_source, avg(event.data.responseTimestamp-event.data.requestTimestamp) as data_avg FROM "
 						+ " InvocationEvent as event");
-		stmt.addListener(new EventListener());
+		stmt.addListener(new StatementAwareUpdateListener() {
+			
+			@Override
+			public void update(EventBean[] arg0, EventBean[] arg1, EPStatement arg2,
+					EPServiceProvider arg3) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 
 		 this.epService.publish(createSampleInvocationEvent());
 	}
