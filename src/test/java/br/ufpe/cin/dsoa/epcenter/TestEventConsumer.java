@@ -13,10 +13,17 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import com.espertech.esper.epl.generated.EsperEPL2GrammarParser.eventFilterExpression_return;
+
 import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.event.EventFilter;
+import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.Subscription;
+import br.ufpe.cin.dsoa.api.service.Expression;
 import br.ufpe.cin.dsoa.epcenter.helper.HelperEpCenterTest;
+import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 
 @RunWith( JUnit4TestRunner.class )
 public class TestEventConsumer {
@@ -24,9 +31,6 @@ public class TestEventConsumer {
 	@Inject
 	private BundleContext context;
 
-	@Inject
-	private br.ufpe.cin.dsoa.platform.event.AgentCatalog plataformManagement;
-	
 	@Configuration
     public Option[] config() {
 		String configDir = "file:src/test/resources/config/";
@@ -60,25 +64,33 @@ public class TestEventConsumer {
 	public void testEventConsumer(){
 		ServiceReference epCenterRef = context.getServiceReference(br.ufpe.cin.dsoa.platform.event.EventProcessingService.class.getName());
 		if (epCenterRef != null) {
-			br.ufpe.cin.dsoa.platform.event.EventProcessingService epCenter = (br.ufpe.cin.dsoa.platform.event.EventProcessingService)context.getService(epCenterRef);
+			EventProcessingService epCenter = (EventProcessingService)context.getService(epCenterRef);
+			
 			epCenter.registerEventType(HelperEpCenterTest.getInvocationEventType());
+			
+			String source = "service.operation";
+			final EventType invocationEventType = HelperEpCenterTest.getInvocationEventType();
+			PropertyType propertyType = invocationEventType.getMetadataPropertyType("source");
+			EventFilter filter = HelperEpCenterTest.getEventFilter(propertyType, source, Expression.EQ);
+			
 			epCenter.subscribe(new EventConsumer() {
 				
 				@Override
 				public void handleEvent(Event event) {
 					System.out.println("===== CONSUMER: ======");
 					System.out.println(event);
-					org.junit.Assert.assertEquals(event.getEventType().getName(), HelperEpCenterTest.getInvocationEventType().getName());
+					org.junit.Assert.assertEquals(event.getEventType().getName(), invocationEventType.getName());
 				}
 				
 				@Override
 				public String getId() {
-					// TODO Auto-generated method stub
 					return "consumer-01";
 				}
-			},new Subscription("sub-01", HelperEpCenterTest.getInvocationEventType(), null));
-			epCenter.publish(HelperEpCenterTest.getSampleInvocationEvent());
+			},new Subscription("sub-01", invocationEventType , filter));
+			
+			epCenter.publish(HelperEpCenterTest.getSampleInvocationEvent(source));
 			
 		}
 	}
+	
 }

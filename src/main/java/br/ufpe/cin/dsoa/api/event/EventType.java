@@ -49,13 +49,15 @@ public class EventType {
 	private List<PropertyType> data;
 	private Map<String, PropertyType> dataMap = new HashMap<String, PropertyType>();
 
-	EventType() {
+	@SuppressWarnings("serial")
+	public EventType() {
 		this.metadata = new ArrayList<PropertyType>() {
 			@Override
 			public boolean add(PropertyType propType) {
 				String typeName = propType.getTypeName();
 				try {
 					propType.setClazz(Class.forName(typeName));
+					propType.setNamespace(Constants.EVENT_METADATA);
 					metadataMap.put(propType.getName(), propType);
 					return super.add(propType);
 				} catch (ClassNotFoundException cnfe) {
@@ -70,6 +72,7 @@ public class EventType {
 				String typeName = propType.getTypeName();
 				try {
 					propType.setClazz(Class.forName(typeName));
+					propType.setNamespace(Constants.EVENT_DATA);
 					dataMap.put(propType.getName(), propType);
 					return super.add(propType);
 				} catch (ClassNotFoundException cnfe) {
@@ -79,13 +82,15 @@ public class EventType {
 		};
 
 	}
-
+	
+	@SuppressWarnings("unused")
 	@XmlElementWrapper(name = METADATA)
 	@XmlElement(name = PROPERTY)
 	private List<PropertyType> getMetadata() {
 		return metadata;
 	}
-
+	
+	@SuppressWarnings("unused")
 	@XmlElementWrapper(name = DATA)
 	@XmlElement(name = PROPERTY)
 	private List<PropertyType> getData() {
@@ -97,8 +102,8 @@ public class EventType {
 		this.name = name;
 		this.metadata = metadata;
 		this.data = data;
-		this.loadMap(metadata, metadataMap);
-		this.loadMap(data, dataMap);
+		this.loadMap(metadata, metadataMap, Constants.EVENT_METADATA);
+		this.loadMap(data, dataMap,  Constants.EVENT_DATA);
 	}
 
 	public String getName() {
@@ -210,12 +215,13 @@ public class EventType {
 	}
 
 	private void loadMap(List<PropertyType> lista,
-			Map<String, PropertyType> mapa) {
+			Map<String, PropertyType> mapa, String namespace) {
 
 		Iterator<PropertyType> it = lista.iterator();
 		while (it.hasNext()) {
-			PropertyType property = it.next();
-			mapa.put(property.getName(), property);
+			PropertyType propertyType = it.next();
+			propertyType.setNamespace(namespace);
+			mapa.put(propertyType.getName(), propertyType);
 		}
 	}
 

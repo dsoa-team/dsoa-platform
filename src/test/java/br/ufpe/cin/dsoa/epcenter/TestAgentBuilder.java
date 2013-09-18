@@ -8,9 +8,15 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.ufpe.cin.dsoa.api.event.Event;
+import br.ufpe.cin.dsoa.api.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.event.EventFilter;
 import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.PropertyType;
+import br.ufpe.cin.dsoa.api.event.Subscription;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
+import br.ufpe.cin.dsoa.api.service.Expression;
 import br.ufpe.cin.dsoa.epcenter.helper.HelperEpCenterTest;
 import br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService;
 import br.ufpe.cin.dsoa.platform.event.impl.Query;
@@ -56,5 +62,33 @@ public class TestAgentBuilder {
 			}
 		}
 		HelperEpCenterTest.publishSampleInvocationEvent(epService);
+	}
+	
+	
+	@Test
+	public void testSubscription(){
+		
+		String source = "service.operation";
+		final EventType invocationEventType = HelperEpCenterTest.getInvocationEventType();
+		PropertyType propertyType = invocationEventType.getMetadataPropertyType("source");
+		EventFilter filter = HelperEpCenterTest.getEventFilter(propertyType, source, Expression.EQ);
+		
+		epService.subscribe(new EventConsumer() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				System.out.println("===== CONSUMER: ======");
+				System.out.println(event);
+				org.junit.Assert.assertEquals(event.getEventType().getName(), invocationEventType.getName());
+			}
+			
+			@Override
+			public String getId() {
+				return "consumer-01";
+			}
+		},new Subscription("sub-01", invocationEventType , filter));
+		
+		epService.publish(HelperEpCenterTest.getSampleInvocationEvent(source));
+		
 	}
 }

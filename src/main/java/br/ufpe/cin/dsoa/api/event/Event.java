@@ -18,8 +18,8 @@ public class Event {
 			Map<String, Property> dataProperties) {
 		super();
 		this.eventType = eventType;
-		this.metadata = metadataProperties;
-		this.data = dataProperties;
+		this.metadata = new HashMap<String, Property>(metadataProperties);
+		this.data = new HashMap<String, Property>(dataProperties);
 		validate();
 	}
 

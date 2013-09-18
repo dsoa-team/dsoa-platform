@@ -5,6 +5,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
+import br.ufpe.cin.dsoa.util.Constants;
+
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyType {
@@ -28,6 +30,7 @@ public class PropertyType {
 	private Class<?> type;
 	
 	private boolean required;
+	private String namespace;
 	
 
 
@@ -78,10 +81,11 @@ public class PropertyType {
 		return generated;
 	}
 
+
 	@Override
 	public String toString() {
 		return "PropertyType [name=" + name + ", typeName=" + typeName + ", generated=" + generated + ", expression="
-				+ expression + ", type=" + type + ", required=" + required + "]";
+				+ expression + ", type=" + type + ", required=" + required + ", namespace=" + namespace + "]";
 	}
 
 	@Override
@@ -131,4 +135,17 @@ public class PropertyType {
 		return property;
 	}
 
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
+	}
+	
+	public String getNamespace() {
+		return this.namespace;
+	}
+	
+
+	public String getFullname() {
+		return this.namespace + Constants.TOKEN + this.name;
+	}
+	
 }

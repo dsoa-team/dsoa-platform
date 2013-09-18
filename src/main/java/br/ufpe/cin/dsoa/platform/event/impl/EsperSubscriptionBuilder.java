@@ -39,9 +39,10 @@ public class EsperSubscriptionBuilder  implements QueryBuilder  {
 							this.queryString.append("(");
 						}
 						first = false;
-						this.queryString.append(exp.getProperty().getPropertyType().getName());
-						this.queryString.append(exp.getProperty().getPropertyType().getExpression().toString());
-						this.queryString.append(exp.getProperty().getValue());
+						
+						this.queryString.append(exp.getProperty().getPropertyType().getFullname());
+						this.queryString.append(exp.getExpression().getOperator());
+						this.queryString.append(String.format("'%s'", exp.getProperty().getValue()));
 					}
 					this.queryString.append(") ");
 				}
