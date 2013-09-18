@@ -123,10 +123,10 @@ public class EsperProcessingService implements EventProcessingService {
 		QueryDirector director = new QueryDirector(builder);
 		director.construct();
 		query = director.getQuery();
-		EventSubscriber listener = new EventSubscriber(consumer, subscription);
+		EventSubscriber subscriber = new EventSubscriber(consumer, subscription);
 		EPStatement statement = this.startQuery(query);
-		statement.setSubscriber(listener);
-		this.listenerMap.put(consumer.getId(), listener);
+		statement.setSubscriber(subscriber);
+		this.listenerMap.put(consumer.getId(), subscriber);
 	}
 
 	public void unsubscribe(EventConsumer consumer, Subscription subscription) {

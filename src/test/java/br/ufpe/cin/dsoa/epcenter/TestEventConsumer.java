@@ -1,11 +1,9 @@
-package br.ufpe.cin.dsoa.environment;
+package br.ufpe.cin.dsoa.epcenter;
 
-import static org.junit.Assert.assertNotNull;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.bundle;
+import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.options;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Inject;
@@ -13,18 +11,21 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
-import br.ufpe.cin.dsoa.platform.configurator.DsoaServiceTracker;
-import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
+import br.ufpe.cin.dsoa.api.event.Event;
+import br.ufpe.cin.dsoa.api.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.event.Subscription;
+import br.ufpe.cin.dsoa.epcenter.helper.HelperEpCenterTest;
 
 @RunWith( JUnit4TestRunner.class )
-public class TestEnvironment {
+public class TestEventConsumer {
 
 	@Inject
 	private BundleContext context;
 
 	@Inject
-	private EventProcessingService epService;
+	private br.ufpe.cin.dsoa.platform.event.AgentCatalog plataformManagement;
 	
 	@Configuration
     public Option[] config() {
@@ -56,7 +57,28 @@ public class TestEnvironment {
     }
 
 	@Test
-	public void testBundleContext(){
-		assertNotNull(context);
+	public void testEventConsumer(){
+		ServiceReference epCenterRef = context.getServiceReference(br.ufpe.cin.dsoa.platform.event.EventProcessingService.class.getName());
+		if (epCenterRef != null) {
+			br.ufpe.cin.dsoa.platform.event.EventProcessingService epCenter = (br.ufpe.cin.dsoa.platform.event.EventProcessingService)context.getService(epCenterRef);
+			epCenter.registerEventType(HelperEpCenterTest.getInvocationEventType());
+			epCenter.subscribe(new EventConsumer() {
+				
+				@Override
+				public void handleEvent(Event event) {
+					System.out.println("===== CONSUMER: ======");
+					System.out.println(event);
+					org.junit.Assert.assertEquals(event.getEventType().getName(), HelperEpCenterTest.getInvocationEventType().getName());
+				}
+				
+				@Override
+				public String getId() {
+					// TODO Auto-generated method stub
+					return "consumer-01";
+				}
+			},new Subscription("sub-01", HelperEpCenterTest.getInvocationEventType(), null));
+			epCenter.publish(HelperEpCenterTest.getSampleInvocationEvent());
+			
+		}
 	}
 }

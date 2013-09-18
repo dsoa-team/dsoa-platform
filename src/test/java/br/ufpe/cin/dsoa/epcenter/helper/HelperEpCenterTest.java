@@ -333,7 +333,23 @@ public class HelperEpCenterTest {
 		Map<String, Property> metadataValue = new HashMap<String, Property>();
 		Map<String, Property> dataValue = new HashMap<String, Property>();
 		EventType invocationEventType = getInvocationEventType();
+		
+	/*
+	 * // add metadata
+		metadata.add(new PropertyType("timestamp", Long.class, true));
+		metadata.add(new PropertyType("id", String.class, true));
+		metadata.add(new PropertyType("source", String.class, true));
 
+		// add data
+		data.add(new PropertyType("consumerId", String.class, false));
+		data.add(new PropertyType("serviceId", String.class, true));
+		data.add(new PropertyType("operationName", String.class, true));
+		data.add(new PropertyType("requestTimestamp", Long.class, true));
+		data.add(new PropertyType("responseTimestamp", Long.class, true));
+		data.add(new PropertyType("success", Boolean.class, true));
+		data.add(new PropertyType("exception", Exception.class, false));
+	 * */
+		              
 		// metadata types
 		PropertyType id = invocationEventType.getMetadataPropertyType("id");
 		PropertyType timestamp = invocationEventType

@@ -250,12 +250,9 @@ public class EventType {
 
 	public Event createEvent(Map<String, Object> metadata,
 			Map<String, Object> data) {
-
 		Map<String, Property> metadataValue = this.loadValues(metadata, true);
 		Map<String, Property> dataValue = this.loadValues(data, false);
-
 		Event event = new Event(this, metadataValue, dataValue);
-
 		return event;
 	}
 
