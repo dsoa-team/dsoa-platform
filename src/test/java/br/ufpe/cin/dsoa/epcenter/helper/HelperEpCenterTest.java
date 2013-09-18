@@ -10,11 +10,16 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.swing.JEditorPane;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import br.ufpe.cin.dsoa.api.attribute.Attribute;
+import br.ufpe.cin.dsoa.api.attribute.AttributeAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.attribute.AttributeList;
+import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
+import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperList;
 import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeList;
@@ -22,6 +27,10 @@ import br.ufpe.cin.dsoa.api.event.Property;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.agent.AgentList;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
+import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
+import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCategoryAdapter;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.event.impl.EsperAgentBuilder;
 import br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService;
@@ -38,6 +47,8 @@ public class HelperEpCenterTest {
 
 	private static final String EVENT_DEFINITION_FILE = "src/test/resources/epcenter/configuration/event.xml";
 	private static final String AGENT_DEFINITION_FILE = "src/test/resources/epcenter/configuration/agent.xml";
+	private static final String ATTRIBUTE_DEFINITION_FILE = "src/test/resources/epcenter/configuration/attribute.xml";
+	private static final String ATTRIBUTE_MAPPER_DEFINITION_FILE = "src/test/resources/epcenter/configuration/attribute-event-mapper.xml";
 
 	/**
 	 * load test configuration files and parse event definition
@@ -121,6 +132,104 @@ public class HelperEpCenterTest {
 
 	}
 
+	public static AttributeEventMapperList handleAttributeEventMapperDefinitions(
+			EsperProcessingService epService,
+			AttributeCatalog attributeCatalog,
+			AttributeEventMapperCatalog attributeEventMapperCatalog)
+			throws JAXBException, FileNotFoundException {
+
+		JAXBContext context = JAXBContext
+				.newInstance(AttributeEventMapperList.class);
+		Unmarshaller u = context.createUnmarshaller();
+
+		AttributeEventMapperList attList = null;
+		try {
+			attList = (AttributeEventMapperList) u
+					.unmarshal(new FileInputStream(
+							ATTRIBUTE_MAPPER_DEFINITION_FILE));
+			for (AttributeEventMapper mapper : attList
+					.getAttributesEventMappers()) {
+				Attribute attribute = attributeCatalog
+						.getAttribute(AttributeConstraint.format(
+								mapper.getCategory(), mapper.getName()));
+				mapper.setAttribute(attribute);
+				EventType eventType = epService.getEventType(mapper
+						.getEventTypeName());
+				mapper.setEventType(eventType);
+				try {
+					attributeEventMapperCatalog.addAttributeEventMapper(mapper);
+				} catch (AttributeEventMapperAlreadyCatalogedException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (JAXBException e1) {
+			e1.printStackTrace();
+		}
+
+		return attList;
+	}
+
+	public static AttributeList handleAttributeDefinitions(
+			AttributeCatalog attributeCatalog) throws JAXBException,
+			FileNotFoundException {
+
+		AttributeCategoryAdapter attCatAdapter = new AttributeCategoryAdapter(
+				attributeCatalog);
+
+		JAXBContext context = JAXBContext.newInstance(AttributeList.class);
+		Unmarshaller u = context.createUnmarshaller();
+		u.setAdapter(AttributeCategoryAdapter.class, attCatAdapter);
+
+		AttributeList attList = null;
+		try {
+			attList = (AttributeList) u.unmarshal(new FileInputStream(
+					ATTRIBUTE_DEFINITION_FILE));
+			for (Attribute att : attList.getAttributes()) {
+				List<PropertyType> metaPropList = att.getMetadataList();
+				if (metaPropList != null) {
+					for (PropertyType propType : metaPropList) {
+						String typeName = propType.getTypeName();
+						Class<?> clazz = null;
+						try {
+							clazz = Class.forName(typeName);
+							propType.setClazz(clazz);
+							att.addMetadata(propType);
+						} catch (ClassNotFoundException e) {
+							e.printStackTrace();
+							metaPropList.remove(propType);
+							continue;
+						}
+					}
+				}
+				List<PropertyType> dataPropList = att.getMetadataList();
+				if (dataPropList != null) {
+					for (PropertyType propType : dataPropList) {
+						String typeName = propType.getTypeName();
+						Class<?> clazz = null;
+						try {
+							clazz = Class.forName(typeName);
+							propType.setClazz(clazz);
+							att.addData(propType);
+						} catch (ClassNotFoundException e) {
+							e.printStackTrace();
+							dataPropList.remove(propType);
+							continue;
+						}
+					}
+				}
+				try {
+					attributeCatalog.addAttribute(att);
+				} catch (AttributeAlreadyCatalogedException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+
+		return attList;
+	}
+
 	public static Query getQuery(EventProcessingAgent agent) {
 		QueryBuilder builder = new EsperAgentBuilder(agent);
 		QueryDirector director = new QueryDirector(builder);
@@ -144,9 +253,11 @@ public class HelperEpCenterTest {
 					EPStatement arg2, EPServiceProvider arg3) {
 				for (EventBean e : arg0) {
 					Object event = e.getUnderlying();
-					
+
 					String eventTypeName = e.getEventType().getName();
-					Event dsoaEvent = toEvent(eventTypeName, (Map<String, Object>) event, epService);
+					@SuppressWarnings("unchecked")
+					Event dsoaEvent = toEvent(eventTypeName,
+							(Map<String, Object>) event, epService);
 					System.out.println(dsoaEvent);
 
 				}
@@ -154,8 +265,8 @@ public class HelperEpCenterTest {
 		};
 	}
 
-	public static Event toEvent(String eventTypeName, Map<String, Object> event,
-			EventProcessingService epService) {
+	public static Event toEvent(String eventTypeName,
+			Map<String, Object> event, EventProcessingService epService) {
 
 		Event dsoaEvent = null;
 
