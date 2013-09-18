@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.management.hook;
+package br.ufpe.cin.dsoa.environment;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

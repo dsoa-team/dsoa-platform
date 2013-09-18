@@ -13,8 +13,8 @@
 		 between application components.
 		 
 		 The ProviderManager component register the services that are provided by a component when it is valid and track its
-		 execution environment. In fact, each service that is provided explicitly states its requirements in terms of its
-		 environment and the quality that it should provide. When the environment doesn't offer the required quality 
+		 execution br.ufpe.cin.dsoa.environment. In fact, each service that is provided explicitly states its requirements in terms of its
+		 br.ufpe.cin.dsoa.environment and the quality that it should provide. When the br.ufpe.cin.dsoa.environment doesn't offer the required quality 
 		 of service the changes the service configuration or unregister it (if it can not handle the current operation
 		 condition.   
 		 
