@@ -1,8 +1,23 @@
 package br.ufpe.cin.dsoa.util;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributableId;
+import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.EventTypeList;
+import br.ufpe.cin.dsoa.api.event.PropertyType;
+import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 
 public class Util {
 	
@@ -30,4 +45,59 @@ public class Util {
 		return new AttributableId(buf.toString());
 	}
 	
+	public static EventTypeList handlePlatformEventDefinitions(Bundle bundle, EventProcessingService epService)
+			throws JAXBException {
+		URL url = bundle.getEntry(EventTypeList.CONFIG);
+		EventTypeList eventList = null;
+		System.out.println("URL: " + url);
+		if (url != null) {
+			JAXBContext context = JAXBContext.newInstance(EventTypeList.class);
+			Unmarshaller u = context.createUnmarshaller();
+			eventList = (EventTypeList) u.unmarshal(url);
+			List<EventType> list = eventList.getEvents();
+			if (list != null && !list.isEmpty()) {
+				List<EventType> subtypes = new ArrayList<EventType>();
+				List<EventType> types = new ArrayList<EventType>();
+				for (EventType eventType : eventList.getEvents()) {
+					if (eventType.getSuperTypeName() != null) {
+						subtypes.add(eventType);
+					} else {
+						types.add(eventType);
+					}
+				}
+
+				if (!types.isEmpty()) {
+					for (EventType type : types) {
+						epService.registerEventType(type);
+					}
+				}
+
+				if (!subtypes.isEmpty()) {
+					for (EventType subtype : subtypes) {
+						EventType superType = epService.getEventType(subtype.getSuperTypeName());
+						if (superType != null) {
+							Map<String, PropertyType> superMetaProps = superType.getMetadataMap();
+							Map<String, PropertyType> subMetadataProps = subtype.getMetadataMap();
+							copyProperties(superMetaProps, subMetadataProps);
+
+							Map<String, PropertyType> superDataProps = superType.getDataMap();
+							Map<String, PropertyType> subDataProps = subtype.getDataMap();
+							copyProperties(superDataProps, subDataProps);
+						}
+						epService.registerEventType(subtype);
+					}
+				}
+			}
+		}
+		return eventList;
+	}
+	
+	private static void copyProperties(Map<String, PropertyType> superProps, Map<String, PropertyType> subProps) {
+		if (!superProps.isEmpty()) {
+			Set<String> keys = superProps.keySet();
+			for (String key : keys) {
+				subProps.put(key, superProps.get(key));
+			}
+		}
+	}
 }

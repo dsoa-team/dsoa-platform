@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.xml.bind.JAXBException;
+
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.api.event.Event;
@@ -21,6 +23,8 @@ import br.ufpe.cin.dsoa.api.event.agent.Processing;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingQuery;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
+import br.ufpe.cin.dsoa.util.Constants;
+import br.ufpe.cin.dsoa.util.Util;
 
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPServiceProvider;
@@ -61,10 +65,15 @@ public class EsperProcessingService implements EventProcessingService {
 	// TODO REMOVE
 	public EsperProcessingService() {
 	}
+	//TODO:REMOVER
 
-	public void start() {
+	public void start() throws JAXBException {
 		this.epServiceProvider = EPServiceProviderManager.getProvider(
 				"Dsoa-EsperEngine", new Configuration());
+
+		//defines invocation event
+		Util.handlePlatformEventDefinitions(ctx.getBundle(), this);
+		this.createAgentContext();
 	}
 
 	public void stop() {
@@ -75,8 +84,8 @@ public class EsperProcessingService implements EventProcessingService {
 		String name = event.getEventType().getName();
 		Map<String, Object> eventMap = event.toMap();
 		this.epServiceProvider.getEPRuntime().sendEvent(eventMap, name);
-	}	
-	
+	}
+
 	public void registerAgent(EventProcessingAgent agent) {
 		Query query = null;
 		Processing processing = agent.getProcessing();
@@ -98,7 +107,8 @@ public class EsperProcessingService implements EventProcessingService {
 			}
 		} else if (processing instanceof ProcessingQuery) {
 			String id = agent.getId();
-			String queryString = ((ProcessingQuery) agent.getProcessing()).getQuery();
+			String queryString = ((ProcessingQuery) agent.getProcessing())
+					.getQuery();
 			query = new Query(id, queryString);
 			// XXX: processing query n esta sendo tratado (output events nao
 			// sao registrados
@@ -106,7 +116,8 @@ public class EsperProcessingService implements EventProcessingService {
 
 		boolean added = this.register(agent.getId(), agent, this.agents);
 		if (added) {
-			System.out.println(" >>>>>>>>>>>>> QUERY: " + query.getQueryString());
+			System.out.println(" >>>>>>>>>>>>> QUERY: "
+					+ query.getQueryString());
 			this.startQuery(query);
 		}
 
@@ -115,8 +126,9 @@ public class EsperProcessingService implements EventProcessingService {
 		 * this.registerEventType(eventType);
 		 */
 	}
-	
-	public synchronized void subscribe(EventConsumer consumer, Subscription subscription) {
+
+	public synchronized void subscribe(EventConsumer consumer,
+			Subscription subscription) {
 		Query query = null;
 		QueryBuilder builder = this.getQueryBuilder(subscription);
 		QueryDirector director = new QueryDirector(builder);
@@ -151,6 +163,12 @@ public class EsperProcessingService implements EventProcessingService {
 		}
 	}
 
+	private void createAgentContext() {
+		String contextEPL = "create context " + Constants.CONTEXT_NAME
+				+ " partition by metadata_source from InvocationEvent";
+		this.epServiceProvider.getEPAdministrator().createEPL(contextEPL);
+	}
+
 	private void addOutputEventType(InputEvent inputEvent,
 			OutputEvent outputEvent) throws ClassNotFoundException {
 
@@ -174,7 +192,8 @@ public class EsperProcessingService implements EventProcessingService {
 						String key = propertyType.getExpression().replace(
 								inputEvent.getAlias() + ".metadata.", "");
 
-						PropertyType rawPropertyType = inputEventType.getMetadataPropertyType(key);
+						PropertyType rawPropertyType = inputEventType
+								.getMetadataPropertyType(key);
 						typeName = rawPropertyType.getTypeName();
 					}
 					propertyType.setClazz(Class.forName(typeName));
@@ -192,7 +211,8 @@ public class EsperProcessingService implements EventProcessingService {
 						String key = propertyType.getExpression().replace(
 								inputEvent.getAlias() + ".data.", "");
 
-						PropertyType rawPropertyType = inputEventType.getDataPropertyType(key);
+						PropertyType rawPropertyType = inputEventType
+								.getDataPropertyType(key);
 						typeName = rawPropertyType.getTypeName();
 					}
 					propertyType.setClazz(Class.forName(typeName));
@@ -239,7 +259,7 @@ public class EsperProcessingService implements EventProcessingService {
 	protected QueryBuilder getQueryBuilder(EventProcessingAgent agent) {
 		return new EsperAgentBuilder(agent);
 	}
-	
+
 	protected QueryBuilder getQueryBuilder(Subscription subscription) {
 		return new EsperSubscriptionBuilder(subscription);
 	}
@@ -248,7 +268,7 @@ public class EsperProcessingService implements EventProcessingService {
 		return this.epServiceProvider.getEPAdministrator().createEPL(
 				query.getQueryString(), query.getId());
 	}
-	
+
 	@Override
 	public void unRegisterAgent(String agentId) {
 		// TODO Auto-generated method stub

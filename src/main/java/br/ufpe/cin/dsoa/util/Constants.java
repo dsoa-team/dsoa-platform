@@ -34,7 +34,7 @@ public interface Constants {
 	
 	public static final String NON_FUNCTIONAL_SPECIFICATION = "nonfunctional.specification";
 	
-	public static final String MANAGED_SERVICE = "(managed=*)";
+	public static final String MANAGED_SERVICE = "(service.managed=*)";
 	
 	/**
 	 * Event
@@ -45,4 +45,6 @@ public interface Constants {
 	public static final String EVENT_DATA 				= "data";
 	
 	public static final String EVENT_SOURCE = "source";
+	
+	public static final String CONTEXT_NAME = "PartitionedByEventSource";
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<events>
+	<event type="DsoaEvent">
+		<metadata>
+			<property id="id" type="java.lang.String" />
+			<property id="source" type="java.lang.String" />
+			<property id="timestamp" type="java.lang.Long" />
+		</metadata>
+	</event>
+	
+	<event type="InvocationEvent" extends="DsoaEvent">
+		<data>
+			<property id="consumerId" type="java.lang.String" />
+			<property id="serviceId" type="java.lang.String" />
+			<property id="operationName" type="java.lang.String" />
+			<property id="requestTimestamp" type="java.lang.Long" />
+			<property id="responseTimestamp" type="java.lang.Long" />
+			<property id="success" type="java.lang.Boolean" />
+			<property id="exception" type="java.lang.String" />
+		</data>
+	</event>
+</events>

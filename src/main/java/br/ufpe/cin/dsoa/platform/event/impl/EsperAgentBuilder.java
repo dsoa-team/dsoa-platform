@@ -31,6 +31,7 @@ public class EsperAgentBuilder implements QueryBuilder {
 	}
 
 	public void buildSelectClause() {
+		this.queryString.append(" context " + Constants.CONTEXT_NAME);
 		this.queryString.append(" INSERT INTO " + this.out.getType());
 		this.queryString.append(" SELECT ");
 		this.queryString.append(extractSelect(this.out.getMetadata(), "metadata") + ", ");

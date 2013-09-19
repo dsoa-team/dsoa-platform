@@ -92,6 +92,8 @@ public class TestEventProcessingAgent {
 			
 			@Override
 			public void handleEvent(Event event) {
+				System.out.println("====>> EVENT: ");
+				System.out.println(event);
 				org.junit.Assert.assertEquals(source, event.getMetadataProperty("source").getValue());
 			}
 
