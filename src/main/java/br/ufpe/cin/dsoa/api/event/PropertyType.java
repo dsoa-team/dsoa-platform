@@ -145,7 +145,7 @@ public class PropertyType {
 	
 
 	public String getFullname() {
-		return this.namespace + Constants.TOKEN + this.name;
+		return this.namespace + Constants.UNDERLINE + this.name;
 	}
 	
 }

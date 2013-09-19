@@ -2,7 +2,9 @@ package br.ufpe.cin.dsoa.epcenter.helper;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,11 @@ import java.util.UUID;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
 import br.ufpe.cin.dsoa.api.attribute.AttributeAlreadyCatalogedException;
@@ -48,10 +55,10 @@ import com.espertech.esper.client.StatementAwareUpdateListener;
 
 public class HelperEpCenterTest {
 
-	private static final String EVENT_DEFINITION_FILE = "src/test/resources/epcenter/configuration/event.xml";
-	private static final String AGENT_DEFINITION_FILE = "src/test/resources/epcenter/configuration/agent.xml";
-	private static final String ATTRIBUTE_DEFINITION_FILE = "src/test/resources/epcenter/configuration/attribute.xml";
-	private static final String ATTRIBUTE_MAPPER_DEFINITION_FILE = "src/test/resources/epcenter/configuration/attribute-event-mapper.xml";
+	public static final String EVENT_DEFINITION_FILE = "src/test/resources/epcenter/configuration/event.xml";
+	public static final String AGENT_DEFINITION_FILE = "src/test/resources/epcenter/configuration/agent.xml";
+	public static final String ATTRIBUTE_DEFINITION_FILE = "src/test/resources/epcenter/configuration/attribute.xml";
+	public static final String ATTRIBUTE_MAPPER_DEFINITION_FILE = "src/test/resources/epcenter/configuration/attribute-event-mapper.xml";
 
 	/**
 	 * load test configuration files and parse event definition
@@ -59,12 +66,12 @@ public class HelperEpCenterTest {
 	 * @throws JAXBException
 	 * @throws FileNotFoundException
 	 */
-	public static EventTypeList handleEventDefinitions(EventProcessingService epService) throws JAXBException,
-			FileNotFoundException {
+	public static EventTypeList handleEventDefinitions(String location, EventProcessingService epService)
+			throws JAXBException, FileNotFoundException {
 
 		JAXBContext context = JAXBContext.newInstance(EventTypeList.class);
 		Unmarshaller u = context.createUnmarshaller();
-		EventTypeList eventList = (EventTypeList) u.unmarshal(new FileInputStream(EVENT_DEFINITION_FILE));
+		EventTypeList eventList = (EventTypeList) u.unmarshal(new FileInputStream(location));
 
 		List<EventType> list = eventList.getEvents();
 		if (list != null && !list.isEmpty()) {
@@ -107,15 +114,17 @@ public class HelperEpCenterTest {
 	/**
 	 * load test configuration files and parse agent definition
 	 * 
+	 * @param agentDefinitionFile
+	 * 
 	 * @throws JAXBException
 	 * @throws FileNotFoundException
 	 */
-	public static AgentList handleAgentDefinitions(EventProcessingService epService) throws JAXBException,
-			FileNotFoundException {
+	public static AgentList handleAgentDefinitions(String agentDefinitionFile, EventProcessingService epService)
+			throws JAXBException, FileNotFoundException {
 		JAXBContext context = JAXBContext.newInstance(AgentList.class);
 		Unmarshaller u = context.createUnmarshaller();
 
-		AgentList agentList = (AgentList) u.unmarshal(new FileInputStream(AGENT_DEFINITION_FILE));
+		AgentList agentList = (AgentList) u.unmarshal(new FileInputStream(agentDefinitionFile));
 
 		// registers agents
 		for (EventProcessingAgent agent : agentList.getAgents()) {
@@ -126,9 +135,29 @@ public class HelperEpCenterTest {
 
 	}
 
-	public static AttributeEventMapperList handleAttributeEventMapperDefinitions(EsperProcessingService epService,
-			AttributeCatalog attributeCatalog, AttributeEventMapperCatalog attributeEventMapperCatalog)
-			throws JAXBException, FileNotFoundException {
+	public static AgentList handleAgentDefinitions(Bundle bundle, EventProcessingService epService)
+			throws JAXBException {
+
+		URL url = bundle.getEntry(AgentList.CONFIG);
+		AgentList agentList = null;
+
+		if (url != null) {
+			Unmarshaller u = createUnmarshaller(AgentList.class);
+			agentList = (AgentList) u.unmarshal(url);
+
+			// registers agents
+			for (EventProcessingAgent agent : agentList.getAgents()) {
+				epService.registerAgent(agent);
+			}
+		}
+
+		return agentList;
+
+	}
+
+	public static AttributeEventMapperList handleAttributeEventMapperDefinitions(String mapperFile,
+			EsperProcessingService epService, AttributeCatalog attributeCatalog,
+			AttributeEventMapperCatalog attributeEventMapperCatalog) throws JAXBException, FileNotFoundException {
 
 		JAXBContext context = JAXBContext.newInstance(AttributeEventMapperList.class);
 		Unmarshaller u = context.createUnmarshaller();
@@ -211,6 +240,68 @@ public class HelperEpCenterTest {
 		}
 
 		return attList;
+	}
+
+	public static EventTypeList handleEventDefinitions(Bundle bundle, EventProcessingService epService)
+			throws JAXBException {
+		URL url = bundle.getEntry(EventTypeList.CONFIG);
+		EventTypeList eventList = null;
+		System.out.println("URL: " + url);
+		if (url != null) {
+			Unmarshaller u = createUnmarshaller(EventTypeList.class);
+			eventList = (EventTypeList) u.unmarshal(url);
+			List<EventType> list = eventList.getEvents();
+			if (list != null && !list.isEmpty()) {
+				List<EventType> subtypes = new ArrayList<EventType>();
+				List<EventType> types = new ArrayList<EventType>();
+				for (EventType eventType : eventList.getEvents()) {
+					if (eventType.getSuperTypeName() != null) {
+						subtypes.add(eventType);
+					} else {
+						types.add(eventType);
+					}
+				}
+
+				if (!types.isEmpty()) {
+					for (EventType type : types) {
+						epService.registerEventType(type);
+					}
+				}
+
+				if (!subtypes.isEmpty()) {
+					for (EventType subtype : subtypes) {
+						EventType superType = epService.getEventType(subtype.getSuperTypeName());
+						if (superType != null) {
+							Map<String, PropertyType> superMetaProps = superType.getMetadataMap();
+							Map<String, PropertyType> subMetadataProps = subtype.getMetadataMap();
+							copyProperties(superMetaProps, subMetadataProps);
+
+							Map<String, PropertyType> superDataProps = superType.getDataMap();
+							Map<String, PropertyType> subDataProps = subtype.getDataMap();
+							copyProperties(superDataProps, subDataProps);
+						}
+						epService.registerEventType(subtype);
+					}
+				}
+			}
+		}
+		return eventList;
+	}
+
+	/*
+	 * contexts.put(EventTypeList.CONFIG,
+	 * JAXBInitializer.createUnmarshaller(EventTypeList.class));
+	 * contexts.put(AgentList.CONFIG,
+	 * JAXBInitializer.createUnmarshaller(AgentList.class));
+	 * contexts.put(AttributeList.CONFIG,
+	 * createUnmarshaller(AttributeList.class));
+	 * contexts.put(AttributeEventMapperList.CONFIG,
+	 * createUnmarshaller(AttributeEventMapperList.class));
+	 */
+
+	private static Unmarshaller createUnmarshaller(Class<?> clazz) throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(clazz);
+		return context.createUnmarshaller();
 	}
 
 	public static Query getQuery(EventProcessingAgent agent) {
@@ -307,7 +398,7 @@ public class HelperEpCenterTest {
 	 * @return
 	 */
 	public static Event getSampleInvocationEvent() {
-		String v_source = "host: " + System.getenv("hostname");
+		String v_source = "host: " + System.getenv("HOSTNAME");
 
 		return getSampleInvocationEvent(v_source);
 	}
@@ -409,7 +500,6 @@ public class HelperEpCenterTest {
 
 	public static EventFilter getEventFilter(PropertyType propertyType, Object propertyValue, Expression expression) {
 
-		System.out.println(propertyType);
 		Property property = propertyType.createProperty(propertyValue);
 		FilterExpression filterExpression = new FilterExpression(property, expression);
 
@@ -419,6 +509,41 @@ public class HelperEpCenterTest {
 		EventFilter filter = new EventFilter(filterExpressions);
 
 		return filter;
+	}
+
+	public static void listRuntimeServices(BundleContext context) throws InvalidSyntaxException {
+		ServiceReference[] refs = (ServiceReference[]) context.getAllServiceReferences(null, null);
+		for (ServiceReference ref : refs) {
+			System.out.println("===================================================================");
+			System.out.println("Properties: ");
+			String[] keys = ref.getPropertyKeys();
+			for (String key : keys) {
+				System.out.println("Key: " + key);
+				Object propValue = ref.getProperty(key);
+				String propString = null;
+				if (propValue instanceof boolean[]) {
+					propString = Arrays.toString((boolean[]) propValue);
+				} else if (propValue instanceof byte[]) {
+					propString = Arrays.toString((byte[]) propValue);
+				} else if (propValue instanceof int[]) {
+					propString = Arrays.toString((int[]) propValue);
+				} else if (propValue instanceof long[]) {
+					propString = Arrays.toString((long[]) propValue);
+				} else if (propValue instanceof float[]) {
+					propString = Arrays.toString((float[]) propValue);
+				} else if (propValue instanceof double[]) {
+					propString = Arrays.toString((double[]) propValue);
+				} else if (propValue instanceof Object[]) {
+					propString = Arrays.toString((Object[]) propValue);
+				} else {
+					propString = propValue.toString();
+				}
+				System.out.println("Value: " + propString);
+			}
+			System.out.println("Class: " + context.getService(ref).getClass());
+			;
+			System.out.println("Object: " + context.getService(ref));
+		}
 	}
 
 	private static void copyProperties(Map<String, PropertyType> superProps, Map<String, PropertyType> subProps) {

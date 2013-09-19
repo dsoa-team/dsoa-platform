@@ -174,24 +174,20 @@ public class EventType {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		// metadata
-		Map<String, Object> metadataDef = new HashMap<String, Object>();
 		if (!metadataMap.isEmpty()) {
 			for (PropertyType property : metadataMap.values()) {
-				metadataDef.put(property.getName(), property.getType());
+				map.put(property.getFullname(), property.getType());
 			}
 		}
 
 		// data
-		Map<String, Object> dataDef = new HashMap<String, Object>();
 		if (!dataMap.isEmpty()) {
 			for (PropertyType property : dataMap.values()) {
-				dataDef.put(property.getName(), property.getType());
+				map.put(property.getFullname(), property.getType());
 			}
 		}
 
 		map.put(Constants.EVENT_TYPE, String.class);
-		map.put(Constants.EVENT_METADATA, metadataDef);
-		map.put(Constants.EVENT_DATA, dataDef);
 
 		return map;
 	}

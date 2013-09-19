@@ -15,4 +15,11 @@ public class EventFilter {
 	public List<FilterExpression> getFilterExpressions() {
 		return new ArrayList<FilterExpression>(filterExpressions);
 	}
+
+	@Override
+	public String toString() {
+		return "EventFilter [filterExpressions=" + filterExpressions + "]";
+	}
+	
+	
 }

@@ -13,4 +13,7 @@ public enum Expression {
 		return operator;
 	}
 	
+	public String toString(){
+		return this.operator;
+	}
 }

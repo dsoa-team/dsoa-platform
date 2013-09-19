@@ -78,8 +78,6 @@ public class EsperProcessingService implements EventProcessingService {
 	}	
 	
 	public void registerAgent(EventProcessingAgent agent) {
-		String id = null;
-		String queryString = null;
 		Query query = null;
 		Processing processing = agent.getProcessing();
 
@@ -99,8 +97,8 @@ public class EsperProcessingService implements EventProcessingService {
 				e.printStackTrace();
 			}
 		} else if (processing instanceof ProcessingQuery) {
-			id = agent.getId();
-			queryString = ((ProcessingQuery) agent.getProcessing()).getQuery();
+			String id = agent.getId();
+			String queryString = ((ProcessingQuery) agent.getProcessing()).getQuery();
 			query = new Query(id, queryString);
 			// XXX: processing query n esta sendo tratado (output events nao
 			// sao registrados
@@ -108,6 +106,7 @@ public class EsperProcessingService implements EventProcessingService {
 
 		boolean added = this.register(agent.getId(), agent, this.agents);
 		if (added) {
+			System.out.println(" >>>>>>>>>>>>> QUERY: " + query.getQueryString());
 			this.startQuery(query);
 		}
 

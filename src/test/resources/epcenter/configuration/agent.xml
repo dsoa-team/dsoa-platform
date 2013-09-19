@@ -4,12 +4,13 @@
 		<description>Calculates avg response time attribute</description>
 		<mapping id="AvgResponseTimeMapping">
 			<input-event type="InvocationEvent" alias="event">
-				<window type="lenght" size="10" />
+				<window type="length" size="10" unit=""/>
 			</input-event>
 			<output-event type="AvgResponseTimeEvent">
 				<metadata>
 					<property id="id" expression="event.metadata.id" />
 					<property id="timestamp" expression="event.metadata.timestamp" />
+					<property id="source" expression="event.metadata.source" />
 				</metadata>
 				<data>
 					<property id="value" type="java.lang.Double"
@@ -23,8 +24,8 @@
 		<description>Calculates min response time attribute</description>
 		<query id="MinResponseTimeQuery">
 			<command>
-				SELECT min (event.data.responseTimestamp -
-				event.data.requestTimestamp) as value
+				SELECT min (event.data_responseTimestamp -
+				event.data_requestTimestamp) as value
 				FROM
 				InvocationEvent.win:time(10 sec) as event
 			</command>

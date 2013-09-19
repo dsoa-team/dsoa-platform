@@ -49,20 +49,24 @@ public class Event {
 	public final Map<String, Object> toMap() {
 		Map<String, Object> eventMap = new HashMap<String, Object>();
 		
+		if (!metadata.isEmpty()) {
+			for (Property property : metadata.values()) {
+				eventMap.put(property.getPropertyType().getFullname(), property.getValue());
+			}
+		}
+
+		// data
+		if (!data.isEmpty()) {
+			for (Property property : data.values()) {
+				eventMap.put(property.getPropertyType().getFullname(), property.getValue());
+			}
+		}
+		
 		eventMap.put(Constants.EVENT_TYPE, eventType.getName());
-		eventMap.put(Constants.EVENT_METADATA,this.buildPropertyMap(true));
-		eventMap.put(Constants.EVENT_DATA,this.buildPropertyMap(false));
 		
 		return eventMap;
 	}
-	
 
-	public static Event fromMap(Map<String, Object> underlyingEvent){
-		
-		
-		return null;
-	}
-	
 	public List<Property> getMetadataProperties() {
 		return getPropertyList(metadata);
 	}
@@ -86,35 +90,9 @@ public class Event {
 
 	@Override
 	public String toString() {
-		return "Event [eventType=" + eventType + ", metadata=" + metadata
-				+ ", data=" + data + "]";
+		return "Event [eventType=" + eventType.getName() + ", data=" + data + "]";
 	}
 
-	private Map<String, Object> buildPropertyMap(boolean isMetadata) {
-
-		Map<String, Object> map = new HashMap<String, Object>();
-		
-		Map<String, Property> values;
-		List<PropertyType> typeList;
-		
-		if(isMetadata){
-			values = this.metadata;
-			typeList = this.eventType.getMetadataList();
-		} else {
-			values = this.data;
-			typeList = this.eventType.getDataList();
-		}
-		
-		if(!typeList.isEmpty()){
-			Iterator<PropertyType> it = typeList.iterator();
-			while(it.hasNext()){
-				PropertyType propertyType = it.next();
-				map.put(propertyType.getName(), (values.get(propertyType.getName()) == null)? null : values.get(propertyType.getName()).getValue());
-			}
-		}
-		
-		return map;
-	}
 	private List<Property> getPropertyList(Map<String, Property> properties) {
 		List<Property> attList = new ArrayList<Property>();
 		if (properties != null) {

@@ -35,8 +35,8 @@ public class TestAgentBuilder {
 		this.epService = new EsperProcessingService();
 		this.epService.start();
 		
-		this.eventTypes = HelperEpCenterTest.handleEventDefinitions(epService).getEvents();
-		this.agents = HelperEpCenterTest.handleAgentDefinitions(epService).getAgents();
+		this.eventTypes = HelperEpCenterTest.handleEventDefinitions(HelperEpCenterTest.EVENT_DEFINITION_FILE, epService).getEvents();
+		this.agents = HelperEpCenterTest.handleAgentDefinitions(HelperEpCenterTest.AGENT_DEFINITION_FILE, epService).getAgents();
 	}
 
 	@Test

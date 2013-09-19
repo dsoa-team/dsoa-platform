@@ -137,7 +137,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 				List<FilterExpression> filterList = new ArrayList<FilterExpression>();
 				filterList.add(filterExp);
 				EventFilter filter = new EventFilter(filterList);
-				String id = sourceType + "." + attributeId;
+				String id = sourceType + Constants.TOKEN + attributeId;
 				Subscription subscription = new Subscription(id, eventType, filter);
 				eventProcessingService.subscribe(consumer, subscription);
 			}

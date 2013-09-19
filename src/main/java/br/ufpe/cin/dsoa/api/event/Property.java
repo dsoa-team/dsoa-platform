@@ -5,8 +5,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-import br.ufpe.cin.dsoa.util.Constants;
-
 @XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Property {
@@ -48,7 +46,7 @@ public class Property {
 
 	@Override
 	public String toString() {
-		return "Property [propertyType=" + propertyType + ", value=" + value + ", expression=" + expression + "]";
+		return "Property [propertyType=" + propertyType.getName() + ", value=" + value + ", expression=" + expression + "]";
 	}
 
 }

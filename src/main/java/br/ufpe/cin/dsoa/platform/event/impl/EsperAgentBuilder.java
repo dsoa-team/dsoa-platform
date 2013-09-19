@@ -8,6 +8,7 @@ import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 import br.ufpe.cin.dsoa.api.event.agent.InputEvent;
 import br.ufpe.cin.dsoa.api.event.agent.OutputEvent;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
+import br.ufpe.cin.dsoa.util.Constants;
 
 public class EsperAgentBuilder implements QueryBuilder {
 
@@ -25,25 +26,23 @@ public class EsperAgentBuilder implements QueryBuilder {
 		this.eventProcessingAgent = eventProcessingAgent;
 		this.queryString = new StringBuilder();
 
-		this.in = ((ProcessingMapping) eventProcessingAgent.getProcessing())
-				.getInputEvent();
-		this.out = ((ProcessingMapping) eventProcessingAgent.getProcessing())
-				.getOutputEvent();
+		this.in = ((ProcessingMapping) eventProcessingAgent.getProcessing()).getInputEvent();
+		this.out = ((ProcessingMapping) eventProcessingAgent.getProcessing()).getOutputEvent();
 	}
 
 	public void buildSelectClause() {
 		this.queryString.append(" INSERT INTO " + this.out.getType());
 		this.queryString.append(" SELECT ");
-		this.queryString.append(extractSelect(this.out.getMetadata(),
-				"metadata") + ", ");
+		this.queryString.append(extractSelect(this.out.getMetadata(), "metadata") + ", ");
 		this.queryString.append(extractSelect(this.out.getData(), "data"));
 	}
-	
-	
+
 	public void buildFromClause() {
 		this.queryString.append(" FROM ");
-		this.queryString
-				.append(this.in.getType() + " as " + this.in.getAlias());
+		this.queryString.append(this.in.getType());
+		this.queryString.append(".win:" + in.getWindow().getType());
+		this.queryString.append(String.format("(%s %s)", in.getWindow().getSize(), in.getWindow().getUnit()));
+		this.queryString.append(" as " + this.in.getAlias());
 
 	}
 
@@ -74,9 +73,22 @@ public class EsperAgentBuilder implements QueryBuilder {
 			first = false;
 			PropertyType p = iterator.next();
 			// empty string is: Constants.TOKEN
-			result.append(String.format("%s as %s_%s ", p.getExpression(), prefix, p.getName()));
+			result.append(String.format(
+					"%s as %s%s%s ",
+					this.parseExpression(p.getExpression(), in.getAlias()),
+					prefix, 
+					Constants.UNDERLINE,
+					p.getName()));
 		}
 		return result.toString();
+	}
+	
+	private String parseExpression(String expression, String alias) {
+		
+		String parsedExpression = expression.replaceAll("\\" + Constants.TOKEN, Constants.UNDERLINE);
+		parsedExpression = parsedExpression.replaceAll(alias + Constants.UNDERLINE , alias + Constants.TOKEN);
+		 
+		return parsedExpression; 
 	}
 
 }

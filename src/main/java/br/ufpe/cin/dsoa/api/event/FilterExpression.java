@@ -21,4 +21,9 @@ public class FilterExpression {
 		return expression;
 	}
 
+	@Override
+	public String toString() {
+		return "FilterExpression [property=" + property + ", expression=" + expression + "]";
+	}
+
 }
