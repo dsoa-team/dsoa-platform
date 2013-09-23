@@ -37,11 +37,10 @@ public class EventType {
 	@XmlAttribute(name = "type", required = true)
 	private String name;
 
-	// @XmlJavaTypeAdapter(EventTypeAdapter.class)
-	private EventType superType = null;
-
 	@XmlAttribute(name = "extends")
 	private String superTypeName;
+
+	private EventType superType = null;
 
 	private List<PropertyType> metadata;
 	private Map<String, PropertyType> metadataMap = new HashMap<String, PropertyType>();
@@ -83,14 +82,12 @@ public class EventType {
 
 	}
 	
-	@SuppressWarnings("unused")
 	@XmlElementWrapper(name = METADATA)
 	@XmlElement(name = PROPERTY)
 	private List<PropertyType> getMetadata() {
 		return metadata;
 	}
 	
-	@SuppressWarnings("unused")
 	@XmlElementWrapper(name = DATA)
 	@XmlElement(name = PROPERTY)
 	private List<PropertyType> getData() {

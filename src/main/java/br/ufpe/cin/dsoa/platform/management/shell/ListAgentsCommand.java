@@ -9,7 +9,7 @@ public class ListAgentsCommand extends DsoaBaseCommand {
 
 		protected PlatformManagementService managementService;
 		
-		private static final String COMMAND = "lstagt";
+		private static final String COMMAND = "lsagt";
 
 		private static final String DESCRIPTION = "List all agents running on dsoa platform";
 

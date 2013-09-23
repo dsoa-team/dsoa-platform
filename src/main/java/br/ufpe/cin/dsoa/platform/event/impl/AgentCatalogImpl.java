@@ -7,7 +7,6 @@ import java.util.Map;
 import br.ufpe.cin.dsoa.api.event.agent.AgentAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
-import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 
 /**
  * This component implements a catalog that register the agents that are known by the platform and that can be used
@@ -19,7 +18,6 @@ import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
  */
 public class AgentCatalogImpl implements AgentCatalog {
 	private Map<String,EventProcessingAgent> agentMap = new HashMap<String,EventProcessingAgent>();
-	private EventProcessingService epService;
 	
 	public EventProcessingAgent getAgent(String id) {
 		return this.agentMap.get(id);
@@ -34,7 +32,6 @@ public class AgentCatalogImpl implements AgentCatalog {
 			throw new AgentAlreadyCatalogedException(eventProcessingAgent);
 		}
 		
-		this.epService.registerAgent(eventProcessingAgent);
 		return this.agentMap.put(eventProcessingAgent.getId(), eventProcessingAgent);
 	}
 

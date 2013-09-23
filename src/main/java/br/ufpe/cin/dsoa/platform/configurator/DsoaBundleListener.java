@@ -22,6 +22,7 @@ import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperList;
 import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.event.EventTypeList;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.agent.AgentAlreadyCatalogedException;
@@ -33,6 +34,7 @@ import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCategoryAdapter;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
+import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 
 /**
  * This class implements the Extender Pattern. It monitors bundle lifecycle
@@ -50,6 +52,7 @@ public class DsoaBundleListener extends BundleTracker {
 	private EventProcessingService epService;
 	private AttributeCatalog attributeCatalog;
 	private AgentCatalog agentCatalog;
+	private EventTypeCatalog eventTypeCatalog;
 
 	private AttributeEventMapperCatalog attributeEventMapperCatalog;
 	private AttributeCategoryAdapter attCatAdapter;
@@ -108,13 +111,18 @@ public class DsoaBundleListener extends BundleTracker {
 					
 					if (!types.isEmpty()) {
 						for (EventType type : types) {
-							epService.registerEventType(type);
+							try {
+								this.eventTypeCatalog.add(type);
+								this.epService.registerEventType(type);
+							} catch (EventTypeAlreadyCatalogedException e) {
+								logger.warning(e.getMessage());
+							}
 						}
 					}
 					
 					if (!subtypes.isEmpty()) {
 						for (EventType subtype : subtypes) {
-							EventType superType = epService.getEventType(subtype.getSuperTypeName());
+							EventType superType = this.eventTypeCatalog.get(subtype.getSuperTypeName());
 							if (superType != null) {
 								Map<String, PropertyType> superMetaProps = superType.getMetadataMap();
 								Map<String, PropertyType> subMetadataProps = subtype.getMetadataMap();
@@ -124,7 +132,12 @@ public class DsoaBundleListener extends BundleTracker {
 								Map<String, PropertyType> subDataProps = subtype.getDataMap();
 								copyProperties(superDataProps, subDataProps);
 							}
-							epService.registerEventType(subtype);
+							try {
+								this.eventTypeCatalog.add(subtype);
+								this.epService.registerEventType(subtype);
+							} catch (EventTypeAlreadyCatalogedException e) {
+								logger.warning(e.getMessage());
+							}
 						}
 					}
 				}
@@ -156,7 +169,7 @@ public class DsoaBundleListener extends BundleTracker {
 				for (AttributeEventMapper mapper : attList.getAttributesEventMappers()) {
 					Attribute attribute = attributeCatalog.getAttribute(AttributeConstraint.format(mapper.getCategory(), mapper.getName()));
 					mapper.setAttribute(attribute);
-					EventType eventType = epService.getEventType(mapper.getEventTypeName());
+					EventType eventType = eventTypeCatalog.get(mapper.getEventTypeName());
 					mapper.setEventType(eventType);
 					try {
 						this.attributeEventMapperCatalog.addAttributeEventMapper(mapper);
@@ -183,6 +196,7 @@ public class DsoaBundleListener extends BundleTracker {
 				for (EventProcessingAgent eventProcessingAgent : agentList.getAgents()) {
 					try {
 						this.agentCatalog.addAgent(eventProcessingAgent);
+						this.epService.registerAgent(eventProcessingAgent);
 					} catch (AgentAlreadyCatalogedException e) {
 						logger.warning(e.getMessage());
 					}
@@ -267,5 +281,9 @@ public class DsoaBundleListener extends BundleTracker {
 
 	public void setAgentCatalog(AgentCatalog agentCatalog) {
 		this.agentCatalog = agentCatalog;
+	}
+
+	public void setEventTypeCatalog(EventTypeCatalog eventTypeCatalog) {
+		this.eventTypeCatalog = eventTypeCatalog;
 	}
 }

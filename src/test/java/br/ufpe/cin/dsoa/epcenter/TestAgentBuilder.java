@@ -18,7 +18,9 @@ import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
 import br.ufpe.cin.dsoa.api.service.Expression;
 import br.ufpe.cin.dsoa.epcenter.helper.HelperEpCenterTest;
+import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService;
+import br.ufpe.cin.dsoa.platform.event.impl.EventTypeCatalogImpl;
 import br.ufpe.cin.dsoa.platform.event.impl.Query;
 
 import com.espertech.esper.client.EPServiceProvider;
@@ -29,13 +31,15 @@ public class TestAgentBuilder {
 	private List<EventProcessingAgent> agents;
 	private EsperProcessingService epService;
 	private List<EventType> eventTypes;
+	private EventTypeCatalog eventTypeCatalog;
 
 	@Before
 	public void setUp() throws Exception {
 		this.epService = new EsperProcessingService();
 		this.epService.start();
+		this.eventTypeCatalog = new EventTypeCatalogImpl();
 		
-		this.eventTypes = HelperEpCenterTest.handleEventDefinitions(HelperEpCenterTest.EVENT_DEFINITION_FILE, epService).getEvents();
+		this.eventTypes = HelperEpCenterTest.handleEventDefinitions(HelperEpCenterTest.EVENT_DEFINITION_FILE, epService, eventTypeCatalog).getEvents();
 		this.agents = HelperEpCenterTest.handleAgentDefinitions(HelperEpCenterTest.AGENT_DEFINITION_FILE, epService).getAgents();
 	}
 
@@ -58,7 +62,7 @@ public class TestAgentBuilder {
 				
 				EPServiceProvider provider = this.epService.getEpProvider();
 				EPStatement stmt = provider.getEPAdministrator().createEPL(query.getQueryString());
-				stmt.addListener(HelperEpCenterTest.getEventListener(this.epService));
+				stmt.addListener(HelperEpCenterTest.getEventListener(this.epService, eventTypeCatalog));
 			}
 		}
 		HelperEpCenterTest.publishSampleInvocationEvent(epService);

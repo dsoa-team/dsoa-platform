@@ -9,7 +9,7 @@ public class ListAttributesCommand  extends DsoaBaseCommand {
 
 	protected PlatformManagementService managementService;
 	
-	private static final String COMMAND = "lstatt";
+	private static final String COMMAND = "lsatt";
 
 	private static final String DESCRIPTION = "List all monitorable metrics on platform";
 

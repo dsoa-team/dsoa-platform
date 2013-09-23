@@ -9,6 +9,7 @@ import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
+import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 import br.ufpe.cin.dsoa.util.Constants;
 
@@ -35,6 +36,7 @@ public class PlatformConfigurator {
 	private AttributeCatalog 			attributeCatalog;
 	private AttributeEventMapperCatalog attributeEventMapperCatalog;
 	private AgentCatalog 				agentCatalog;
+	private EventTypeCatalog 			eventTypeCatalog;
 	
 	private EventProcessingService		epService;
 	
@@ -66,6 +68,7 @@ public class PlatformConfigurator {
 		listener.setAttributeCatalog(this.attributeCatalog);
 		listener.setAttributeEventMapperCatalog(this.attributeEventMapperCatalog);
 		listener.setAgentCatalog(this.agentCatalog);
+		listener.setEventTypeCatalog(eventTypeCatalog);
 		listener.open();
 	}
 

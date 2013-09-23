@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter.configuration.parser;
+/*package br.ufpe.cin.dsoa.epcenter.configuration.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -42,7 +42,7 @@ public class EventParserSpec {
 	private EventTypeList list;
 	private List<String> validTypes = new ArrayList<String>();
 	
-	/*
+	
 	 <event type="DsoaEvent">
 		<metadata>
 			<property id="id" type="java.lang.String" />
@@ -68,7 +68,7 @@ public class EventParserSpec {
 			<property id="value" type="java.lang.Double" />
 		</data>
 	</event>
-	 */
+	 
 
 	@Before
 	public void setUp() throws JAXBException, FileNotFoundException {
@@ -84,7 +84,7 @@ public class EventParserSpec {
 		//this.defineInvocationEventType();
 	}
 	
-	/*private void defineInvocationEventType(){
+	private void defineInvocationEventType(){
 		List<PropertyType> metadata = new ArrayList<PropertyType>();
 		List<PropertyType> data = new ArrayList<PropertyType>();
 
@@ -102,7 +102,7 @@ public class EventParserSpec {
 		data.add(new PropertyType("exception", Exception.class, false));
 		
 		//avgResponseTimeEventType = new EventType("InvocationEvent", metadata, data);
-	}*/
+	}
 	
 	private void registerEvents() {
 		List<EventType> eventTypeList = list.getEvents();
@@ -248,3 +248,4 @@ public class EventParserSpec {
 	}
 
 }
+*/

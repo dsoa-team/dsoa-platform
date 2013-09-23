@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter;
+/*package br.ufpe.cin.dsoa.epcenter;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -213,3 +213,4 @@ public class TestAgentQuery {
 	}
 
 }
+*/

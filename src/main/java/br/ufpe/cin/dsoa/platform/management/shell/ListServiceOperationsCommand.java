@@ -12,7 +12,7 @@ import br.ufpe.cin.dsoa.platform.monitor.ServiceMetadata;
 public class ListServiceOperationsCommand extends DsoaBaseCommand {
 
 	protected PlatformManagementService managementService;
-	private static final String COMMAND 		= "lstsrvop";
+	private static final String COMMAND 		= "lssrvop";
 	private static final String DESCRIPTION 	= "List monitored service operations";
 	private static final String PARAMETER 		= "service-pid";
 	

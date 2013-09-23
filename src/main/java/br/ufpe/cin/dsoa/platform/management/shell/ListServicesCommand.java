@@ -10,7 +10,7 @@ import br.ufpe.cin.dsoa.platform.monitor.ServiceMetadata;
 
 public class ListServicesCommand extends DsoaBaseCommand {
 	private static final String DESCRIPTION = "List all provided services on plaform";
-	private static final String COMMAND = "lstsrv";
+	private static final String COMMAND = "lssrv";
 	protected PlatformManagementService managementService;
 
 	public String getName() {

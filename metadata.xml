@@ -95,18 +95,13 @@
 		connected together compose Event Processing Networks. 
 	 	-->
 	 <composite name="Platform.Event.EventProcessingComponent">
-		<instance component="Platform.Event.EventProcessingService" />
 		<instance component="Platform.Event.AgentCatalog" />
-		<provides action="export" specification="br.ufpe.cin.dsoa.platform.event.EventProcessingService"/>
+		<instance component="Platform.Event.EventTypeCatalog" />
+		<instance component="Platform.Event.EventProcessingService" />
 		<provides action="export" specification="br.ufpe.cin.dsoa.platform.event.AgentCatalog"/>
+		<provides action="export" specification="br.ufpe.cin.dsoa.platform.event.EventTypeCatalog"/>
+		<provides action="export" specification="br.ufpe.cin.dsoa.platform.event.EventProcessingService"/>
 	</composite>
-	
-	<component 	name="Platform.Event.EventProcessingService" 
-				classname="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" >
-		<provides />
-		<callback transition="validate" method="start" />
-		<callback transition="invalidate" method="stop" />
-	</component>
 	
 	<!-- 
 		This component implements a catalog that register the agents that are known by the platform and that can be used
@@ -114,9 +109,22 @@
 	 	-->
 	<component 	name="Platform.Event.AgentCatalog" 
 				classname="br.ufpe.cin.dsoa.platform.event.impl.AgentCatalogImpl">
-		<requires field="epService" />
 		<provides />
 	</component>
+	
+	<component 	name="Platform.Event.EventTypeCatalog" 
+				classname="br.ufpe.cin.dsoa.platform.event.impl.EventTypeCatalogImpl">
+		<provides />
+	</component>
+
+	<component 	name="Platform.Event.EventProcessingService" 
+				classname="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" >
+		<requires field="eventTypeCatalog"/>
+		<provides />
+		<callback transition="validate" method="start" />
+		<callback transition="invalidate" method="stop" />
+	</component>
+	
 	
 	<!-- ============================================================================================================ -->		
 	<!-- ============================================================================================================ -->
@@ -137,6 +145,7 @@
 		<requires field="attributeCatalog" />
 		<requires field="attributeEventMapperCatalog" />
 		<requires field="agentCatalog" />
+		<requires field="eventTypeCatalog" />
 		<requires field="epService" />
 		<requires field="resourceManager" />
 		<callback transition="validate" method="start" />

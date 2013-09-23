@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -15,11 +16,15 @@ import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributableId;
 import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.event.EventTypeList;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
+import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 
 public class Util {
+
+	private static Logger logger = Logger.getLogger(Util.class.getName());
 	
 	public static boolean isRemote(ServiceReference reference) {
 		return reference.getProperty(Constants.REMOTE_SERVICE) != null;
@@ -28,15 +33,15 @@ public class Util {
 	public static boolean isProxy(ServiceReference reference) {
 		return reference.getProperty(Constants.SERVICE_PROXY) != null;
 	}
-	
+
 	public static String getId(ServiceReference reference) {
 		Object pid = reference.getProperty(org.osgi.framework.Constants.SERVICE_PID);
 		if (pid == null) {
-			pid =  reference.getProperty(org.osgi.framework.Constants.SERVICE_ID);
+			pid = reference.getProperty(org.osgi.framework.Constants.SERVICE_ID);
 		}
 		return pid.toString();
 	}
-	
+
 	public static AttributableId getAttributableId(String serviceId, String operationName) {
 		StringBuffer buf = new StringBuffer(serviceId);
 		if (operationName != null) {
@@ -44,12 +49,13 @@ public class Util {
 		}
 		return new AttributableId(buf.toString());
 	}
-	
-	public static EventTypeList handlePlatformEventDefinitions(Bundle bundle, EventProcessingService epService)
+
+	public static EventTypeList handlePlatformEventDefinitions(Bundle bundle,
+			EventTypeCatalog eventTypeCatalog, EventProcessingService epService)
 			throws JAXBException {
 		URL url = bundle.getEntry(EventTypeList.CONFIG);
 		EventTypeList eventList = null;
-		System.out.println("URL: " + url);
+		
 		if (url != null) {
 			JAXBContext context = JAXBContext.newInstance(EventTypeList.class);
 			Unmarshaller u = context.createUnmarshaller();
@@ -68,13 +74,18 @@ public class Util {
 
 				if (!types.isEmpty()) {
 					for (EventType type : types) {
-						epService.registerEventType(type);
+						try {
+							eventTypeCatalog.add(type);
+							epService.registerEventType(type);
+						} catch (EventTypeAlreadyCatalogedException e) {
+							logger.warning(e.getMessage());
+						}
 					}
 				}
 
 				if (!subtypes.isEmpty()) {
 					for (EventType subtype : subtypes) {
-						EventType superType = epService.getEventType(subtype.getSuperTypeName());
+						EventType superType = eventTypeCatalog.get(subtype.getSuperTypeName());
 						if (superType != null) {
 							Map<String, PropertyType> superMetaProps = superType.getMetadataMap();
 							Map<String, PropertyType> subMetadataProps = subtype.getMetadataMap();
@@ -84,15 +95,21 @@ public class Util {
 							Map<String, PropertyType> subDataProps = subtype.getDataMap();
 							copyProperties(superDataProps, subDataProps);
 						}
-						epService.registerEventType(subtype);
+						try {
+							eventTypeCatalog.add(subtype);
+							epService.registerEventType(subtype);
+						} catch (EventTypeAlreadyCatalogedException e) {
+							logger.warning(e.getMessage());
+						}
 					}
 				}
 			}
 		}
 		return eventList;
 	}
-	
-	private static void copyProperties(Map<String, PropertyType> superProps, Map<String, PropertyType> subProps) {
+
+	private static void copyProperties(Map<String, PropertyType> superProps,
+			Map<String, PropertyType> subProps) {
 		if (!superProps.isEmpty()) {
 			Set<String> keys = superProps.keySet();
 			for (String key : keys) {

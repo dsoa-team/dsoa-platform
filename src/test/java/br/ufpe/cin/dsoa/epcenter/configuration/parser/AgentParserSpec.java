@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.epcenter.configuration.parser;
+/*package br.ufpe.cin.dsoa.epcenter.configuration.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -128,7 +128,7 @@ public class AgentParserSpec {
 	}
 	
 	
-	/*@Test
+	@Test
 	public void testAgentTransformer(){
 		for(EventProcessingAgent a : agentList.getAgents()){
 			assertNotNull(a.getTransformer());
@@ -150,6 +150,7 @@ public class AgentParserSpec {
 			List<String> query = t.getQueries();
 			assertNotNull(query);
 		}
-	}*/
+	}
 	
 }
+*/
