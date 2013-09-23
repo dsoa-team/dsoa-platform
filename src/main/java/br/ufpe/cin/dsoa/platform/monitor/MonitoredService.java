@@ -42,7 +42,6 @@ public class MonitoredService implements Monitorable {
 		this.metadata = new ServiceMetadata(service);
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void start() {
 		registerMonitor();
 		//registerProxy();
@@ -59,7 +58,7 @@ public class MonitoredService implements Monitorable {
 		this.started = false;
 	}
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void registerMonitor() {
 		log.info("Registering monitor...");
 		Hashtable ht = new Hashtable();
@@ -86,7 +85,7 @@ public class MonitoredService implements Monitorable {
 	}
 	
 	private String getMonitoredServicePid() {
-		return this.service.getServiceId() + "-Monitor";
+		return this.service.getServiceId() + "-m";
 	}
 	
 	public String getServiceId() {

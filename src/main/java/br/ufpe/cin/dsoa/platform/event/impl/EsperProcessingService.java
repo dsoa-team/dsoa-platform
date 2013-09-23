@@ -31,6 +31,8 @@ import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
+import com.espertech.esper.client.EventBean;
+import com.espertech.esper.client.StatementAwareUpdateListener;
 
 /**
  * Esper implementation of EventProcessingService. This component implements
@@ -53,7 +55,7 @@ public class EsperProcessingService implements EventProcessingService {
 
 	private EventTypeCatalog eventTypeCatalog;
 
-	private Map<String, EventSubscriber> listenerMap = new HashMap<String, EventSubscriber>();
+	//private Map<String, EventSubscriber> listenerMap = new HashMap<String, EventSubscriber>();
 
 	private ConcurrentHashMap<String, EventConsumer> consumers = new ConcurrentHashMap<String, EventConsumer>();
 
@@ -109,24 +111,60 @@ public class EsperProcessingService implements EventProcessingService {
 			String id = agent.getId();
 			String queryString = ((ProcessingQuery) agent.getProcessing()).getQuery();
 			query = new Query(id, queryString);
-			// XXX: processing query n esta sendo tratado (output events nao
-			// sao registrados
+			// XXX: processing query n esta sendo tratado (output events naosao registrados)
 		}
 
-		System.out.println(" >>>>>>>>>>>>> QUERY: " + query.getQueryString());
 		this.startQuery(query);
 	}
 
-	public synchronized void subscribe(EventConsumer consumer, Subscription subscription) {
+	public synchronized void subscribe(final EventConsumer consumer, Subscription subscription) {
 		Query query = null;
 		QueryBuilder builder = this.getQueryBuilder(subscription);
 		QueryDirector director = new QueryDirector(builder);
 		director.construct();
 		query = director.getQuery();
-		EventSubscriber subscriber = new EventSubscriber(consumer, subscription);
+		//EventSubscriber subscriber = new EventSubscriber(consumer, subscription);
 		EPStatement statement = this.startQuery(query);
-		statement.setSubscriber(subscriber);
-		this.listenerMap.put(consumer.getId(), subscriber);
+		statement.addListener(new StatementAwareUpdateListener() {
+			
+			@Override
+			public void update(EventBean[] newEvents, EventBean[] oldEvents, EPStatement statement,
+					EPServiceProvider epServiceProvider) {
+				
+				for (EventBean e : newEvents) {
+					Object event = e.getUnderlying();
+					String eventTypeName = e.getEventType().getName();
+					
+					@SuppressWarnings("unchecked")
+					Event dsoaEvent = convertEsperEvent(eventTypeName, (Map<String, Object>) event);
+					consumer.handleEvent(dsoaEvent);
+				}
+			}
+		});
+		//statement.setSubscriber(subscriber);
+		//this.listenerMap.put(consumer.getId(), subscriber);
+	}
+	
+	private Event convertEsperEvent(String eventTypeName, Map<String, Object> esperEvent){
+		
+		Event dsoaEvent = null;
+
+		Map<String, Object> metadata = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<String, Object>();
+
+		for (String key : ((Map<String, Object>) esperEvent).keySet()) {
+			if (key.startsWith("data_")) {
+				String newKey = key.replace("data_", "");
+				data.put(newKey, esperEvent.get(key));
+			} else if (key.startsWith("metadata_")) {
+				String newKey = key.replace("metadata_", "");
+				metadata.put(newKey, esperEvent.get(key));
+			}
+		}
+		EventType eventType = eventTypeCatalog.get(eventTypeName);
+		dsoaEvent = eventType.createEvent(metadata, data);
+
+		return dsoaEvent;
 	}
 
 	public void unsubscribe(EventConsumer consumer, Subscription subscription) {
@@ -252,8 +290,13 @@ public class EsperProcessingService implements EventProcessingService {
 	}
 
 	protected EPStatement startQuery(Query query) {
-		return this.epServiceProvider.getEPAdministrator().createEPL(query.getQueryString(),
-				query.getId());
+		
+		String queryString  = query.getQueryString();
+		String queryId = query.getId();
+		
+		EPStatement stmt = this.epServiceProvider.getEPAdministrator().createEPL(queryString, queryId);
+		
+		return stmt;
 	}
 
 	@Override

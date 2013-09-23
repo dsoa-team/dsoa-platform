@@ -24,7 +24,7 @@ public class EsperSubscriptionBuilder  implements QueryBuilder  {
 		
 		
 		public void buildFromClause() {
-			this.queryString.append(" FROM " + subscription.getEventType().getName() + " ");
+			this.queryString.append(" FROM " + subscription.getEventType().getName());
 			EventFilter filter  = subscription.getFilter();
 			if (filter != null) {
 				List<FilterExpression> expressions = filter.getFilterExpressions();

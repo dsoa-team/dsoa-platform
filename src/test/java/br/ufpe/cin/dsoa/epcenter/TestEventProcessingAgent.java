@@ -60,9 +60,6 @@ public class TestEventProcessingAgent {
 			eventTypeCatalog = (EventTypeCatalog) context.getService(eventTypeCatalogRef);
 		}
 
-		System.out.println("EPSERVICEREF: " + epCenterRef + "<<<<<<<<<<");
-		System.out.println("EPSERVICE: " + epCenter + "<<<<<<<<<<");
-
 		initializeDsoaPlatform();
 
 		EventType invocationEvent = eventTypeCatalog.get("InvocationEvent");

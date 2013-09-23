@@ -45,6 +45,7 @@ public interface Constants {
 	public static final String EVENT_DATA 				= "data";
 	
 	public static final String EVENT_SOURCE = "source";
+	public static final String ATTRIBUTE_VALUE = "value";
 	
 	public static final String CONTEXT_NAME = "PartitionedByEventSource";
 }

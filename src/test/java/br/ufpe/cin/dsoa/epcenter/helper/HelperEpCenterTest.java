@@ -355,7 +355,7 @@ public class HelperEpCenterTest {
 					String eventTypeName = e.getEventType().getName();
 					@SuppressWarnings("unchecked")
 					Event dsoaEvent = toEvent(eventTypeName, (Map<String, Object>) event,
-							eventTypeCatalog, epService);
+							eventTypeCatalog);
 					System.out.println(dsoaEvent);
 
 				}
@@ -364,7 +364,7 @@ public class HelperEpCenterTest {
 	}
 
 	public static Event toEvent(String eventTypeName, Map<String, Object> event,
-			EventTypeCatalog eventTypeCatalog, EventProcessingService epService) {
+			EventTypeCatalog eventTypeCatalog) {
 
 		Event dsoaEvent = null;
 

@@ -1,14 +1,13 @@
 package br.ufpe.cin.dsoa.platform.monitor;
 
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.osgi.service.monitor.StatusVariable;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributableId;
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
-import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
 import br.ufpe.cin.dsoa.api.attribute.AttributeChangeListener;
+import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
 import br.ufpe.cin.dsoa.util.Constants;
 
 /**
@@ -45,13 +44,14 @@ public class MonitoredAttribute implements AttributeChangeListener {
 	
 	public String getStatusVariableId() {
 		if (statusVariableId == null) {
-			statusVariableId = this.attributableId.toString() + Constants.TOKEN + this.attribute.getId();
+			statusVariableId = this.attributableId.getOperationName() + Constants.TOKEN + this.attribute.getName();
 		}
 		return statusVariableId;
 	}
 	
 	public StatusVariable getStatusVariable() {
-		return new StatusVariable(getStatusVariableId(),StatusVariable.CM_GAUGE, attributeValue.toString());
+		String value = attributeValue.getValue().toString();
+		return new StatusVariable(getStatusVariableId(),StatusVariable.CM_GAUGE, value);
 	}
 	
 	@Override

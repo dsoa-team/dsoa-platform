@@ -3,6 +3,7 @@ package br.ufpe.cin.dsoa.api.attribute;
 import java.util.Map;
 
 import br.ufpe.cin.dsoa.api.event.Property;
+import br.ufpe.cin.dsoa.util.Constants;
 
 
 public class AttributeValue {
@@ -31,6 +32,11 @@ public class AttributeValue {
 
 	public Map<String, Property> getData() {
 		return data;
+	}
+
+
+	public Object getValue() {
+		return this.data.get(Constants.ATTRIBUTE_VALUE).getValue();
 	}
 	
 	
