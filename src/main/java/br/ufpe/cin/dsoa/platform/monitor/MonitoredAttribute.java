@@ -2,6 +2,9 @@ package br.ufpe.cin.dsoa.platform.monitor;
 
 import java.util.logging.Logger;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.monitor.MonitorListener;
 import org.osgi.service.monitor.StatusVariable;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributableId;
@@ -22,12 +25,16 @@ public class MonitoredAttribute implements AttributeChangeListener {
 	private Attribute 			attribute;
 	private AttributableId	 	attributableId;
 	private AttributeValue 		attributeValue;
+	private String			 	monitoredServicePid;
 	private Logger 				log;
+	private BundleContext 		ctx;
 	
-	public MonitoredAttribute(AttributableId attributableId, Attribute attribute) {
+	public MonitoredAttribute(BundleContext ctx, String monitoredServicePid, AttributableId attributableId, Attribute attribute) {
 		this.log = Logger.getLogger(getClass().getSimpleName());
 		this.attributableId = attributableId;
 		this.attribute = attribute;
+		this.monitoredServicePid = monitoredServicePid;
+		this.ctx = ctx;
 	}
 	
 	public String getAttributeName() {
@@ -57,5 +64,19 @@ public class MonitoredAttribute implements AttributeChangeListener {
 	@Override
 	public void update(AttributeValue value) {
 		this.attributeValue = value;
+		this.getMonitorListener().updated(this.monitoredServicePid, this.getStatusVariable());
+	}
+	
+	
+	
+	private MonitorListener getMonitorListener(){
+		MonitorListener monitorListener = null;
+		ServiceReference monitorListenerRef = ctx.getServiceReference(MonitorListener.class.getName());
+		
+		if(monitorListenerRef != null){
+			monitorListener = (MonitorListener) ctx.getService(monitorListenerRef);
+		}
+		
+		return monitorListener;
 	}
 }

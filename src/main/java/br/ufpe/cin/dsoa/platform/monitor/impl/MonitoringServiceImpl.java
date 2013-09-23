@@ -126,7 +126,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 		Attribute attribute = attributeCatalog.getAttribute(attributeId);
 		if (attribute != null) {
 			AttributableId attributableId = new AttributableId(monitoredService.getServiceId(), attributeConstraint.getOperation());
-			MonitoredAttribute monitoredAttribute = new MonitoredAttribute(attributableId, attribute);
+			MonitoredAttribute monitoredAttribute = new MonitoredAttribute(ctx, monitoredService.getMonitoredServicePid(), attributableId, attribute);
 			monitoredService.addMonitoredAttribute(monitoredAttribute);
 			AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
 			if (mapper != null) {

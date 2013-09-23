@@ -84,7 +84,7 @@ public class MonitoredService implements Monitorable {
 		this.attributeMonitorMap.put(monitor.getStatusVariableId(), monitor);
 	}
 	
-	private String getMonitoredServicePid() {
+	public String getMonitoredServicePid() {
 		return this.service.getServiceId() + "-m";
 	}
 	
@@ -117,7 +117,7 @@ public class MonitoredService implements Monitorable {
 	}
 
 	public boolean notifiesOnChange(String id) throws IllegalArgumentException {
-		return false;
+		return true;
 	}
 
 	public boolean resetStatusVariable(String id) throws IllegalArgumentException {
