@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.apache.felix.ipojo.FieldInterceptor;
 
+import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.api.service.ServiceConsumer;
 import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.handler.dependency.manager.DependencyManager;
+import br.ufpe.cin.dsoa.platform.monitor.DynamicProxyFactory;
 
 public class Dependency implements FieldInterceptor {
 
@@ -23,15 +25,25 @@ public class Dependency implements FieldInterceptor {
 	private DependencyStatus status;
 	private DependencyManager manager;
 
+	private DynamicProxyFactory dynamicProxy;
+
+	private EventType invocationEventType;
+
 	public Dependency(DependencyHandler dependencyHandler, ServiceConsumer serviceConsumer,
-			ServiceSpecification specification) {
+			ServiceSpecification specification, EventType invocationEventType) {
 		super();
+		this.invocationEventType = invocationEventType;
 		this.handler = dependencyHandler;
 		this.consumer = serviceConsumer;
 		this.requiredSpecification = specification;
 		this.blackList = new ArrayList<String>();
 		this.status = DependencyStatus.UNRESOLVED;
 		this.manager = new DependencyManager(this);
+		this.dynamicProxy = new DynamicProxyFactory(this, handler.getEventChannel()); 
+	}
+
+	public EventType getInvocationEventType() {
+		return invocationEventType;
 	}
 
 	public DependencyHandler getHandler() {
@@ -138,7 +150,8 @@ public class Dependency implements FieldInterceptor {
 	}
 
 	public Object onGet(Object pojo, String fieldName, Object value) {
-		return this.service.getServiceObject();
+		//return this.service.getServiceObject();
+		return dynamicProxy.getProxy();
 	}
 
 }

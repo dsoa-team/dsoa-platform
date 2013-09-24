@@ -29,6 +29,8 @@
 
 	<handler name="requires" namespace="br.ufpe.cin.dsoa"
 		classname="br.ufpe.cin.dsoa.platform.handler.dependency.DependencyHandler" >
+		<requires field="eventTypeCatalog" />
+		<requires field="epService" />
 	</handler>
 	
 

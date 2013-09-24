@@ -16,23 +16,25 @@ import br.ufpe.cin.dsoa.platform.registry.ServiceRegistry;
 public class DependencyManager implements ServiceListener, AttributeChangeListener {
 
 	/**
-	 * The managed dependency
-	 */
-	private Dependency dependency;
-	//private DependencyManagerMBean dependencys
-	
-	/**
 	 * The component responsible for service selection.
 	 */
 	private BundleContext context;
-	private ServiceRegistry serviceRegistry;
-	private ServiceTracker brokerTracker;
-	
+
 	/**
 	 * Signals that it is waiting for a Broker in order to resolve 
 	 * its dependency
 	 */
 	private Boolean waiting;
+	
+	/**
+	 * The managed dependency
+	 */
+	private Dependency dependency;
+	//private DependencyManagerMBean dependencys
+	
+	private ServiceRegistry serviceRegistry;
+	private ServiceTracker brokerTracker;
+	
 	
 	/**
 	 * The component responsible for analyzing "service contracts" 
@@ -106,12 +108,12 @@ public class DependencyManager implements ServiceListener, AttributeChangeListen
 					serviceRegistry = (ServiceRegistry) DependencyManager.this.context.getService(reference);
 				}
 				
-				//if (verifier != null) {
-					//if (waiting) {
+				if (verifier != null) {
+					if (waiting) {
 						serviceRegistry.getBestService(dependency.getSpecification(), dependency.getBlackList(), DependencyManager.this);
 						waiting = Boolean.FALSE;
-					//}
-				//}
+					}
+				}
 				return serviceRegistry;
 			}
 		}
@@ -153,6 +155,7 @@ public class DependencyManager implements ServiceListener, AttributeChangeListen
 			synchronized(DependencyManager.this) {
 				DependencyManager.this.context.ungetService(reference);
 				verifier = null;
+				waiting = Boolean.TRUE;
 			}
 		}	
 	}

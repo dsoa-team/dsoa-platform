@@ -11,9 +11,11 @@ import javax.xml.bind.JAXBException;
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.api.event.Event;
+import br.ufpe.cin.dsoa.api.event.EventChannel;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.event.OutputTerminal;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.Subscription;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
@@ -54,6 +56,9 @@ public class EsperProcessingService implements EventProcessingService {
 	private EPServiceProvider epServiceProvider;
 
 	private EventTypeCatalog eventTypeCatalog;
+	
+	//EventTypeName/EventChannel
+	private Map<String, EventChannel> channelMap = new HashMap<String, EventChannel>();
 
 	//private Map<String, EventSubscriber> listenerMap = new HashMap<String, EventSubscriber>();
 
@@ -307,5 +312,21 @@ public class EsperProcessingService implements EventProcessingService {
 
 	public EPServiceProvider getEpProvider() {
 		return this.epServiceProvider;
+	}
+
+	@Override
+	public EventChannel getEventChannel(EventType eventType) {
+		OutputTerminal output = new OutputTerminalAdapter(this);
+		String eventTopic = String.format("%s%s%s", Constants.REQUIRES_TAG_NAMESPACE, Constants.TOKEN, eventType.getName());
+		eventTopic = eventTopic.replaceAll(".", "/");
+		
+		EventChannel channel = this.channelMap.get(eventTopic);
+		
+		if(channel == null){
+			channel = new EventAdminChannel(ctx, eventTopic, output);
+			this.channelMap.put(eventTopic, channel);
+		}
+		
+		return channel;
 	}
 }

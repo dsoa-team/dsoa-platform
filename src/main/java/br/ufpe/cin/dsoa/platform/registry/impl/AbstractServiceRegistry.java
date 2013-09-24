@@ -58,8 +58,9 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
 			}
 		} else {
 			Service bestService = this.rankServices(serviceInterface, services, nfs.getAttributeConstraints());
-			DynamicProxyFactory proxyFactory = new DynamicProxyFactory(bestService);
-			listener.onArrival(proxyFactory.getProxy());
+			//DynamicProxyFactory proxyFactory = new DynamicProxyFactory(bestService);
+			//listener.onArrival(proxyFactory.getProxy());
+			listener.onArrival(bestService);
 			this.trackService(bestService, listener);
 		}
 	}

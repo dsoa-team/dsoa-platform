@@ -13,11 +13,18 @@ import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
 
+import br.ufpe.cin.dsoa.api.event.EventChannel;
+import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.OutputTerminal;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.Expression;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.ServiceConsumer;
 import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
+import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
+import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
+import br.ufpe.cin.dsoa.platform.event.impl.EventAdminChannel;
+import br.ufpe.cin.dsoa.platform.event.impl.OutputTerminalAdapter;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyHandler extends PrimitiveHandler {
@@ -26,6 +33,9 @@ public class DependencyHandler extends PrimitiveHandler {
 	private DependencyHandlerDescription description;
 	private boolean started;
 	private Logger log = Logger.getLogger(DependencyHandler.class.getName());
+	
+	private EventTypeCatalog eventTypeCatalog;
+	private EventProcessingService epService;
 	
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -46,7 +56,9 @@ public class DependencyHandler extends PrimitiveHandler {
 			NonFunctionalSpecification nonFunctionalSpecification = new NonFunctionalSpecification(constraintList);
 			try {
 				specification = getInstanceManager().getClazz().getClassLoader().loadClass(className);
-				Dependency dependency  = new Dependency(this, serviceConsumer, new ServiceSpecification(specification, className, nonFunctionalSpecification));
+				ServiceSpecification serviceSpecification =  new ServiceSpecification(specification, className, nonFunctionalSpecification);
+				EventType invocationEventType = getInvocationEventType();
+				Dependency dependency  = new Dependency(this, serviceConsumer, serviceSpecification, invocationEventType);
 				this.register(fieldMetadata, dependency);
 			} catch (ClassNotFoundException e) {
 				throw new ConfigurationException("The required service interface cannot be loaded : " + e.getMessage());
@@ -55,6 +67,10 @@ public class DependencyHandler extends PrimitiveHandler {
 		description = new DependencyHandlerDescription(this, dependencies); // Initialize
 																			// the
 																			// description.
+	}
+
+	private EventType getInvocationEventType() {
+		return eventTypeCatalog.get(Constants.INVOCATION_EVENT);
 	}
 
 	private List<AttributeConstraint> getConstraintList(Element[] constraintTags) {
@@ -165,5 +181,12 @@ public class DependencyHandler extends PrimitiveHandler {
 
         }
     }
+
+	public EventChannel getEventChannel() {
+		EventType invocationEvent = eventTypeCatalog.get(Constants.INVOCATION_EVENT);
+		EventChannel channel = epService.getEventChannel(invocationEvent);
+		
+		return channel;
+	}
 
 }
