@@ -67,8 +67,6 @@ public class MonitoredAttribute implements AttributeChangeListener {
 		this.getMonitorListener().updated(this.monitoredServicePid, this.getStatusVariable());
 	}
 	
-	
-	
 	private MonitorListener getMonitorListener(){
 		MonitorListener monitorListener = null;
 		ServiceReference monitorListenerRef = ctx.getServiceReference(MonitorListener.class.getName());

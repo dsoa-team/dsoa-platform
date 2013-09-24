@@ -5,13 +5,13 @@ import java.util.List;
 
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
-import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.management.PlatformManagementService;
+import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.platform.monitor.ServiceMetadata;
-import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;
+import br.ufpe.cin.dsoa.util.Constants;
 
 /**
  * The Management Service is responsible for providing an access point to perform
@@ -32,8 +32,7 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 	public List<ServiceMetadata> getManagedServicesMetadata() {
 		List<ServiceMetadata> metadata = new ArrayList<ServiceMetadata>();
 		for (MonitoredService monitoredService : this.monitoringService.getMonitoredServices()) {
-			//TODO: CORRIGIR
-			//metadata.add(serviceMonitor.getMetadata());
+			metadata.add(monitoredService.getMetadata());
 		}
 		return metadata;
 	}
@@ -75,16 +74,9 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 		return monitoringService.getMonitoredService(id);
 	}
 
-	public void addAttributeConstraint(String serviceId, AttributeConstraint attributeConstraint) {
-		this.monitoringService.addAttributeConstraint(serviceId, attributeConstraint);
-	}
-
 	public void addAttributeMonitor(String servicePid, String attName, String attCategory, String operationName) {
-		Attribute attribute = this.attributeCatalog.getAttribute(AttributeConstraint.format(attCategory, attName));
-		AttributeConstraint attributeConstraint = null; 
-		// TODO: terminar
-		//new AttributeConstraint(attribute.getId(), Util.getAttributableId(servicePid, operationName));
-		this.monitoringService.addAttributeConstraint(servicePid, attributeConstraint);
+		String attributeId = String.format("%s%s%s", attCategory, Constants.TOKEN, attName);
+		this.monitoringService.addMonitoredAttribute(servicePid, operationName, attributeId);
 	}
 	
 }

@@ -2,6 +2,7 @@ package br.ufpe.cin.dsoa.platform.management.shell;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import br.ufpe.cin.dsoa.platform.management.PlatformManagementService;
@@ -29,7 +30,9 @@ public class AddMonitorCommand  extends DsoaBaseCommand {
 
 	//dsoa monitor 
 	public void execute(String line, PrintStream out, PrintStream err) {
+		
 		String[] params = line.split(" ");
+		params = Arrays.copyOfRange(params, 1, params.length);
 		if (params.length == 4) { //operation monitor
 			String pid = params[PID];
 			String category = params[CATEGORY];

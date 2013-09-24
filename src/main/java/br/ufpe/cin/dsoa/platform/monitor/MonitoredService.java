@@ -31,6 +31,8 @@ public class MonitoredService implements Monitorable {
 	private ServiceRegistration proxyRegistration;
 	
 	private boolean started;
+	
+	private boolean notifiesOnChange;
 
 	private ServiceMetadata metadata;
 	
@@ -40,6 +42,7 @@ public class MonitoredService implements Monitorable {
 		this.service = service;
 		this.ctx = ctx;
 		this.metadata = new ServiceMetadata(service);
+		this.notifiesOnChange = true;
 	}
 	
 	public void start() {
@@ -117,7 +120,7 @@ public class MonitoredService implements Monitorable {
 	}
 
 	public boolean notifiesOnChange(String id) throws IllegalArgumentException {
-		return true;
+		return this.notifiesOnChange;
 	}
 
 	public boolean resetStatusVariable(String id) throws IllegalArgumentException {
@@ -133,6 +136,14 @@ public class MonitoredService implements Monitorable {
 
 	public Map<String, MonitoredAttribute> getMetricVariableMap() {
 		return this.attributeMonitorMap;
+	}
+
+	public boolean isNotifiesOnChange() {
+		return notifiesOnChange;
+	}
+
+	public void setNotifiesOnChange(boolean notifiesOnChange) {
+		this.notifiesOnChange = notifiesOnChange;
 	}
 
 }

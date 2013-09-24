@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.Service;
 
 public class ServiceMetadata {
@@ -55,7 +56,14 @@ public class ServiceMetadata {
 	}
 	
 	public List<AttributeConstraint> getAttributeConstraints() {
-		List<AttributeConstraint> attConsts = service.getSpecification().getNonFunctionalSpecification().getAttributeConstraints();
+		
+		List<AttributeConstraint> attConsts = new ArrayList<AttributeConstraint>(); 
+		NonFunctionalSpecification nfs = service.getSpecification().getNonFunctionalSpecification();
+		
+		if(nfs != null) {
+			attConsts = nfs.getAttributeConstraints();
+		}
+		
 		return attConsts;
 	}
 }

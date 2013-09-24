@@ -2,9 +2,8 @@ package br.ufpe.cin.dsoa.platform.management;
 
 import java.util.List;
 
-import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.platform.monitor.ServiceMetadata;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;
+import br.ufpe.cin.dsoa.platform.monitor.ServiceMetadata;
 
 /**
  * This intends to be the DSOA's management facade. 
@@ -28,5 +27,4 @@ public interface PlatformManagementService {
 	
 	MonitoredService getMonitoredService(String id);
 	
-	void addAttributeConstraint(String serviceId, AttributeConstraint attributeConstraint);
 }

@@ -88,20 +88,31 @@ public class MonitoringServiceImpl implements MonitoringService {
 		MonitoredService monitoredService = new MonitoredService(ctx, service);
 		if (nfs != null) {
 			for (AttributeConstraint attributeConstraint : service.getSpecification().getNonFunctionalSpecification().getAttributeConstraints()) {
-				this.addAttributeMonitor(monitoredService, attributeConstraint);
+				
+				String servicePid = service.getServiceId();
+				String operation = attributeConstraint.getOperation();
+				String attributeId = attributeConstraint.getAttributeId();
+				this.addMonitoredAttribute(servicePid, operation, attributeId);
+				
 			}
-			synchronized (serviceMonitorsMap) {
-				String providedServiceId = service.getServiceId();
-				List<MonitoredService> monitors = serviceMonitorsMap.get(providedServiceId);
-				if (monitors == null) {
-					monitors = new ArrayList<MonitoredService>();
-					serviceMonitorsMap.put(providedServiceId, monitors);
-				}
-				monitors.add(monitoredService);
-			}
-			monitoredService.start();
 		}
+		registerMonitoredService(service, monitoredService);
+		
 		return monitoredService;
+	}
+
+	private void registerMonitoredService(Service service, MonitoredService monitoredService) {
+		synchronized (serviceMonitorsMap) {
+			String providedServiceId = service.getServiceId();
+			List<MonitoredService> monitors = serviceMonitorsMap.get(providedServiceId);
+			if (monitors == null) {
+				monitors = new ArrayList<MonitoredService>();
+				serviceMonitorsMap.put(providedServiceId, monitors);
+			}
+			monitors.add(monitoredService);
+		}
+		
+		monitoredService.start();
 	}
 
 	public void stopMonitoring(String providedServiceId) {
@@ -111,45 +122,40 @@ public class MonitoringServiceImpl implements MonitoringService {
 		}
 	}
 
-	public void addAttributeConstraint(String servicePid, AttributeConstraint attributeConstraint) {
-		List<MonitoredService> monitors = serviceMonitorsMap.get(servicePid);
-		if (monitors == null || monitors.isEmpty()) {
-			log.warning("There is no monitors related to service " + servicePid);
-			return;
-		}
-		MonitoredService monitor = monitors.get(0);
-		this.addAttributeMonitor(monitor, attributeConstraint);
-	}
-
-	private void addAttributeMonitor(MonitoredService monitoredService, AttributeConstraint attributeConstraint) {
-		String attributeId = attributeConstraint.getAttributeId();
+	public void addMonitoredAttribute(String servicePid, String operation, String attributeId) {
+		
 		Attribute attribute = attributeCatalog.getAttribute(attributeId);
 		if (attribute != null) {
-			AttributableId attributableId = new AttributableId(monitoredService.getServiceId(), attributeConstraint.getOperation());
-			MonitoredAttribute monitoredAttribute = new MonitoredAttribute(ctx, monitoredService.getMonitoredServicePid(), attributableId, attribute);
-			monitoredService.addMonitoredAttribute(monitoredAttribute);
-			AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
-			if (mapper != null) {
-				EventConsumer consumer = new EventConsumerImpl(mapper, monitoredAttribute);
-				EventType eventType = mapper.getEventType();
-				PropertyType sourceType = eventType.getMetadataPropertyType(Constants.EVENT_SOURCE);
-				FilterExpression filterExp = new FilterExpression(new Property(attributableId.getId(), sourceType), Expression.EQ);
-				List<FilterExpression> filterList = new ArrayList<FilterExpression>();
-				filterList.add(filterExp);
-				EventFilter filter = new EventFilter(filterList);
-				String id = sourceType + Constants.TOKEN + attributeId;
-				Subscription subscription = new Subscription(id, eventType, filter);
-				eventProcessingService.subscribe(consumer, subscription);
+			
+			AttributableId attributableId = new AttributableId(servicePid, operation);
+			
+			//add monitored attribute
+			List<MonitoredService> monitoredServices = this.serviceMonitorsMap.get(servicePid);
+			if(monitoredServices != null){
+				for(MonitoredService monitoredService : monitoredServices) {
+					MonitoredAttribute monitoredAttribute = new MonitoredAttribute(ctx, monitoredService.getMonitoredServicePid(), attributableId, attribute);
+					monitoredService.addMonitoredAttribute(monitoredAttribute);
+
+					AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
+					if (mapper != null) {
+						EventConsumer consumer = new EventConsumerImpl(mapper, monitoredAttribute);
+						EventType eventType = mapper.getEventType();
+						PropertyType sourceType = eventType.getMetadataPropertyType(Constants.EVENT_SOURCE);
+						
+						FilterExpression filterExp = new FilterExpression(new Property(attributableId.getId(), sourceType), Expression.EQ);
+						List<FilterExpression> filterList = new ArrayList<FilterExpression>();
+						filterList.add(filterExp);
+						EventFilter filter = new EventFilter(filterList);
+						
+						String id = sourceType + Constants.TOKEN + attributeId;
+						Subscription subscription = new Subscription(id, eventType, filter);
+						eventProcessingService.subscribe(consumer, subscription);
+					}
+				}
 			}
-			//eventProcessingService.registerConsumer(consumer);
-		// String stmtName = monitor.getStatusVariableId();
-		// AttributeEventMapper attEventMapper =
-		// String stmt = attribute.getQuery();
-		// List<Object> parameters = new ArrayList<Object>();
-		// parameters.add(attributableId.getId());
-		// eventProcessingService.subscribe(attributeAttributableMapper.toString(),
-		// parameters, monitor);
+			
 		}
+		
 	}
 	
 }

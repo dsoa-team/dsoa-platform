@@ -2,7 +2,6 @@ package br.ufpe.cin.dsoa.platform.monitor;
 
 import java.util.List;
 
-import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.Service;
 
 public interface MonitoringService {
@@ -15,6 +14,6 @@ public interface MonitoringService {
 
 	void stopMonitoring(String serviceId);
 
-	void addAttributeConstraint(String servicePid, AttributeConstraint attributeConstraint);
+	void addMonitoredAttribute(String servicePid, String operation, String attributeId);
 
 }
