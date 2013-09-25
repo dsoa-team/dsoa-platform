@@ -4,8 +4,8 @@ public interface Constants {
 	/**
 	 * Tag Component
 	 */
-	public static final String COMPONENT_ID_ATT        	= "id";
-	public static final String COMPONENT_NAME_ATT      	= "name";
+	public static final String COMPOSITION_ID_ATT        	= "id";
+	public static final String COMPOSITION_NAME_ATT      	= "name";
 	
 	/** 
 	 * Tag Requires
