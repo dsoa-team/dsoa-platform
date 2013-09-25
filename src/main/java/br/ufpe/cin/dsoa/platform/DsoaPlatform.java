@@ -29,12 +29,9 @@ public class DsoaPlatform {
 	
 	private EventProcessingService epService;
 	
-	private Analyzer analizer;
-
 	public DsoaPlatform(BundleContext context) {
 		this.context = context;
 	}
-	
 	
 	public BundleContext getContext() {
 		return context;
@@ -69,9 +66,4 @@ public class DsoaPlatform {
 	}
 
 
-	public Analyzer getAnalyzer() {
-		return analizer;
-	}
-	
-	
 }

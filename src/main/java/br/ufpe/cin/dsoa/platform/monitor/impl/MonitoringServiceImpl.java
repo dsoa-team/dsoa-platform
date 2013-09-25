@@ -10,7 +10,9 @@ import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributableId;
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
+import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
+import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.event.EventFilter;
 import br.ufpe.cin.dsoa.api.event.EventType;
@@ -27,6 +29,7 @@ import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredAttribute;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;
+import br.ufpe.cin.dsoa.platform.monitor.MonitoringRegistration;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.util.Constants;
 
@@ -132,18 +135,34 @@ public class MonitoringServiceImpl implements MonitoringService {
 		String attributeId = attribute.getId();
 		AttributableId attributableId = new AttributableId(serviceId, operation);
 
-		MonitoredAttribute monitoredAttribute = new MonitoredAttribute(ctx,
+		final MonitoredAttribute monitoredAttribute = new MonitoredAttribute(ctx,
 				monitoredService.getMonitoredServicePid(), attributableId, attribute);
 
 		// add monitored attribute
 		monitoredService.addMonitoredAttribute(monitoredAttribute);
 
-		AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
+		final AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
 		if (mapper != null) {
+			EventConsumer consumer = new EventConsumer() {
+				private String id = monitoredAttribute.getStatusVariableId();
+
+				@Override
+				public String getId() {
+					return id;
+				}
+
+				@Override
+				public void handleEvent(Event event) {
+					AttributeValue attValue = mapper.convertToAttribute(event);
+					monitoredAttribute.update(attValue);
+				}
+			};
+
 			Subscription subscription = this.createSubscription(monitoredAttribute, attributableId,
 					attributeId, mapper);
 
-			EventConsumer consumer = new EventConsumerImpl(mapper, monitoredAttribute);
+			monitoredAttribute.setMonitoringRegistration(new MonitoringRegistration(consumer, subscription));
+			
 			eventProcessingService.subscribe(consumer, subscription);
 		}
 
@@ -161,8 +180,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 		filterList.add(filterExp);
 		EventFilter filter = new EventFilter(filterList);
 
-		String id = sourceType + Constants.TOKEN + attributeId;
-		Subscription subscription = new Subscription(id, eventType, filter);
+		Subscription subscription = new Subscription(eventType, filter);
 
 		return subscription;
 	}

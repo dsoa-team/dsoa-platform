@@ -1,5 +1,7 @@
 package br.ufpe.cin.dsoa.api.event;
 
+import java.util.UUID;
+
 
 public class Subscription {
 
@@ -9,11 +11,11 @@ public class Subscription {
 
 	private String id;
 
-	public Subscription(String id, EventType eventType, EventFilter filter) {
+	public Subscription(EventType eventType, EventFilter filter) {
 		if (eventType == null) {
 			throw new IllegalArgumentException();
 		}
-		this.id = id;
+		this.id = String.format("%s-%s", eventType.getName(), UUID.randomUUID().toString());
 		this.eventType = eventType;
 		this.filter = filter;
 	}

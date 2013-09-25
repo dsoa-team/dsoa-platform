@@ -28,6 +28,7 @@ public class MonitoredAttribute implements AttributeChangeListener {
 	private String			 	monitoredServicePid;
 	private Logger 				log;
 	private BundleContext 		ctx;
+	private MonitoringRegistration monitoringRegistration;
 	
 	public MonitoredAttribute(BundleContext ctx, String monitoredServicePid, AttributableId attributableId, Attribute attribute) {
 		this.log = Logger.getLogger(getClass().getSimpleName());
@@ -77,4 +78,13 @@ public class MonitoredAttribute implements AttributeChangeListener {
 		
 		return monitorListener;
 	}
+
+	public void setMonitoringRegistration(MonitoringRegistration monitoringRegistration) {
+		this.monitoringRegistration = monitoringRegistration;
+	}
+
+	public MonitoringRegistration getMonitoringRegistration() {
+		return monitoringRegistration;
+	}
+	
 }

@@ -75,16 +75,6 @@ public class Dependency implements FieldInterceptor {
 		return this.requiredSpecification.getNonFunctionalSpecification().getAttributeConstraints();
 	}
 	
-	public boolean addAttributeConstraint(AttributeConstraint attributeConstraint) {
-		//TODO: update query
-		return this.getAttributeConstraintList().add(attributeConstraint);
-	}
-	
-	public boolean removeAttributeConstraint(AttributeConstraint attributeConstraint) {
-		//TODO: update query
-		return this.getAttributeConstraintList().remove(attributeConstraint);
-	}
-	
 	public DependencyStatus getStatus() {
 		return status;
 	}

@@ -185,7 +185,7 @@ public class DependencyHandler extends PrimitiveHandler {
 
     	public Object addingService(ServiceReference reference) {
 			validate();
-			return reference;
+			return ctx.getService(reference);
 		}
 		
 		public void modifiedService(ServiceReference reference, Object service) {

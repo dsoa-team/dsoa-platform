@@ -29,8 +29,6 @@
 
 	<handler name="requires" namespace="br.ufpe.cin.dsoa"
 		classname="br.ufpe.cin.dsoa.platform.handler.dependency.DependencyHandler" >
-<!-- 		<requires field="eventTypeCatalog" />
-		<requires field="epService" /> -->
 	</handler>
 	
 	<!-- ============================================================================================================ -->		
@@ -47,6 +45,7 @@
 		<requires field="agentCatalog" />
 		<requires field="monitoringService" />
 		<requires field="epService" />
+		<provides/>
 	</component>
 
 	<!-- ============================================================================================================ -->		
@@ -107,7 +106,7 @@
 		
 		-->
 	<!-- <component 	name="Platform.Manager.Verifier" 
-				classname="br.ufpe.cin.dsoa.platform.handler.dependency.manager.EsperAnalyzer">
+				classname="br.ufpe.cin.dsoa.platform.handler.dependency.manager.DsoaAnalyzer">
 		<requires field="attributeMapperCatalog"/>
 		<requires field="eventProcessingService"/>
 		<provides />
@@ -280,6 +279,8 @@
 	<!-- ============================================================================================================ -->
 	<!-- ============================================================================================================ -->
 
+	<instance component="Platform.Dsoa"/>
+	
 	<instance component="Platform.Event.EventProcessingComponent" />
 	<instance component="Platform.Metric.MetricComputingComponent" />
 	<instance component="Platform.Monitor.MonitoringComponent" />
@@ -305,7 +306,7 @@
 	<instance component="Platform.Event.EventProcessingService" />
 	
 		
-	<!-- <instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.EsperAnalyzer"/> -->
+	<!-- <instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.DsoaAnalyzer"/> -->
 	
 	<!-- 	<instance component="Platform.Catalog.AgentCatalog" />
 	<instance component="Platform.Catalog.AttributeCatalog" />
@@ -321,7 +322,7 @@
 	<instance component="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" /> -->
 	<!-- 
 	<instance component="Platform.Registry.QoSAwareRegistryComponent"/>
-	<instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.EsperAnalyzer"/>
+	<instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.DsoaAnalyzer"/>
 	<instance component="br.ufpe.cin.dsoa.resource.impl.MonitoredServiceListenerImpl"/> -->
 	<!-- <instance component="br.ufpe.cin.dsoa.platform.configurator.DsoaFindHook" />  -->
 	

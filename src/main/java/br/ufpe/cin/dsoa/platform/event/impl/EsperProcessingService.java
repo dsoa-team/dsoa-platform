@@ -177,7 +177,11 @@ public class EsperProcessingService implements EventProcessingService {
 	}
 
 	public void unsubscribe(EventConsumer consumer, Subscription subscription) {
-
+		String statmentId = subscription.getId();
+		EPStatement stmt = this.epServiceProvider.getEPAdministrator().getStatement(statmentId);
+		if(stmt != null) {
+			stmt.destroy();
+		}
 	}
 
 	/**

@@ -122,7 +122,7 @@ public class TestEventProcessingAgent {
 			public String getId() {
 				return "consumer-01";
 			}
-		}, new Subscription("sub-01", subscribedEventType, filter));
+		}, new Subscription(subscribedEventType, filter));
 
 		genTonsOffEvents(eventCounter, service, operation);
 	}
@@ -154,7 +154,7 @@ public class TestEventProcessingAgent {
 			public String getId() {
 				return "consumer-01";
 			}
-		}, new Subscription("sub-01", subscribedEventType, filter));
+		}, new Subscription(subscribedEventType, filter));
 
 		genTimedEvent(eventCounter, service, operation);
 	}
