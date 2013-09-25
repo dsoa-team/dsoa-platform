@@ -6,26 +6,23 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
-import br.ufpe.cin.dsoa.api.attribute.AttributeChangeListener;
+import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.Service;
+import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
+import br.ufpe.cin.dsoa.platform.attribute.AttributeNotificationListener;
+import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.handler.dependency.Dependency;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
 import br.ufpe.cin.dsoa.platform.registry.ServiceRegistry;
 
 
-public class DependencyManager implements ServiceListener, AttributeChangeListener {
+public class DependencyManager implements ServiceListener, AttributeNotificationListener {
 
 	/**
 	 * The component responsible for service selection.
 	 */
 	private BundleContext context;
 
-	/**
-	 * Signals that it is waiting for a Broker in order to resolve 
-	 * its dependency
-	 */
-	private Boolean waiting;
-	
 	/**
 	 * The managed dependency
 	 */
@@ -34,41 +31,38 @@ public class DependencyManager implements ServiceListener, AttributeChangeListen
 	
 	private ServiceRegistry serviceRegistry;
 	private ServiceTracker brokerTracker;
+	private ServiceTracker attributeEventMapperCatalogTacker;
 	
-	
-	/**
-	 * The component responsible for analyzing "service contracts" 
-	 */
-	private Verifier verifier;
-	private ServiceTracker verifierTracker;
+	private Analyzer analyzer;
+
+	private Service service;
+	//private Planner planner;
+
+	public AttributeEventMapperCatalog attributeEventMapperCatalog;
 	
 	public DependencyManager(Dependency dependency) {
-		this.dependency = dependency;
 		this.context = dependency.getHandler().getInstanceManager().getContext();
-		this.waiting = true;
+		this.dependency = dependency;
+		this.analyzer = new EsperAnalyzer();
 		this.brokerTracker = new ServiceTracker(this.context, ServiceRegistry.class.getName(), new BrokerTrackerCustomizer());
-		this.verifierTracker = new ServiceTracker(this.context, Verifier.class.getName(), new VerifierTrackerCustomizer());
+		this.attributeEventMapperCatalogTacker = new ServiceTracker(this.context, AttributeEventMapperCatalog.class.getName(), new AttributeEventMapperCatalogCustomizer());
 	}
 
 	public void start() {
 		this.brokerTracker.open();
-		this.verifierTracker.open();
+		this.attributeEventMapperCatalogTacker.open();
 	}
 
 	public void stop() {
 		brokerTracker.close();
-		verifierTracker.close();
+		this.attributeEventMapperCatalogTacker.close();
 		release();
 	}
 	
 	public void resolve() {
 		if (serviceRegistry != null) {
 			serviceRegistry.getBestService(dependency.getSpecification(), dependency.getBlackList(), this);
-		} else {
-			synchronized (waiting) {
-				waiting = Boolean.TRUE;
-			}
-		}
+		} 
 	}
 
 	public void release() {
@@ -76,21 +70,19 @@ public class DependencyManager implements ServiceListener, AttributeChangeListen
 		dependency.computeDependencyState();
 	}
 	
-	private void configureVerifierAgents(Service service) {
-		this.verifier.configure(this, service.getServiceId(), dependency.getAttributeConstraintList());
-	}
-	
 	public String getServiceInterface() {
 		return dependency.getSpecification().getServiceInterface();
 	}
 	
 	public void onArrival(Service service) {
-		configureVerifierAgents(service);
-		dependency.setService(service);
-		dependency.computeDependencyState();
+		this.service = service;
+		if (this.attributeEventMapperCatalog != null) {
+			initializeManagement();
+		}
 	}
 
 	public void onDeparture(Service service) {
+		this.analyzer.stop();
 		release();
 		resolve();
 	}
@@ -107,13 +99,7 @@ public class DependencyManager implements ServiceListener, AttributeChangeListen
 				if (serviceRegistry == null) {
 					serviceRegistry = (ServiceRegistry) DependencyManager.this.context.getService(reference);
 				}
-				
-				if (verifier != null) {
-					if (waiting) {
-						serviceRegistry.getBestService(dependency.getSpecification(), dependency.getBlackList(), DependencyManager.this);
-						waiting = Boolean.FALSE;
-					}
-				}
+				serviceRegistry.getBestService(dependency.getSpecification(), dependency.getBlackList(), DependencyManager.this);
 				return serviceRegistry;
 			}
 		}
@@ -125,47 +111,54 @@ public class DependencyManager implements ServiceListener, AttributeChangeListen
 		public void removedService(ServiceReference reference, Object service) {
 			synchronized(DependencyManager.this) {
 				DependencyManager.this.context.ungetService(reference);
-				waiting = Boolean.TRUE;
 				serviceRegistry = null;
 			}
 		}	
 	}
-
-	class VerifierTrackerCustomizer implements ServiceTrackerCustomizer {
-		public Object addingService(ServiceReference reference) {
-			synchronized(DependencyManager.this) {
-				verifier = (Verifier) DependencyManager.this.context.getService(reference);
-				if (serviceRegistry != null) {
-					synchronized (waiting) {
-						if (waiting) {
-							serviceRegistry.getBestService(dependency.getSpecification(), dependency.getBlackList(), DependencyManager.this);
-							waiting = Boolean.FALSE;
-						}
-					}
-				}
-				return verifier;
-			}
-		}
-
-		public void modifiedService(ServiceReference reference, Object service) {
-			// Just do nothing!
-		}
-
-		public void removedService(ServiceReference reference, Object service) {
-			synchronized(DependencyManager.this) {
-				DependencyManager.this.context.ungetService(reference);
-				verifier = null;
-				waiting = Boolean.TRUE;
-			}
-		}	
+	
+	public void initializeManagement() {
+		EventProcessingService epService = this.getEventProcessingService();
+		analyzer.start(service.getServiceId(), dependency.getAttributeConstraintList(), attributeEventMapperCatalog,epService, this );
+		dependency.setService(service);
+		dependency.computeDependencyState();
 	}
 	
-	@Override
-	public void update(AttributeValue value) {
-		// TODO Auto-generated method stub
+	private EventProcessingService getEventProcessingService() {
+		ServiceReference reference = context.getServiceReference(EventProcessingService.class.getName());
+		EventProcessingService epService = (EventProcessingService) context.getService(reference);
 		
+		return epService;
 	}
-	
+
+	class AttributeEventMapperCatalogCustomizer implements ServiceTrackerCustomizer {
+
+		@Override
+		public Object addingService(ServiceReference reference) {
+			attributeEventMapperCatalog = (AttributeEventMapperCatalog) context.getService(reference);
+			if (service != null) {
+				initializeManagement();
+			}
+			return reference;
+		}
+
+		@Override
+		public void modifiedService(ServiceReference reference, Object service) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void removedService(ServiceReference reference, Object service) {
+			// TODO Auto-generated method stub
+		}
+	}
+
+	@Override
+	public void handleNotification(AttributeConstraint constraint, AttributeValue value) {
+
+			System.out.println("Constraint: " + constraint);
+			System.out.println("Value: "+ value);
+	}
+
 /*	class BrokerTrackerCustomizer implements ServiceTrackerCustomizer {
 		@Override
 		public Object addingService(ServiceReference reference) {

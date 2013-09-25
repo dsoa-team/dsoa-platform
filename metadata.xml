@@ -29,8 +29,8 @@
 
 	<handler name="requires" namespace="br.ufpe.cin.dsoa"
 		classname="br.ufpe.cin.dsoa.platform.handler.dependency.DependencyHandler" >
-		<requires field="eventTypeCatalog" />
-		<requires field="epService" />
+<!-- 		<requires field="eventTypeCatalog" />
+		<requires field="epService" /> -->
 	</handler>
 	
 
@@ -83,6 +83,20 @@
 		<provides/>
 	</component>
 	
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 				DSOA VERIFIER SERVICE			   	   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
+	<!-- 
+		
+		-->
+	<!-- <component 	name="Platform.Manager.Verifier" 
+				classname="br.ufpe.cin.dsoa.platform.handler.dependency.manager.EsperAnalyzer">
+		<requires field="attributeMapperCatalog"/>
+		<requires field="eventProcessingService"/>
+		<provides />
+	</component> -->	
 	
 	<!-- ============================================================================================================ -->		
 	<!-- ============================================================================================================ -->
@@ -96,14 +110,16 @@
 		themselves to listen those events. The collection of Event Producers, Event Processing Agents, and Event Consumers 
 		connected together compose Event Processing Networks. 
 	 	-->
-	 <composite name="Platform.Event.EventProcessingComponent">
+	 <!-- <composite name="Platform.Event.EventProcessingComponent">
 		<instance component="Platform.Event.AgentCatalog" />
 		<instance component="Platform.Event.EventTypeCatalog" />
 		<instance component="Platform.Event.EventProcessingService" />
+		<subservice action="import" 
+             specification="org.osgi.service.event.EventAdmin"/>
 		<provides action="export" specification="br.ufpe.cin.dsoa.platform.event.AgentCatalog"/>
 		<provides action="export" specification="br.ufpe.cin.dsoa.platform.event.EventTypeCatalog"/>
 		<provides action="export" specification="br.ufpe.cin.dsoa.platform.event.EventProcessingService"/>
-	</composite>
+	</composite> -->
 	
 	<!-- 
 		This component implements a catalog that register the agents that are known by the platform and that can be used
@@ -247,6 +263,7 @@
 	<instance component="Platform.Configuration.ConfiguratorComponent" />
 	<instance component="Platform.Management.ManagementComponent" />
 	<instance component="Platform.Management.ResourceManagerComponent" />
+	<instance component="Platform.Manager.Verifier"/>
 	
 	<instance component="Platform.Shell.DsoaShell" />
 	<instance component="Platform.Shell.ListAttributesCmd" />
@@ -255,7 +272,15 @@
 	<instance component="Platform.Shell.ListServiceOperationsCmd" />
 	<instance component="Platform.Shell.AddMonitorCmd" />
 	
-	<instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.EsperVerifier"/>
+	
+	
+	
+	<instance component="Platform.Event.AgentCatalog" />
+	<instance component="Platform.Event.EventTypeCatalog" />
+	<instance component="Platform.Event.EventProcessingService" />
+	
+		
+	<!-- <instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.EsperAnalyzer"/> -->
 	
 	<!-- 	<instance component="Platform.Catalog.AgentCatalog" />
 	<instance component="Platform.Catalog.AttributeCatalog" />
@@ -271,7 +296,7 @@
 	<instance component="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" /> -->
 	<!-- 
 	<instance component="Platform.Registry.QoSAwareRegistryComponent"/>
-	<instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.EsperVerifier"/>
+	<instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.EsperAnalyzer"/>
 	<instance component="br.ufpe.cin.dsoa.resource.impl.MonitoredServiceListenerImpl"/> -->
 	<!-- <instance component="br.ufpe.cin.dsoa.platform.configurator.DsoaFindHook" />  -->
 	

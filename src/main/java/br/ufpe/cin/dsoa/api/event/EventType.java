@@ -263,7 +263,7 @@ public class EventType {
 		for (String key : valueMap.keySet()) {
 			PropertyType propertyType = this.getPropertyType(key, isMetadata);
 
-			if (null != propertyMap) {
+			if (null != propertyType) {
 				Object value = valueMap.get(key);
 				Property property = propertyType.createProperty(value);
 				propertyMap.put(key, property);

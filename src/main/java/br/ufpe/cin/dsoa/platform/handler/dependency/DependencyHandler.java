@@ -12,10 +12,12 @@ import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 import br.ufpe.cin.dsoa.api.event.EventChannel;
 import br.ufpe.cin.dsoa.api.event.EventType;
-import br.ufpe.cin.dsoa.api.event.OutputTerminal;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.Expression;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
@@ -23,8 +25,6 @@ import br.ufpe.cin.dsoa.api.service.ServiceConsumer;
 import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
-import br.ufpe.cin.dsoa.platform.event.impl.EventAdminChannel;
-import br.ufpe.cin.dsoa.platform.event.impl.OutputTerminalAdapter;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyHandler extends PrimitiveHandler {
@@ -34,12 +34,18 @@ public class DependencyHandler extends PrimitiveHandler {
 	private boolean started;
 	private Logger log = Logger.getLogger(DependencyHandler.class.getName());
 	
-	private EventTypeCatalog eventTypeCatalog;
-	private EventProcessingService epService;
+	private ServiceTracker eventTypeCatalogTracker;
+	private ServiceTracker eventProcessingServiceTracker;
 	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
+		BundleContext ctx = this.getInstanceManager().getContext();
+		eventTypeCatalogTracker = new ServiceTracker(ctx, EventTypeCatalog.class.getName(), null);
+		eventTypeCatalogTracker.open();
+		eventProcessingServiceTracker = new ServiceTracker(ctx, EventProcessingService.class.getName(), null);
+		eventProcessingServiceTracker.open();
+		
 		String consumerId = metadata.getAttribute(Constants.COMPONENT_ID_ATT);
 		String consumerName = metadata.getAttribute(Constants.COMPONENT_NAME_ATT);
 		ServiceConsumer serviceConsumer = new ServiceConsumer(consumerId, consumerName);
@@ -69,7 +75,12 @@ public class DependencyHandler extends PrimitiveHandler {
 																			// description.
 	}
 
-	private EventType getInvocationEventType() {
+	private EventType getInvocationEventType() throws ConfigurationException {
+		EventTypeCatalog eventTypeCatalog = (EventTypeCatalog) eventTypeCatalogTracker.getService();
+		
+		if (eventTypeCatalog == null) {
+			throw new ConfigurationException("Event type catalog was not found!");
+		}
 		return eventTypeCatalog.get(Constants.INVOCATION_EVENT);
 	}
 
@@ -182,7 +193,14 @@ public class DependencyHandler extends PrimitiveHandler {
         }
     }
 
-	public EventChannel getEventChannel() {
+	public EventChannel getEventChannel() throws ConfigurationException {
+		EventTypeCatalog eventTypeCatalog = (EventTypeCatalog) eventTypeCatalogTracker.getService();
+		EventProcessingService epService = (EventProcessingService) eventProcessingServiceTracker.getService();
+		if (eventTypeCatalog == null) {
+			throw new ConfigurationException("Event type catalog was not found!");
+		} else if (epService == null) {
+			throw new ConfigurationException("Event processing service was not found!");
+		}
 		EventType invocationEvent = eventTypeCatalog.get(Constants.INVOCATION_EVENT);
 		EventChannel channel = epService.getEventChannel(invocationEvent);
 		

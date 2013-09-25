@@ -65,7 +65,7 @@ public class DynamicProxyFactory implements InvocationHandler {
 	}
 
 	public Object getProxy() {
-		return (Service) java.lang.reflect.Proxy.newProxyInstance(this.dependency.getClass().getClassLoader(),
+		return java.lang.reflect.Proxy.newProxyInstance(this.dependency.getClass().getClassLoader(),
 				new Class[] { this.dependency.getSpecification().getClazz() }, this);
 	}
 
@@ -100,7 +100,7 @@ public class DynamicProxyFactory implements InvocationHandler {
 		}
 
 		// InvocationEvent ie = null;
-		long requestTime = System.nanoTime(), responseTime;
+		long requestTime = System.currentTimeMillis(), responseTime;
 		Object result = null;
 		boolean success = true;
 		try {
@@ -110,7 +110,7 @@ public class DynamicProxyFactory implements InvocationHandler {
 			success = false;
 			throw exc;
 		} finally {
-			responseTime = System.nanoTime();
+			responseTime = System.currentTimeMillis();
 			notifyInvocation(dependency.getConsumer().getId(), dependency.getService().getServiceId(),
 					method.getName(), requestTime, responseTime, success, exceptionMessage);
 		}
@@ -178,14 +178,14 @@ public class DynamicProxyFactory implements InvocationHandler {
 		}
 
 		private Map<String, Object> loadInvocationData(String consumerId, String serviceId, String operationName,
-				long requestTimestamp, long responseTimestampe, boolean success, String exceptionMessage) {
+				long requestTimestamp, long responseTimestamp, boolean success, String exceptionMessage) {
 			Map<String, Object> data = new HashMap<String, Object>();
 
 			data.put("consumerId", consumerId);
 			data.put("serviceId", serviceId);
 			data.put("operationName", operationName);
 			data.put("requestTimestamp", requestTimestamp);
-			data.put("responseTimestampe", responseTimestampe);
+			data.put("responseTimestamp", responseTimestamp);
 			data.put("success", success);
 			data.put("exceptionMessage", exceptionMessage);
 

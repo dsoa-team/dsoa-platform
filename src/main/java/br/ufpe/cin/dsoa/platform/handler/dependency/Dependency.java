@@ -3,6 +3,7 @@ package br.ufpe.cin.dsoa.platform.handler.dependency;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.FieldInterceptor;
 
 import br.ufpe.cin.dsoa.api.event.EventType;
@@ -39,7 +40,12 @@ public class Dependency implements FieldInterceptor {
 		this.blackList = new ArrayList<String>();
 		this.status = DependencyStatus.UNRESOLVED;
 		this.manager = new DependencyManager(this);
-		this.dynamicProxy = new DynamicProxyFactory(this, handler.getEventChannel()); 
+		try {
+			this.dynamicProxy = new DynamicProxyFactory(this, handler.getEventChannel());
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+			dependencyHandler.setValidity(false);
+		} 
 	}
 
 	public EventType getInvocationEventType() {

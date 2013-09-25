@@ -75,8 +75,12 @@ public class EsperProcessingService implements EventProcessingService {
 	// TODO:REMOVER
 
 	public void start() throws JAXBException {
+		Configuration configuration = new Configuration();
+		configuration.getEngineDefaults().getThreading().setInsertIntoDispatchPreserveOrder(false);
+		configuration.getEngineDefaults().getThreading().setListenerDispatchPreserveOrder(false);
+		
 		this.epServiceProvider = EPServiceProviderManager.getProvider("Dsoa-EsperEngine",
-				new Configuration());
+				configuration);
 
 		// defines invocation event
 		Util.handlePlatformEventDefinitions(ctx.getBundle(), this.eventTypeCatalog, this);
@@ -317,14 +321,12 @@ public class EsperProcessingService implements EventProcessingService {
 	@Override
 	public EventChannel getEventChannel(EventType eventType) {
 		OutputTerminal output = new OutputTerminalAdapter(this);
-		String eventTopic = String.format("%s%s%s", Constants.REQUIRES_TAG_NAMESPACE, Constants.TOKEN, eventType.getName());
-		eventTopic = eventTopic.replaceAll(".", "/");
 		
-		EventChannel channel = this.channelMap.get(eventTopic);
+		EventChannel channel = this.channelMap.get(eventType.getName());
 		
 		if(channel == null){
-			channel = new EventAdminChannel(ctx, eventTopic, output);
-			this.channelMap.put(eventTopic, channel);
+			channel = new EventAdminChannel(ctx, eventType, output);
+			this.channelMap.put(eventType.getName(), channel);
 		}
 		
 		return channel;

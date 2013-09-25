@@ -38,6 +38,10 @@ public class AttributeValue {
 	public Object getValue() {
 		return this.data.get(Constants.ATTRIBUTE_VALUE).getValue();
 	}
-	
-	
+
+
+	@Override
+	public String toString() {
+		return "AttributeValue [attribute=" + attribute + ", metadata=" + metadata + ", data=" + data + "]";
+	}
 }

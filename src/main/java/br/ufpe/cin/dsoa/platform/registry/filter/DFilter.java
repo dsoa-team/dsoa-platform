@@ -19,8 +19,8 @@ public class DFilter extends FilterBuilder{
 
 	@Override
 	public StringBuilder append(StringBuilder builder) {
-		// TODO Auto-generated method stub
-		return builder.append('(').append(name).append(expression.getOperator())
-		.append(value).append(')');
+		String renderedExpression = expression.renderExpression(this.name, value+"");
+
+		return builder.append('(').append(renderedExpression).append(')');
 	}
 }

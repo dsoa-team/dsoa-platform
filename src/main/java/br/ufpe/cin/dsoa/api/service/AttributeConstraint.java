@@ -75,8 +75,8 @@ public class AttributeConstraint {
 		buffer.append(br.ufpe.cin.dsoa.util.Constants.TOKEN);
 		buffer.append(getAttributeId());
 		buffer.append(br.ufpe.cin.dsoa.util.Constants.TOKEN);
-		buffer.append((getOperation() != null) ?getOperation() + br.ufpe.cin.dsoa.util.Constants.TOKEN : "");
-		buffer.append(getExpression());
+		buffer.append((getOperation() != null) ? getOperation() + br.ufpe.cin.dsoa.util.Constants.TOKEN : "");
+		buffer.append(getExpression().getAlias());
 		return buffer.toString();
 	}
 	

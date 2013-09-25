@@ -43,11 +43,13 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 		try {
 			Filter filter = this.createFilter(serviceInterface, constraints);
 			ServiceReference[] references = this.context.getServiceReferences(serviceInterface, filter.toString());
-			for(ServiceReference reference : references){
-				try {
-					services.add(OsgiService.getOsgiService(serviceInterface,reference));
-				} catch (ClassNotFoundException e) {
-					logger.log(Level.WARNING, e.getMessage());
+			if(references != null){
+				for(ServiceReference reference : references){
+					try {
+						services.add(OsgiService.getOsgiService(serviceInterface,reference));
+					} catch (ClassNotFoundException e) {
+						logger.log(Level.WARNING, e.getMessage());
+					}
 				}
 			}
 		} catch (InvalidConstraintException e) {
