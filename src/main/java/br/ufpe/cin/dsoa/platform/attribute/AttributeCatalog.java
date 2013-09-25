@@ -12,6 +12,8 @@ public interface AttributeCatalog {
 
 	public Attribute getAttribute(String id);
 
+	public Attribute getAttribute(String attCategory, String attName);
+
 	public Collection<Attribute> getAttributes();
 
 	public void addAttribute(Attribute attribute) throws AttributeAlreadyCatalogedException;
@@ -19,5 +21,6 @@ public interface AttributeCatalog {
 	public AttributeCategory getCategory(String catId);
 
 	public void addCategory(AttributeCategory cat);
+
 	
 }

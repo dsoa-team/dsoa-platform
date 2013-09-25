@@ -2,14 +2,11 @@ package br.ufpe.cin.dsoa.api.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
-import br.ufpe.cin.dsoa.api.attribute.AttributeCategory;
-import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.util.Constants;
 
 
@@ -137,39 +134,11 @@ public class AttributeConstraint {
 		return attConstraints;
 	}
 	
-	public static AttributeCategory parseCategory(AttributeCatalog attributeCatalog, String catName) {
-		AttributeCategory cat = null, parentCat = null;
-		if (catName != null) {
-			StringTokenizer tokenizer = new StringTokenizer(catName, Constants.TOKEN);
-			String parentId = tokenizer.nextToken();
-			String catId = null;
-			parentCat = attributeCatalog.getCategory(parentId);
-			if (parentCat == null) {
-				parentCat = new AttributeCategory(parentId);
-				attributeCatalog.addCategory(parentCat);
-			}
-			while (tokenizer.hasMoreTokens()) {
-				catId = tokenizer.nextToken();
-				cat = attributeCatalog.getCategory(catId);
-				if (cat == null) {
-					cat = new AttributeCategory(catId, parentCat);
-					attributeCatalog.addCategory(cat);
-				}
-				parentCat = cat;
-			}
-		}
-		return parentCat;
-	}
-	
-	public static String format(String category, String attribute) {
-		return category + Constants.TOKEN + attribute;
-	}
-	
-	public static void main(String args[] ) {
+	/*public static void main(String args[] ) {
 		AttributeConstraint opConstraint = parse ("constraint.operation.qos.performance.avgResponseTime.getCotation.LT",500);
 		AttributeConstraint svConstraint = parse ("constraint.service.qos.availability.LT", 99);
 		System.out.println(opConstraint);
 		System.out.println(svConstraint);
-	}
+	}*/
 
 }

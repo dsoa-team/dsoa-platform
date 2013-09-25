@@ -3,7 +3,6 @@ package br.ufpe.cin.dsoa.platform.attribute.impl;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributeCategory;
-import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 
 public class AttributeCategoryAdapter extends XmlAdapter<String, AttributeCategory> {
@@ -18,7 +17,7 @@ public class AttributeCategoryAdapter extends XmlAdapter<String, AttributeCatego
 	public AttributeCategory unmarshal(String catId) throws Exception {
 		AttributeCategory attCat = attributeCatalog.getCategory(catId);
 		if (attCat == null) {
-			attCat = AttributeConstraint.parseCategory(attributeCatalog, catId);
+			attCat = AttributeManager.parseCategory(attributeCatalog, catId);
 		}
 		return attCat;
 	}

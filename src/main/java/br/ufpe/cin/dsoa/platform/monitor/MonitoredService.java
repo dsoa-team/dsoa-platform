@@ -12,6 +12,7 @@ import org.osgi.service.monitor.Monitorable;
 import org.osgi.service.monitor.StatusVariable;
 
 import br.ufpe.cin.dsoa.api.service.Service;
+import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 
 public class MonitoredService implements Monitorable {
 	
@@ -66,33 +67,21 @@ public class MonitoredService implements Monitorable {
 		log.info("Registering monitor...");
 		Hashtable ht = new Hashtable();
 		ht.put(Constants.SERVICE_PID, getMonitoredServicePid());
-		ht.put(REFERED_SERVICE_ID, service.getServiceId());
+		ht.put(REFERED_SERVICE_ID, service.getCompomentId());
 		String[] clazzes = {Monitorable.class.getName()};
 		this.monitorRegistration = this.ctx.registerService(clazzes, this, ht);
 	}
-	
-	/*@SuppressWarnings("rawtypes")
-	private void registerProxy() {
-		log.info("Registering proxy...");
-		log.info("A new remote service was registered: "
-				+ this.service.getServiceId());
-		log.info("Creating a service proxy...");
-		
-		Dictionary dict = this.service.getProperties();
-		dict.put(br.ufpe.cin.dsoa.util.Constants.SERVICE_PROXY, "true");
-		//this.proxyRegistration = this.ctx.registerService(service.getSpecification().getClassNames(), service.getProxy(), dict);
-	}*/
 	
 	public synchronized void addMonitoredAttribute(MonitoredAttribute monitor) {
 		this.attributeMonitorMap.put(monitor.getStatusVariableId(), monitor);
 	}
 	
 	public String getMonitoredServicePid() {
-		return this.service.getServiceId() + "-m";
+		return this.service.getCompomentId() + "-m";
 	}
 	
-	public String getServiceId() {
-		return this.service.getServiceId();
+	public String getComponentId() {
+		return this.service.getCompomentId();
 	}
 	
 	public ServiceMetadata getMetadata() {
@@ -101,6 +90,10 @@ public class MonitoredService implements Monitorable {
 
 	public boolean isStarted() {
 		return this.started;
+	}
+	
+	public ServiceSpecification getServiceSpecification(){
+		return this.service.getSpecification();
 	}
 	
 	public String[] getStatusVariableNames() {

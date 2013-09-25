@@ -28,9 +28,8 @@ import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.agent.AgentAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.event.agent.AgentList;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
-import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
+import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCategoryAdapter;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
@@ -167,7 +166,7 @@ public class DsoaBundleListener extends BundleTracker {
 			try {
 				attList = (AttributeEventMapperList) u.unmarshal(url);
 				for (AttributeEventMapper mapper : attList.getAttributesEventMappers()) {
-					Attribute attribute = attributeCatalog.getAttribute(AttributeConstraint.format(mapper.getCategory(), mapper.getName()));
+					Attribute attribute = attributeCatalog.getAttribute(mapper.getCategory(), mapper.getName());
 					mapper.setAttribute(attribute);
 					EventType eventType = eventTypeCatalog.get(mapper.getEventTypeName());
 					mapper.setEventType(eventType);

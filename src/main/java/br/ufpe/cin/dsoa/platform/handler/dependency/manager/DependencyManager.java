@@ -118,7 +118,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	
 	public void initializeManagement() {
 		EventProcessingService epService = this.getEventProcessingService();
-		analyzer.start(service.getServiceId(), dependency.getAttributeConstraintList(), attributeEventMapperCatalog,epService, this );
+		analyzer.start(service.getCompomentId(), dependency.getAttributeConstraintList(), attributeEventMapperCatalog,epService, this );
 		dependency.setService(service);
 		dependency.computeDependencyState();
 	}

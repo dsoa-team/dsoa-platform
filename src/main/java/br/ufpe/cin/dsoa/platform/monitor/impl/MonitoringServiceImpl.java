@@ -30,31 +30,32 @@ import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.util.Constants;
 
-
-
 /**
- * This component is responsible for monitoring services that are registered in the platform. It reads the service
- * non-functional specification, identify declared QoS attributes, and starts a monitor (an agent processing instance)
- * that computes corresponding attribute values. It is important to mention that its monitoring action is passive, in the
- * sense that the service DOESN'T generate artificial requests. It computes metrics based on InvocationEvents that
- * are generated when the service is requested. In fact, it register agents in the EventProcessingService, which are 
- * able to compute the corresponding metrics.
-		
+ * This component is responsible for monitoring services that are registered in
+ * the platform. It reads the service non-functional specification, identify
+ * declared QoS attributes, and starts a monitor (an agent processing instance)
+ * that computes corresponding attribute values. It is important to mention that
+ * its monitoring action is passive, in the sense that the service DOESN'T
+ * generate artificial requests. It computes metrics based on InvocationEvents
+ * that are generated when the service is requested. In fact, it register agents
+ * in the EventProcessingService, which are able to compute the corresponding
+ * metrics.
+ * 
  * @author fabions
- *
+ * 
  */
 public class MonitoringServiceImpl implements MonitoringService {
 
 	private Logger log;
-	
+
 	private BundleContext ctx;
-	
+
 	private EventProcessingService eventProcessingService;
-	
+
 	private AttributeCatalog attributeCatalog;
-	
+
 	private AttributeEventMapperCatalog attributeMapperCatalog;
-	
+
 	/**
 	 * Maps a service.pid to the service that is created to store the metrics
 	 * associated to the service. That is: Map<service.pid, MonitoredService>
@@ -65,15 +66,15 @@ public class MonitoringServiceImpl implements MonitoringService {
 		this.ctx = ctx;
 		this.log = Logger.getLogger(MonitoringService.class.getName());
 	}
-	
+
 	public List<MonitoredService> getMonitoredServices() {
-		 List<MonitoredService> list = new ArrayList<MonitoredService>();
-		 for (List<MonitoredService> providedList : serviceMonitorsMap.values()) {
-			 list.addAll(providedList);
-		 }
-		 return list;
+		List<MonitoredService> list = new ArrayList<MonitoredService>();
+		for (List<MonitoredService> providedList : serviceMonitorsMap.values()) {
+			list.addAll(providedList);
+		}
+		return list;
 	}
-	
+
 	public MonitoredService getMonitoredService(String providedId) {
 		List<MonitoredService> compInstanceList = this.serviceMonitorsMap.get(providedId);
 		if (providedId != null && !compInstanceList.isEmpty()) {
@@ -82,28 +83,30 @@ public class MonitoringServiceImpl implements MonitoringService {
 			return null;
 		}
 	}
-	
+
 	public MonitoredService startMonitoring(Service service) {
 		NonFunctionalSpecification nfs = service.getSpecification().getNonFunctionalSpecification();
 		MonitoredService monitoredService = new MonitoredService(ctx, service);
 		if (nfs != null) {
-			for (AttributeConstraint attributeConstraint : service.getSpecification().getNonFunctionalSpecification().getAttributeConstraints()) {
-				
-				String servicePid = service.getServiceId();
+			for (AttributeConstraint attributeConstraint : service.getSpecification()
+					.getNonFunctionalSpecification().getAttributeConstraints()) {
+
 				String operation = attributeConstraint.getOperation();
 				String attributeId = attributeConstraint.getAttributeId();
-				this.addMonitoredAttribute(servicePid, operation, attributeId);
+				Attribute attribute = this.attributeCatalog.getAttribute(attributeId);
 				
+				this.addMonitoredAttribute(monitoredService, attribute, operation);
+
 			}
 		}
 		registerMonitoredService(service, monitoredService);
-		
+
 		return monitoredService;
 	}
 
 	private void registerMonitoredService(Service service, MonitoredService monitoredService) {
 		synchronized (serviceMonitorsMap) {
-			String providedServiceId = service.getServiceId();
+			String providedServiceId = service.getCompomentId();
 			List<MonitoredService> monitors = serviceMonitorsMap.get(providedServiceId);
 			if (monitors == null) {
 				monitors = new ArrayList<MonitoredService>();
@@ -111,7 +114,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 			}
 			monitors.add(monitoredService);
 		}
-		
+
 		monitoredService.start();
 	}
 
@@ -122,40 +125,45 @@ public class MonitoringServiceImpl implements MonitoringService {
 		}
 	}
 
-	public void addMonitoredAttribute(String servicePid, String operation, String attributeId) {
-		
-		Attribute attribute = attributeCatalog.getAttribute(attributeId);
-		if (attribute != null) {
-			
-			AttributableId attributableId = new AttributableId(servicePid, operation);
-			
-			//add monitored attribute
-			List<MonitoredService> monitoredServices = this.serviceMonitorsMap.get(servicePid);
-			if(monitoredServices != null){
-				for(MonitoredService monitoredService : monitoredServices) {
-					MonitoredAttribute monitoredAttribute = new MonitoredAttribute(ctx, monitoredService.getMonitoredServicePid(), attributableId, attribute);
-					monitoredService.addMonitoredAttribute(monitoredAttribute);
+	public void addMonitoredAttribute(MonitoredService monitoredService, Attribute attribute,
+			String operation) {
 
-					AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
-					if (mapper != null) {
-						EventConsumer consumer = new EventConsumerImpl(mapper, monitoredAttribute);
-						EventType eventType = mapper.getEventType();
-						PropertyType sourceType = eventType.getMetadataPropertyType(Constants.EVENT_SOURCE);
-						
-						FilterExpression filterExp = new FilterExpression(new Property(attributableId.getId(), sourceType), Expression.EQ);
-						List<FilterExpression> filterList = new ArrayList<FilterExpression>();
-						filterList.add(filterExp);
-						EventFilter filter = new EventFilter(filterList);
-						
-						String id = sourceType + Constants.TOKEN + attributeId;
-						Subscription subscription = new Subscription(id, eventType, filter);
-						eventProcessingService.subscribe(consumer, subscription);
-					}
-				}
-			}
-			
+		String serviceId = monitoredService.getComponentId();
+		String attributeId = attribute.getId();
+		AttributableId attributableId = new AttributableId(serviceId, operation);
+
+		MonitoredAttribute monitoredAttribute = new MonitoredAttribute(ctx,
+				monitoredService.getMonitoredServicePid(), attributableId, attribute);
+
+		// add monitored attribute
+		monitoredService.addMonitoredAttribute(monitoredAttribute);
+
+		AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
+		if (mapper != null) {
+			Subscription subscription = this.createSubscription(monitoredAttribute, attributableId,
+					attributeId, mapper);
+
+			EventConsumer consumer = new EventConsumerImpl(mapper, monitoredAttribute);
+			eventProcessingService.subscribe(consumer, subscription);
 		}
-		
+
 	}
-	
+
+	private Subscription createSubscription(MonitoredAttribute monitoredAttribute,
+			AttributableId attributableId, String attributeId, AttributeEventMapper mapper) {
+
+		EventType eventType = mapper.getEventType();
+		PropertyType sourceType = eventType.getMetadataPropertyType(Constants.EVENT_SOURCE);
+
+		FilterExpression filterExp = new FilterExpression(new Property(attributableId.getId(),
+				sourceType), Expression.EQ);
+		List<FilterExpression> filterList = new ArrayList<FilterExpression>();
+		filterList.add(filterExp);
+		EventFilter filter = new EventFilter(filterList);
+
+		String id = sourceType + Constants.TOKEN + attributeId;
+		Subscription subscription = new Subscription(id, eventType, filter);
+
+		return subscription;
+	}
 }

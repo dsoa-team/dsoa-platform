@@ -15,7 +15,7 @@ public interface PlatformManagementService {
 
 	List<String> getAttributeList();
 	
-	void addAttributeMonitor(String servicePid, String attName, String attCategory, String operationName);
+	void addAttributeMonitor(String servicePid, String attName, String attCategory, String specification, String operationName);
 	
 	public ServiceMetadata getManagedServiceMetadata(String id);
 	

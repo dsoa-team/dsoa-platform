@@ -19,7 +19,7 @@ public class DFilter extends FilterBuilder{
 
 	@Override
 	public StringBuilder append(StringBuilder builder) {
-		String renderedExpression = expression.renderExpression(this.name, value+"");
+		String renderedExpression = expression.renderExpression(this.name, new Double(value).toString());
 
 		return builder.append('(').append(renderedExpression).append(')');
 	}

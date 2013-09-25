@@ -5,15 +5,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
 import br.ufpe.cin.dsoa.api.attribute.AttributeAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.attribute.AttributeCategory;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
-import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
+import br.ufpe.cin.dsoa.util.Constants;
 
 /**
  * This component implements DSOA Attributes Catalog. It maintains a register of
@@ -59,10 +60,46 @@ public class AttributeManager implements AttributeCatalog, AttributeEventMapperC
 	}
 
 	public synchronized void addAttributeEventMapper(AttributeEventMapper mapper) throws AttributeEventMapperAlreadyCatalogedException {
-		String attId = AttributeConstraint.format(mapper.getCategory(), mapper.getName());
+		String attId = AttributeManager.format(mapper.getCategory(), mapper.getName());
 		if (this.attributeEventMapperMap.containsKey(attId)) {
 			throw new AttributeEventMapperAlreadyCatalogedException(mapper);
 		}
 		this.attributeEventMapperMap.put(attId, mapper);
 	}
+
+	public Attribute getAttribute(String attCategory, String attName) {
+		String attributeId = AttributeManager.format(attCategory, attName);
+		Attribute attribute =this.getAttribute(attributeId); 
+		
+		return attribute;
+	}
+	
+	public static AttributeCategory parseCategory(AttributeCatalog attributeCatalog, String catName) {
+		AttributeCategory cat = null, parentCat = null;
+		if (catName != null) {
+			StringTokenizer tokenizer = new StringTokenizer(catName, Constants.TOKEN);
+			String parentId = tokenizer.nextToken();
+			String catId = null;
+			parentCat = attributeCatalog.getCategory(parentId);
+			if (parentCat == null) {
+				parentCat = new AttributeCategory(parentId);
+				attributeCatalog.addCategory(parentCat);
+			}
+			while (tokenizer.hasMoreTokens()) {
+				catId = tokenizer.nextToken();
+				cat = attributeCatalog.getCategory(catId);
+				if (cat == null) {
+					cat = new AttributeCategory(catId, parentCat);
+					attributeCatalog.addCategory(cat);
+				}
+				parentCat = cat;
+			}
+		}
+		return parentCat;
+	}
+	
+	public static String format(String category, String attribute) {
+		return category + Constants.TOKEN + attribute;
+	}
+	
 }

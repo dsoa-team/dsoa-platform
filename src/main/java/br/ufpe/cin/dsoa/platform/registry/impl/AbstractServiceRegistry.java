@@ -24,7 +24,7 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
 
 	public final synchronized boolean addService(Service service) {
 		boolean result = false;
-		String id = service.getServiceId();
+		String id = service.getCompomentId();
 		if (!serviceMap.containsKey(id)) {
 			serviceMap.put(id, service);
 			result = true;

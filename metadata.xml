@@ -186,6 +186,7 @@
 		<requires field="attributeCatalog" />
 		<requires field="agentCatalog" />
 		<requires field="monitoringService" />
+		<requires field="managementInfomationBase" />
 		<provides >
 			<property name="org.apache.cxf.ws.address"   value="http://localhost:9090/ManagementService"  	type="java.lang.String"/>
 			<property name="service.exported.interfaces"  value="*"  type="java.lang.String"/>
@@ -196,9 +197,17 @@
 	<component 	name="Platform.Management.ResourceManagerComponent" 
 				classname="br.ufpe.cin.dsoa.platform.resource.impl.ResourceManagerImpl">
 		<requires field="monitoringService" />
+		<requires field="managementInfomationBase" />
 		<provides />
 	</component>
-			
+	
+	<!--
+		Platform management information base
+	-->
+	<component name="Plataform.Management.InformationBase"
+			   classname="br.ufpe.cin.dsoa.platform.management.impl.DsoaManagementInformationBase">
+    	<provides/>
+    </component>
 	
 	<!-- ============================================================================================================ -->		
 	<!-- ============================================================================================================ -->
@@ -207,7 +216,7 @@
 	<!-- ============================================================================================================ -->
 	<!-- 
 		This class is the root of DSOA's command shell. Every DSOA command should be enacted through 'dsoa' prefix,
- 		so that this class is called to handle the command. In fact, it just delegate the resposibility of executing
+ 		so that this class is called to handle the command. In fact, it just delegate the responsibility of executing
  		the command itself to the OSGI's ShellCommand.
 	-->
 	<component name="Platform.Shell.DsoaShell" classname="br.ufpe.cin.dsoa.platform.management.shell.DsoaShell">
@@ -263,6 +272,7 @@
 	<instance component="Platform.Configuration.ConfiguratorComponent" />
 	<instance component="Platform.Management.ManagementComponent" />
 	<instance component="Platform.Management.ResourceManagerComponent" />
+	<instance component="Plataform.Management.InformationBase" />
 	<instance component="Platform.Manager.Verifier"/>
 	
 	<instance component="Platform.Shell.DsoaShell" />

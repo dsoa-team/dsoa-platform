@@ -1,8 +1,8 @@
 package br.ufpe.cin.dsoa.api.service;
 
 public enum Expression {
-	GT("GT", ">",  "%s>%s",    "LE"), 
-	LT("LT", "<",  "%s<%s",    "GE"), 
+	GT("GT", ">",  "!(%s<=%s)",    "LE"), //GT turns !(<=) (ldap)  
+	LT("LT", "<",  "!(%s>=%s)",    "GE"), //LT turns !(>=) (ldap)
 	EQ("EQ", "=",  "%s=%s",    "NE"), 
 	GE("GE", ">=", "%s>=%s",   "LT"), 
 	LE("LE", "<=", "%s<=%s",   "GT"), 
