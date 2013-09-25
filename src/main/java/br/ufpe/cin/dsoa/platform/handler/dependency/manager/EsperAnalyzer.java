@@ -29,17 +29,21 @@ public class EsperAnalyzer implements EventConsumer, Analyzer {
 	private AttributeEventMapperCatalog attributeMapperCatalog;
 	private AttributeNotificationListener listener;
 
+	// Map<eventTypeName, AttributeEventMapper>
 	private Map<String, AttributeEventMapper> mappers;
+	
+	
 	private Map<String, Subscription> subscriptionMap;
+	
+	private EventProcessingService epService;
+	
 	private Map<String, AttributeConstraint> constraintMap;
 
 	@Override
 	public void start(String servicePid, List<AttributeConstraint> constraints,
-			AttributeEventMapperCatalog attributeEventMapperCatalog, EventProcessingService eventProcessingService,
 			AttributeNotificationListener listener) {
 
 		this.listener = listener;
-		this.attributeMapperCatalog = attributeEventMapperCatalog;
 		this.mappers = new HashMap<String, AttributeEventMapper>();
 		this.subscriptionMap = new HashMap<String, Subscription>();
 		this.constraintMap = new HashMap<String, AttributeConstraint>();
@@ -48,14 +52,14 @@ public class EsperAnalyzer implements EventConsumer, Analyzer {
 			String operationName = constraint.getOperation();
 			AttributableId attributableId = new AttributableId(servicePid, operationName);
 			String attributeId = constraint.getAttributeId();
-			AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
+			AttributeEventMapper attMapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
 
-			if (mapper != null) {
+			if (attMapper != null) {
 
-				this.mappers.put(mapper.getEventTypeName(), mapper);
-				this.constraintMap.put(mapper.getEventTypeName(), constraint);
+				this.mappers.put(attMapper.getEventTypeName(), attMapper);
+				this.constraintMap.put(attMapper.getEventTypeName(), constraint);
 
-				EventType eventType = mapper.getEventType();
+				EventType eventType = attMapper.getEventType();
 				PropertyType sourceType = eventType.getMetadataPropertyType(Constants.EVENT_SOURCE);
 
 				List<FilterExpression> filterList = new ArrayList<FilterExpression>();
@@ -65,14 +69,14 @@ public class EsperAnalyzer implements EventConsumer, Analyzer {
 						Expression.EQ);
 				filterList.add(filterExp);
 
-				List<AttributeEventPropertyMapper> propertyMappers = mapper.getData();
+				List<AttributeEventPropertyMapper> propertyMappers = attMapper.getData();
 
 				// Filter constraints
 				for (AttributeEventPropertyMapper propertyMapper : propertyMappers) {
-					String eventTypeName = propertyMapper.getExpression()
-							.replaceFirst(mapper.getEventAlias() + ".", "").replaceFirst("data.", "");
+					String eventPropertyName = propertyMapper.getExpression()
+							.replaceFirst(attMapper.getEventAlias() + ".", "").replaceFirst("data.", "");
 
-					PropertyType propertyType = eventType.getDataPropertyType(eventTypeName);
+					PropertyType propertyType = eventType.getDataPropertyType(eventPropertyName);
 					filterExp = new FilterExpression(new Property(constraint.getThreashold(), propertyType),
 							constraint.getExpression().getComplement());
 					filterList.add(filterExp);
@@ -82,7 +86,7 @@ public class EsperAnalyzer implements EventConsumer, Analyzer {
 				String id = sourceType + Constants.TOKEN + attributeId;
 				Subscription subscription = new Subscription(id, eventType, filter);
 				this.subscriptionMap.put(id, subscription);
-				eventProcessingService.subscribe(this, subscription);
+				this.epService.subscribe(this, subscription);
 			}
 		}
 	}

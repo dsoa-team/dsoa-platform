@@ -15,40 +15,38 @@ import org.apache.felix.ipojo.parser.PojoMetadata;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-import br.ufpe.cin.dsoa.api.event.EventChannel;
-import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.Expression;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
-import br.ufpe.cin.dsoa.api.service.ServiceConsumer;
 import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
-import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
-import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
+import br.ufpe.cin.dsoa.platform.DsoaPlatform;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyHandler extends PrimitiveHandler {
 
-	private List<Dependency> dependencies = new ArrayList<Dependency>();
-	private DependencyHandlerDescription description;
 	private boolean started;
-	private Logger log = Logger.getLogger(DependencyHandler.class.getName());
 	
-	private ServiceTracker eventTypeCatalogTracker;
-	private ServiceTracker eventProcessingServiceTracker;
+	private BundleContext ctx;
+	
+	private List<Dependency> dependencies = new ArrayList<Dependency>();
+	
+	private DependencyHandlerDescription description;
+	
+	private ServiceTracker dsoaServiceTracker;
+	
+	private Logger log = Logger.getLogger(DependencyHandler.class.getName());
 	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
-		BundleContext ctx = this.getInstanceManager().getContext();
-		eventTypeCatalogTracker = new ServiceTracker(ctx, EventTypeCatalog.class.getName(), null);
-		eventTypeCatalogTracker.open();
-		eventProcessingServiceTracker = new ServiceTracker(ctx, EventProcessingService.class.getName(), null);
-		eventProcessingServiceTracker.open();
+		ctx = this.getInstanceManager().getContext();
 		
-		String consumerId = metadata.getAttribute(Constants.COMPONENT_ID_ATT);
-		String consumerName = metadata.getAttribute(Constants.COMPONENT_NAME_ATT);
-		ServiceConsumer serviceConsumer = new ServiceConsumer(consumerId, consumerName);
+		dsoaServiceTracker = new ServiceTracker(ctx, DsoaPlatform.class.getName(), new DsoaTrackerCustomizer());
+		dsoaServiceTracker.open();
+		
+		String componentId = metadata.getAttribute(Constants.COMPOSITION_ID_ATT);
 		
 		PojoMetadata pojoMetadata = getFactory().getPojoMetadata();
 		Element[] requiresTags = metadata.getElements(Constants.REQUIRES_TAG, Constants.REQUIRES_TAG_NAMESPACE);
@@ -57,14 +55,13 @@ public class DependencyHandler extends PrimitiveHandler {
 			List<AttributeConstraint> constraintList = getConstraintList(requiresTag.getElements(Constants.CONSTRAINT_TAG));
 			FieldMetadata fieldMetadata = pojoMetadata.getField(field);
 			
-			Class<?> specification = null;
+			Class<?> clazz = null;
 			String className = fieldMetadata.getFieldType();
 			NonFunctionalSpecification nonFunctionalSpecification = new NonFunctionalSpecification(constraintList);
 			try {
-				specification = getInstanceManager().getClazz().getClassLoader().loadClass(className);
-				ServiceSpecification serviceSpecification =  new ServiceSpecification(specification, className, nonFunctionalSpecification);
-				EventType invocationEventType = getInvocationEventType();
-				Dependency dependency  = new Dependency(this, serviceConsumer, serviceSpecification, invocationEventType);
+				clazz = getInstanceManager().getClazz().getClassLoader().loadClass(className);
+				ServiceSpecification serviceSpecification =  new ServiceSpecification(clazz, className, nonFunctionalSpecification);
+				Dependency dependency  = new Dependency(this, componentId, serviceSpecification);
 				this.register(fieldMetadata, dependency);
 			} catch (ClassNotFoundException e) {
 				throw new ConfigurationException("The required service interface cannot be loaded : " + e.getMessage());
@@ -73,15 +70,6 @@ public class DependencyHandler extends PrimitiveHandler {
 		description = new DependencyHandlerDescription(this, dependencies); // Initialize
 																			// the
 																			// description.
-	}
-
-	private EventType getInvocationEventType() throws ConfigurationException {
-		EventTypeCatalog eventTypeCatalog = (EventTypeCatalog) eventTypeCatalogTracker.getService();
-		
-		if (eventTypeCatalog == null) {
-			throw new ConfigurationException("Event type catalog was not found!");
-		}
-		return eventTypeCatalog.get(Constants.INVOCATION_EVENT);
 	}
 
 	private List<AttributeConstraint> getConstraintList(Element[] constraintTags) {
@@ -193,7 +181,40 @@ public class DependencyHandler extends PrimitiveHandler {
         }
     }
 
-	public EventChannel getEventChannel() throws ConfigurationException {
+    class DsoaTrackerCustomizer implements ServiceTrackerCustomizer {
+
+    	public Object addingService(ServiceReference reference) {
+			validate();
+			return reference;
+		}
+		
+		public void modifiedService(ServiceReference reference, Object service) {
+			// Just do nothing!
+		}
+		
+		public void removedService(ServiceReference reference, Object service) {
+			invalidate();
+			ctx.ungetService(reference);
+		}	
+    	
+    }
+
+	public DsoaPlatform getDsoaPlatform() {
+		return (DsoaPlatform) dsoaServiceTracker.getService();
+	}
+    
+/*	
+ 
+	private EventType getInvocationEventType() throws ConfigurationException {
+		EventTypeCatalog eventTypeCatalog = (EventTypeCatalog) eventTypeCatalogTracker.getService();
+		
+		if (eventTypeCatalog == null) {
+			throw new ConfigurationException("Event type catalog was not found!");
+		}
+		return eventTypeCatalog.get(Constants.INVOCATION_EVENT);
+	}
+
+  public EventChannel getEventChannel() throws ConfigurationException {
 		EventTypeCatalog eventTypeCatalog = (EventTypeCatalog) eventTypeCatalogTracker.getService();
 		EventProcessingService epService = (EventProcessingService) eventProcessingServiceTracker.getService();
 		if (eventTypeCatalog == null) {
@@ -205,6 +226,6 @@ public class DependencyHandler extends PrimitiveHandler {
 		EventChannel channel = epService.getEventChannel(invocationEvent);
 		
 		return channel;
-	}
+	}*/
 
 }

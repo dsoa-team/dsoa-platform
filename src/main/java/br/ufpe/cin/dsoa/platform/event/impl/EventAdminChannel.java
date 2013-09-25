@@ -26,9 +26,10 @@ public class EventAdminChannel implements EventChannel, EventHandler  {
 	private ServiceTracker tracker;
 	private OutputTerminal output;
 	private BundleContext ctx;
+	private EventType eventType;
 
 	public EventAdminChannel(BundleContext ctx, EventType eventType, OutputTerminal output) {
-		
+		this.eventType = eventType;
 		String eventTopic = String.format("%s%s%s", Constants.REQUIRES_TAG_NAMESPACE, Constants.TOKEN, eventType.getName());
 		this.topic = eventTopic.replaceAll("\\.", "/");
 		this.output = output;
@@ -84,5 +85,11 @@ public class EventAdminChannel implements EventChannel, EventHandler  {
 			output.handle(event);
 		}
 		
+	}
+
+	@Override
+	public EventType getEventType() {
+		// TODO Auto-generated method stub
+		return eventType;
 	}
 }

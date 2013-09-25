@@ -1,12 +1,12 @@
 package br.ufpe.cin.dsoa.api.service;
 
-public class ServiceConsumer {
+public class ServiceComposition {
 
 	private String id;
 	private String name;
 	
 
-	public ServiceConsumer(String id, String name) {
+	public ServiceComposition(String id, String name) {
 		super();
 		this.id = id;
 		this.name = name;

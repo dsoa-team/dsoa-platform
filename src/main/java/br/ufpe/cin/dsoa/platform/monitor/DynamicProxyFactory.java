@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventChannel;
 import br.ufpe.cin.dsoa.api.event.EventType;
-import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.platform.handler.dependency.Dependency;
 import br.ufpe.cin.dsoa.util.Constants;
 
@@ -27,12 +26,14 @@ import br.ufpe.cin.dsoa.util.Constants;
  */
 public class DynamicProxyFactory implements InvocationHandler {
 
-	// The log dependency
 	private Logger log;
 
 	private Dependency dependency;
 
+	private EventChannel eventChannel;
+
 	private ExecutorService executorService;
+	
 	/**
 	 * HashCode method.
 	 */
@@ -48,9 +49,10 @@ public class DynamicProxyFactory implements InvocationHandler {
 	 */
 	private Method m_toStringMethod;
 
-	private EventChannel eventChannel;
+	private EventType eventType;
 
 	public DynamicProxyFactory(Dependency dependency, EventChannel eventChannel) {
+		this.eventType = eventChannel.getEventType();
 		this.dependency = dependency;
 		this.eventChannel = eventChannel;
 		this.executorService = Executors.newFixedThreadPool(10);
@@ -111,7 +113,7 @@ public class DynamicProxyFactory implements InvocationHandler {
 			throw exc;
 		} finally {
 			responseTime = System.currentTimeMillis();
-			notifyInvocation(dependency.getConsumer().getId(), dependency.getService().getServiceId(),
+			notifyInvocation(dependency.getComponentId(), dependency.getService().getServiceId(),
 					method.getName(), requestTime, responseTime, success, exceptionMessage);
 		}
 		return result;
@@ -154,7 +156,6 @@ public class DynamicProxyFactory implements InvocationHandler {
 
 		private void notifyInvocation() {
 
-			EventType invocationEventType = dependency.getInvocationEventType();
 			String source = String.format("%s%s%s", serviceId, Constants.TOKEN, operationName);
 
 			Map<String, Object> metadata = this.loadInvocationMetadata(source);
@@ -162,7 +163,8 @@ public class DynamicProxyFactory implements InvocationHandler {
 			Map<String, Object> data = this.loadInvocationData(consumerId, serviceId, operationName, requestTimestamp,
 					responseTimestamp, success, exceptionMessage);
 
-			Event invocationEvent = invocationEventType.createEvent(metadata, data);
+			Event invocationEvent = eventType.createEvent(metadata, data);
+			
 			eventChannel.pushEvent(invocationEvent);
 
 		}

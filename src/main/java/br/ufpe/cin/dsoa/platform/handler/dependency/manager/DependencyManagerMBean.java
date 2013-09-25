@@ -2,7 +2,7 @@ package br.ufpe.cin.dsoa.platform.handler.dependency.manager;
 
 
 public interface DependencyManagerMBean {
-	/*public ServiceConsumer getConsumer() {
+	/*public ServiceComposition getConsumer() {
 		return consumer;
 	}
 
