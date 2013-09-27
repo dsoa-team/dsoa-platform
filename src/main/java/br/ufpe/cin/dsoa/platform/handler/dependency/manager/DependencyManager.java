@@ -10,7 +10,6 @@ import br.ufpe.cin.dsoa.platform.DsoaPlatform;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeNotificationListener;
 import br.ufpe.cin.dsoa.platform.handler.dependency.Dependency;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
-import br.ufpe.cin.dsoa.platform.monitor.DynamicProxyFactory;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyManager implements ServiceListener, AttributeNotificationListener {
@@ -24,22 +23,31 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 	private Analyzer analyzer;
 
-	// private Planner planner;
+	private Monitor monitor;
+
+	private Planner planner;
 
 	public DependencyManager(Dependency dependency) {
 		this.dependency = dependency;
 		this.dsoa = dependency.getHandler().getDsoaPlatform();
-		this.dependency.setDynamicProxy(createDependencyProxy());
+		this.monitor = new Monitor();
 		this.analyzer = new DsoaAnalyzer(dsoa.getEpService(), dsoa.getAttEventMapperCatalog());
+		this.planner = new Planner();
+		
+		this.startMonitoring();
 	}
 
-	private DynamicProxyFactory createDependencyProxy() {
-		EventType invocationEvent = dsoa.getEventTypeCatalog().get(Constants.INVOCATION_EVENT);
-		EventAdmin eventAdmin = this.dsoa.getEventDistribuitionService();
-		DynamicProxyFactory dynamicProxy = new DynamicProxyFactory(dependency, eventAdmin,
-				invocationEvent);
+	private void startMonitoring() {
+		this.configureMonitor();
+		this.monitor.instrument(dependency);
+	}
 
-		return dynamicProxy;
+	private void configureMonitor() {
+		EventType invocationEvent = this.dsoa.getEventTypeCatalog().get(Constants.INVOCATION_EVENT);
+		EventAdmin eventAdmin = this.dsoa.getEventDistribuitionService();
+
+		this.monitor.setEventAdmin(eventAdmin);
+		this.monitor.setEventType(invocationEvent);
 	}
 
 	public void resolve() {
@@ -74,8 +82,6 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 	@Override
 	public void handleNotification(AttributeConstraint constraint, AttributeValue value) {
-
-		System.out.println("Constraint: " + constraint);
-		System.out.println("Value: " + value);
+		this.planner.evaluate(dependency, constraint, value);
 	}
 }
