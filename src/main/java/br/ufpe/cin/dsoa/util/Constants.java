@@ -39,6 +39,7 @@ public interface Constants {
 	/**
 	 * Event
 	 */
+	public static final String DSOA_EVENT = "dsoa.event";
 	public static final String EVENT_TYPE				= "type";
 	public static final String INVOCATION_EVENT			= "InvocationEvent";
 	public static final String EVENT_METADATA 			= "metadata";

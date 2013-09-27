@@ -35,7 +35,7 @@ public class TestAgentBuilder {
 
 	@Before
 	public void setUp() throws Exception {
-		this.epService = new EsperProcessingService();
+		//this.epService = new EsperProcessingService();//XXX: this test will fail
 		this.epService.start();
 		this.eventTypeCatalog = new EventTypeCatalogImpl();
 		

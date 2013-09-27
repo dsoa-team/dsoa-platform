@@ -45,6 +45,7 @@
 		<requires field="agentCatalog" />
 		<requires field="monitoringService" />
 		<requires field="epService" />
+		<requires field="eventDistribuitionService" />
 		<provides/>
 	</component>
 

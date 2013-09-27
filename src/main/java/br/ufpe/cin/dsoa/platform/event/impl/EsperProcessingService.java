@@ -1,21 +1,21 @@
 package br.ufpe.cin.dsoa.platform.event.impl;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.bind.JAXBException;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 
 import br.ufpe.cin.dsoa.api.event.Event;
-import br.ufpe.cin.dsoa.api.event.EventChannel;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
-import br.ufpe.cin.dsoa.api.event.OutputTerminal;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.Subscription;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
@@ -57,22 +57,9 @@ public class EsperProcessingService implements EventProcessingService {
 
 	private EventTypeCatalog eventTypeCatalog;
 	
-	//EventTypeName/EventChannel
-	private Map<String, EventChannel> channelMap = new HashMap<String, EventChannel>();
-
-	//private Map<String, EventSubscriber> listenerMap = new HashMap<String, EventSubscriber>();
-
-	private ConcurrentHashMap<String, EventConsumer> consumers = new ConcurrentHashMap<String, EventConsumer>();
-
 	public EsperProcessingService(BundleContext ctx) {
 		this.ctx = ctx;
 	}
-
-	// TODO REMOVE
-	public EsperProcessingService() {
-	}
-
-	// TODO:REMOVER
 
 	public void start() throws JAXBException {
 		Configuration configuration = new Configuration();
@@ -150,8 +137,6 @@ public class EsperProcessingService implements EventProcessingService {
 				}
 			}
 		});
-		//statement.setSubscriber(subscriber);
-		//this.listenerMap.put(consumer.getId(), subscriber);
 	}
 	
 	private Event convertEsperEvent(String eventTypeName, Map<String, Object> esperEvent){
@@ -194,7 +179,25 @@ public class EsperProcessingService implements EventProcessingService {
 		if (this.eventTypeCatalog.contains(eventTypeName)) {
 			Map<String, Object> definition = eventType.toDefinitionMap();
 			this.registerEventTypeOnEsper(eventTypeName, definition);
+			this.registerEventAdminListener(eventType);
 		}
+	}
+
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void registerEventAdminListener(EventType eventType){
+		String topic = Util.getDsoaEventTopic(eventType);
+				
+		Hashtable props = new Hashtable();
+		props.put(EventConstants.EVENT_TOPIC, new String[] {topic});
+		ctx.registerService(EventHandler.class.getName(), new EventHandler() {
+			
+			@Override
+			public void handleEvent(org.osgi.service.event.Event event) {
+				Event dsoaEvent = (Event) event.getProperty(Constants.DSOA_EVENT);
+				publish(dsoaEvent);
+			}
+		} , props);
 	}
 
 	/**
@@ -288,7 +291,7 @@ public class EsperProcessingService implements EventProcessingService {
 		try {
 			this.epServiceProvider.getEPAdministrator().getConfiguration()
 					.removeEventType(eventTypeName, true);
-			this.eventTypeCatalog.remove(eventTypeName);
+			this.eventTypeCatalog.remove(eventTypeName);//FIXME: move to out
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -320,19 +323,5 @@ public class EsperProcessingService implements EventProcessingService {
 
 	public EPServiceProvider getEpProvider() {
 		return this.epServiceProvider;
-	}
-
-	@Override
-	public EventChannel getEventChannel(EventType eventType) {
-		OutputTerminal output = new OutputTerminalAdapter(this);
-		
-		EventChannel channel = this.channelMap.get(eventType.getName());
-		
-		if(channel == null){
-			channel = new EventAdminChannel(ctx, eventType, output);
-			this.channelMap.put(eventType.getName(), channel);
-		}
-		
-		return channel;
 	}
 }

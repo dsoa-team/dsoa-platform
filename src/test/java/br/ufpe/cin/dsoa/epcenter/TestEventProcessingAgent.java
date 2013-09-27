@@ -185,7 +185,7 @@ public class TestEventProcessingAgent {
 		for (int i = 0; i < size; i++) {
 			Event e;
 
-			e = this.mock.getEvent(service, operation, i, i + 10);
+			e = this.mock.getEvent(service, operation, i, i + 80);
 			System.out.println(e);
 			this.epCenter.publish(e);
 

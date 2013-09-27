@@ -1,6 +1,7 @@
 package br.ufpe.cin.dsoa.platform;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.event.EventAdmin;
 
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
@@ -28,6 +29,8 @@ public class DsoaPlatform {
 	private MonitoringService monitoringService;
 	
 	private EventProcessingService epService;
+
+	private EventAdmin eventDistribuitionService;
 	
 	public DsoaPlatform(BundleContext context) {
 		this.context = context;
@@ -63,6 +66,10 @@ public class DsoaPlatform {
 
 	public EventProcessingService getEpService() {
 		return epService;
+	}
+
+	public EventAdmin getEventDistribuitionService() {
+		return eventDistribuitionService;
 	}
 
 

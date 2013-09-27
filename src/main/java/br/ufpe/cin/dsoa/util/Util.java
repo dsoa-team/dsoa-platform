@@ -117,4 +117,12 @@ public class Util {
 			}
 		}
 	}
+	
+	public static String getDsoaEventTopic(EventType eventType) {
+		String eventTypeName = eventType.getName();
+		String eventTopic = String.format("%s%s%s", Constants.REQUIRES_TAG_NAMESPACE, Constants.TOKEN, eventTypeName);
+		String topic = eventTopic.replaceAll("\\.", "/");
+		
+		return topic;
+	}
 }

@@ -20,6 +20,7 @@ public class EventNotifier implements StatementAwareUpdateListener{
 		this.consumer = consumer;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void update(EventBean[] newEvents, EventBean[] oldEvents,
 			EPStatement statement, EPServiceProvider epServiceProvider) {
 		

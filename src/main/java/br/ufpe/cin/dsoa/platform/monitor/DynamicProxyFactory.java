@@ -9,11 +9,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
+import org.osgi.service.event.EventAdmin;
+
 import br.ufpe.cin.dsoa.api.event.Event;
-import br.ufpe.cin.dsoa.api.event.EventChannel;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.platform.handler.dependency.Dependency;
 import br.ufpe.cin.dsoa.util.Constants;
+import br.ufpe.cin.dsoa.util.Util;
 
 /**
  * A Service Proxy that intercepts requests at the client side. It generates
@@ -30,10 +32,8 @@ public class DynamicProxyFactory implements InvocationHandler {
 
 	private Dependency dependency;
 
-	private EventChannel eventChannel;
-
 	private ExecutorService executorService;
-	
+
 	/**
 	 * HashCode method.
 	 */
@@ -51,12 +51,15 @@ public class DynamicProxyFactory implements InvocationHandler {
 
 	private EventType eventType;
 
-	public DynamicProxyFactory(Dependency dependency, EventChannel eventChannel) {
-		this.eventType = eventChannel.getEventType();
+	private EventAdmin eventAdmin;
+
+	public DynamicProxyFactory(Dependency dependency, EventAdmin eventAdmin, EventType eventType) {
 		this.dependency = dependency;
-		this.eventChannel = eventChannel;
+		this.eventAdmin = eventAdmin;
+		this.eventType = eventType;
 		this.executorService = Executors.newFixedThreadPool(10);
 		this.log = Logger.getLogger(getClass().getSimpleName());
+
 		try {
 			m_hashCodeMethod = Object.class.getMethod("hashCode", null);
 			m_equalsMethod = Object.class.getMethod("equals", new Class[] { Object.class });
@@ -67,8 +70,9 @@ public class DynamicProxyFactory implements InvocationHandler {
 	}
 
 	public Object getProxy() {
-		return java.lang.reflect.Proxy.newProxyInstance(this.dependency.getClass().getClassLoader(),
-				new Class[] { this.dependency.getSpecification().getClazz() }, this);
+		return java.lang.reflect.Proxy.newProxyInstance(
+				this.dependency.getClass().getClassLoader(), new Class[] { this.dependency
+						.getSpecification().getClazz() }, this);
 	}
 
 	/**
@@ -119,11 +123,11 @@ public class DynamicProxyFactory implements InvocationHandler {
 		return result;
 	}
 
-	private void notifyInvocation(String consumerId, String serviceId, String operationName, long requestTimestamp,
-			long responseTimestamp, boolean success, String exceptionMessage) {
+	private void notifyInvocation(String consumerId, String serviceId, String operationName,
+			long requestTimestamp, long responseTimestamp, boolean success, String exceptionMessage) {
 
-		NotificationWorker worker = new NotificationWorker(consumerId, serviceId, operationName, requestTimestamp,
-				responseTimestamp, success, exceptionMessage);
+		NotificationWorker worker = new NotificationWorker(consumerId, serviceId, operationName,
+				requestTimestamp, responseTimestamp, success, exceptionMessage);
 		this.executorService.execute(worker);
 	}
 
@@ -137,8 +141,9 @@ public class DynamicProxyFactory implements InvocationHandler {
 		private boolean success;
 		private String exceptionMessage;
 
-		public NotificationWorker(String consumerId, String serviceId, String operationName, long requestTimestamp,
-				long responseTimestamp, boolean success, String exceptionMessage) {
+		public NotificationWorker(String consumerId, String serviceId, String operationName,
+				long requestTimestamp, long responseTimestamp, boolean success,
+				String exceptionMessage) {
 			super();
 			this.consumerId = consumerId;
 			this.serviceId = serviceId;
@@ -160,13 +165,15 @@ public class DynamicProxyFactory implements InvocationHandler {
 
 			Map<String, Object> metadata = this.loadInvocationMetadata(source);
 
-			Map<String, Object> data = this.loadInvocationData(consumerId, serviceId, operationName, requestTimestamp,
-					responseTimestamp, success, exceptionMessage);
+			Map<String, Object> data = this.loadInvocationData(consumerId, serviceId,
+					operationName, requestTimestamp, responseTimestamp, success, exceptionMessage);
 
 			Event invocationEvent = eventType.createEvent(metadata, data);
-			
-			eventChannel.pushEvent(invocationEvent);
+			String topic = Util.getDsoaEventTopic(invocationEvent.getEventType());
 
+			Map<String, Event> eventTable = new HashMap<String, Event>();
+			eventTable.put(Constants.DSOA_EVENT, invocationEvent);
+			eventAdmin.postEvent(new org.osgi.service.event.Event(topic, eventTable));
 		}
 
 		private Map<String, Object> loadInvocationMetadata(String source) {
@@ -179,8 +186,9 @@ public class DynamicProxyFactory implements InvocationHandler {
 			return metadata;
 		}
 
-		private Map<String, Object> loadInvocationData(String consumerId, String serviceId, String operationName,
-				long requestTimestamp, long responseTimestamp, boolean success, String exceptionMessage) {
+		private Map<String, Object> loadInvocationData(String consumerId, String serviceId,
+				String operationName, long requestTimestamp, long responseTimestamp,
+				boolean success, String exceptionMessage) {
 			Map<String, Object> data = new HashMap<String, Object>();
 
 			data.put("consumerId", consumerId);

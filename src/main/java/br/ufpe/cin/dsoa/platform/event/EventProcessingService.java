@@ -1,7 +1,6 @@
 package br.ufpe.cin.dsoa.platform.event;
 
 import br.ufpe.cin.dsoa.api.event.Event;
-import br.ufpe.cin.dsoa.api.event.EventChannel;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.Subscription;
@@ -23,7 +22,5 @@ public interface EventProcessingService {
 	public void registerAgent(EventProcessingAgent agent);
 	
 	public void unRegisterAgent(String agentId);
-	
-	public EventChannel getEventChannel(EventType eventType);
 	
 }

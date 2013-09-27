@@ -5,14 +5,9 @@ import java.util.List;
 
 import org.apache.felix.ipojo.FieldInterceptor;
 
-import br.ufpe.cin.dsoa.api.event.EventChannel;
-import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
-import br.ufpe.cin.dsoa.platform.DsoaPlatform;
-import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
-import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.platform.handler.dependency.manager.DependencyManager;
 import br.ufpe.cin.dsoa.platform.monitor.DynamicProxyFactory;
 
@@ -42,16 +37,10 @@ public class Dependency implements FieldInterceptor {
 		this.blackList = new ArrayList<String>();
 		this.status = DependencyStatus.UNRESOLVED;
 		this.manager = new DependencyManager(this);
-		this.initialize();
 	}
-
-	private void initialize() {
-		DsoaPlatform dsoa = handler.getDsoaPlatform();
-		EventTypeCatalog eventCatalog = dsoa.getEventTypeCatalog();
-		EventType invocationEventType = eventCatalog.get("InvocationEvent");
-		EventProcessingService epService = dsoa.getEpService();
-		EventChannel channel = epService.getEventChannel(invocationEventType);
-		this.dynamicProxy = new DynamicProxyFactory(this,channel);
+	
+	public void setDynamicProxy(DynamicProxyFactory dynamicProxyFactory){
+		this.dynamicProxy = dynamicProxyFactory;
 	}
 
 	public void start() {
