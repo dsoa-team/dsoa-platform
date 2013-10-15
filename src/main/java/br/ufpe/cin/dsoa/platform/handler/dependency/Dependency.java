@@ -49,7 +49,6 @@ public class Dependency implements FieldInterceptor {
 
 	public void stop() {
 		manager.release();
-		this.status = DependencyStatus.UNRESOLVED;
 	}
 	
 	public String getComponentId() {
