@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.felix.ipojo.FieldInterceptor;
 
-import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.handler.dependency.manager.DependencyManager;
@@ -23,7 +22,7 @@ public class Dependency implements FieldInterceptor {
 	
 	private String componentId;
 	
-	private DependencyStatus status;
+	private boolean valid;
 	
 	private DependencyManager manager;
 
@@ -35,7 +34,7 @@ public class Dependency implements FieldInterceptor {
 		this.componentId = componentId;
 		this.requiredSpecification = specification;
 		this.blackList = new ArrayList<String>();
-		this.status = DependencyStatus.UNRESOLVED;
+		this.valid = false;
 		this.manager = new DependencyManager(this);
 	}
 	
@@ -44,11 +43,31 @@ public class Dependency implements FieldInterceptor {
 	}
 
 	public void start() {
-		manager.resolve();
+		manager.start();
 	}
 
 	public void stop() {
-		manager.release();
+		manager.stop();
+	}
+	
+	public boolean isValid() {
+		return this.valid;
+	}
+	
+	public void setValid(boolean valid) {
+		this.valid = valid;
+		if (valid) {
+			handler.computeState();
+		} else {
+			handler.setValidity(false);
+		}
+	}
+	
+	public void setService(Service service) {
+		if (service != this.service && this.service != null){
+			this.service.ungetServiceObject();
+		}
+		this.service = service;
 	}
 	
 	public String getComponentId() {
@@ -57,18 +76,6 @@ public class Dependency implements FieldInterceptor {
 	
 	public DependencyHandler getHandler() {
 		return handler;
-	}
-
-	public List<AttributeConstraint> getAttributeConstraintList() {
-		return this.requiredSpecification.getNonFunctionalSpecification().getAttributeConstraints();
-	}
-	
-	public DependencyStatus getStatus() {
-		return status;
-	}
-
-	public boolean isValid() {
-		return this.status == DependencyStatus.RESOLVED;
 	}
 
 	public ServiceSpecification getSpecification() {
@@ -82,61 +89,12 @@ public class Dependency implements FieldInterceptor {
 	public Service getService() {
 		return this.service;
 	}
-	
-	public void setService(Service service) {
-		if (service != this.service && this.service != null){
-			this.service.ungetServiceObject();
-		}
-		this.service = service;
-	}
-	
-	public void computeDependencyState() {
-		boolean mustCallValidate = false;
-		boolean mustCallInvalidate = false;
-		synchronized (this) {
-			if (this.service != null) {
-				if (status == DependencyStatus.UNRESOLVED) {
-					status = DependencyStatus.RESOLVED;
-					mustCallValidate = true;
-				}
-			} else {
-				if (status == DependencyStatus.RESOLVED) {
-					status = DependencyStatus.UNRESOLVED;
-					mustCallInvalidate = true;
-				}
-			}
-		}
-
-		if (mustCallInvalidate) {
-			invalidate();
-		} else if (mustCallValidate) {
-			validate();
-		}
-
-	}
-
-	/**
-	 * Calls the listener callback to notify the new state of the current
-	 * dependency.
-	 */
-	private void invalidate() {
-		handler.invalidate();
-	}
-
-	/**
-	 * Calls the listener callback to notify the new state of the current
-	 * dependency.
-	 */
-	private void validate() {
-		handler.validate();
-	}
 
 	public void onSet(Object pojo, String fieldName, Object value) {
 		// Just do nothing...
 	}
 
 	public Object onGet(Object pojo, String fieldName, Object value) {
-		//return this.service.getServiceObject();
 		return dynamicProxy.getProxy();
 	}
 

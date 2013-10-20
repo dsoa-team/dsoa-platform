@@ -30,51 +30,63 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	public DependencyManager(Dependency dependency) {
 		this.dependency = dependency;
 		this.dsoa = dependency.getHandler().getDsoaPlatform();
+
+		this.initializeControlLoop();
+	}
+	
+	private void initializeControlLoop() {
 		this.monitor = new Monitor();
-		this.analyzer = new DsoaAnalyzer(dsoa.getEpService(), dsoa.getAttEventMapperCatalog());
+		this.analyzer = new Analyzer();
 		this.planner = new Planner();
-		
-		this.startMonitoring();
 	}
-
-	private void startMonitoring() {
-		this.configureMonitor();
-		this.monitor.instrument(dependency);
-	}
-
-	private void configureMonitor() {
+	
+	private void configureControlLoop() {
+		// configure monitor
 		EventType invocationEvent = this.dsoa.getEventTypeCatalog().get(Constants.INVOCATION_EVENT);
 		EventAdmin eventAdmin = this.dsoa.getEventDistribuitionService();
 
 		this.monitor.setEventAdmin(eventAdmin);
 		this.monitor.setEventType(invocationEvent);
+		this.monitor.instrument(dependency);
+
+		// configure analyzer
+		this.analyzer.setPlatform(dsoa);
+	}
+	
+	public void start() {
+		this.configureControlLoop();
+		this.resolve();
+	}
+
+	public void stop() {
+		this.analyzer.stop();
+		this.release();
 	}
 
 	public void resolve() {
-		dsoa.getServiceRegistry().getBestService(dependency.getSpecification(),
-				dependency.getBlackList(), this);
+		dsoa.getServiceRegistry().getBestService(dependency.getSpecification(), dependency.getBlackList(), this);
 	}
 
 	public void release() {
 		this.analyzer.stop();
-		dependency.setService(null);
-		dependency.computeDependencyState();
+		this.dependency.setValid(false);
+		this.dependency.setService(null);
 	}
 
 	public String getServiceInterface() {
-		return dependency.getSpecification().getServiceInterface();
+		return this.dependency.getSpecification().getServiceInterface();
 	}
 
 	public void onArrival(Service service) {
-		this.analyzer
-				.start(service.getCompomentId(), dependency.getAttributeConstraintList(), this);
-		dependency.setService(service);
-		dependency.computeDependencyState();
+		this.analyzer.start(service.getCompomentId(), dependency.getSpecification().getNonFunctionalSpecification()
+				.getAttributeConstraints(), this);
+
+		this.dependency.setService(service);
+		this.dependency.setValid(true);
 	}
 
 	public void onDeparture(Service service) {
-		release();
-		resolve();
+		this.release();
 	}
 
 	public void onError(Exception e) {
@@ -82,6 +94,6 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 	@Override
 	public void handleNotification(AttributeConstraint constraint, AttributeValue value) {
-		this.planner.evaluate(dependency, constraint, value);
+		this.planner.evaluate(constraint, value);
 	}
 }

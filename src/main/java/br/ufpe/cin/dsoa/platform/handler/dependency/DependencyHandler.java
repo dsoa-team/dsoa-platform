@@ -36,6 +36,8 @@ public class DependencyHandler extends PrimitiveHandler {
 	
 	private ServiceTracker dsoaServiceTracker;
 	
+	private DsoaPlatform dsoa;
+	
 	private Logger log = Logger.getLogger(DependencyHandler.class.getName());
 	
 	@SuppressWarnings("rawtypes")
@@ -67,11 +69,106 @@ public class DependencyHandler extends PrimitiveHandler {
 				throw new ConfigurationException("The required service interface cannot be loaded : " + e.getMessage());
 			}
 		}
-		description = new DependencyHandlerDescription(this, dependencies); // Initialize
-																			// the
-																			// description.
+		description = new DependencyHandlerDescription(this, dependencies); 
+	}
+	
+    /**
+     * Handler start method.
+     * @see org.apache.felix.ipojo.Handler#start()
+     */
+    public void start() {
+        started = true;
+        setValidity(false);
+    	if (dsoa != null) {
+	    	startDependencies();
+    	}
+    }
+    
+    /**
+     * Handler stop method.
+     * @see org.apache.felix.ipojo.Handler#stop()
+     */
+    public void stop() {
+        this.stopDependencies();
+        this.setValidity(false);
+        started = false;
+    }
+
+	private void startDependencies() {
+		synchronized (dependencies) {
+		    for (Dependency dep : dependencies) {
+		        dep.start();
+		    }
+		}
+		computeState();
+	}
+	
+	private void stopDependencies() {
+		synchronized (dependencies) {
+		    for (Dependency dep : dependencies) {
+		        dep.stop();
+		    }
+		}
 	}
 
+    protected void computeState() {
+        if (!started) {
+            return;
+        }
+        
+        boolean initialState = getValidity();
+        boolean valid = true;
+        
+        synchronized (dependencies) {
+            for (Dependency dep : dependencies) {
+                if (!dep.isValid()) {
+                    valid = false;
+                    break;
+                }
+            }
+            
+            if (valid) {
+                if (!initialState) {
+                    setValidity(true);
+                }
+            } else {
+                if (initialState) {
+                    setValidity(false);
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Check the validity of the dependencies.
+     */
+    class DsoaTrackerCustomizer implements ServiceTrackerCustomizer {
+
+    	public Object addingService(ServiceReference reference) {
+			dsoa = (DsoaPlatform) ctx.getService(reference);
+			startDependencies();
+			return dsoa;
+		}
+		
+		public void modifiedService(ServiceReference reference, Object service) {
+			// Just do nothing!
+		}
+		
+		public void removedService(ServiceReference reference, Object service) {
+			stopDependencies();
+			dsoa = null;
+			ctx.ungetService(reference);
+			computeState();
+		}	
+    	
+    }
+
+	public DsoaPlatform getDsoaPlatform() {
+		DsoaPlatform platform = (DsoaPlatform) dsoaServiceTracker.getService();
+		return platform;
+	}
+    
 	private List<AttributeConstraint> getConstraintList(Element[] constraintTags) {
 		List<AttributeConstraint> constraintList = new ArrayList<AttributeConstraint>();
 		String attribute = null, operation = null, expression = null, threashold = null, weight = null;
@@ -114,118 +211,4 @@ public class DependencyHandler extends PrimitiveHandler {
 	public HandlerDescription getDescription() {
 		return this.description;
 	}
-
-	public void validate() {
-		checkContext();
-	}
-
-	public void invalidate() {
-		setValidity(false);
-	}
-	
-    /**
-     * Handler start method.
-     * @see org.apache.felix.ipojo.Handler#start()
-     */
-    public void start() {
-        // Start the dependencies
-        for (Dependency dep : dependencies) {
-            dep.start();
-        }
-        // Check the state
-        started = true;
-        setValidity(false);
-        checkContext();
-    }
-
-    /**
-     * Handler stop method.
-     * @see org.apache.felix.ipojo.Handler#stop()
-     */
-    public void stop() {
-    	started = false;
-        for (Dependency dep : dependencies) {
-        	dep.stop();
-        }
-    }
-	
-    /**
-     * Check the validity of the dependencies.
-     */
-    protected void checkContext() {
-        if (!started) {
-            return;
-        }
-        synchronized (dependencies) {
-            // Store the initial state
-            boolean initialState = getValidity();
-
-            boolean valid = true;
-            for (Dependency dep : dependencies) {
-                if (dep.getStatus() != DependencyStatus.RESOLVED) {
-                    valid = false;
-                    break;
-                }
-            }
-
-            if (valid) {
-                if (!initialState) {
-                    setValidity(true);
-                }
-            } else {
-                if (initialState) {
-                    setValidity(false);
-                }
-            }
-
-        }
-    }
-
-    class DsoaTrackerCustomizer implements ServiceTrackerCustomizer {
-
-    	public Object addingService(ServiceReference reference) {
-			validate();
-			return ctx.getService(reference);
-		}
-		
-		public void modifiedService(ServiceReference reference, Object service) {
-			// Just do nothing!
-		}
-		
-		public void removedService(ServiceReference reference, Object service) {
-			invalidate();
-			ctx.ungetService(reference);
-		}	
-    	
-    }
-
-	public DsoaPlatform getDsoaPlatform() {
-		return (DsoaPlatform) dsoaServiceTracker.getService();
-	}
-    
-/*	
- 
-	private EventType getInvocationEventType() throws ConfigurationException {
-		EventTypeCatalog eventTypeCatalog = (EventTypeCatalog) eventTypeCatalogTracker.getService();
-		
-		if (eventTypeCatalog == null) {
-			throw new ConfigurationException("Event type catalog was not found!");
-		}
-		return eventTypeCatalog.get(Constants.INVOCATION_EVENT);
-	}
-
-  public EventChannel getEventChannel() throws ConfigurationException {
-		EventTypeCatalog eventTypeCatalog = (EventTypeCatalog) eventTypeCatalogTracker.getService();
-		EventProcessingService epService = (EventProcessingService) eventProcessingServiceTracker.getService();
-		if (eventTypeCatalog == null) {
-			throw new ConfigurationException("Event type catalog was not found!");
-		} else if (epService == null) {
-			throw new ConfigurationException("Event processing service was not found!");
-		}
-		EventType invocationEvent = eventTypeCatalog.get(Constants.INVOCATION_EVENT);
-		EventChannel channel = epService.getEventChannel(invocationEvent);
-		
-		return channel;
-	}*/
-
 }

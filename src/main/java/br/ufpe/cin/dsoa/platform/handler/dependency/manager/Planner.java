@@ -2,13 +2,18 @@ package br.ufpe.cin.dsoa.platform.handler.dependency.manager;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.platform.handler.dependency.Dependency;
 
 public class Planner {
 
-	public void evaluate(Dependency dependency, AttributeConstraint constraint, AttributeValue value) {
-		dependency.stop();
-		dependency.start();
+	private DependencyManager manager;
+
+	public void setDependencyManager(DependencyManager manager) {
+		this.manager = manager;
+	}
+
+	public synchronized void evaluate(AttributeConstraint constraint, AttributeValue value) {
+		manager.release();
+		manager.resolve();
 	}
 
 }
