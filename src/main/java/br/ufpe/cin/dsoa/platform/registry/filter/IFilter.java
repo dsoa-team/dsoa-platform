@@ -1,11 +1,12 @@
 package br.ufpe.cin.dsoa.platform.registry.filter;
 
+import br.ufpe.cin.dsoa.api.service.Expression;
+
 
 
 public class IFilter extends FilterBuilder {
 	
 	private final String name;
-	private final String op = "=";
 	private final String value;
 	
 	public IFilter(String name, String value) {
@@ -16,9 +17,9 @@ public class IFilter extends FilterBuilder {
 
 	@Override
 	public StringBuilder append(StringBuilder builder) {
-		// TODO Auto-generated method stub
-		return builder.append('(').append(name).append(op)
-		.append(value).append(')');
+		
+		String renderedExpression = Expression.EQ.renderExpression(this.name, value);
+		return builder.append('(').append(renderedExpression).append(')');
 	}
 
 }

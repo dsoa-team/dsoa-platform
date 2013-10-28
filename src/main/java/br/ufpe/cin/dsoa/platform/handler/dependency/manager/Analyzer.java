@@ -90,7 +90,7 @@ public class Analyzer {
 
 	public void stop() {
 		
-		if(!this.monitoringRegistrations.isEmpty()) {
+		if(this.monitoringRegistrations != null && !this.monitoringRegistrations.isEmpty()) {
 			for(MonitoringRegistration registration : this.monitoringRegistrations) {
 				this.dsoa.getEpService().unsubscribe(registration.getConsumer(), registration.getSubscription());
 			}

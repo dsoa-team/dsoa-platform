@@ -17,9 +17,10 @@ public class ObjectFilter extends FilterBuilder {
 
 	@Override
 	public StringBuilder append(StringBuilder builder) {
-		// TODO Auto-generated method stub
-		return builder.append('(').append(name).append(expression.getOperator())
-		.append(value.toString()).append(')');
+		
+		String renderedExpression = expression.renderExpression(this.name, value.toString());
+		return builder.append('(').append(renderedExpression).append(')');
+		
 	}
 
 }

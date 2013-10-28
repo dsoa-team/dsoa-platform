@@ -119,6 +119,7 @@ public class EsperProcessingService implements EventProcessingService {
 		QueryDirector director = new QueryDirector(builder);
 		director.construct();
 		query = director.getQuery();
+		System.out.println(query.getQueryString());
 		//EventSubscriber subscriber = new EventSubscriber(consumer, subscription);
 		EPStatement statement = this.startQuery(query);
 		statement.addListener(new StatementAwareUpdateListener() {
@@ -166,6 +167,7 @@ public class EsperProcessingService implements EventProcessingService {
 		EPStatement stmt = this.epServiceProvider.getEPAdministrator().getStatement(statmentId);
 		if(stmt != null) {
 			stmt.destroy();
+			System.out.println("stmt destroyed");
 		}
 	}
 

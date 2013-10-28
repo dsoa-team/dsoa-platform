@@ -12,8 +12,11 @@ public class Planner {
 	}
 
 	public synchronized void evaluate(AttributeConstraint constraint, AttributeValue value) {
+		System.err.println(">>>> Trocar serviço <<<");
 		manager.release();
+		System.err.println(">>>> Handler Invalido <<<");
 		manager.resolve();
+		System.err.println(">>>> Trocou serviço <<<");
 	}
 
 }

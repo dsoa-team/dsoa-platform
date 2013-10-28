@@ -51,6 +51,9 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 		// configure analyzer
 		this.analyzer.setPlatform(dsoa);
+		
+		//configure planner
+		this.planner.setDependencyManager(this);
 	}
 	
 	public void start() {
@@ -59,18 +62,27 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	public void stop() {
-		this.analyzer.stop();
 		this.release();
 	}
 
 	public void resolve() {
+		System.err.println("dependency state: "+  dependency.isValid());
 		dsoa.getServiceRegistry().getBestService(dependency.getSpecification(), dependency.getBlackList(), this);
 	}
 
 	public void release() {
 		this.analyzer.stop();
-		this.dependency.setValid(false);
-		this.dependency.setService(null);
+
+		synchronized (dependency) {
+			if(dependency.isValid()){
+				//TODO: move to planer
+				this.dependency.getBlackList().clear();
+				this.dependency.getBlackList().add(dependency.getService().getCompomentId());
+			}
+			
+			this.dependency.setValid(false);
+			this.dependency.setService(null);
+		}
 	}
 
 	public String getServiceInterface() {
@@ -78,6 +90,8 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	public void onArrival(Service service) {
+		System.err.println("Atual service: " + service.getCompomentId());
+		//TODO: remover
 		this.analyzer.start(service.getCompomentId(), dependency.getSpecification().getNonFunctionalSpecification()
 				.getAttributeConstraints(), this);
 

@@ -13,6 +13,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.api.service.Expression;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
@@ -23,6 +24,7 @@ import br.ufpe.cin.dsoa.platform.registry.filter.AndFilter;
 import br.ufpe.cin.dsoa.platform.registry.filter.DFilter;
 import br.ufpe.cin.dsoa.platform.registry.filter.FilterBuilder;
 import br.ufpe.cin.dsoa.platform.registry.filter.IFilter;
+import br.ufpe.cin.dsoa.platform.registry.filter.ObjectFilter;
 import br.ufpe.cin.dsoa.platform.registry.normalizer.Normalizer;
 import br.ufpe.cin.dsoa.platform.registry.rank.Rank;
 
@@ -36,17 +38,18 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 
 	@Override
 	public List<Service> findService(String serviceInterface,
-			List<AttributeConstraint> constraints) {
-		
+			List<AttributeConstraint> constraints, List<String> blackList) {
+
 		List<Service> services = new ArrayList<Service>();
-		
+
 		try {
-			Filter filter = this.createFilter(serviceInterface, constraints);
-			ServiceReference[] references = this.context.getServiceReferences(serviceInterface, filter.toString());
-			if(references != null){
-				for(ServiceReference reference : references){
+			Filter filter = this.createFilter(serviceInterface, constraints, blackList);
+			ServiceReference[] references = this.context.getServiceReferences(serviceInterface,
+					filter.toString());
+			if (references != null) {
+				for (ServiceReference reference : references) {
 					try {
-						services.add(OsgiService.getOsgiService(serviceInterface,reference));
+						services.add(OsgiService.getOsgiService(serviceInterface, reference));
 					} catch (ClassNotFoundException e) {
 						logger.log(Level.WARNING, e.getMessage());
 					}
@@ -57,19 +60,19 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 		} catch (InvalidSyntaxException e) {
 			logger.log(Level.WARNING, e.getMessage());
 		}
-		
+
 		return services;
 	}
 
 	@Override
 	public List<Service> findService(String serviceInterface) {
-		
+
 		List<Service> services = new ArrayList<Service>();
-		
+
 		ServiceReference reference = this.context.getServiceReference(serviceInterface);
-		if(null != reference){
+		if (null != reference) {
 			try {
-				services.add(OsgiService.getOsgiService(serviceInterface,reference));
+				services.add(OsgiService.getOsgiService(serviceInterface, reference));
 			} catch (ClassNotFoundException e) {
 				logger.log(Level.WARNING, e.getMessage());
 			}
@@ -78,16 +81,17 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 	}
 
 	@Override
-	public Service rankServices(String serviceInterface, List<Service> services, List<AttributeConstraint> constraints) {
-		
+	public Service rankServices(String serviceInterface, List<Service> services,
+			List<AttributeConstraint> constraints) {
+
 		Service service = null;
-		
-		List<ServiceReference> referenceList  = new ArrayList<ServiceReference>();
-		for(Service s :  services){
+
+		List<ServiceReference> referenceList = new ArrayList<ServiceReference>();
+		for (Service s : services) {
 			referenceList.add(((OsgiService) s).getReference());
 		}
-		
-		ServiceReference[] references = referenceList.toArray(new ServiceReference[]{});
+
+		ServiceReference[] references = referenceList.toArray(new ServiceReference[] {});
 		ServiceReference ranking = context.getServiceReference(Rank.class.getName());
 		ServiceReference reference = null;
 
@@ -95,11 +99,11 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 			Collections.sort(referenceList, new RankComparator());
 			reference = referenceList.get(0);
 		} else {
-			Normalizer normalizer = new Normalizer(constraints, references); 
+			Normalizer normalizer = new Normalizer(constraints, references);
 			Rank rank = (Rank) context.getService(ranking);
 			reference = rank.ranking(constraints, normalizer, references);
 		}
-		
+
 		try {
 			service = OsgiService.getOsgiService(serviceInterface, reference);
 		} catch (ClassNotFoundException e) {
@@ -115,9 +119,8 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 	}
 
 	@Override
-	public void waitForService(ServiceSpecification specification,
-			ServiceListener listener, List<String> blackList)
-			throws InvalidConstraintException {
+	public void waitForService(ServiceSpecification specification, ServiceListener listener,
+			List<String> blackList) throws InvalidConstraintException {
 
 		Filter filter = null;
 
@@ -125,11 +128,10 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 				.getNonFunctionalSpecification();
 
 		if (null != nonFunctionalSpecification) {
-			List<AttributeConstraint> constraints = specification
-					.getNonFunctionalSpecification().getAttributeConstraints();
+			List<AttributeConstraint> constraints = specification.getNonFunctionalSpecification()
+					.getAttributeConstraints();
 
-			filter = this.createFilter(specification.getServiceInterface(),
-					constraints);
+			filter = this.createFilter(specification.getServiceInterface(), constraints, blackList);
 			new OsgiTracker(context, filter, listener, blackList).open();
 		}
 	}
@@ -139,8 +141,8 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 		private ServiceListener listener;
 		private List<String> blackList;
 
-		public OsgiTracker(BundleContext context, Filter filter,
-				ServiceListener listener, List<String> blackList) {
+		public OsgiTracker(BundleContext context, Filter filter, ServiceListener listener,
+				List<String> blackList) {
 			super(context, filter, null);
 
 			this.listener = listener;
@@ -167,13 +169,11 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 		}
 	}
 
-	private void openTracker(ServiceReference reference,
-			final ServiceListener listener) {
-		
+	private void openTracker(ServiceReference reference, final ServiceListener listener) {
+
 		new ServiceTracker(this.context, reference, null) {
 			@Override
-			public void removedService(ServiceReference reference,
-					Object service) {
+			public void removedService(ServiceReference reference, Object service) {
 				listener.onDeparture((Service) service);
 				super.removedService(reference, service);
 				this.close();
@@ -181,29 +181,53 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 		}.open();
 	}
 
-	private Filter createFilter(String serviceInterface,
-			List<AttributeConstraint> constraints)
-			throws InvalidConstraintException {
+	private Filter createFilter(String serviceInterface, List<AttributeConstraint> constraints,
+			List<String> blackList) throws InvalidConstraintException {
 
 		Filter filter = null;
+		List<FilterBuilder> filterBuilders = new ArrayList<FilterBuilder>();
+
+		addServiceInterfaceFilter(filterBuilders, serviceInterface);
+		addConstraintFilters(filterBuilders, constraints);
+		addBlackListFilters(filterBuilders, blackList);
+
 		try {
-			filter = context.createFilter(new AndFilter(this.getFilters(
-					serviceInterface, constraints)).toString());
+			filter = context.createFilter(new AndFilter(filterBuilders).toString());
 		} catch (InvalidSyntaxException e) {
 			throw new InvalidConstraintException("Invalid constraints!", e);
 		}
 		return filter;
 	}
 
-	private List<FilterBuilder> getFilters(String spe,
-			List<AttributeConstraint> constraints) {
-		List<FilterBuilder> filter = new ArrayList<FilterBuilder>();
-		filter.add(new IFilter(Constants.OBJECTCLASS, spe));
+	private void addServiceInterfaceFilter(List<FilterBuilder> filterBuilders,
+			String serviceInterface) {
 
-		for (AttributeConstraint constraint : constraints) {
-			filter.add(new DFilter(constraint.format(),	constraint.getExpression(), constraint.getThreashold()));
-		}
-		return filter;
+		filterBuilders.add(new IFilter(Constants.OBJECTCLASS, serviceInterface));
 	}
 
+	/**
+	 * Creates attribute constraints filters
+	 * 
+	 * @param filterBuilders
+	 * @param serviceInterface
+	 * @param constraints
+	 */
+	private void addConstraintFilters(List<FilterBuilder> filterBuilders,
+			List<AttributeConstraint> constraints) {
+
+		for (AttributeConstraint constraint : constraints) {
+			filterBuilders.add(new DFilter(constraint.format(), constraint.getExpression(),
+					constraint.getThreashold()));
+		}
+
+	}
+
+	private void addBlackListFilters(List<FilterBuilder> filterBuilders, List<String> blackList) {
+
+		if (blackList != null) {
+			for (String serviceId : blackList) {
+				filterBuilders.add(new ObjectFilter(Constants.SERVICE_ID, Expression.NE, serviceId));
+			}
+		}
+	}
 }

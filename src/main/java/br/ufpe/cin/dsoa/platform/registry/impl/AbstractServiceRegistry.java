@@ -12,7 +12,6 @@ import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
-import br.ufpe.cin.dsoa.platform.monitor.DynamicProxyFactory;
 import br.ufpe.cin.dsoa.platform.registry.InvalidConstraintException;
 import br.ufpe.cin.dsoa.platform.registry.ServiceRegistry;
 
@@ -39,6 +38,9 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
 	public final void getBestService(ServiceSpecification specification,
 			List<String> blackList, ServiceListener listener) {
 
+		
+		System.out.println("blackList: " + blackList);
+		
 		String serviceInterface = specification.getServiceInterface();
 		NonFunctionalSpecification nfs = specification
 				.getNonFunctionalSpecification();
@@ -82,7 +84,7 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
 			ServiceListener listener, List<String> blackList) throws InvalidConstraintException;
 
 	public abstract List<Service> findService(String serviceInterface,
-			List<AttributeConstraint> contraints);
+			List<AttributeConstraint> contraints, List<String> blackList);
 
 	public abstract List<Service> findService(String serviceInterface);
 
@@ -114,13 +116,15 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
 
 		
 		if (null != constraints) {
-			services = this.findService(serviceInterface, constraints);
+			services = this.findService(serviceInterface, constraints, blackList);
 		} else {
 			services = this.findService(serviceInterface);
 		}
 
+		//XXX: filtered via ldap before
 		// filter black listed services
-		this.filterServices(blackList, services);
+		//this.filterServices(blackList, services);
+		
 
 		return services;
 	}

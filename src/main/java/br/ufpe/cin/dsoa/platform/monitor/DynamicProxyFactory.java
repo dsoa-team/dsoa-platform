@@ -110,15 +110,23 @@ public class DynamicProxyFactory implements InvocationHandler {
 		Object result = null;
 		boolean success = true;
 		try {
-			result = method.invoke(dependency.getService().getServiceObject(), args);
+			synchronized (dependency) {
+				if(dependency.getService() != null){
+					result = method.invoke(dependency.getService().getServiceObject(), args);
+				}
+			}
 		} catch (Exception exc) {
 			exceptionMessage = exc.getMessage();
 			success = false;
 			throw exc;
 		} finally {
 			responseTime = System.currentTimeMillis();
-			notifyInvocation(dependency.getComponentId(), dependency.getService().getCompomentId(),
-					method.getName(), requestTime, responseTime, success, exceptionMessage);
+			synchronized (dependency) {
+				if(dependency.getService() != null){
+					notifyInvocation(dependency.getComponentId(), dependency.getService().getCompomentId(),
+							method.getName(), requestTime, responseTime, success, exceptionMessage);
+				}
+			}
 		}
 		return result;
 	}
