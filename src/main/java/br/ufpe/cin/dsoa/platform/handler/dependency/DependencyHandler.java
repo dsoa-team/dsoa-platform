@@ -165,8 +165,7 @@ public class DependencyHandler extends PrimitiveHandler {
     }
 
 	public DsoaPlatform getDsoaPlatform() {
-		DsoaPlatform platform = (DsoaPlatform) dsoaServiceTracker.getService();
-		return platform;
+		return dsoa;
 	}
     
 	private List<AttributeConstraint> getConstraintList(Element[] constraintTags) {

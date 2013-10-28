@@ -1,6 +1,10 @@
 package br.ufpe.cin.dsoa.platform.event.impl;
 
 public interface QueryBuilder {
+	
+	public void buildContextClause();
+	
+	public void buildInsertIntoClause();
 
 	public void buildSelectClause();
 
@@ -13,4 +17,5 @@ public interface QueryBuilder {
 	public void buildHavingClause();
 
 	public Query getQuery();
+
 }

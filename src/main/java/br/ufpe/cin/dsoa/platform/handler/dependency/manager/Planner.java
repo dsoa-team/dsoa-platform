@@ -11,7 +11,7 @@ public class Planner {
 		this.manager = manager;
 	}
 
-	public synchronized void evaluate(AttributeConstraint constraint, AttributeValue value) {
+	public void evaluate(AttributeConstraint constraint, AttributeValue value) {
 		manager.release();
 		manager.resolve();
 	}

@@ -6,7 +6,6 @@ import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.Service;
-import br.ufpe.cin.dsoa.platform.DsoaPlatform;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeNotificationListener;
 import br.ufpe.cin.dsoa.platform.handler.dependency.Dependency;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
@@ -19,7 +18,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	 */
 	private Dependency dependency;
 
-	private DsoaPlatform dsoa;
+	//private DsoaPlatform dsoa;
 
 	private Analyzer analyzer;
 
@@ -29,7 +28,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 	public DependencyManager(Dependency dependency) {
 		this.dependency = dependency;
-		this.dsoa = dependency.getHandler().getDsoaPlatform();
+		//this.dsoa = dependency.getHandler().getDsoaPlatform();
 
 		this.initializeControlLoop();
 	}
@@ -42,15 +41,18 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	
 	private void configureControlLoop() {
 		// configure monitor
-		EventType invocationEvent = this.dsoa.getEventTypeCatalog().get(Constants.INVOCATION_EVENT);
-		EventAdmin eventAdmin = this.dsoa.getEventDistribuitionService();
+		EventType invocationEvent = this.dependency.getHandler().getDsoaPlatform().getEventTypeCatalog().get(Constants.INVOCATION_EVENT);
+		EventAdmin eventAdmin = this.dependency.getHandler().getDsoaPlatform().getEventDistribuitionService();
 
 		this.monitor.setEventAdmin(eventAdmin);
 		this.monitor.setEventType(invocationEvent);
 		this.monitor.instrument(dependency);
 
 		// configure analyzer
-		this.analyzer.setPlatform(dsoa);
+		this.analyzer.setPlatform(dependency.getHandler().getDsoaPlatform());
+		
+		// configure planner
+		this.planner.setDependencyManager(this);
 	}
 	
 	public void start() {
@@ -64,10 +66,11 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	public void resolve() {
-		dsoa.getServiceRegistry().getBestService(dependency.getSpecification(), dependency.getBlackList(), this);
+		dependency.getHandler().getDsoaPlatform().getServiceRegistry().getBestService(dependency.getSpecification(), dependency.getBlackList(), this);
 	}
 
 	public void release() {
+		System.out.println("Stopping dependency on service " + this.dependency != null ? dependency.getService().getCompomentId() : null);
 		this.analyzer.stop();
 		this.dependency.setValid(false);
 		this.dependency.setService(null);
@@ -78,6 +81,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	public void onArrival(Service service) {
+		System.out.println("Starting dependency on service " + service.getCompomentId());
 		this.analyzer.start(service.getCompomentId(), dependency.getSpecification().getNonFunctionalSpecification()
 				.getAttributeConstraints(), this);
 
@@ -94,6 +98,8 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 	@Override
 	public void handleNotification(AttributeConstraint constraint, AttributeValue value) {
-		this.planner.evaluate(constraint, value);
+		synchronized(dependency) {
+			this.planner.evaluate(constraint, value);
+		}
 	}
 }
