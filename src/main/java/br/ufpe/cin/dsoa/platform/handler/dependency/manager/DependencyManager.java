@@ -42,8 +42,8 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	
 	private void configureControlLoop() {
 		// configure monitor
-		EventType invocationEvent = this.dsoa.getEventTypeCatalog().get(Constants.INVOCATION_EVENT);
-		EventAdmin eventAdmin = this.dsoa.getEventDistribuitionService();
+		EventType invocationEvent = this.dependency.getHandler().getDsoaPlatform().getEventTypeCatalog().get(Constants.INVOCATION_EVENT);
+		EventAdmin eventAdmin = this.dependency.getHandler().getDsoaPlatform().getEventDistribuitionService();
 
 		this.monitor.setEventAdmin(eventAdmin);
 		this.monitor.setEventType(invocationEvent);
@@ -71,6 +71,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	public void release() {
+		System.out.println("Stopping dependency on service " + this.dependency != null ? dependency.getService().getCompomentId() : null);
 		this.analyzer.stop();
 
 		synchronized (dependency) {
@@ -108,6 +109,8 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 	@Override
 	public void handleNotification(AttributeConstraint constraint, AttributeValue value) {
-		this.planner.evaluate(constraint, value);
+		synchronized(dependency) {
+			this.planner.evaluate(constraint, value);
+		}
 	}
 }

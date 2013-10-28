@@ -9,6 +9,8 @@ public class QueryDirector {
 	}
 	
 	public void construct(){
+		this.builder.buildContextClause();
+		this.builder.buildInsertIntoClause();
 		this.builder.buildSelectClause();
 		this.builder.buildFromClause();
 		this.builder.buildWhereClause();

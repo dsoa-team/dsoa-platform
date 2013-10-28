@@ -30,9 +30,15 @@ public class EsperAgentBuilder implements QueryBuilder {
 		this.out = ((ProcessingMapping) eventProcessingAgent.getProcessing()).getOutputEvent();
 	}
 
-	public void buildSelectClause() {
+	public void buildContextClause() {
 		this.queryString.append(" context " + Constants.CONTEXT_NAME);
+	}
+	
+	public void buildInsertIntoClause() {
 		this.queryString.append(" INSERT INTO " + this.out.getType());
+	}
+	
+	public void buildSelectClause() {
 		this.queryString.append(" SELECT ");
 		this.queryString.append(extractSelect(this.out.getMetadata(), "metadata") + ", ");
 		this.queryString.append(extractSelect(this.out.getData(), "data"));

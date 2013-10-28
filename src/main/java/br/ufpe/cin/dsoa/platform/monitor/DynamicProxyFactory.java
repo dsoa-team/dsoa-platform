@@ -118,6 +118,7 @@ public class DynamicProxyFactory implements InvocationHandler {
 		} catch (Exception exc) {
 			exceptionMessage = exc.getMessage();
 			success = false;
+			exc.printStackTrace();
 			throw exc;
 		} finally {
 			responseTime = System.currentTimeMillis();

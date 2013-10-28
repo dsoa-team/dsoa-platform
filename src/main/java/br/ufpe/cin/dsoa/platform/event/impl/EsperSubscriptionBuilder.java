@@ -18,8 +18,16 @@ public class EsperSubscriptionBuilder  implements QueryBuilder  {
 			this.subscription = subscription;
 		}
 
+		public void buildContextClause() {
+			
+		}
+		
+		public void buildInsertIntoClause() {
+			
+		}
+		
 		public void buildSelectClause() {
-			this.queryString.append("SELECT * ");
+			this.queryString.append(" SELECT * ");
 		}
 		
 		

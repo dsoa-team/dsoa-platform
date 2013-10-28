@@ -107,7 +107,7 @@ public class EsperProcessingService implements EventProcessingService {
 			String id = agent.getId();
 			String queryString = ((ProcessingQuery) agent.getProcessing()).getQuery();
 			query = new Query(id, queryString);
-			// XXX: processing query n esta sendo tratado (output events naosao registrados)
+			// XXX: processing query n esta sendo tratado (output events nao sao registrados)
 		}
 
 		this.startQuery(query);
