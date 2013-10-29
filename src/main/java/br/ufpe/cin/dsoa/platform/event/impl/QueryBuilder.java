@@ -9,6 +9,12 @@ public interface QueryBuilder {
 	public void buildSelectClause();
 
 	public void buildFromClause();
+	
+	public void buildFilterClause();
+	
+	public void buildWindowClause();
+
+	public void buildAliasClause();
 
 	public void buildWhereClause();
 

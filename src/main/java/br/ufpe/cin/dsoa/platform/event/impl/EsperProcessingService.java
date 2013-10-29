@@ -24,6 +24,7 @@ import br.ufpe.cin.dsoa.api.event.agent.OutputEvent;
 import br.ufpe.cin.dsoa.api.event.agent.Processing;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingQuery;
+import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.util.Constants;
@@ -56,6 +57,8 @@ public class EsperProcessingService implements EventProcessingService {
 	private EPServiceProvider epServiceProvider;
 
 	private EventTypeCatalog eventTypeCatalog;
+	
+	private AgentCatalog agentCatalog;
 	
 	public EsperProcessingService(BundleContext ctx) {
 		this.ctx = ctx;
@@ -115,11 +118,11 @@ public class EsperProcessingService implements EventProcessingService {
 
 	public synchronized void subscribe(final EventConsumer consumer, Subscription subscription) {
 		Query query = null;
-		QueryBuilder builder = this.getQueryBuilder(subscription);
+		QueryBuilder builder = this.getQueryBuilder(consumer, subscription);
 		QueryDirector director = new QueryDirector(builder);
 		director.construct();
 		query = director.getQuery();
-		System.out.println(query.getQueryString());
+		System.err.println(query.getQueryString());//TODO: remover
 		//EventSubscriber subscriber = new EventSubscriber(consumer, subscription);
 		EPStatement statement = this.startQuery(query);
 		statement.addListener(new StatementAwareUpdateListener() {
@@ -157,6 +160,11 @@ public class EsperProcessingService implements EventProcessingService {
 			}
 		}
 		EventType eventType = eventTypeCatalog.get(eventTypeName);
+		if(eventType == null){
+			String typeName = (String) esperEvent.get(Constants.EVENT_METADATA + Constants.UNDERLINE + Constants.EVENT_TYPE);
+			System.err.println("underlying type: " + typeName);
+			eventType = eventTypeCatalog.get(typeName);
+		}
 		dsoaEvent = eventType.createEvent(metadata, data);
 
 		return dsoaEvent;
@@ -303,8 +311,11 @@ public class EsperProcessingService implements EventProcessingService {
 		return new EsperAgentBuilder(agent);
 	}
 
-	protected QueryBuilder getQueryBuilder(Subscription subscription) {
-		return new EsperSubscriptionBuilder(subscription);
+	protected QueryBuilder getQueryBuilder(EventConsumer eventConsumer, Subscription subscription) {
+		EventType outputEventType = subscription.getEventType();
+		EventProcessingAgent eventProcessingAgent = this.agentCatalog.getAgent(outputEventType);
+		
+		return new EsperSubscriptionBuilder(eventConsumer, subscription, eventProcessingAgent);
 	}
 
 	protected EPStatement startQuery(Query query) {

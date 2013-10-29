@@ -3,21 +3,35 @@ package br.ufpe.cin.dsoa.platform.event.impl;
 import java.util.Iterator;
 import java.util.List;
 
+import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.event.EventFilter;
 import br.ufpe.cin.dsoa.api.event.FilterExpression;
+import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.Subscription;
+import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
+import br.ufpe.cin.dsoa.util.Constants;
 
-public class EsperSubscriptionBuilder  implements QueryBuilder  {
+public class EsperSubscriptionBuilder extends EsperAgentBuilder  {
 
 		private Query query;
-		private StringBuilder queryString;
 		private Subscription subscription;
+		private EventConsumer eventConsumer;
 
-		public EsperSubscriptionBuilder(Subscription subscription) {
-			this.queryString = new StringBuilder();
+		public EsperSubscriptionBuilder(EventConsumer eventConsumer, Subscription subscription, 
+				EventProcessingAgent eventProcessingAgent) {
+			
+			super(eventProcessingAgent);
 			this.subscription = subscription;
+			this.eventConsumer = eventConsumer;
 		}
 
+		public void buildSelectClause() {
+			super.buildSelectClause();
+			this.queryString.append( ", '" + out.getType() + "' as " + Constants.EVENT_METADATA +
+					Constants.UNDERLINE + Constants.EVENT_TYPE);
+		}
+
+		
 		public void buildContextClause() {
 			
 		}
@@ -26,13 +40,21 @@ public class EsperSubscriptionBuilder  implements QueryBuilder  {
 			
 		}
 		
-		public void buildSelectClause() {
-			this.queryString.append(" SELECT * ");
+		public void buildFilterClause(){
+			this.queryString.append("(");
+			this.queryString.append(this.in.getAlias() +".data_consumerId = '" + eventConsumer.getId() +"'");
+			this.queryString.append(" ) ");
 		}
 		
-		
-		public void buildFromClause() {
-			this.queryString.append(" FROM " + subscription.getEventType().getName());
+		public void buildWhereClause() {
+		}
+
+		public void buildGroupByClause() {
+		}
+
+		public void buildHavingClause() {
+
+			this.queryString.append(" HAVING ");
 			EventFilter filter  = subscription.getFilter();
 			if (filter != null) {
 				List<FilterExpression> expressions = filter.getFilterExpressions();
@@ -48,27 +70,47 @@ public class EsperSubscriptionBuilder  implements QueryBuilder  {
 						}
 						first = false;
 						
-						this.queryString.append(exp.getProperty().getPropertyType().getFullname());
-						this.queryString.append(exp.getExpression().getOperator());
-						Object value = exp.getProperty().getValue();
-						if(exp.getProperty().getPropertyType().getType().equals(String.class)){
-							this.queryString.append(String.format("'%s'", value));
-						} else {
-							this.queryString.append(String.format("%s", value));
+						
+						PropertyType propertyType = exp.getProperty().getPropertyType();
+						String namesapce = propertyType.getNamespace();
+						String alias = in.getAlias();
+						
+						String expression = null;
+						if(namesapce.equalsIgnoreCase(Constants.EVENT_DATA)){
+							Iterator<PropertyType> types = this.out.getData().iterator();
+							while(types.hasNext()){
+								PropertyType type = types.next();
+								if(type.getName().equals(propertyType.getName())){
+									expression = type.getExpression();
+								}
+							}
+									
+						} else if(namesapce.equalsIgnoreCase(Constants.EVENT_METADATA)) {
+							Iterator<PropertyType> types = this.out.getMetadata().iterator();
+							while(types.hasNext()){
+								PropertyType type = types.next();
+								if(type.getName().equals(propertyType.getName())){
+									expression = type.getExpression();
+								}
+							}
+						}
+						
+						if(expression != null) {
+							expression = this.parseExpression(expression, alias);
+							this.queryString.append(expression);
+							
+							this.queryString.append(exp.getExpression().getOperator());
+							Object value = exp.getProperty().getValue();
+							if(exp.getProperty().getPropertyType().getType().equals(String.class)){
+								this.queryString.append(String.format("'%s'", value));
+							} else {
+								this.queryString.append(String.format("%s", value));
+							}
 						}
 					}
 					this.queryString.append(") ");
 				}
 			}
-		}
-
-		public void buildWhereClause() {
-		}
-
-		public void buildGroupByClause() {
-		}
-
-		public void buildHavingClause() {
 		}
 
 		public Query getQuery() {

@@ -33,17 +33,19 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 		this.initializeControlLoop();
 	}
-	
+
 	private void initializeControlLoop() {
 		this.monitor = new Monitor();
 		this.analyzer = new Analyzer();
 		this.planner = new Planner();
 	}
-	
+
 	private void configureControlLoop() {
 		// configure monitor
-		EventType invocationEvent = this.dependency.getHandler().getDsoaPlatform().getEventTypeCatalog().get(Constants.INVOCATION_EVENT);
-		EventAdmin eventAdmin = this.dependency.getHandler().getDsoaPlatform().getEventDistribuitionService();
+		EventType invocationEvent = this.dependency.getHandler().getDsoaPlatform()
+				.getEventTypeCatalog().get(Constants.INVOCATION_EVENT);
+		EventAdmin eventAdmin = this.dependency.getHandler().getDsoaPlatform()
+				.getEventDistribuitionService();
 
 		this.monitor.setEventAdmin(eventAdmin);
 		this.monitor.setEventType(invocationEvent);
@@ -51,11 +53,11 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 		// configure analyzer
 		this.analyzer.setPlatform(dsoa);
-		
-		//configure planner
+
+		// configure planner
 		this.planner.setDependencyManager(this);
 	}
-	
+
 	public void start() {
 		this.configureControlLoop();
 		this.resolve();
@@ -66,21 +68,23 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	public void resolve() {
-		System.err.println("dependency state: "+  dependency.isValid());
-		dsoa.getServiceRegistry().getBestService(dependency.getSpecification(), dependency.getBlackList(), this);
+		System.err.println("dependency state: " + dependency.isValid());
+		dsoa.getServiceRegistry().getBestService(dependency.getSpecification(),
+				dependency.getBlackList(), this);
 	}
 
 	public void release() {
-		System.out.println("Stopping dependency on service " + this.dependency != null ? dependency.getService().getCompomentId() : null);
+		System.out.println("Stopping dependency on service " + this.dependency != null ? dependency
+				.getService().getCompomentId() : null);
 		this.analyzer.stop();
 
 		synchronized (dependency) {
-			if(dependency.isValid()){
-				//TODO: move to planer
+			if (dependency.isValid()) {
+				// TODO: move to planer
 				this.dependency.getBlackList().clear();
 				this.dependency.getBlackList().add(dependency.getService().getCompomentId());
 			}
-			
+
 			this.dependency.setValid(false);
 			this.dependency.setService(null);
 		}
@@ -92,9 +96,10 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 	public void onArrival(Service service) {
 		System.err.println("Atual service: " + service.getCompomentId());
-		//TODO: remover
-		this.analyzer.start(service.getCompomentId(), dependency.getSpecification().getNonFunctionalSpecification()
-				.getAttributeConstraints(), this);
+		// TODO: remover
+		this.analyzer.start(dependency.getComponentId(), service.getCompomentId(), 
+				dependency.getSpecification().getNonFunctionalSpecification().
+				getAttributeConstraints(), this);
 
 		this.dependency.setService(service);
 		this.dependency.setValid(true);
@@ -109,7 +114,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 	@Override
 	public void handleNotification(AttributeConstraint constraint, AttributeValue value) {
-		synchronized(dependency) {
+		synchronized (dependency) {
 			this.planner.evaluate(constraint, value);
 		}
 	}

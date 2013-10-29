@@ -27,7 +27,7 @@ public class Analyzer {
 	private List<MonitoringRegistration> monitoringRegistrations;
 	private DsoaPlatform dsoa;
 
-	public void start(String servicePid, List<AttributeConstraint> constraints,
+	public void start(final String componentId, String servicePid, List<AttributeConstraint> constraints,
 			final AttributeNotificationListener listener) {
 		
 		this.monitoringRegistrations = new ArrayList<MonitoringRegistration>();
@@ -78,7 +78,7 @@ public class Analyzer {
 
 					@Override
 					public String getId() {
-						return null;
+						return componentId;
 					}
 				};
 				

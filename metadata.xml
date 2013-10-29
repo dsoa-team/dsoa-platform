@@ -153,6 +153,7 @@
 	<component 	name="Platform.Event.EventProcessingService" 
 				classname="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" >
 		<requires field="eventTypeCatalog"/>
+		<requires field="agentCatalog"/>
 		<provides />
 		<callback transition="validate" method="start" />
 		<callback transition="invalidate" method="stop" />

@@ -14,10 +14,10 @@ public class EsperAgentBuilder implements QueryBuilder {
 
 	private EventProcessingAgent eventProcessingAgent;
 	private Query query;
-	private StringBuilder queryString;
+	protected StringBuilder queryString;
 
-	private OutputEvent out;
-	private InputEvent in;
+	protected OutputEvent out;
+	protected InputEvent in;
 
 	public EsperAgentBuilder(EventProcessingAgent eventProcessingAgent) {
 		if (!(eventProcessingAgent.getProcessing() instanceof ProcessingMapping)) {
@@ -47,10 +47,18 @@ public class EsperAgentBuilder implements QueryBuilder {
 	public void buildFromClause() {
 		this.queryString.append(" FROM ");
 		this.queryString.append(this.in.getType());
+	}
+	
+	public void buildFilterClause() {
+	}
+	
+	public void buildWindowClause(){
 		this.queryString.append(".win:" + in.getWindow().getType());
 		this.queryString.append(String.format("(%s %s)", in.getWindow().getSize(), in.getWindow().getUnit()));
+	}
+	
+	public void buildAliasClause(){
 		this.queryString.append(" as " + this.in.getAlias());
-
 	}
 
 	public void buildWhereClause() {
@@ -90,7 +98,7 @@ public class EsperAgentBuilder implements QueryBuilder {
 		return result.toString();
 	}
 	
-	private String parseExpression(String expression, String alias) {
+	protected String parseExpression(String expression, String alias) {
 		
 		String parsedExpression = expression.replaceAll("\\" + Constants.TOKEN, Constants.UNDERLINE);
 		parsedExpression = parsedExpression.replaceAll(alias + Constants.UNDERLINE , alias + Constants.TOKEN);

@@ -13,6 +13,9 @@ public class QueryDirector {
 		this.builder.buildInsertIntoClause();
 		this.builder.buildSelectClause();
 		this.builder.buildFromClause();
+		this.builder.buildFilterClause();
+		this.builder.buildWindowClause();
+		this.builder.buildAliasClause();
 		this.builder.buildWhereClause();
 		this.builder.buildGroupByClause();
 		this.builder.buildHavingClause();
