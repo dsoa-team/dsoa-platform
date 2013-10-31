@@ -74,20 +74,19 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	public void release() {
-		System.out.println("Stopping dependency on service " + this.dependency != null ? dependency
-				.getService().getCompomentId() : null);
-		this.analyzer.stop();
-
-		synchronized (dependency) {
-			if (dependency.isValid()) {
-				// TODO: move to planer
-				this.dependency.getBlackList().clear();
-				this.dependency.getBlackList().add(dependency.getService().getCompomentId());
+		if (this.dependency != null) {
+			synchronized (dependency) {
+				if (dependency.isValid()) {
+					this.dependency.setValid(false);
+					this.dependency.getBlackList().clear();
+					if (dependency.getService() != null) {
+						this.dependency.getBlackList().add(dependency.getService().getCompomentId());
+						this.dependency.setService(null);
+					}
+				}
 			}
-
-			this.dependency.setValid(false);
-			this.dependency.setService(null);
 		}
+		this.analyzer.stop();
 	}
 
 	public String getServiceInterface() {
