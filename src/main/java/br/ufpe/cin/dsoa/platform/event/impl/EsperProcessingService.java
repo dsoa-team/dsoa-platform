@@ -122,7 +122,6 @@ public class EsperProcessingService implements EventProcessingService {
 		QueryDirector director = new QueryDirector(builder);
 		director.construct();
 		query = director.getQuery();
-		System.err.println(query.getQueryString());//TODO: remover
 		//EventSubscriber subscriber = new EventSubscriber(consumer, subscription);
 		EPStatement statement = this.startQuery(query);
 		statement.addListener(new StatementAwareUpdateListener() {
