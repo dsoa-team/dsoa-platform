@@ -83,7 +83,7 @@ public class Analyzer {
 				};
 				
 				this.monitoringRegistrations.add(new MonitoringRegistration(consumer, subscription));
-				this.dsoa.getEpService().subscribe(consumer, subscription);
+				this.dsoa.getEpService().subscribe(consumer, subscription, false);//TODO: parametrizar
 			}
 		}
 	}

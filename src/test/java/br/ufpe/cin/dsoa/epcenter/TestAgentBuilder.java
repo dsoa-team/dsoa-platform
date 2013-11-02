@@ -90,7 +90,7 @@ public class TestAgentBuilder {
 			public String getId() {
 				return "consumer-01";
 			}
-		},new Subscription(invocationEventType , filter));
+		},new Subscription(invocationEventType , filter), false);
 		
 		epService.publish(HelperEpCenterTest.getSampleInvocationEvent(source));
 		

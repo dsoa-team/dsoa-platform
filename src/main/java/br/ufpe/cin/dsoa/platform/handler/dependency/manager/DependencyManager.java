@@ -94,8 +94,6 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	public void onArrival(Service service) {
-		System.err.println("Atual service: " + service.getCompomentId());
-		// TODO: remover
 		this.analyzer.start(dependency.getComponentId(), service.getCompomentId(), 
 				dependency.getSpecification().getNonFunctionalSpecification().
 				getAttributeConstraints(), this);

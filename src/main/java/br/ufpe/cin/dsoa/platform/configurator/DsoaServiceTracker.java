@@ -53,23 +53,6 @@ public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 				.valueOf(reference.getProperty(Constants.SERVICE_PROXY).toString()));
 		if (!isProxy) {
 			try {
-				// / Testes
-				BundleContext ctx = reference.getBundle().getBundleContext();
-				Object componentObject = (Object) ctx.getService(reference);
-				try {
-					Pojo pojo = (Pojo) componentObject;
-					ComponentInstance componentInstance = pojo.getComponentInstance();
-					String componentName = componentInstance.getInstanceName();
-					InstanceDescription desc = componentInstance.getInstanceDescription();
-					ComponentTypeDescription compType = desc.getComponentDescription();
-					String compTypeName = compType.getName();
-					String[] providedSpec = compType.getprovidedServiceSpecification();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				// / FIM TESTES
-				// service = OsgiService.get
-				// this.registry.addService(service);
 				List<OsgiService> services = OsgiService.getOsgiServices(reference);
 				for (Service service : services) {
 					resourceManagerImpl.manage(service);

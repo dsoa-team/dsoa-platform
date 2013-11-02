@@ -57,9 +57,9 @@ public class EsperProcessingService implements EventProcessingService {
 	private EPServiceProvider epServiceProvider;
 
 	private EventTypeCatalog eventTypeCatalog;
-	
+
 	private AgentCatalog agentCatalog;
-	
+
 	public EsperProcessingService(BundleContext ctx) {
 		this.ctx = ctx;
 	}
@@ -68,7 +68,7 @@ public class EsperProcessingService implements EventProcessingService {
 		Configuration configuration = new Configuration();
 		configuration.getEngineDefaults().getThreading().setInsertIntoDispatchPreserveOrder(false);
 		configuration.getEngineDefaults().getThreading().setListenerDispatchPreserveOrder(false);
-		
+
 		this.epServiceProvider = EPServiceProviderManager.getProvider("Dsoa-EsperEngine",
 				configuration);
 
@@ -110,30 +110,33 @@ public class EsperProcessingService implements EventProcessingService {
 			String id = agent.getId();
 			String queryString = ((ProcessingQuery) agent.getProcessing()).getQuery();
 			query = new Query(id, queryString);
-			// XXX: processing query n esta sendo tratado (output events nao sao registrados)
+			// XXX: processing query n esta sendo tratado (output events nao sao
+			// registrados)
 		}
 
 		this.startQuery(query);
 	}
 
-	public synchronized void subscribe(final EventConsumer consumer, Subscription subscription) {
+	public synchronized void subscribe(final EventConsumer consumer, Subscription subscription,
+			boolean shared) {
+		
 		Query query = null;
-		QueryBuilder builder = this.getQueryBuilder(consumer, subscription);
+		QueryBuilder builder = this.getQueryBuilder(consumer, subscription, shared);
 		QueryDirector director = new QueryDirector(builder);
 		director.construct();
 		query = director.getQuery();
-		//EventSubscriber subscriber = new EventSubscriber(consumer, subscription);
+
 		EPStatement statement = this.startQuery(query);
 		statement.addListener(new StatementAwareUpdateListener() {
-			
+
 			@Override
 			public void update(EventBean[] newEvents, EventBean[] oldEvents, EPStatement statement,
 					EPServiceProvider epServiceProvider) {
-				
+
 				for (EventBean e : newEvents) {
 					Object event = e.getUnderlying();
 					String eventTypeName = e.getEventType().getName();
-					
+
 					@SuppressWarnings("unchecked")
 					Event dsoaEvent = convertEsperEvent(eventTypeName, (Map<String, Object>) event);
 					consumer.handleEvent(dsoaEvent);
@@ -141,9 +144,9 @@ public class EsperProcessingService implements EventProcessingService {
 			}
 		});
 	}
-	
-	private Event convertEsperEvent(String eventTypeName, Map<String, Object> esperEvent){
-		
+
+	private Event convertEsperEvent(String eventTypeName, Map<String, Object> esperEvent) {
+
 		Event dsoaEvent = null;
 
 		Map<String, Object> metadata = new HashMap<String, Object>();
@@ -159,8 +162,9 @@ public class EsperProcessingService implements EventProcessingService {
 			}
 		}
 		EventType eventType = eventTypeCatalog.get(eventTypeName);
-		if(eventType == null){
-			String typeName = (String) esperEvent.get(Constants.EVENT_METADATA + Constants.UNDERLINE + Constants.EVENT_TYPE);
+		if (eventType == null) {
+			String typeName = (String) esperEvent.get(Constants.EVENT_METADATA
+					+ Constants.UNDERLINE + Constants.EVENT_TYPE);
 			System.err.println("underlying type: " + typeName);
 			eventType = eventTypeCatalog.get(typeName);
 		}
@@ -172,9 +176,8 @@ public class EsperProcessingService implements EventProcessingService {
 	public void unsubscribe(EventConsumer consumer, Subscription subscription) {
 		String statmentId = subscription.getId();
 		EPStatement stmt = this.epServiceProvider.getEPAdministrator().getStatement(statmentId);
-		if(stmt != null) {
+		if (stmt != null) {
 			stmt.destroy();
-			System.out.println("stmt destroyed");
 		}
 	}
 
@@ -184,7 +187,7 @@ public class EsperProcessingService implements EventProcessingService {
 	public void registerEventType(EventType eventType) {
 
 		String eventTypeName = eventType.getName();
-		
+
 		if (this.eventTypeCatalog.contains(eventTypeName)) {
 			Map<String, Object> definition = eventType.toDefinitionMap();
 			this.registerEventTypeOnEsper(eventTypeName, definition);
@@ -192,21 +195,20 @@ public class EsperProcessingService implements EventProcessingService {
 		}
 	}
 
-	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void registerEventAdminListener(EventType eventType){
+	private void registerEventAdminListener(EventType eventType) {
 		String topic = Util.getDsoaEventTopic(eventType);
-				
+
 		Hashtable props = new Hashtable();
-		props.put(EventConstants.EVENT_TOPIC, new String[] {topic});
+		props.put(EventConstants.EVENT_TOPIC, new String[] { topic });
 		ctx.registerService(EventHandler.class.getName(), new EventHandler() {
-			
+
 			@Override
 			public void handleEvent(org.osgi.service.event.Event event) {
 				Event dsoaEvent = (Event) event.getProperty(Constants.DSOA_EVENT);
 				publish(dsoaEvent);
 			}
-		} , props);
+		}, props);
 	}
 
 	/**
@@ -300,7 +302,7 @@ public class EsperProcessingService implements EventProcessingService {
 		try {
 			this.epServiceProvider.getEPAdministrator().getConfiguration()
 					.removeEventType(eventTypeName, true);
-			this.eventTypeCatalog.remove(eventTypeName);//FIXME: move to out
+			this.eventTypeCatalog.remove(eventTypeName);// FIXME: move to out
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -310,20 +312,37 @@ public class EsperProcessingService implements EventProcessingService {
 		return new EsperAgentBuilder(agent);
 	}
 
-	protected QueryBuilder getQueryBuilder(EventConsumer eventConsumer, Subscription subscription) {
+	/**
+	 * 
+	 * @param eventConsumer
+	 * @param subscription
+	 * @param shared - use data from all consumers or specific ones
+	 * @return
+	 */
+	protected QueryBuilder getQueryBuilder(EventConsumer eventConsumer, Subscription subscription,
+			boolean shared) {
 		EventType outputEventType = subscription.getEventType();
 		EventProcessingAgent eventProcessingAgent = this.agentCatalog.getAgent(outputEventType);
-		
-		return new EsperSubscriptionBuilder(eventConsumer, subscription, eventProcessingAgent);
+
+		QueryBuilder builder = null;
+
+		if (shared) {
+			builder = new EsperSharedSubscriptionBuilder(subscription);
+		} else {
+			builder = new EsperSubscriptionBuilder(eventConsumer, subscription,
+					eventProcessingAgent);
+		}
+
+		return builder;
 	}
 
 	protected EPStatement startQuery(Query query) {
-		
-		String queryString  = query.getQueryString();
+
+		String queryString = query.getQueryString();
 		String queryId = query.getId();
-		
-		EPStatement stmt = this.epServiceProvider.getEPAdministrator().createEPL(queryString, queryId);
-		
+		EPStatement stmt = this.epServiceProvider.getEPAdministrator().createEPL(queryString,
+				queryId);
+
 		return stmt;
 	}
 

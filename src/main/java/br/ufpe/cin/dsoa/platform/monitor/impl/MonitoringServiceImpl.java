@@ -97,7 +97,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 				String operation = attributeConstraint.getOperation();
 				String attributeId = attributeConstraint.getAttributeId();
 				Attribute attribute = this.attributeCatalog.getAttribute(attributeId);
-				
+
 				this.addMonitoredAttribute(monitoredService, attribute, operation);
 
 			}
@@ -141,7 +141,8 @@ public class MonitoringServiceImpl implements MonitoringService {
 		// add monitored attribute
 		monitoredService.addMonitoredAttribute(monitoredAttribute);
 
-		final AttributeEventMapper mapper = attributeMapperCatalog.getAttributeEventMapper(attributeId);
+		final AttributeEventMapper mapper = attributeMapperCatalog
+				.getAttributeEventMapper(attributeId);
 		if (mapper != null) {
 			EventConsumer consumer = new EventConsumer() {
 				private String id = monitoredAttribute.getStatusVariableId();
@@ -161,9 +162,10 @@ public class MonitoringServiceImpl implements MonitoringService {
 			Subscription subscription = this.createSubscription(monitoredAttribute, attributableId,
 					attributeId, mapper);
 
-			monitoredAttribute.setMonitoringRegistration(new MonitoringRegistration(consumer, subscription));
-			
-			eventProcessingService.subscribe(consumer, subscription);
+			monitoredAttribute.setMonitoringRegistration(new MonitoringRegistration(consumer,
+					subscription));
+
+			eventProcessingService.subscribe(consumer, subscription, true);
 		}
 
 	}
