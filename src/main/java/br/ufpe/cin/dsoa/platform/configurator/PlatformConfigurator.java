@@ -69,6 +69,7 @@ public class PlatformConfigurator {
 		listener.setAttributeEventMapperCatalog(this.attributeEventMapperCatalog);
 		listener.setAgentCatalog(this.agentCatalog);
 		listener.setEventTypeCatalog(eventTypeCatalog);
+		listener.setResourceManager(resourceManager);
 		listener.open();
 	}
 

@@ -114,6 +114,8 @@ public class EsperProcessingService implements EventProcessingService {
 			// registrados)
 		}
 
+		System.out.println("QUERY AGENT: " + query.getQueryString());
+		
 		this.startQuery(query);
 	}
 
@@ -126,6 +128,8 @@ public class EsperProcessingService implements EventProcessingService {
 		director.construct();
 		query = director.getQuery();
 
+		System.out.println("QUERY CLIENT: " + query.getQueryString());
+		
 		EPStatement statement = this.startQuery(query);
 		statement.addListener(new StatementAwareUpdateListener() {
 
@@ -175,10 +179,7 @@ public class EsperProcessingService implements EventProcessingService {
 
 	public void unsubscribe(EventConsumer consumer, Subscription subscription) {
 		String statmentId = subscription.getId();
-		EPStatement stmt = this.epServiceProvider.getEPAdministrator().getStatement(statmentId);
-		if (stmt != null) {
-			stmt.destroy();
-		}
+		destroyStatement(statmentId);
 	}
 
 	/**
@@ -348,11 +349,17 @@ public class EsperProcessingService implements EventProcessingService {
 
 	@Override
 	public void unRegisterAgent(String agentId) {
-		// TODO Auto-generated method stub
-
+		destroyStatement(agentId);
 	}
 
 	public EPServiceProvider getEpProvider() {
 		return this.epServiceProvider;
+	}
+	
+	private void destroyStatement(String stmtId) {
+		EPStatement stmt = this.epServiceProvider.getEPAdministrator().getStatement(stmtId);
+		if (stmt != null) {
+			stmt.destroy();
+		}
 	}
 }

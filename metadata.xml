@@ -214,6 +214,7 @@
 				classname="br.ufpe.cin.dsoa.platform.resource.impl.ResourceManagerImpl">
 		<requires field="monitoringService" />
 		<requires field="managementInfomationBase" />
+		<requires field="epService" />
 		<provides />
 	</component>
 	

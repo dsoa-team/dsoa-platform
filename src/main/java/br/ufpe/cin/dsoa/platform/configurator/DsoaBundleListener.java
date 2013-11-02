@@ -28,12 +28,15 @@ import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.agent.AgentAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.event.agent.AgentList;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
+import br.ufpe.cin.dsoa.api.event.agent.Processing;
+import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCategoryAdapter;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
+import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 
 /**
  * This class implements the Extender Pattern. It monitors bundle lifecycle
@@ -49,6 +52,8 @@ public class DsoaBundleListener extends BundleTracker {
 	private Map<String, Unmarshaller> JAXBContexts;
 
 	private EventProcessingService epService;
+	private ResourceManager resourceManager;
+	
 	private AttributeCatalog attributeCatalog;
 	private AgentCatalog agentCatalog;
 	private EventTypeCatalog eventTypeCatalog;
@@ -196,6 +201,11 @@ public class DsoaBundleListener extends BundleTracker {
 					try {
 						this.agentCatalog.addAgent(eventProcessingAgent);
 						this.epService.registerAgent(eventProcessingAgent);
+						
+						if(eventProcessingAgent.getProcessing() instanceof ProcessingMapping){
+							this.resourceManager.manage(eventProcessingAgent);
+						}
+						
 					} catch (AgentAlreadyCatalogedException e) {
 						logger.warning(e.getMessage());
 					}
@@ -284,5 +294,10 @@ public class DsoaBundleListener extends BundleTracker {
 
 	public void setEventTypeCatalog(EventTypeCatalog eventTypeCatalog) {
 		this.eventTypeCatalog = eventTypeCatalog;
+	}
+
+	public void setResourceManager(ResourceManager resourceManager) {
+		this.resourceManager = resourceManager;
+		
 	}
 }

@@ -30,6 +30,18 @@ public class Window {
 	public String getUnit() {
 		return unit;
 	}
+	
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
 
 	@Override
 	public String toString() {
