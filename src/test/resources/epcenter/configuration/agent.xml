@@ -19,14 +19,14 @@
 			</output-event>
 		</mapping>
 	</agent>
-	
+
 	<agent id="OutOfServiceAgent">
 		<description>OutOfServiceAgent identifies request made out of predefined times</description>
 		<mapping id="OutOfServiceAgentMapping">
 			<input-event type="InvocationEvent" alias="event">
 				<window type="length" size="1" unit="" />
 				<filterExpression>
-					<filter expression="event.data.exceptionClass"  operator="=" value="OutOfScheduleException"/>
+					<filter expression="event.data.exceptionClass"  operator="EQ" value="br.com.bb.exception.OutOfScheduleException"/>
 				</filterExpression>
 			</input-event>
 			<output-event type="RequestOutOfScheduleEvent">
@@ -42,7 +42,7 @@
 			</output-event>
 		</mapping>
 	</agent>
-
+	
 	<agent id="MinResponseTimeAgent">
 		<description>Calculates min response time attribute</description>
 		<query id="MinResponseTimeQuery">

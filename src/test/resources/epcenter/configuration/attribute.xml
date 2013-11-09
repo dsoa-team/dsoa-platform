@@ -2,7 +2,7 @@
 <attributes>
 
 	<attribute>
-		<category>qos.performance.responseTime</category>
+		<category>qos</category>
 		<name>AvgResponseTime</name>
 		<description>Average response time</description>
 		<metadata>
@@ -10,12 +10,12 @@
 			<property id="timestamp" 	type="java.lang.Double" />
 		</metadata>
 		<data>
-			<property id="value" 		type="java.lang.Long" />
+			<property id="value" 		type="java.lang.Double" />
 		</data>
 	</attribute>
 	
 	<attribute>
-		<category>qos.performance.responseTime</category>
+		<category>qos</category>
 		<name>MinResponseTime</name>
 		<description>Minimum response time</description>
 		<metadata>
@@ -23,7 +23,7 @@
 			<property id="timestamp" 	type="java.lang.Double" />
 		</metadata>
 		<data>
-			<property id="value" 		type="java.lang.Long" />
+			<property id="value" 		type="java.lang.Double" />
 		</data>
 	</attribute>
 	
@@ -36,8 +36,22 @@
 			<property id="timestamp" 	type="java.lang.Double" />
 		</metadata>
 		<data>
-			<property id="value" 		type="java.lang.Long" />
+			<property id="value" 		type="java.lang.Double" />
 		</data>
 	</attribute>
+	
+	<attribute>
+		<category>qos</category>
+		<name>BusinessException</name>
+		<description>Business Exception</description>
+		<metadata>
+			<property id="source" 		type="java.lang.String" />
+			<property id="timestamp" 	type="java.lang.Double" />
+		</metadata>
+		<data>
+			<property id="value" 		type="java.lang.Double" />
+		</data>
+	</attribute>
+	
 </attributes>
 
