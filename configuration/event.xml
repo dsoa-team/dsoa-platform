@@ -16,7 +16,8 @@
 			<property id="requestTimestamp" type="java.lang.Long" />
 			<property id="responseTimestamp" type="java.lang.Long" />
 			<property id="success" type="java.lang.Boolean" />
-			<property id="exception" type="java.lang.String" />
+			<property id="exceptionMessage" type="java.lang.String" />
+			<property id="exceptionClass" type="java.lang.String" />
 		</data>
 	</event>
 </events>

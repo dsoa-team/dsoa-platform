@@ -15,7 +15,7 @@ public interface EventProcessingService {
 	
 	public void publish(Event event);
 	
-	public void subscribe(EventConsumer consumer, Subscription subscription, boolean contextAware);
+	public void subscribe(EventConsumer consumer, Subscription subscription, boolean shared);
 	
 	public void unsubscribe(EventConsumer consumer, Subscription subscription);
 	

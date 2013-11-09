@@ -1,9 +1,12 @@
 package br.ufpe.cin.dsoa.api.event.agent;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -19,6 +22,10 @@ public class InputEvent {
 	
 	@XmlElement(name = "window")
 	private Window window;
+	
+	@XmlElementWrapper(name = "filterExpression")
+	@XmlElement(name ="filter") 
+	private List<Filter> filter;
 
 	public String getType() {
 		return type;
@@ -30,6 +37,10 @@ public class InputEvent {
 
 	public Window getWindow() {
 		return window;
+	}
+	
+	public List<Filter> getFilter() {
+		return filter;
 	}
 
 	@Override

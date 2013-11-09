@@ -19,6 +19,29 @@
 			</output-event>
 		</mapping>
 	</agent>
+	
+	<agent id="OutOfServiceAgent">
+		<description>OutOfServiceAgent identifies request made out of predefined times</description>
+		<mapping id="OutOfServiceAgentMapping">
+			<input-event type="InvocationEvent" alias="event">
+				<window type="length" size="1" unit="" />
+				<filterExpression>
+					<filter expression="event.data.exceptionClass"  operator="=" value="OutOfScheduleException"/>
+				</filterExpression>
+			</input-event>
+			<output-event type="RequestOutOfScheduleEvent">
+				<metadata>
+					<property id="id" expression="event.metadata.id" />
+					<property id="timestamp" expression="event.metadata.timestamp" />
+					<property id="source" expression="event.metadata.source" />
+				</metadata>
+				<data>
+					<property id="value" type="java.lang.Double"
+						expression="1" />
+				</data>
+			</output-event>
+		</mapping>
+	</agent>
 
 	<agent id="MinResponseTimeAgent">
 		<description>Calculates min response time attribute</description>

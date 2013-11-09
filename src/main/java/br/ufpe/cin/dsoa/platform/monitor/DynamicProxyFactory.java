@@ -1,6 +1,7 @@
 package br.ufpe.cin.dsoa.platform.monitor;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,14 +86,15 @@ public class DynamicProxyFactory implements InvocationHandler {
 	 * @param args
 	 *            the arguments
 	 * @return a proxy object.
-	 * @throws Exception
-	 *             if the invocation throws an exception
+	 * @throws Throwable
 	 * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object,
 	 *      java.lang.reflect.Method, java.lang.Object[])
 	 */
-	public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		Class<?> declaringClass = method.getDeclaringClass();
 		String exceptionMessage = null;
+		String exceptionClassName = null;
+
 		if (declaringClass == Object.class) {
 			if (method.equals(m_hashCodeMethod)) {
 				return new Integer(this.hashCode());
@@ -111,21 +113,31 @@ public class DynamicProxyFactory implements InvocationHandler {
 		boolean success = true;
 		try {
 			synchronized (dependency) {
-				if(dependency.getService() != null){
+				if (dependency.getService() != null) {
 					result = method.invoke(dependency.getService().getServiceObject(), args);
 				}
 			}
+		} catch (InvocationTargetException e) {
+			Throwable rawException = e.getTargetException();
+			exceptionClassName = rawException.getClass().getName();
+			exceptionMessage = rawException.getMessage();
+			success = false;
+			//rawException.printStackTrace();
+			throw rawException;
+
 		} catch (Exception exc) {
+			exceptionClassName = exc.getClass().getName();
 			exceptionMessage = exc.getMessage();
 			success = false;
-			exc.printStackTrace();
+			//exc.printStackTrace();
 			throw exc;
 		} finally {
 			responseTime = System.currentTimeMillis();
 			synchronized (dependency) {
-				if(dependency.getService() != null){
-					notifyInvocation(dependency.getComponentId(), dependency.getService().getCompomentId(),
-							method.getName(), requestTime, responseTime, success, exceptionMessage);
+				if (dependency.getService() != null) {
+					notifyInvocation(dependency.getComponentId(), dependency.getService()
+							.getCompomentId(), method.getName(), requestTime, responseTime,
+							success, exceptionClassName, exceptionMessage);
 				}
 			}
 		}
@@ -133,10 +145,11 @@ public class DynamicProxyFactory implements InvocationHandler {
 	}
 
 	private void notifyInvocation(String consumerId, String serviceId, String operationName,
-			long requestTimestamp, long responseTimestamp, boolean success, String exceptionMessage) {
+			long requestTimestamp, long responseTimestamp, boolean success, String exceptionClass,
+			String exceptionMessage) {
 
 		NotificationWorker worker = new NotificationWorker(consumerId, serviceId, operationName,
-				requestTimestamp, responseTimestamp, success, exceptionMessage);
+				requestTimestamp, responseTimestamp, success, exceptionClass, exceptionMessage);
 		this.executorService.execute(worker);
 	}
 
@@ -149,10 +162,11 @@ public class DynamicProxyFactory implements InvocationHandler {
 		private long responseTimestamp;
 		private boolean success;
 		private String exceptionMessage;
+		private String exceptionClass;
 
 		public NotificationWorker(String consumerId, String serviceId, String operationName,
 				long requestTimestamp, long responseTimestamp, boolean success,
-				String exceptionMessage) {
+				String exceptionClass, String exceptionMessage) {
 			super();
 			this.consumerId = consumerId;
 			this.serviceId = serviceId;
@@ -161,6 +175,7 @@ public class DynamicProxyFactory implements InvocationHandler {
 			this.responseTimestamp = responseTimestamp;
 			this.success = success;
 			this.exceptionMessage = exceptionMessage;
+			this.exceptionClass = exceptionClass;
 		}
 
 		@Override
@@ -175,7 +190,8 @@ public class DynamicProxyFactory implements InvocationHandler {
 			Map<String, Object> metadata = this.loadInvocationMetadata(source);
 
 			Map<String, Object> data = this.loadInvocationData(consumerId, serviceId,
-					operationName, requestTimestamp, responseTimestamp, success, exceptionMessage);
+					operationName, requestTimestamp, responseTimestamp, success, exceptionClass,
+					exceptionMessage);
 
 			Event invocationEvent = eventType.createEvent(metadata, data);
 			String topic = Util.getDsoaEventTopic(invocationEvent.getEventType());
@@ -197,7 +213,7 @@ public class DynamicProxyFactory implements InvocationHandler {
 
 		private Map<String, Object> loadInvocationData(String consumerId, String serviceId,
 				String operationName, long requestTimestamp, long responseTimestamp,
-				boolean success, String exceptionMessage) {
+				boolean success, String exceptionClass, String exceptionMessage) {
 			Map<String, Object> data = new HashMap<String, Object>();
 
 			data.put("consumerId", consumerId);
@@ -207,6 +223,7 @@ public class DynamicProxyFactory implements InvocationHandler {
 			data.put("responseTimestamp", responseTimestamp);
 			data.put("success", success);
 			data.put("exceptionMessage", exceptionMessage);
+			data.put("exceptionClass", exceptionClass);
 
 			return data;
 		}
