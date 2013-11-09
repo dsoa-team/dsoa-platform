@@ -28,7 +28,6 @@ import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.agent.AgentAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.event.agent.AgentList;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
-import br.ufpe.cin.dsoa.api.event.agent.Processing;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;

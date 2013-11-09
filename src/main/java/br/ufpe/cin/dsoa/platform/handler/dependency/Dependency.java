@@ -1,6 +1,7 @@
 package br.ufpe.cin.dsoa.platform.handler.dependency;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
 
 import org.apache.felix.ipojo.FieldInterceptor;
@@ -10,7 +11,7 @@ import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.handler.dependency.manager.DependencyManager;
 import br.ufpe.cin.dsoa.platform.monitor.DynamicProxyFactory;
 
-public class Dependency implements FieldInterceptor {
+public class Dependency implements FieldInterceptor, Service {
 
 	private DependencyHandler 			handler;
 	
@@ -95,7 +96,39 @@ public class Dependency implements FieldInterceptor {
 	}
 
 	public Object onGet(Object pojo, String fieldName, Object value) {
-		return dynamicProxy.getProxy();
+		return dynamicProxy.getProxy(componentId, this);
+	}
+
+	@Override
+	public String getProviderId() {
+		String result = null;
+		if (this.service != null) {
+			result = this.service.getProviderId();
+		}
+		return result;
+	}
+
+	@Override
+	public Dictionary<?, ?> getProperties() {
+		Dictionary<?, ?> result = null;
+		if (this.service != null) {
+			result = this.service.getProperties();
+		}
+		return result;
+	}
+
+	@Override
+	public Object getServiceObject() {
+		Object result = null;
+		if (this.service != null) {
+			result = this.service.getServiceObject();
+		}
+		return result;
+	}
+
+	@Override
+	public void ungetServiceObject() {
+		
 	}
 
 }

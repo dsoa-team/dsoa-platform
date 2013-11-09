@@ -2,17 +2,11 @@ package br.ufpe.cin.dsoa.platform.configurator;
 
 import java.util.List;
 
-import org.apache.felix.ipojo.ComponentInstance;
-import org.apache.felix.ipojo.Pojo;
-import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
-import org.apache.felix.ipojo.architecture.InstanceDescription;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.api.service.impl.OsgiService;
-import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 import br.ufpe.cin.dsoa.util.Constants;
 import br.ufpe.cin.dsoa.util.Util;

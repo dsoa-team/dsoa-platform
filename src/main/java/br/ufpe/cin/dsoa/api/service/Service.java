@@ -5,7 +5,7 @@ import java.util.Dictionary;
 
 public interface Service {
 
-	String getCompomentId();
+	String getProviderId();
 
 	ServiceSpecification getSpecification();
 	

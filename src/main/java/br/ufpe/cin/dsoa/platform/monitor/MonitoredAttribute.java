@@ -1,7 +1,5 @@
 package br.ufpe.cin.dsoa.platform.monitor;
 
-import java.util.logging.Logger;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.monitor.MonitorListener;
@@ -26,12 +24,10 @@ public class MonitoredAttribute implements AttributeChangeListener {
 	private AttributableId	 	attributableId;
 	private AttributeValue 		attributeValue;
 	private String			 	monitoredServicePid;
-	private Logger 				log;
 	private BundleContext 		ctx;
 	private MonitoringRegistration monitoringRegistration;
 	
 	public MonitoredAttribute(BundleContext ctx, String monitoredServicePid, AttributableId attributableId, Attribute attribute) {
-		this.log = Logger.getLogger(getClass().getSimpleName());
 		this.attributableId = attributableId;
 		this.attribute = attribute;
 		this.monitoredServicePid = monitoredServicePid;

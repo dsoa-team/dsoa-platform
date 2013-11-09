@@ -45,10 +45,24 @@
 		<requires field="agentCatalog" />
 		<requires field="monitoringService" />
 		<requires field="epService" />
+		<requires field="proxyFactory" />
 		<requires field="eventDistribuitionService" />
 		<provides/>
 	</component>
 
+	<!-- ============================================================================================================ -->		
+	<!-- ============================================================================================================ -->
+	<!-- ========================== 			DSOA PROXY FACTORY		   	   			   ========================== -->
+	<!-- ============================================================================================================ -->
+	<!-- ============================================================================================================ -->
+	<component 	name="Platform.Proxy.ProxyFactory"
+				classname="br.ufpe.cin.dsoa.platform.monitor.DynamicProxyFactory">
+		<requires field="eventTypeCatalog"/>
+		<requires field="eventAdmin"/>
+		<callback transition="validate" method="start" />
+	</component> 
+	
+	
 	<!-- ============================================================================================================ -->		
 	<!-- ============================================================================================================ -->
 	<!-- ========================== 			DSOA METRIC COMPUTING COMPONENT		   	   ========================== -->
@@ -215,6 +229,7 @@
 		<requires field="monitoringService" />
 		<requires field="managementInfomationBase" />
 		<requires field="epService" />
+		<requires field="proxyFactory" />
 		<provides />
 	</component>
 	
