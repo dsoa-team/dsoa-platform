@@ -21,7 +21,7 @@ public class ServiceMetadata {
 	
 	public ServiceMetadata(Service service) {
 		this.log = Logger.getLogger(getClass().getSimpleName());
-		this.id = service.getCompomentId();
+		this.id = service.getProviderId();
 		this.operationsList = new ArrayList<String>();
 		this.service = service;
 		this.parseOperations();

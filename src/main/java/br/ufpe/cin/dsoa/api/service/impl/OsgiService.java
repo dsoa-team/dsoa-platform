@@ -50,7 +50,7 @@ public class OsgiService implements Service {
 		this.reference = reference;
 	}
 
-	public String getCompomentId() {
+	public String getProviderId() {
 		return serviceId;
 	}
 

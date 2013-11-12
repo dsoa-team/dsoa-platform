@@ -67,7 +67,7 @@ public class MonitoredService implements Monitorable {
 		log.info("Registering monitor...");
 		Hashtable ht = new Hashtable();
 		ht.put(Constants.SERVICE_PID, getMonitoredServicePid());
-		ht.put(REFERED_SERVICE_ID, service.getCompomentId());
+		ht.put(REFERED_SERVICE_ID, service.getProviderId());
 		String[] clazzes = {Monitorable.class.getName()};
 		this.monitorRegistration = this.ctx.registerService(clazzes, this, ht);
 	}
@@ -77,11 +77,11 @@ public class MonitoredService implements Monitorable {
 	}
 	
 	public String getMonitoredServicePid() {
-		return this.service.getCompomentId() + "-m";
+		return this.service.getProviderId() + "-m";
 	}
 	
 	public String getComponentId() {
-		return this.service.getCompomentId();
+		return this.service.getProviderId();
 	}
 	
 	public ServiceMetadata getMetadata() {

@@ -1,16 +1,12 @@
 package br.ufpe.cin.dsoa.platform.handler.dependency.manager;
 
-import org.osgi.service.event.EventAdmin;
-
 import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
-import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.platform.DsoaPlatform;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeNotificationListener;
 import br.ufpe.cin.dsoa.platform.handler.dependency.Dependency;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
-import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyManager implements ServiceListener, AttributeNotificationListener {
 
@@ -35,20 +31,13 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	private void initializeControlLoop() {
-		this.monitor = new Monitor();
+		this.monitor = new Monitor(this.dsoa);
 		this.analyzer = new Analyzer();
 		this.planner = new Planner();
 	}
 
 	private void configureControlLoop() {
 		// configure monitor
-		EventType invocationEvent = this.dependency.getHandler().getDsoaPlatform()
-				.getEventTypeCatalog().get(Constants.INVOCATION_EVENT);
-		EventAdmin eventAdmin = this.dependency.getHandler().getDsoaPlatform()
-				.getEventDistribuitionService();
-
-		this.monitor.setEventAdmin(eventAdmin);
-		this.monitor.setEventType(invocationEvent);
 		this.monitor.instrument(dependency);
 
 		// configure analyzer
@@ -80,7 +69,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 					this.dependency.setValid(false);
 					this.dependency.getBlackList().clear();
 					if (dependency.getService() != null) {
-						this.dependency.getBlackList().add(dependency.getService().getCompomentId());
+						this.dependency.getBlackList().add(dependency.getService().getProviderId());
 						this.dependency.setService(null);
 					}
 				}
@@ -94,7 +83,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	public void onArrival(Service service) {
-		this.analyzer.start(dependency.getComponentId(), service.getCompomentId(), 
+		this.analyzer.start(dependency.getComponentId(), service.getProviderId(), 
 				dependency.getSpecification().getNonFunctionalSpecification().
 				getAttributeConstraints(), this);
 

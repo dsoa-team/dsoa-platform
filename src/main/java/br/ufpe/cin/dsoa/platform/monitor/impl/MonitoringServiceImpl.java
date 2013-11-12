@@ -109,7 +109,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 
 	private void registerMonitoredService(Service service, MonitoredService monitoredService) {
 		synchronized (serviceMonitorsMap) {
-			String providedServiceId = service.getCompomentId();
+			String providedServiceId = service.getProviderId();
 			List<MonitoredService> monitors = serviceMonitorsMap.get(providedServiceId);
 			if (monitors == null) {
 				monitors = new ArrayList<MonitoredService>();
