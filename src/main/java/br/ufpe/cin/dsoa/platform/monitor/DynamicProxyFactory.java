@@ -27,7 +27,7 @@ import br.ufpe.cin.dsoa.util.Util;
  * @author fabions
  * 
  */
-public class DynamicProxyFactory  {
+public class DynamicProxyFactory  implements ProxyFactory {
 
 	private EventTypeCatalog eventTypeCatalog;
 	private EventAdmin eventAdmin;
@@ -36,11 +36,13 @@ public class DynamicProxyFactory  {
 	private ExecutorService executorService;
 	
 	public void start () {
-		this.invocationEventType = this.eventTypeCatalog.get(Constants.INVOCATION_EVENT);
 		this.executorService = Executors.newFixedThreadPool(10);
 	}
 	
 	public Object getProxy(String consumerId, Service service) {
+		if(this.invocationEventType == null){
+			this.invocationEventType = this.eventTypeCatalog.get(Constants.INVOCATION_EVENT);
+		}
 		DynamicProxy dynaProxy = new DynamicProxy(consumerId, service);
 		return java.lang.reflect.Proxy.newProxyInstance(
 				this.getClass().getClassLoader(), new Class[] { service
@@ -72,9 +74,9 @@ public class DynamicProxyFactory  {
 			this.service = service;
 
 			try {
-				m_hashCodeMethod = Object.class.getMethod("hashCode", (Class<?>)null);
+				m_hashCodeMethod = Object.class.getMethod("hashCode", null);
 				m_equalsMethod = Object.class.getMethod("equals", new Class[] { Object.class });
-				m_toStringMethod = Object.class.getMethod("toString", (Class<?>)null);
+				m_toStringMethod = Object.class.getMethod("toString", null);
 			} catch (NoSuchMethodException e) {
 				throw new NoSuchMethodError(e.getMessage());
 			}
@@ -226,8 +228,12 @@ public class DynamicProxyFactory  {
 				data.put("requestTimestamp", requestTimestamp);
 				data.put("responseTimestamp", responseTimestamp);
 				data.put("success", success);
-				data.put("exceptionMessage", exceptionMessage);
-				data.put("exceptionClass", exceptionClass);
+				
+				if(exceptionClass != null) {
+					data.put("exceptionMessage", exceptionMessage);
+					data.put("exceptionClass", exceptionClass);
+				}
+				
 
 				return data;
 			}

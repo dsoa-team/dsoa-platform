@@ -13,7 +13,7 @@ public class Monitor {
 	}
 
 	public void instrument(Dependency dependency) {
-		dependency.setDynamicProxy(dsoa.getProxyFactory());
+		dependency.setProxy(dsoa.getProxyFactory());
 	}
 
 

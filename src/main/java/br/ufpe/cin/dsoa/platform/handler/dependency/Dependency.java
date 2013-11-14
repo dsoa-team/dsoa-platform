@@ -9,7 +9,7 @@ import org.apache.felix.ipojo.FieldInterceptor;
 import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.handler.dependency.manager.DependencyManager;
-import br.ufpe.cin.dsoa.platform.monitor.DynamicProxyFactory;
+import br.ufpe.cin.dsoa.platform.monitor.ProxyFactory;
 
 public class Dependency implements FieldInterceptor, Service {
 
@@ -27,7 +27,7 @@ public class Dependency implements FieldInterceptor, Service {
 	
 	private DependencyManager manager;
 
-	private DynamicProxyFactory dynamicProxy;
+	private ProxyFactory dynamicProxy;
 
 	public Dependency(DependencyHandler dependencyHandler, String componentId, ServiceSpecification specification) {
 		super();
@@ -39,7 +39,7 @@ public class Dependency implements FieldInterceptor, Service {
 		this.manager = new DependencyManager(this);
 	}
 	
-	public void setDynamicProxy(DynamicProxyFactory dynamicProxyFactory){
+	public void setProxy(ProxyFactory dynamicProxyFactory){
 		this.dynamicProxy = dynamicProxyFactory;
 	}
 

@@ -14,9 +14,9 @@ import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.management.ManagementInfomationBase;
 import br.ufpe.cin.dsoa.platform.management.jmx.ServiceMBean;
-import br.ufpe.cin.dsoa.platform.monitor.DynamicProxyFactory;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
+import br.ufpe.cin.dsoa.platform.monitor.ProxyFactory;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 import br.ufpe.cin.dsoa.platform.resource.mbean.ManagedAgent;
 
@@ -25,7 +25,7 @@ public class ResourceManagerImpl implements ResourceManager {
 	private MonitoringService monitoringService;
 	private ManagementInfomationBase managementInfomationBase;
 	private EventProcessingService epService;
-	private DynamicProxyFactory proxyFactory;
+	private ProxyFactory proxyFactory;
 	
 	private Map<String, ManagedService> managedServices = new HashMap<String, ManagedService>();
 	private Map<String, ManagedAgent> managedAgents = new HashMap<String, ManagedAgent>();

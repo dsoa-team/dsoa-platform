@@ -8,8 +8,8 @@ import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
-import br.ufpe.cin.dsoa.platform.monitor.DynamicProxyFactory;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
+import br.ufpe.cin.dsoa.platform.monitor.ProxyFactory;
 import br.ufpe.cin.dsoa.platform.registry.ServiceRegistry;
 
 public class DsoaPlatform {
@@ -32,7 +32,7 @@ public class DsoaPlatform {
 
 	private EventAdmin eventDistribuitionService;
 	
-	private DynamicProxyFactory proxyFactory;
+	private ProxyFactory proxyFactory;
 	
 	public DsoaPlatform(BundleContext context) {
 		this.context = context;
@@ -74,7 +74,7 @@ public class DsoaPlatform {
 		return eventDistribuitionService;
 	}
 
-	public DynamicProxyFactory getProxyFactory() {
+	public ProxyFactory getProxyFactory() {
 		return proxyFactory;
 	}
 

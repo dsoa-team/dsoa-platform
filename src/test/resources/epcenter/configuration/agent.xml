@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <agents>
-	<agent id="AvgResponseTimeAgent">
+	<!-- <agent id="AvgResponseTimeAgent">
 		<description>Calculates avg response time attribute</description>
 		<mapping id="AvgResponseTimeMapping">
 			<input-event type="InvocationEvent" alias="event">
@@ -18,9 +18,9 @@
 				</data>
 			</output-event>
 		</mapping>
-	</agent>
+	</agent> -->
 
-	<agent id="OutOfServiceAgent">
+	<!-- <agent id="OutOfServiceAgent">
 		<description>OutOfServiceAgent identifies request made out of predefined times</description>
 		<mapping id="OutOfServiceAgentMapping">
 			<input-event type="InvocationEvent" alias="event">
@@ -41,6 +41,22 @@
 				</data>
 			</output-event>
 		</mapping>
+	</agent> -->
+	
+	<agent id="AvgResponseTimeAgent">
+		<description>Calculates min response time attribute</description>
+		<query id="AvgResponseTimeQuery">
+			<command>
+				 context PartitionedByEventSource 
+				 INSERT INTO AvgResponseTimeEvent 
+				 SELECT 
+				 event.metadata_id as metadata_id , 
+				 event.metadata_timestamp as metadata_timestamp , 
+				 event.metadata_source as metadata_source , 
+				 avg(event.data_responseTimestamp - event.data_requestTimestamp) as data_value  
+				 FROM InvocationEvent.win:length(10) as event
+			</command>
+		</query>
 	</agent>
 	
 	<agent id="MinResponseTimeAgent">

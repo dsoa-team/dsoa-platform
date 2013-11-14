@@ -29,11 +29,11 @@ public class PropertyType {
 	
 	private Class<?> type;
 	
+	@XmlAttribute(name = "required")
 	private boolean required;
+	
 	private String namespace;
 	
-
-
 	PropertyType() {}
 	
 	public PropertyType(String name, Class<?> type, String expression,

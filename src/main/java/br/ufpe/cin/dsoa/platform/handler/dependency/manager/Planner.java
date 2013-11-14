@@ -11,12 +11,21 @@ public class Planner {
 		this.manager = manager;
 	}
 
-	public void evaluate(AttributeConstraint constraint, AttributeValue value) {
-		System.err.println(">>>> Trocar serviço <<<");
+	public void evaluate(String serviceId, AttributeConstraint constraint, AttributeValue value) {
+		System.err.println("====================================================");
+		System.err.println("ServiceId: " + serviceId);
+		String op1 = constraint.getAttributeId();
+		if (constraint.getOperation() != null) {
+			op1 = "." + constraint.getOperation();
+		}
+		String expected = constraint.getExpression().renderExpression(op1,
+				constraint.getThreashold() + "");
+		System.err.println(String.format("Expected value= %s :: Monitored Value= %s", expected,
+				value.getValue()));
+
+		System.err.println("====================================================");
 		manager.release();
-		System.err.println(">>>> Handler Invalido <<<");
 		manager.resolve();
-		System.err.println(">>>> Trocou serviço <<<");
 	}
 
 }

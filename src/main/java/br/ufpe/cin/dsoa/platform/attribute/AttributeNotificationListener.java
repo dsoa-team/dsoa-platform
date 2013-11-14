@@ -4,5 +4,6 @@ import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 
 public interface AttributeNotificationListener {
-	public void handleNotification(AttributeConstraint constraint, AttributeValue value);
+	public void handleNotification(String serviceId, AttributeConstraint constraint,
+			AttributeValue value);
 }

@@ -27,7 +27,7 @@ public class Analyzer {
 	private List<MonitoringRegistration> monitoringRegistrations;
 	private DsoaPlatform dsoa;
 
-	public void start(final String componentId, String servicePid, List<AttributeConstraint> constraints,
+	public void start(final String componentId, final String servicePid, List<AttributeConstraint> constraints,
 			final AttributeNotificationListener listener) {
 		
 		this.monitoringRegistrations = new ArrayList<MonitoringRegistration>();
@@ -73,7 +73,7 @@ public class Analyzer {
 
 						AttributeValue value = attMapper.convertToAttribute(event);
 
-						listener.handleNotification(constraint, value);
+						listener.handleNotification(servicePid, constraint, value);
 					}
 
 					@Override

@@ -83,9 +83,10 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	public void onArrival(Service service) {
-		this.analyzer.start(dependency.getComponentId(), service.getProviderId(), 
-				dependency.getSpecification().getNonFunctionalSpecification().
-				getAttributeConstraints(), this);
+		this.analyzer
+				.start(dependency.getComponentId(), service.getProviderId(), dependency
+						.getSpecification().getNonFunctionalSpecification()
+						.getAttributeConstraints(), this);
 
 		this.dependency.setService(service);
 		this.dependency.setValid(true);
@@ -99,9 +100,10 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	@Override
-	public void handleNotification(AttributeConstraint constraint, AttributeValue value) {
+	public void handleNotification(String serviceId, AttributeConstraint constraint,
+			AttributeValue value) {
 		synchronized (dependency) {
-			this.planner.evaluate(constraint, value);
+			this.planner.evaluate(serviceId, constraint, value);
 		}
 	}
 }

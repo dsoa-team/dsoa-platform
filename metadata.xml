@@ -59,6 +59,7 @@
 				classname="br.ufpe.cin.dsoa.platform.monitor.DynamicProxyFactory">
 		<requires field="eventTypeCatalog"/>
 		<requires field="eventAdmin"/>
+		<provides/>
 		<callback transition="validate" method="start" />
 	</component> 
 	
@@ -304,6 +305,7 @@
 	<instance component="Platform.Monitor.MonitoringComponent" />
 	<instance component="Platform.Registry.QoSAwareRegistryComponent" />
 	<instance component="Platform.Configuration.ConfiguratorComponent" />
+	<instance component="Platform.Proxy.ProxyFactory" />
 	<instance component="Platform.Management.ManagementComponent" />
 	<instance component="Platform.Management.ResourceManagerComponent" />
 	<instance component="Plataform.Management.InformationBase" />
