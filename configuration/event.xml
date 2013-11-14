@@ -18,6 +18,10 @@
 			<property id="success" type="java.lang.Boolean" />
 			<property id="exceptionMessage" type="java.lang.String"/>
 			<property id="exceptionClass" type="java.lang.String" />
+			<property id="parameterTypes" type="java.util.Map" />
+			<property id="parameterValues" type="java.util.Map" />
+			<property id="returnType" type="java.lang.String" />
+			<property id="returnValue" type="java.lang.Object" />
 		</data>
 	</event>
 </events>

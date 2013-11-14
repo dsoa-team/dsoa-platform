@@ -27,33 +27,32 @@ import br.ufpe.cin.dsoa.util.Util;
  * @author fabions
  * 
  */
-public class DynamicProxyFactory  implements ProxyFactory {
+public class DynamicProxyFactory implements ProxyFactory {
 
 	private EventTypeCatalog eventTypeCatalog;
 	private EventAdmin eventAdmin;
-	
+
 	private EventType invocationEventType;
 	private ExecutorService executorService;
-	
-	public void start () {
+
+	public void start() {
 		this.executorService = Executors.newFixedThreadPool(10);
 	}
-	
+
 	public Object getProxy(String consumerId, Service service) {
-		if(this.invocationEventType == null){
+		if (this.invocationEventType == null) {
 			this.invocationEventType = this.eventTypeCatalog.get(Constants.INVOCATION_EVENT);
 		}
 		DynamicProxy dynaProxy = new DynamicProxy(consumerId, service);
-		return java.lang.reflect.Proxy.newProxyInstance(
-				this.getClass().getClassLoader(), new Class[] { service
-						.getSpecification().getClazz() }, dynaProxy);
+		return java.lang.reflect.Proxy.newProxyInstance(this.getClass().getClassLoader(),
+				new Class[] { service.getSpecification().getClazz() }, dynaProxy);
 	}
-	
+
 	class DynamicProxy implements InvocationHandler {
 
 		private String consumerId;
 		private Service service;
-		
+
 		/**
 		 * HashCode method.
 		 */
@@ -68,7 +67,7 @@ public class DynamicProxyFactory  implements ProxyFactory {
 		 * toStirng method.
 		 */
 		private Method m_toStringMethod;
-		
+
 		public DynamicProxy(String consumerId, Service service) {
 			this.consumerId = consumerId;
 			this.service = service;
@@ -80,9 +79,9 @@ public class DynamicProxyFactory  implements ProxyFactory {
 			} catch (NoSuchMethodException e) {
 				throw new NoSuchMethodError(e.getMessage());
 			}
-			
+
 		}
-		
+
 		/**
 		 * Invocation Handler delegating invocation on the dependency object.
 		 * 
@@ -129,33 +128,48 @@ public class DynamicProxyFactory  implements ProxyFactory {
 				exceptionClassName = rawException.getClass().getName();
 				exceptionMessage = rawException.getMessage();
 				success = false;
-				//rawException.printStackTrace();
+				// rawException.printStackTrace();
 				throw rawException;
 
 			} catch (Exception exc) {
 				exceptionClassName = exc.getClass().getName();
 				exceptionMessage = exc.getMessage();
 				success = false;
-				//exc.printStackTrace();
+				// exc.printStackTrace();
 				throw exc;
 			} finally {
 				responseTime = System.currentTimeMillis();
 				synchronized (service) {
 					if (service.getServiceObject() != null) {
-						notifyInvocation(consumerId, service
-								.getProviderId(), method.getName(), requestTime, responseTime,
-								success, exceptionClassName, exceptionMessage);
+
+						Map<Integer, String> parameterTypes = new HashMap<Integer, String>();
+						Map<Integer, Object> parameterValues = new HashMap<Integer, Object>();
+
+						for (int i = 0; i < method.getParameterTypes().length; i++) {
+							parameterTypes.put(i, method.getParameterTypes()[i].getName());
+							parameterValues.put(i, args[i]);
+						}
+						String returnType = method.getReturnType().getName();
+
+						notifyInvocation(consumerId, service.getProviderId(), method.getName(),
+								requestTime, responseTime, success, exceptionClassName,
+								exceptionMessage, parameterTypes, parameterValues, returnType,
+								result);
 					}
 				}
 			}
 			return result;
 		}
-		private void notifyInvocation(String consumerId, String serviceId, String operationName,
-				long requestTimestamp, long responseTimestamp, boolean success, String exceptionClass,
-				String exceptionMessage) {
 
-			NotificationWorker worker = new NotificationWorker(consumerId, serviceId, operationName,
-					requestTimestamp, responseTimestamp, success, exceptionClass, exceptionMessage);
+		private void notifyInvocation(String consumerId, String serviceId, String operationName,
+				long requestTimestamp, long responseTimestamp, boolean success,
+				String exceptionClass, String exceptionMessage,
+				Map<Integer, String> parameterTypes, Map<Integer, Object> parameterValues,
+				String returnType, Object returnValue) {
+
+			NotificationWorker worker = new NotificationWorker(consumerId, serviceId,
+					operationName, requestTimestamp, responseTimestamp, success, exceptionClass,
+					exceptionMessage, parameterTypes, parameterValues, returnType, returnValue);
 			executorService.execute(worker);
 		}
 
@@ -169,10 +183,16 @@ public class DynamicProxyFactory  implements ProxyFactory {
 			private boolean success;
 			private String exceptionMessage;
 			private String exceptionClass;
+			private Map<Integer, String> parameterTypes;
+			private Map<Integer, Object> parameterValues;
+			private String returnType;
+			private Object returnValue;
 
 			public NotificationWorker(String consumerId, String serviceId, String operationName,
 					long requestTimestamp, long responseTimestamp, boolean success,
-					String exceptionClass, String exceptionMessage) {
+					String exceptionMessage, String exceptionClass,
+					Map<Integer, String> parameterTypes, Map<Integer, Object> parameterValues,
+					String returnType, Object returnValue) {
 				super();
 				this.consumerId = consumerId;
 				this.serviceId = serviceId;
@@ -182,6 +202,10 @@ public class DynamicProxyFactory  implements ProxyFactory {
 				this.success = success;
 				this.exceptionMessage = exceptionMessage;
 				this.exceptionClass = exceptionClass;
+				this.parameterTypes = parameterTypes;
+				this.parameterValues = parameterValues;
+				this.returnType = returnType;
+				this.returnValue = returnValue;
 			}
 
 			@Override
@@ -196,8 +220,8 @@ public class DynamicProxyFactory  implements ProxyFactory {
 				Map<String, Object> metadata = this.loadInvocationMetadata(source);
 
 				Map<String, Object> data = this.loadInvocationData(consumerId, serviceId,
-						operationName, requestTimestamp, responseTimestamp, success, exceptionClass,
-						exceptionMessage);
+						operationName, requestTimestamp, responseTimestamp, success,
+						exceptionClass, exceptionMessage);
 
 				Event invocationEvent = invocationEventType.createEvent(metadata, data);
 				String topic = Util.getDsoaEventTopic(invocationEvent.getEventType());
@@ -228,17 +252,20 @@ public class DynamicProxyFactory  implements ProxyFactory {
 				data.put("requestTimestamp", requestTimestamp);
 				data.put("responseTimestamp", responseTimestamp);
 				data.put("success", success);
-				
-				if(exceptionClass != null) {
+
+				if (exceptionClass != null) {
 					data.put("exceptionMessage", exceptionMessage);
 					data.put("exceptionClass", exceptionClass);
 				}
-				
+				data.put("parameterTypes", parameterTypes);
+				data.put("parameterValues", parameterValues);
+				data.put("returnType", returnType);
+				data.put("returnValue", returnValue);
 
 				return data;
 			}
 		}
-		
+
 	}
 
 }
