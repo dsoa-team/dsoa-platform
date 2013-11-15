@@ -169,6 +169,7 @@
 				classname="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" >
 		<requires field="eventTypeCatalog"/>
 		<requires field="agentCatalog"/>
+		<requires field="eventAdmin"/>
 		<provides />
 		<callback transition="validate" method="start" />
 		<callback transition="invalidate" method="stop" />

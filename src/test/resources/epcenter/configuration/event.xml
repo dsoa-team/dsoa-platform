@@ -3,13 +3,24 @@
 <events>
 	<event type="AvgResponseTimeEvent" extends="DsoaEvent">
 		<data>
-			<property id="value" type="java.lang.Double" />
+			<property id="value" type="java.lang.Object" />
 		</data>
 	</event>
 	
 	<event type="RequestOutOfScheduleEvent" extends="DsoaEvent">
 		<data>
 			<property id="value" type="java.lang.Double" />
+		</data>
+	</event>
+	
+	<event type="IntrospectSampleEvent" extends="DsoaEvent">
+		<data>
+			<property id="address" type="java.lang.Object" />
+			<property id="stock" type="java.lang.Object" />
+			<property id="lowerThreshold" type="java.lang.Object" />
+			<property id="higherThreshold" type="java.lang.Object" />
+			<property id="type" type="java.lang.Object" />
+			<property id="price" type="java.lang.Object" />
 		</data>
 	</event>
 	

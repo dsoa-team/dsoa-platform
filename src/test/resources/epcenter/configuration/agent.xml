@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <agents>
-	<!-- <agent id="AvgResponseTimeAgent">
+	<agent id="AvgResponseTimeAgent">
 		<description>Calculates avg response time attribute</description>
 		<mapping id="AvgResponseTimeMapping">
 			<input-event type="InvocationEvent" alias="event">
@@ -18,9 +18,9 @@
 				</data>
 			</output-event>
 		</mapping>
-	</agent> -->
+	</agent>
 
-	<!-- <agent id="OutOfServiceAgent">
+	<agent id="OutOfServiceAgent">
 		<description>OutOfServiceAgent identifies request made out of predefined times</description>
 		<mapping id="OutOfServiceAgentMapping">
 			<input-event type="InvocationEvent" alias="event">
@@ -41,25 +41,33 @@
 				</data>
 			</output-event>
 		</mapping>
-	</agent> -->
+	</agent>
 	
-	<agent id="AvgResponseTimeAgent">
-		<description>Calculates min response time attribute</description>
-		<query id="AvgResponseTimeQuery">
+	String address, Stock stock, double lowerThreshold,
+			double higherThreshold
+	
+	<agent id="IntrospectSampleAgent">
+		<description></description>
+		<query id="IntrospectSampleQuery">
 			<command>
 				 context PartitionedByEventSource 
-				 INSERT INTO AvgResponseTimeEvent 
+				 INSERT INTO IntrospectSampleEvent 
 				 SELECT 
 				 event.metadata_id as metadata_id , 
 				 event.metadata_timestamp as metadata_timestamp , 
-				 event.metadata_source as metadata_source , 
-				 avg(event.data_responseTimestamp - event.data_requestTimestamp) as data_value  
-				 FROM InvocationEvent.win:length(10) as event
+				 event.metadata_source as metadata_source ,
+				 event.data_parameterValues('0') as data_address ,
+				 event.data_parameterValues('1') as data_stock ,
+				 event.data_parameterValues('2') as data_lowerThreshold ,
+				 event.data_parameterValues('3') as data_higherThreshold ,
+				 event.data_returnType as data_type , 
+				 event.data_returnValue as data_price
+				 FROM InvocationEvent as event
 			</command>
 		</query>
 	</agent>
 	
-	<agent id="MinResponseTimeAgent">
+	<!-- <agent id="MinResponseTimeAgent">
 		<description>Calculates min response time attribute</description>
 		<query id="MinResponseTimeQuery">
 			<command>
@@ -69,7 +77,7 @@
 				InvocationEvent.win:time(10 sec) as event
 			</command>
 		</query>
-	</agent>
+	</agent> -->
 
 	<!-- <event type="DsoaEvent"> <metadata> <property id="id" type="java.lang.String" 
 		/> <property id="timestamp" type="java.lang.Double" /> </metadata> </event> 

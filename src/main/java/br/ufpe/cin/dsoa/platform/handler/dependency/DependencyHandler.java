@@ -171,13 +171,16 @@ public class DependencyHandler extends PrimitiveHandler {
 	private List<AttributeConstraint> getConstraintList(Element[] constraintTags) {
 		List<AttributeConstraint> constraintList = new ArrayList<AttributeConstraint>();
 		String attribute = null, operation = null, expression = null, threashold = null, weight = null;
-		for (Element constraintTag : constraintTags) {
-			attribute = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_METRIC);
-			operation = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_OPERATION);
-			expression = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_EXPRESSION);
-			threashold = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_THREASHOLD);
-			weight = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_WEIGHT);
-			constraintList.add(defineConstraint(attribute, operation, expression, threashold, weight));
+		
+		if(constraintTags != null){
+			for (Element constraintTag : constraintTags) {
+				attribute = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_METRIC);
+				operation = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_OPERATION);
+				expression = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_EXPRESSION);
+				threashold = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_THREASHOLD);
+				weight = constraintTag.getAttribute(Constants.CONSTRAINT_ATT_WEIGHT);
+				constraintList.add(defineConstraint(attribute, operation, expression, threashold, weight));
+			}
 		}
 		return constraintList;
 	}

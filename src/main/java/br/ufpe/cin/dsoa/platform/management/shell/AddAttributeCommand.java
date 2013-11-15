@@ -1,6 +1,7 @@
 package br.ufpe.cin.dsoa.platform.management.shell;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.ufpe.cin.dsoa.platform.management.PlatformManagementService;
@@ -26,7 +27,13 @@ public class AddAttributeCommand extends DsoaBaseCommand {
 
 	@Override
 	public List<String> getParameters() {
-		return null;
+		List<String> params = new ArrayList<String>();
+		params.add("component-id");
+		params.add("event-type");
+		params.add("attribute-name");
+		params.add("service-interface");
+		params.add("[operation]");
+		return params;
 	}
 
 }

@@ -16,7 +16,6 @@ import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.util.Constants;
-import br.ufpe.cin.dsoa.util.Util;
 
 /**
  * A Service Proxy that intercepts requests at the client side. It generates
@@ -142,12 +141,12 @@ public class DynamicProxyFactory implements ProxyFactory {
 				synchronized (service) {
 					if (service.getServiceObject() != null) {
 
-						Map<Integer, String> parameterTypes = new HashMap<Integer, String>();
-						Map<Integer, Object> parameterValues = new HashMap<Integer, Object>();
+						Map<String, String> parameterTypes = new HashMap<String, String>();
+						Map<String, Object> parameterValues = new HashMap<String, Object>();
 
 						for (int i = 0; i < method.getParameterTypes().length; i++) {
-							parameterTypes.put(i, method.getParameterTypes()[i].getName());
-							parameterValues.put(i, args[i]);
+							parameterTypes.put(i+"", method.getParameterTypes()[i].getName());
+							parameterValues.put(i+"", args[i]);
 						}
 						String returnType = method.getReturnType().getName();
 
@@ -164,7 +163,7 @@ public class DynamicProxyFactory implements ProxyFactory {
 		private void notifyInvocation(String consumerId, String serviceId, String operationName,
 				long requestTimestamp, long responseTimestamp, boolean success,
 				String exceptionClass, String exceptionMessage,
-				Map<Integer, String> parameterTypes, Map<Integer, Object> parameterValues,
+				Map<String, String> parameterTypes, Map<String, Object> parameterValues,
 				String returnType, Object returnValue) {
 
 			NotificationWorker worker = new NotificationWorker(consumerId, serviceId,
@@ -183,15 +182,15 @@ public class DynamicProxyFactory implements ProxyFactory {
 			private boolean success;
 			private String exceptionMessage;
 			private String exceptionClass;
-			private Map<Integer, String> parameterTypes;
-			private Map<Integer, Object> parameterValues;
+			private Map<String, String> parameterTypes;
+			private Map<String, Object> parameterValues;
 			private String returnType;
 			private Object returnValue;
 
 			public NotificationWorker(String consumerId, String serviceId, String operationName,
 					long requestTimestamp, long responseTimestamp, boolean success,
 					String exceptionMessage, String exceptionClass,
-					Map<Integer, String> parameterTypes, Map<Integer, Object> parameterValues,
+					Map<String, String> parameterTypes, Map<String, Object> parameterValues,
 					String returnType, Object returnValue) {
 				super();
 				this.consumerId = consumerId;
@@ -224,10 +223,10 @@ public class DynamicProxyFactory implements ProxyFactory {
 						exceptionClass, exceptionMessage);
 
 				Event invocationEvent = invocationEventType.createEvent(metadata, data);
-				String topic = Util.getDsoaEventTopic(invocationEvent.getEventType());
+				String topic = invocationEvent.getEventType().getName();
 
-				Map<String, Event> eventTable = new HashMap<String, Event>();
-				eventTable.put(Constants.DSOA_EVENT, invocationEvent);
+				Map<String, Object> eventTable = new HashMap<String, Object>();
+				eventTable.put(topic, invocationEvent.toMap());
 				eventAdmin.postEvent(new org.osgi.service.event.Event(topic, eventTable));
 			}
 

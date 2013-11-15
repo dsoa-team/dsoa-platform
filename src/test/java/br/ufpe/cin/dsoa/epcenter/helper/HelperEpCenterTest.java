@@ -366,22 +366,8 @@ public class HelperEpCenterTest {
 	public static Event toEvent(String eventTypeName, Map<String, Object> event,
 			EventTypeCatalog eventTypeCatalog) {
 
-		Event dsoaEvent = null;
-
-		Map<String, Object> metadata = new HashMap<String, Object>();
-		Map<String, Object> data = new HashMap<String, Object>();
-
-		for (String key : ((Map<String, Object>) event).keySet()) {
-			if (key.startsWith("data_")) {
-				String newKey = key.replace("data_", "");
-				data.put(newKey, event.get(key));
-			} else if (key.startsWith("metadata_")) {
-				String newKey = key.replace("metadata_", "");
-				metadata.put(newKey, event.get(key));
-			}
-		}
 		EventType eventType = eventTypeCatalog.get(eventTypeName);
-		dsoaEvent = eventType.createEvent(metadata, data);
+		Event dsoaEvent = eventType.createEvent(event);
 
 		return dsoaEvent;
 	}

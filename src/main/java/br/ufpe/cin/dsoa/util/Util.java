@@ -65,6 +65,7 @@ public class Util {
 				List<EventType> subtypes = new ArrayList<EventType>();
 				List<EventType> types = new ArrayList<EventType>();
 				for (EventType eventType : eventList.getEvents()) {
+					eventType.setPrimitive(true);
 					if (eventType.getSuperTypeName() != null) {
 						subtypes.add(eventType);
 					} else {
@@ -116,13 +117,5 @@ public class Util {
 				subProps.put(key, superProps.get(key));
 			}
 		}
-	}
-	
-	public static String getDsoaEventTopic(EventType eventType) {
-		String eventTypeName = eventType.getName();
-		String eventTopic = String.format("%s%s%s", Constants.REQUIRES_TAG_NAMESPACE, Constants.TOKEN, eventTypeName);
-		String topic = eventTopic.replaceAll("\\.", "/");
-		
-		return topic;
 	}
 }

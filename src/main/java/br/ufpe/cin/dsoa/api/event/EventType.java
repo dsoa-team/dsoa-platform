@@ -41,6 +41,8 @@ public class EventType {
 	private String superTypeName;
 
 	private EventType superType = null;
+	
+	private boolean primitive;
 
 	private List<PropertyType> metadata;
 	private Map<String, PropertyType> metadataMap = new HashMap<String, PropertyType>();
@@ -101,6 +103,14 @@ public class EventType {
 		this.data = data;
 		this.loadMap(metadata, metadataMap, Constants.EVENT_METADATA);
 		this.loadMap(data, dataMap,  Constants.EVENT_DATA);
+	}
+	
+	public boolean isPrimitive() {
+		return primitive;
+	}
+
+	public void setPrimitive(boolean primitive) {
+		this.primitive = primitive;
 	}
 
 	public String getName() {
@@ -253,6 +263,30 @@ public class EventType {
 		Map<String, Property> dataValue = this.loadValues(data, false);
 		Event event = new Event(this, metadataValue, dataValue);
 		return event;
+	}
+	
+	/**
+	 * receive a map with property has a prefix (metadata_ or data_)
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public Event createEvent(Map<String, Object> map) {
+		
+		Map<String, Object> metadata = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<String, Object>();
+
+		for (String key : map.keySet()) {
+			if (key.startsWith("data_")) {
+				String newKey = key.replace("data_", "");
+				data.put(newKey, map.get(key));
+			} else if (key.startsWith("metadata_")) {
+				String newKey = key.replace("metadata_", "");
+				metadata.put(newKey, map.get(key));
+			}
+		}
+		
+		return this.createEvent(metadata, data);
 	}
 
 	private Map<String, Property> loadValues(Map<String, Object> valueMap,

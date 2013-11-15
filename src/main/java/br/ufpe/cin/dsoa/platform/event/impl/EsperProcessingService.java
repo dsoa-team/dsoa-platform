@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.event.EventAdmin;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 
@@ -16,6 +17,7 @@ import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.event.EventTypeList;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.Subscription;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
@@ -59,6 +61,8 @@ public class EsperProcessingService implements EventProcessingService {
 	private EventTypeCatalog eventTypeCatalog;
 
 	private AgentCatalog agentCatalog;
+	
+	private EventAdmin eventAdmin;
 
 	public EsperProcessingService(BundleContext ctx) {
 		this.ctx = ctx;
@@ -73,7 +77,12 @@ public class EsperProcessingService implements EventProcessingService {
 				configuration);
 
 		// defines invocation event
-		Util.handlePlatformEventDefinitions(ctx.getBundle(), this.eventTypeCatalog, this);
+		EventTypeList primitiveEvents = Util.handlePlatformEventDefinitions(ctx.getBundle(), this.eventTypeCatalog, this);
+		if(primitiveEvents != null && primitiveEvents.getEvents()!= null){
+			for(EventType primitiveEvent : primitiveEvents.getEvents()) {
+				this.registerEventAdminListener(primitiveEvent);
+			}
+		}
 		this.createAgentContext();
 	}
 
@@ -151,28 +160,16 @@ public class EsperProcessingService implements EventProcessingService {
 
 	private Event convertEsperEvent(String eventTypeName, Map<String, Object> esperEvent) {
 
-		Event dsoaEvent = null;
-
-		Map<String, Object> metadata = new HashMap<String, Object>();
-		Map<String, Object> data = new HashMap<String, Object>();
-
-		for (String key : ((Map<String, Object>) esperEvent).keySet()) {
-			if (key.startsWith("data_")) {
-				String newKey = key.replace("data_", "");
-				data.put(newKey, esperEvent.get(key));
-			} else if (key.startsWith("metadata_")) {
-				String newKey = key.replace("metadata_", "");
-				metadata.put(newKey, esperEvent.get(key));
-			}
-		}
 		EventType eventType = eventTypeCatalog.get(eventTypeName);
+		
 		if (eventType == null) {
 			String typeName = (String) esperEvent.get(Constants.EVENT_METADATA
 					+ Constants.UNDERLINE + Constants.EVENT_TYPE);
 			System.err.println("underlying type: " + typeName);
 			eventType = eventTypeCatalog.get(typeName);
 		}
-		dsoaEvent = eventType.createEvent(metadata, data);
+		
+		Event dsoaEvent = eventType.createEvent(esperEvent);
 
 		return dsoaEvent;
 	}
@@ -185,20 +182,39 @@ public class EsperProcessingService implements EventProcessingService {
 	/**
 	 * add event type on eventTypeMap and registers event definition on esper
 	 */
-	public void registerEventType(EventType eventType) {
+	public void registerEventType(final EventType eventType) {
 
 		String eventTypeName = eventType.getName();
 
 		if (this.eventTypeCatalog.contains(eventTypeName)) {
 			Map<String, Object> definition = eventType.toDefinitionMap();
 			this.registerEventTypeOnEsper(eventTypeName, definition);
-			this.registerEventAdminListener(eventType);
+			
+			if(!eventType.isPrimitive()){
+				this.subscribe(new EventConsumer() {
+					
+					@Override
+					public void handleEvent(Event event) {
+						
+						String topic = event.getEventType().getName();
+	
+						Map<String, Object> eventTable = new HashMap<String, Object>();
+						eventTable.put(topic, event.toMap());
+						eventAdmin.postEvent(new org.osgi.service.event.Event(topic, eventTable));
+					}
+					
+					@Override
+					public String getId() {
+						return eventType.getName();
+					}
+				}, new Subscription(eventType, null), true);
+			}
 		}
 	}
-
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void registerEventAdminListener(EventType eventType) {
-		String topic = Util.getDsoaEventTopic(eventType);
+	private void registerEventAdminListener(final EventType eventType) {
+		final String topic = eventType.getName();
 
 		Hashtable props = new Hashtable();
 		props.put(EventConstants.EVENT_TOPIC, new String[] { topic });
@@ -206,7 +222,8 @@ public class EsperProcessingService implements EventProcessingService {
 
 			@Override
 			public void handleEvent(org.osgi.service.event.Event event) {
-				Event dsoaEvent = (Event) event.getProperty(Constants.DSOA_EVENT);
+				Map<String, Object> rawEvent = (Map<String, Object>) event.getProperty(topic);
+				Event dsoaEvent = eventType.createEvent(rawEvent);
 				publish(dsoaEvent);
 			}
 		}, props);

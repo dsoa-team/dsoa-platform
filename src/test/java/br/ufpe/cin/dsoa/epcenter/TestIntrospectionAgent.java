@@ -19,15 +19,23 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
 import br.ufpe.cin.dsoa.api.event.Event;
+import br.ufpe.cin.dsoa.api.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.event.EventFilter;
 import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.FilterExpression;
+import br.ufpe.cin.dsoa.api.event.Property;
+import br.ufpe.cin.dsoa.api.event.Subscription;
+import br.ufpe.cin.dsoa.api.service.Expression;
 import br.ufpe.cin.dsoa.epcenter.helper.EventProducerMock;
 import br.ufpe.cin.dsoa.epcenter.helper.HelperEpCenterTest;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
+import br.ufpe.cin.dsoa.platform.monitor.MonitoringRegistration;
 
 @RunWith(JUnit4TestRunner.class)
-public class TestMonitorable {
+public class TestIntrospectionAgent {
 
 	@Inject
 	private BundleContext context;
@@ -94,29 +102,72 @@ public class TestMonitorable {
 				bundle(configDir + "dsoa/bin/dsoa-platform.jar"), 
 				bundle(configDir + "dsoa/conf/configuration-bundle.jar"),
 				bundle(configDir + "dsoa/apps/HomebrokerModel.jar"),
-				bundle(configDir + "dsoa/apps/HomebrokerBB.jar")
-				//,vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
-				//new TimeoutOption(0)
+				bundle(configDir + "dsoa/apps/commons-math-2.2.jar"),
+				bundle(configDir + "dsoa/apps/dsoa-qos-simulator.jar"),
+				bundle(configDir + "dsoa/apps/simulated-service.jar")
+				,vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
+				new TimeoutOption(0)
 
 		);
+	}
+	
+	public void testFilteredSubscription() {
+	
+		/*// Filter source
+		FilterExpression filterExp = new FilterExpression(new Property("", ""),
+				Expression.EQ);
+		filterList.add(filterExp);
+		
+		
+		EventFilter filter = new EventFilter(filterList);
+		Subscription subscription = new Subscription(eventType, filter);
+
+		EventConsumer consumer = new EventConsumer() {
+
+			@Override
+			public void handleEvent(Event event) {
+
+				AttributeValue value = attMapper.convertToAttribute(event);
+
+				listener.handleNotification(servicePid, constraint, value);
+			}
+
+			@Override
+			public String getId() {
+				return componentId;
+			}
+		};
+		
+		this.monitoringRegistrations.add(new MonitoringRegistration(consumer, subscription));
+		this.dsoa.getEpService().subscribe(consumer, subscription, true);//TODO: parametrizar
+				*/
 	}
 
 	@Test
 	public void testQuerySubscription() {
-		final int eventCounter = 10;
-		String service = "Homebroker-instance", operation = "priceAlert";
-		genTimedEvent(eventCounter, service, operation);
+		
+		// Filter source
+		EventType eventType = eventTypeCatalog.get("IntrospectSampleEvent");
+		
+		Subscription subscription = new Subscription(eventType, null);
+
+		EventConsumer consumer = new EventConsumer() {
+
+			@Override
+			public void handleEvent(Event event) {
+				System.out.println("================================");
+				System.out.println(event);
+				System.out.println("================================");
+			}
+
+			@Override
+			public String getId() {
+				return "sample";
+			}
+		};
+		
+		epService.subscribe(consumer, subscription, true);
 	}
 	
-	private void genTimedEvent(int size, String service, String operation) {
-
-		for (int i = 0; i < size; i++) {
-			Event e;
-
-			e = this.mock.getEvent(service, operation, i, i + 10);
-			System.err.println(e);
-			this.epService.publish(e);
-		}
-	}
-
+	
 }
