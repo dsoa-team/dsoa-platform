@@ -6,6 +6,7 @@ import org.osgi.service.event.EventAdmin;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
+import br.ufpe.cin.dsoa.platform.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
@@ -30,7 +31,7 @@ public class DsoaPlatform {
 	
 	private EventProcessingService epService;
 
-	private EventAdmin eventDistribuitionService;
+	private EventDistribuitionService eventDistribuitionService;
 	
 	private ProxyFactory proxyFactory;
 	
@@ -70,7 +71,7 @@ public class DsoaPlatform {
 		return epService;
 	}
 
-	public EventAdmin getEventDistribuitionService() {
+	public EventDistribuitionService getEventDistribuitionService() {
 		return eventDistribuitionService;
 	}
 

@@ -5,16 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import org.osgi.service.event.EventAdmin;
-
-import br.ufpe.cin.dsoa.api.event.Event;
-import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.service.Service;
-import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
+import br.ufpe.cin.dsoa.platform.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.util.Constants;
 
 /**
@@ -28,20 +21,10 @@ import br.ufpe.cin.dsoa.util.Constants;
  */
 public class DynamicProxyFactory implements ProxyFactory {
 
-	private EventTypeCatalog eventTypeCatalog;
-	private EventAdmin eventAdmin;
-
-	private EventType invocationEventType;
-	private ExecutorService executorService;
-
-	public void start() {
-		this.executorService = Executors.newFixedThreadPool(10);
-	}
-
+	
+	private EventDistribuitionService distribuitionService;
+	
 	public Object getProxy(String consumerId, Service service) {
-		if (this.invocationEventType == null) {
-			this.invocationEventType = this.eventTypeCatalog.get(Constants.INVOCATION_EVENT);
-		}
 		DynamicProxy dynaProxy = new DynamicProxy(consumerId, service);
 		return java.lang.reflect.Proxy.newProxyInstance(this.getClass().getClassLoader(),
 				new Class[] { service.getSpecification().getClazz() }, dynaProxy);
@@ -145,8 +128,8 @@ public class DynamicProxyFactory implements ProxyFactory {
 						Map<String, Object> parameterValues = new HashMap<String, Object>();
 
 						for (int i = 0; i < method.getParameterTypes().length; i++) {
-							parameterTypes.put(i+"", method.getParameterTypes()[i].getName());
-							parameterValues.put(i+"", args[i]);
+							parameterTypes.put(i + "", method.getParameterTypes()[i].getName());
+							parameterValues.put(i + "", args[i]);
 						}
 						String returnType = method.getReturnType().getName();
 
@@ -162,109 +145,52 @@ public class DynamicProxyFactory implements ProxyFactory {
 
 		private void notifyInvocation(String consumerId, String serviceId, String operationName,
 				long requestTimestamp, long responseTimestamp, boolean success,
-				String exceptionClass, String exceptionMessage,
+				String exceptionClass, String exceptionMessage, Map<String, String> parameterTypes,
+				Map<String, Object> parameterValues, String returnType, Object returnValue) {
+
+			String source = String.format("%s%s%s", serviceId, Constants.TOKEN, operationName);
+
+			Map<String, Object> metadata = this.loadInvocationMetadata(source);
+			Map<String, Object> data = this.loadInvocationData(consumerId, serviceId,
+					operationName, requestTimestamp, responseTimestamp, success, exceptionClass,
+					exceptionMessage, parameterTypes, parameterValues, returnType, returnValue);
+
+			distribuitionService.postEvent(Constants.INVOCATION_EVENT, metadata, data);
+			
+		}
+
+		private Map<String, Object> loadInvocationMetadata(String source) {
+			Map<String, Object> metadata = new HashMap<String, Object>();
+			metadata.put("source", source);
+
+			return metadata;
+		}
+
+		private Map<String, Object> loadInvocationData(String consumerId, String serviceId,
+				String operationName, long requestTimestamp, long responseTimestamp,
+				boolean success, String exceptionClass, String exceptionMessage,
 				Map<String, String> parameterTypes, Map<String, Object> parameterValues,
 				String returnType, Object returnValue) {
 
-			NotificationWorker worker = new NotificationWorker(consumerId, serviceId,
-					operationName, requestTimestamp, responseTimestamp, success, exceptionClass,
-					exceptionMessage, parameterTypes, parameterValues, returnType, returnValue);
-			executorService.execute(worker);
+			Map<String, Object> data = new HashMap<String, Object>();
+
+			data.put(Constants.CONSUMER_ID, consumerId);
+			data.put(Constants.SERVICE_ID, serviceId);
+			data.put("operationName", operationName);
+			data.put("requestTimestamp", requestTimestamp);
+			data.put("responseTimestamp", responseTimestamp);
+			data.put("success", success);
+
+			if (exceptionClass != null) {
+				data.put("exceptionMessage", exceptionMessage);
+				data.put("exceptionClass", exceptionClass);
+			}
+			data.put("parameterTypes", parameterTypes);
+			data.put("parameterValues", parameterValues);
+			data.put("returnType", returnType);
+			data.put("returnValue", returnValue);
+
+			return data;
 		}
-
-		class NotificationWorker implements Runnable {
-
-			private String consumerId;
-			private String serviceId;
-			private String operationName;
-			private long requestTimestamp;
-			private long responseTimestamp;
-			private boolean success;
-			private String exceptionMessage;
-			private String exceptionClass;
-			private Map<String, String> parameterTypes;
-			private Map<String, Object> parameterValues;
-			private String returnType;
-			private Object returnValue;
-
-			public NotificationWorker(String consumerId, String serviceId, String operationName,
-					long requestTimestamp, long responseTimestamp, boolean success,
-					String exceptionMessage, String exceptionClass,
-					Map<String, String> parameterTypes, Map<String, Object> parameterValues,
-					String returnType, Object returnValue) {
-				super();
-				this.consumerId = consumerId;
-				this.serviceId = serviceId;
-				this.operationName = operationName;
-				this.requestTimestamp = requestTimestamp;
-				this.responseTimestamp = responseTimestamp;
-				this.success = success;
-				this.exceptionMessage = exceptionMessage;
-				this.exceptionClass = exceptionClass;
-				this.parameterTypes = parameterTypes;
-				this.parameterValues = parameterValues;
-				this.returnType = returnType;
-				this.returnValue = returnValue;
-			}
-
-			@Override
-			public void run() {
-				this.notifyInvocation();
-			}
-
-			private void notifyInvocation() {
-
-				String source = String.format("%s%s%s", serviceId, Constants.TOKEN, operationName);
-
-				Map<String, Object> metadata = this.loadInvocationMetadata(source);
-
-				Map<String, Object> data = this.loadInvocationData(consumerId, serviceId,
-						operationName, requestTimestamp, responseTimestamp, success,
-						exceptionClass, exceptionMessage);
-
-				Event invocationEvent = invocationEventType.createEvent(metadata, data);
-				String topic = invocationEvent.getEventType().getName();
-
-				Map<String, Object> eventTable = new HashMap<String, Object>();
-				eventTable.put(topic, invocationEvent.toMap());
-				eventAdmin.postEvent(new org.osgi.service.event.Event(topic, eventTable));
-			}
-
-			private Map<String, Object> loadInvocationMetadata(String source) {
-				Map<String, Object> metadata = new HashMap<String, Object>();
-
-				metadata.put("id", UUID.randomUUID().toString());
-				metadata.put("timestamp", System.nanoTime());
-				metadata.put("source", source);
-
-				return metadata;
-			}
-
-			private Map<String, Object> loadInvocationData(String consumerId, String serviceId,
-					String operationName, long requestTimestamp, long responseTimestamp,
-					boolean success, String exceptionClass, String exceptionMessage) {
-				Map<String, Object> data = new HashMap<String, Object>();
-
-				data.put("consumerId", consumerId);
-				data.put("serviceId", serviceId);
-				data.put("operationName", operationName);
-				data.put("requestTimestamp", requestTimestamp);
-				data.put("responseTimestamp", responseTimestamp);
-				data.put("success", success);
-
-				if (exceptionClass != null) {
-					data.put("exceptionMessage", exceptionMessage);
-					data.put("exceptionClass", exceptionClass);
-				}
-				data.put("parameterTypes", parameterTypes);
-				data.put("parameterValues", parameterValues);
-				data.put("returnType", returnType);
-				data.put("returnValue", returnValue);
-
-				return data;
-			}
-		}
-
 	}
-
 }

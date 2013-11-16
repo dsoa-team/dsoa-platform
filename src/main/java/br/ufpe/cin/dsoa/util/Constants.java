@@ -39,14 +39,25 @@ public interface Constants {
 	/**
 	 * Event
 	 */
-	public static final String DSOA_EVENT = "dsoa.event";
+	public static final String DSOA_EVENT 				= "dsoa.event";
 	public static final String EVENT_TYPE				= "type";
 	public static final String INVOCATION_EVENT			= "InvocationEvent";
+	public static final String UNBIND_EVENT 			= "UnbindEvent";
+	public static final String BIND_EVENT 				= "BindEvent";
 	public static final String EVENT_METADATA 			= "metadata";
 	public static final String EVENT_DATA 				= "data";
 	public static final String INVOCATION_EVENT_TOPIC 	= "br/ufpe/cin/dsoa/invocationEvent";
-	public static final String EVENT_SOURCE = "source";
-	public static final String ATTRIBUTE_VALUE = "value";
+	public static final String EVENT_SOURCE 			= "source";
+	public static final String ATTRIBUTE_VALUE 			= "value";
+	
+	/**
+	 *  Properties
+	 */
+	public static final String SERVICE_ID				= "serviceId";
+	public static final String CONSUMER_ID				= "consumerId";
+	public static final String SERVICE_INTERFACE		= "serviceInterface";
+	public static final Object METADATA_TIMESTAMP 		= "timestamp";
+	public static final Object METADATA_ID 				= "id";
 	
 	public static final String CONTEXT_NAME = "PartitionedByEventSource";
 }

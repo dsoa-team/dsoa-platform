@@ -2,9 +2,9 @@
 <events>
 	<event type="DsoaEvent">
 		<metadata>
-			<property id="id" type="java.lang.String" required="true" />
+			<property id="id" type="java.lang.String" generated="true" required="true" />
 			<property id="source" type="java.lang.String" required="true" />
-			<property id="timestamp" type="java.lang.Long" />
+			<property id="timestamp" type="java.lang.Long" generated="true" />
 		</metadata>
 	</event>
 	
@@ -24,4 +24,23 @@
 			<property id="returnValue" type="java.lang.Object" />
 		</data>
 	</event>
+	
+	<event type="UnbindEvent" extends="DsoaEvent">
+		<data>
+			<property id="consumerId" type="java.util.String" required="true" />
+			<property id="serviceId" type="java.lang.String" required="true" />
+			<property id="serviceInterface" type="java.lang.String" />
+		</data>
+	</event>
+	
+	<event type="BindEvent" extends="DsoaEvent">
+		<data>
+			<property id="consumerId" type="java.util.String" required="true" />
+			<property id="serviceId" type="java.lang.String" required="true" />
+			<property id="serviceInterface" type="java.lang.String" />
+		</data>
+	</event>
+	<!-- 
+		publication event TODO
+	 -->
 </events>

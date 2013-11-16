@@ -1,5 +1,8 @@
 package br.ufpe.cin.dsoa.platform.handler.dependency.manager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.Service;
@@ -7,6 +10,7 @@ import br.ufpe.cin.dsoa.platform.DsoaPlatform;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeNotificationListener;
 import br.ufpe.cin.dsoa.platform.handler.dependency.Dependency;
 import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
+import br.ufpe.cin.dsoa.util.Constants;
 
 public class DependencyManager implements ServiceListener, AttributeNotificationListener {
 
@@ -65,9 +69,12 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	public void release() {
 		if (this.dependency != null) {
 			synchronized (dependency) {
+				
 				if (dependency.isValid()) {
 					this.dependency.setValid(false);
-					this.dependency.getBlackList().clear();
+					
+					this.notifyUnbind();
+					this.dependency.getBlackList().clear();//TODO:REMOVE
 					if (dependency.getService() != null) {
 						this.dependency.getBlackList().add(dependency.getService().getProviderId());
 						this.dependency.setService(null);
@@ -76,6 +83,34 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 			}
 		}
 		this.analyzer.stop();
+	}
+
+	private void notifyUnbind() {
+		Service service = dependency.getService();
+		String serviceId = service.getProviderId();
+		String consumerId = dependency.getComponentId();
+		String serviceInterface = service.getSpecification().getServiceInterface();
+
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put(Constants.SERVICE_ID, serviceId);
+		data.put(Constants.CONSUMER_ID, consumerId);
+		data.put(Constants.SERVICE_INTERFACE, serviceInterface);
+		
+		this.notify(Constants.UNBIND_EVENT, data);
+	}
+	
+	private void notifyBind() {
+		Service service = dependency.getService();
+		String serviceId = service.getProviderId();
+		String consumerId = dependency.getComponentId();
+		String serviceInterface = service.getSpecification().getServiceInterface();
+
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put(Constants.SERVICE_ID, serviceId);
+		data.put(Constants.CONSUMER_ID, consumerId);
+		data.put(Constants.SERVICE_INTERFACE, serviceInterface);
+		
+		this.notify(Constants.BIND_EVENT, data);
 	}
 
 	public String getServiceInterface() {
@@ -89,6 +124,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 						.getAttributeConstraints(), this);
 
 		this.dependency.setService(service);
+		this.notifyBind();
 		this.dependency.setValid(true);
 	}
 
@@ -105,5 +141,13 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 		synchronized (dependency) {
 			this.planner.evaluate(serviceId, constraint, value);
 		}
+	}
+
+	private void notify(String eventTypeName, Map<String, Object> data) {
+		Map<String, Object> metadata = new HashMap<String, Object>();
+		metadata.put(Constants.EVENT_SOURCE, dependency.getId());
+
+		dsoa.getEventDistribuitionService().postEvent(eventTypeName, metadata, data);
+		
 	}
 }

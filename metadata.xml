@@ -57,10 +57,8 @@
 	<!-- ============================================================================================================ -->
 	<component 	name="Platform.Proxy.ProxyFactory"
 				classname="br.ufpe.cin.dsoa.platform.monitor.DynamicProxyFactory">
-		<requires field="eventTypeCatalog"/>
-		<requires field="eventAdmin"/>
+		<requires field="distribuitionService"/>
 		<provides/>
-		<callback transition="validate" method="start" />
 	</component> 
 	
 	
@@ -174,6 +172,16 @@
 		<callback transition="validate" method="start" />
 		<callback transition="invalidate" method="stop" />
 	</component>
+	
+	<component name="Platform.Event.EventDistributionService"
+			   classname="br.ufpe.cin.dsoa.platform.event.impl.EventAdminDistributionService">
+			   
+		<requires field = "eventTypeCatalog"/>
+		<requires field="eventAdmin"/>
+		<provides />
+		<callback transition="validate" method="start" />
+		<callback transition="invalidate" method="stop" />	   
+    </component>
 	
 	
 	<!-- ============================================================================================================ -->		
@@ -325,6 +333,7 @@
 	<instance component="Platform.Event.AgentCatalog" />
 	<instance component="Platform.Event.EventTypeCatalog" />
 	<instance component="Platform.Event.EventProcessingService" />
+	<instance component="Platform.Event.EventDistributionService" />
 	
 		
 	<!-- <instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.Analyzer"/> -->

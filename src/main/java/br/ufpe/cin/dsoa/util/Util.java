@@ -65,7 +65,7 @@ public class Util {
 				List<EventType> subtypes = new ArrayList<EventType>();
 				List<EventType> types = new ArrayList<EventType>();
 				for (EventType eventType : eventList.getEvents()) {
-					eventType.setPrimitive(true);
+					eventType.setPrimitive(true);//set primitive event
 					if (eventType.getSuperTypeName() != null) {
 						subtypes.add(eventType);
 					} else {

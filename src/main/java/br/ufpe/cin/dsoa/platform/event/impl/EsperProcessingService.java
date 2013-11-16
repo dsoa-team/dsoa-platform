@@ -190,7 +190,7 @@ public class EsperProcessingService implements EventProcessingService {
 			Map<String, Object> definition = eventType.toDefinitionMap();
 			this.registerEventTypeOnEsper(eventTypeName, definition);
 			
-			if(!eventType.isPrimitive()){
+			if(!eventType.isPrimitive()) {
 				this.subscribe(new EventConsumer() {
 					
 					@Override

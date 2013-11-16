@@ -69,8 +69,9 @@ public class PropertyType {
 		this.type = clazz;
 	}
 	
+	// generated event must be required (for validation)
 	public boolean isRequired() {
-		return required;
+		return required || generated;
 	}
 
 	public String getExpression() {

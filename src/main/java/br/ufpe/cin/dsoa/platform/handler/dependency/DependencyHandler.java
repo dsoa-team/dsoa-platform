@@ -63,7 +63,7 @@ public class DependencyHandler extends PrimitiveHandler {
 			try {
 				clazz = getInstanceManager().getClazz().getClassLoader().loadClass(className);
 				ServiceSpecification serviceSpecification =  new ServiceSpecification(clazz, className, nonFunctionalSpecification);
-				Dependency dependency  = new Dependency(this, componentId, serviceSpecification);
+				Dependency dependency  = new Dependency(this, componentId, field, serviceSpecification);
 				this.register(fieldMetadata, dependency);
 			} catch (ClassNotFoundException e) {
 				throw new ConfigurationException("The required service interface cannot be loaded : " + e.getMessage());
