@@ -61,7 +61,7 @@ public class EsperProcessingService implements EventProcessingService {
 	private EventTypeCatalog eventTypeCatalog;
 
 	private AgentCatalog agentCatalog;
-	
+
 	private EventAdmin eventAdmin;
 
 	public EsperProcessingService(BundleContext ctx) {
@@ -70,16 +70,19 @@ public class EsperProcessingService implements EventProcessingService {
 
 	public void start() throws JAXBException {
 		Configuration configuration = new Configuration();
-		configuration.getEngineDefaults().getThreading().setInsertIntoDispatchPreserveOrder(false);
-		configuration.getEngineDefaults().getThreading().setListenerDispatchPreserveOrder(false);
+		configuration.getEngineDefaults().getThreading()
+				.setInsertIntoDispatchPreserveOrder(false);
+		configuration.getEngineDefaults().getThreading()
+				.setListenerDispatchPreserveOrder(false);
 
-		this.epServiceProvider = EPServiceProviderManager.getProvider("Dsoa-EsperEngine",
-				configuration);
+		this.epServiceProvider = EPServiceProviderManager.getProvider(
+				"Dsoa-EsperEngine", configuration);
 
 		// defines invocation event
-		EventTypeList primitiveEvents = Util.handlePlatformEventDefinitions(ctx.getBundle(), this.eventTypeCatalog, this);
-		if(primitiveEvents != null && primitiveEvents.getEvents()!= null){
-			for(EventType primitiveEvent : primitiveEvents.getEvents()) {
+		EventTypeList primitiveEvents = Util.handlePlatformEventDefinitions(
+				ctx.getBundle(), this.eventTypeCatalog, this);
+		if (primitiveEvents != null && primitiveEvents.getEvents() != null) {
+			for (EventType primitiveEvent : primitiveEvents.getEvents()) {
 				this.registerEventAdminListener(primitiveEvent);
 			}
 		}
@@ -105,8 +108,10 @@ public class EsperProcessingService implements EventProcessingService {
 			QueryDirector director = new QueryDirector(builder);
 			director.construct();
 			query = director.getQuery();
-			OutputEvent outputEvent = ((ProcessingMapping) processing).getOutputEvent();
-			InputEvent inputEvent = ((ProcessingMapping) processing).getInputEvent();
+			OutputEvent outputEvent = ((ProcessingMapping) processing)
+					.getOutputEvent();
+			InputEvent inputEvent = ((ProcessingMapping) processing)
+					.getInputEvent();
 
 			try {
 				this.addOutputEventType(inputEvent, outputEvent);
@@ -117,58 +122,62 @@ public class EsperProcessingService implements EventProcessingService {
 			}
 		} else if (processing instanceof ProcessingQuery) {
 			String id = agent.getId();
-			String queryString = ((ProcessingQuery) agent.getProcessing()).getQuery();
+			String queryString = ((ProcessingQuery) agent.getProcessing())
+					.getQuery();
 			query = new Query(id, queryString);
 			// XXX: processing query n esta sendo tratado (output events nao sao
 			// registrados)
 		}
 
 		System.out.println("QUERY AGENT: " + query.getQueryString());
-		
+
 		this.startQuery(query);
 	}
 
-	public synchronized void subscribe(final EventConsumer consumer, Subscription subscription,
-			boolean shared) {
-		
+	public synchronized void subscribe(final EventConsumer consumer,
+			Subscription subscription, boolean shared) {
+
 		Query query = null;
-		QueryBuilder builder = this.getQueryBuilder(consumer, subscription, shared);
+		QueryBuilder builder = this.getQueryBuilder(consumer, subscription,
+				shared);
 		QueryDirector director = new QueryDirector(builder);
 		director.construct();
 		query = director.getQuery();
 
 		System.out.println("QUERY CLIENT: " + query.getQueryString());
-		
+
 		EPStatement statement = this.startQuery(query);
 		statement.addListener(new StatementAwareUpdateListener() {
 
 			@Override
-			public void update(EventBean[] newEvents, EventBean[] oldEvents, EPStatement statement,
-					EPServiceProvider epServiceProvider) {
+			public void update(EventBean[] newEvents, EventBean[] oldEvents,
+					EPStatement statement, EPServiceProvider epServiceProvider) {
 
 				for (EventBean e : newEvents) {
 					Object event = e.getUnderlying();
 					String eventTypeName = e.getEventType().getName();
 
 					@SuppressWarnings("unchecked")
-					Event dsoaEvent = convertEsperEvent(eventTypeName, (Map<String, Object>) event);
+					Event dsoaEvent = convertEsperEvent(eventTypeName,
+							(Map<String, Object>) event);
 					consumer.handleEvent(dsoaEvent);
 				}
 			}
 		});
 	}
 
-	private Event convertEsperEvent(String eventTypeName, Map<String, Object> esperEvent) {
+	private Event convertEsperEvent(String eventTypeName,
+			Map<String, Object> esperEvent) {
 
 		EventType eventType = eventTypeCatalog.get(eventTypeName);
-		
+
 		if (eventType == null) {
 			String typeName = (String) esperEvent.get(Constants.EVENT_METADATA
 					+ Constants.UNDERLINE + Constants.EVENT_TYPE);
 			System.err.println("underlying type: " + typeName);
 			eventType = eventTypeCatalog.get(typeName);
 		}
-		
+
 		Event dsoaEvent = eventType.createEvent(esperEvent);
 
 		return dsoaEvent;
@@ -189,20 +198,29 @@ public class EsperProcessingService implements EventProcessingService {
 		if (this.eventTypeCatalog.contains(eventTypeName)) {
 			Map<String, Object> definition = eventType.toDefinitionMap();
 			this.registerEventTypeOnEsper(eventTypeName, definition);
-			
-			if(!eventType.isPrimitive()) {
+
+			// caso ninguem tenha interesse em tais eventos
+			// esses eventos sao lancados sem necessidade
+			// (isso sera tratado como uma subscricao)
+			if (!eventType.isPrimitive()) {
 				this.subscribe(new EventConsumer() {
-					
+
 					@Override
 					public void handleEvent(Event event) {
-						
-						String topic = event.getEventType().getName();
-	
+
+						// String topic = event.getEventType().getName();
+
+						// topic based on context
+						String topic = String.format("%s/%s", event
+								.getEventType().getName(), event
+								.getMetadataProperty(Constants.EVENT_SOURCE));
+
 						Map<String, Object> eventTable = new HashMap<String, Object>();
 						eventTable.put(topic, event.toMap());
-						eventAdmin.postEvent(new org.osgi.service.event.Event(topic, eventTable));
+						eventAdmin.postEvent(new org.osgi.service.event.Event(
+								topic, eventTable));
 					}
-					
+
 					@Override
 					public String getId() {
 						return eventType.getName();
@@ -211,7 +229,7 @@ public class EsperProcessingService implements EventProcessingService {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void registerEventAdminListener(final EventType eventType) {
 		final String topic = eventType.getName();
@@ -222,7 +240,8 @@ public class EsperProcessingService implements EventProcessingService {
 
 			@Override
 			public void handleEvent(org.osgi.service.event.Event event) {
-				Map<String, Object> rawEvent = (Map<String, Object>) event.getProperty(topic);
+				Map<String, Object> rawEvent = (Map<String, Object>) event
+						.getProperty(topic);
 				Event dsoaEvent = eventType.createEvent(rawEvent);
 				publish(dsoaEvent);
 			}
@@ -235,13 +254,15 @@ public class EsperProcessingService implements EventProcessingService {
 	 * @param eventTypeName
 	 * @param definition
 	 */
-	private void registerEventTypeOnEsper(String eventTypeName, Map<String, Object> definition) {
+	private void registerEventTypeOnEsper(String eventTypeName,
+			Map<String, Object> definition) {
 		try {
 			this.epServiceProvider.getEPAdministrator().getConfiguration()
 					.addEventType(eventTypeName, definition);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("Error while configuring event: " + eventTypeName);
+			throw new RuntimeException("Error while configuring event: "
+					+ eventTypeName);
 		}
 	}
 
@@ -251,12 +272,14 @@ public class EsperProcessingService implements EventProcessingService {
 		this.epServiceProvider.getEPAdministrator().createEPL(contextEPL);
 	}
 
-	private void addOutputEventType(InputEvent inputEvent, OutputEvent outputEvent)
-			throws ClassNotFoundException, EventTypeAlreadyCatalogedException {
+	private void addOutputEventType(InputEvent inputEvent,
+			OutputEvent outputEvent) throws ClassNotFoundException,
+			EventTypeAlreadyCatalogedException {
 
 		String inputEventTypeName = inputEvent.getType();
 
-		EventType inputEventType = this.eventTypeCatalog.get(inputEventTypeName);
+		EventType inputEventType = this.eventTypeCatalog
+				.get(inputEventTypeName);
 
 		String name = outputEvent.getType();
 		List<PropertyType> metadata = outputEvent.getMetadata();
@@ -274,7 +297,8 @@ public class EsperProcessingService implements EventProcessingService {
 						String key = propertyType.getExpression().replace(
 								inputEvent.getAlias() + ".metadata.", "");
 
-						PropertyType rawPropertyType = inputEventType.getMetadataPropertyType(key);
+						PropertyType rawPropertyType = inputEventType
+								.getMetadataPropertyType(key);
 						typeName = rawPropertyType.getTypeName();
 					}
 					propertyType.setClazz(Class.forName(typeName));
@@ -292,7 +316,8 @@ public class EsperProcessingService implements EventProcessingService {
 						String key = propertyType.getExpression().replace(
 								inputEvent.getAlias() + ".data.", "");
 
-						PropertyType rawPropertyType = inputEventType.getDataPropertyType(key);
+						PropertyType rawPropertyType = inputEventType
+								.getDataPropertyType(key);
 						typeName = rawPropertyType.getTypeName();
 					}
 					propertyType.setClazz(Class.forName(typeName));
@@ -334,13 +359,15 @@ public class EsperProcessingService implements EventProcessingService {
 	 * 
 	 * @param eventConsumer
 	 * @param subscription
-	 * @param shared - use data from all consumers or specific ones
+	 * @param shared
+	 *            - use data from all consumers or specific ones
 	 * @return
 	 */
-	protected QueryBuilder getQueryBuilder(EventConsumer eventConsumer, Subscription subscription,
-			boolean shared) {
+	protected QueryBuilder getQueryBuilder(EventConsumer eventConsumer,
+			Subscription subscription, boolean shared) {
 		EventType outputEventType = subscription.getEventType();
-		EventProcessingAgent eventProcessingAgent = this.agentCatalog.getAgent(outputEventType);
+		EventProcessingAgent eventProcessingAgent = this.agentCatalog
+				.getAgent(outputEventType);
 
 		QueryBuilder builder = null;
 
@@ -358,8 +385,8 @@ public class EsperProcessingService implements EventProcessingService {
 
 		String queryString = query.getQueryString();
 		String queryId = query.getId();
-		EPStatement stmt = this.epServiceProvider.getEPAdministrator().createEPL(queryString,
-				queryId);
+		EPStatement stmt = this.epServiceProvider.getEPAdministrator()
+				.createEPL(queryString, queryId);
 
 		return stmt;
 	}
@@ -372,9 +399,10 @@ public class EsperProcessingService implements EventProcessingService {
 	public EPServiceProvider getEpProvider() {
 		return this.epServiceProvider;
 	}
-	
+
 	private void destroyStatement(String stmtId) {
-		EPStatement stmt = this.epServiceProvider.getEPAdministrator().getStatement(stmtId);
+		EPStatement stmt = this.epServiceProvider.getEPAdministrator()
+				.getStatement(stmtId);
 		if (stmt != null) {
 			stmt.destroy();
 		}
