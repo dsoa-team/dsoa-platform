@@ -162,6 +162,11 @@
 				classname="br.ufpe.cin.dsoa.platform.event.impl.EventTypeCatalogImpl">
 		<provides />
 	</component>
+	
+	<component name="Platform.Event.EventAdapterCatalog"
+				classname="br.ufpe.cin.dsoa.platform.event.impl.EventAdapterCatalogImpl">
+		<provides />
+	</component>
 
 	<component 	name="Platform.Event.EventProcessingService" 
 				classname="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" >
@@ -178,6 +183,7 @@
 			   
 		<requires field = "eventTypeCatalog"/>
 		<requires field="eventAdmin"/>
+		<requires field="eventAdapterCatalog"/>
 		<provides />
 		<callback transition="validate" method="start" />
 		<callback transition="invalidate" method="stop" />	   
@@ -332,6 +338,7 @@
 	
 	<instance component="Platform.Event.AgentCatalog" />
 	<instance component="Platform.Event.EventTypeCatalog" />
+	<instance component="Platform.Event.EventAdapterCatalog" />
 	<instance component="Platform.Event.EventProcessingService" />
 	<instance component="Platform.Event.EventDistributionService" />
 	
