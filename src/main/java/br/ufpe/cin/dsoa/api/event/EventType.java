@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import br.ufpe.cin.dsoa.util.Constants;
+import br.ufpe.cin.dsoa.util.MetadataEnricher;
 
 /**
  * 
@@ -259,10 +260,24 @@ public class EventType {
 
 	public Event createEvent(Map<String, Object> metadata,
 			Map<String, Object> data) {
+		
+		addGeneratedMetadataProperties(metadata);
+
 		Map<String, Property> metadataValue = this.loadValues(metadata, true);
 		Map<String, Property> dataValue = this.loadValues(data, false);
+		
 		Event event = new Event(this, metadataValue, dataValue);
 		return event;
+	}
+	
+	private void addGeneratedMetadataProperties(Map<String, Object> metadata) {
+		for (PropertyType propertyType : this.getMetadataList()) {
+			if (propertyType.isGenerated()) {
+				String key = propertyType.getName();
+				Object value = MetadataEnricher.generate(key);
+				metadata.put(key, value);
+			}
+		}
 	}
 	
 	/**

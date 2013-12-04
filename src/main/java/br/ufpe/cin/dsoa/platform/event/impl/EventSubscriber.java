@@ -1,6 +1,5 @@
 package br.ufpe.cin.dsoa.platform.event.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import br.ufpe.cin.dsoa.api.event.Event;

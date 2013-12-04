@@ -1,7 +1,5 @@
 package br.ufpe.cin.dsoa.platform.event.impl;
 
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +7,6 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.event.EventAdmin;
-import org.osgi.service.event.EventConstants;
-import org.osgi.service.event.EventHandler;
 
 import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
@@ -27,6 +22,7 @@ import br.ufpe.cin.dsoa.api.event.agent.Processing;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingQuery;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
+import br.ufpe.cin.dsoa.platform.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.util.Constants;
@@ -62,8 +58,8 @@ public class EsperProcessingService implements EventProcessingService {
 
 	private AgentCatalog agentCatalog;
 
-	private EventAdmin eventAdmin;
-
+	private EventDistribuitionService eventDistribuitionService;
+	
 	public EsperProcessingService(BundleContext ctx) {
 		this.ctx = ctx;
 	}
@@ -83,7 +79,7 @@ public class EsperProcessingService implements EventProcessingService {
 				ctx.getBundle(), this.eventTypeCatalog, this);
 		if (primitiveEvents != null && primitiveEvents.getEvents() != null) {
 			for (EventType primitiveEvent : primitiveEvents.getEvents()) {
-				this.registerEventAdminListener(primitiveEvent);
+				this.registerEventDistributionListener(primitiveEvent);
 			}
 		}
 		this.createAgentContext();
@@ -133,7 +129,20 @@ public class EsperProcessingService implements EventProcessingService {
 
 		this.startQuery(query);
 	}
+	
+	/**
+	 *  subscribe to an event type  
+	 */
+	public synchronized void subscribe(final EventConsumer consumer,
+			Subscription subscription) {
+		
+		this.subscribe(consumer, subscription, true);
+	}
 
+	/**
+	 * subscribe to an event type. If shared = false
+	 * that subscription considers events related to one event consumer.
+	 */
 	public synchronized void subscribe(final EventConsumer consumer,
 			Subscription subscription, boolean shared) {
 
@@ -144,6 +153,7 @@ public class EsperProcessingService implements EventProcessingService {
 		director.construct();
 		query = director.getQuery();
 
+		//TODO REMOVER
 		System.out.println("QUERY CLIENT: " + query.getQueryString());
 
 		EPStatement statement = this.startQuery(query);
@@ -207,18 +217,7 @@ public class EsperProcessingService implements EventProcessingService {
 
 					@Override
 					public void handleEvent(Event event) {
-
-						// String topic = event.getEventType().getName();
-
-						// topic based on context
-						String topic = String.format("%s/%s", event
-								.getEventType().getName(), event
-								.getMetadataProperty(Constants.EVENT_SOURCE));
-
-						Map<String, Object> eventTable = new HashMap<String, Object>();
-						eventTable.put(topic, event.toMap());
-						eventAdmin.postEvent(new org.osgi.service.event.Event(
-								topic, eventTable));
+						eventDistribuitionService.postEvent(event);
 					}
 
 					@Override
@@ -230,22 +229,20 @@ public class EsperProcessingService implements EventProcessingService {
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void registerEventAdminListener(final EventType eventType) {
-		final String topic = eventType.getName();
-
-		Hashtable props = new Hashtable();
-		props.put(EventConstants.EVENT_TOPIC, new String[] { topic });
-		ctx.registerService(EventHandler.class.getName(), new EventHandler() {
-
+	private void registerEventDistributionListener(final EventType eventType) {
+		
+		this.eventDistribuitionService.subscribe(new EventConsumer() {
+			
 			@Override
-			public void handleEvent(org.osgi.service.event.Event event) {
-				Map<String, Object> rawEvent = (Map<String, Object>) event
-						.getProperty(topic);
-				Event dsoaEvent = eventType.createEvent(rawEvent);
-				publish(dsoaEvent);
+			public void handleEvent(Event event) {
+				publish(event);
 			}
-		}, props);
+			
+			@Override
+			public String getId() {
+				return String.format("dsoa-%s", eventType.getName());
+			}
+		}, eventType);
 	}
 
 	/**
@@ -365,15 +362,15 @@ public class EsperProcessingService implements EventProcessingService {
 	 */
 	protected QueryBuilder getQueryBuilder(EventConsumer eventConsumer,
 			Subscription subscription, boolean shared) {
-		EventType outputEventType = subscription.getEventType();
-		EventProcessingAgent eventProcessingAgent = this.agentCatalog
-				.getAgent(outputEventType);
 
 		QueryBuilder builder = null;
 
 		if (shared) {
 			builder = new EsperSharedSubscriptionBuilder(subscription);
 		} else {
+			EventType outputEventType = subscription.getEventType();
+			EventProcessingAgent eventProcessingAgent = this.agentCatalog
+					.getAgent(outputEventType);
 			builder = new EsperSubscriptionBuilder(eventConsumer, subscription,
 					eventProcessingAgent);
 		}

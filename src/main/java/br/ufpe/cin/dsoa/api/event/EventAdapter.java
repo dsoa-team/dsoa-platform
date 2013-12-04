@@ -4,7 +4,8 @@ public interface EventAdapter {
 	
 	public String getId();
 
-	public void handleEvent(Event event);
+	public void exportEvent(Event event);
 	
-	public void postEvent(String eventTypeName, Object event);
+	public void importEvent(Subscription subscription); //send to edservice queue servuce
+	
 }
