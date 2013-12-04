@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 import br.ufpe.cin.dsoa.util.Constants;
+import br.ufpe.cin.dsoa.util.JsonSerializer;
 
 public class Event {
 	private EventType eventType;
 	private Map<String, Property> metadata;
 	private Map<String, Property> data;
-	
-	public Event(EventType eventType,
-			Map<String, Property> metadataProperties,
+
+	public Event(EventType eventType, Map<String, Property> metadataProperties,
 			Map<String, Property> dataProperties) {
 		super();
 		this.eventType = eventType;
@@ -37,60 +37,77 @@ public class Event {
 		}
 		return property;
 	}
-	
+
 	public Property getMetadataProperty(String name) {
 		return metadata.get(name);
 	}
-	
+
 	public Property getDataProperty(String name) {
 		return data.get(name);
 	}
-	
+
+	/**
+	 * Represents a platform event as a map
+	 * 
+	 * @return
+	 */
 	public final Map<String, Object> toMap() {
 		Map<String, Object> eventMap = new HashMap<String, Object>();
-		
+
 		if (!metadata.isEmpty()) {
 			for (Property property : metadata.values()) {
-				eventMap.put(property.getPropertyType().getFullname(), property.getValue());
+				eventMap.put(property.getPropertyType().getFullname(),
+						property.getValue());
 			}
 		}
 
 		// data
 		if (!data.isEmpty()) {
 			for (Property property : data.values()) {
-				eventMap.put(property.getPropertyType().getFullname(), property.getValue());
+				eventMap.put(property.getPropertyType().getFullname(),
+						property.getValue());
 			}
 		}
-		
+
 		eventMap.put(Constants.EVENT_TYPE, eventType.getName());
-		
+
 		return eventMap;
 	}
 
+	/**
+	 * Represents a platform event as a json file
+	 * 
+	 * @return
+	 */
+	public String toJson() {
+		String jsonEvent = JsonSerializer.getInstance().getJson(this);
+		return jsonEvent;
+	}
+	
 	public List<Property> getMetadataProperties() {
 		return getPropertyList(metadata);
 	}
-	
+
 	public List<Property> getDataProperties() {
 		return getPropertyList(data);
 	}
-	
-	public Map<String, Property> getMetadata(){
+
+	public Map<String, Property> getMetadata() {
 		return this.metadata;
 	}
-	
-	public Map<String, Property> getData(){
+
+	public Map<String, Property> getData() {
 		return this.data;
 	}
-	
-	public String get(String key){
+
+	public String get(String key) {
 		return this.metadata.get("key").getValue().toString();
 	}
-	
 
 	@Override
 	public String toString() {
-		return "Event [eventType=" + eventType.getName() + ", data=" + data + "]";
+		return "Event [eventType=" + eventType.getName() + ", data=" + data
+				+ "]";
 	}
 
 	private List<Property> getPropertyList(Map<String, Property> properties) {
@@ -100,29 +117,43 @@ public class Event {
 		}
 		return attList;
 	}
-	
-	private void validate() throws IllegalArgumentException {
-		List<PropertyType> requiredHeaderTypes = eventType.getRequiredMetadataAttributeTypeList();
-		List<PropertyType> optionalHeaderTypes = eventType.getOptionalMetadataAttributeTypeList();
-		List<Property> headerAttributes = this.getMetadataProperties();
-		
-		List<PropertyType> requiredApplicationTypes = eventType.getRequiredDataAttributeTypeList();
-		List<PropertyType> optionalApplicationTypes = eventType.getOptionalDataAttributeTypeList();
-		List<Property> aplicationAttributes = this.getDataProperties();
-		
-		this.validate(requiredHeaderTypes, optionalHeaderTypes, headerAttributes);
-		this.validate(requiredApplicationTypes, optionalApplicationTypes, aplicationAttributes);
 
-		if ( !(requiredHeaderTypes.isEmpty() && requiredApplicationTypes.isEmpty()) ){
-			throw new IllegalArgumentException("Invalid event! These attributes are required: Headers: "  + requiredHeaderTypes + " Application: " + requiredApplicationTypes);
+	private void validate() throws IllegalArgumentException {
+		List<PropertyType> requiredHeaderTypes = eventType
+				.getRequiredMetadataAttributeTypeList();
+		List<PropertyType> optionalHeaderTypes = eventType
+				.getOptionalMetadataAttributeTypeList();
+		List<Property> headerAttributes = this.getMetadataProperties();
+
+		List<PropertyType> requiredApplicationTypes = eventType
+				.getRequiredDataAttributeTypeList();
+		List<PropertyType> optionalApplicationTypes = eventType
+				.getOptionalDataAttributeTypeList();
+		List<Property> aplicationAttributes = this.getDataProperties();
+
+		this.validate(requiredHeaderTypes, optionalHeaderTypes,
+				headerAttributes);
+		this.validate(requiredApplicationTypes, optionalApplicationTypes,
+				aplicationAttributes);
+
+		if (!(requiredHeaderTypes.isEmpty() && requiredApplicationTypes
+				.isEmpty())) {
+			throw new IllegalArgumentException(
+					"Invalid event! These attributes are required: Headers: "
+							+ requiredHeaderTypes + " Application: "
+							+ requiredApplicationTypes);
 		} else {
-			if (!(headerAttributes.isEmpty() && aplicationAttributes.isEmpty()) ) {
-				throw new IllegalArgumentException("Invalid event! These attributes are not declared: Headers: "  + headerAttributes + " Application: " + aplicationAttributes);
+			if (!(headerAttributes.isEmpty() && aplicationAttributes.isEmpty())) {
+				throw new IllegalArgumentException(
+						"Invalid event! These attributes are not declared: Headers: "
+								+ headerAttributes + " Application: "
+								+ aplicationAttributes);
 			}
 		}
 	}
-	
-	private void validate(List<PropertyType> requiredAttributeTypes, List<PropertyType> optionalAttributeTypes, List<Property> attList) {
+
+	private void validate(List<PropertyType> requiredAttributeTypes,
+			List<PropertyType> optionalAttributeTypes, List<Property> attList) {
 		Iterator<Property> attItr = null;
 		if (attList != null) {
 			attItr = attList.iterator();
@@ -131,11 +162,12 @@ public class Event {
 				if (requiredAttributeTypes.contains(property.getPropertyType())) {
 					requiredAttributeTypes.remove(property.getPropertyType());
 					attItr.remove();
-				} else if (optionalAttributeTypes.contains(property.getPropertyType())){
+				} else if (optionalAttributeTypes.contains(property
+						.getPropertyType())) {
 					optionalAttributeTypes.remove(property);
 					attItr.remove();
 				}
 			}
 		}
 	}
-}	
+}
