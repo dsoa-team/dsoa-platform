@@ -1,5 +1,6 @@
 package br.ufpe.cin.dsoa.platform.event.impl;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.api.event.EventTypeList;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.Subscription;
@@ -24,7 +26,6 @@ import br.ufpe.cin.dsoa.api.event.agent.ProcessingQuery;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
-import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.util.Constants;
 import br.ufpe.cin.dsoa.util.Util;
 
@@ -213,6 +214,15 @@ public class EsperProcessingService implements EventProcessingService {
 			// esses eventos sao lancados sem necessidade
 			// (isso sera tratado como uma subscricao)
 			if (!eventType.isPrimitive()) {
+				
+				//XXX: TEMP
+				Map<String, Object> config = new HashMap<String, Object>();
+				config.put("adapter-id", "AMPQAdapter");
+				this.eventDistribuitionService.exportEvents(eventType, config);
+				//this.eventDistribuitionService.importEvents(eventType, null);
+				//XXX: TEMP
+				
+				
 				this.subscribe(new EventConsumer() {
 
 					@Override

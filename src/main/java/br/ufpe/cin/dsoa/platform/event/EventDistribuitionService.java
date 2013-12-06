@@ -21,9 +21,8 @@ public interface EventDistribuitionService {
 
 	public void subscribe(EventConsumer consumer, EventType eventType);
 
-	// retorna id da subscription
-	// public String subscribe(EventConsumer consumer, Subscription
-	// subscription);
+	public void importEvents(EventType eventType, Map<String, Object> configuration);
 
-	// public void unsubscribe(String subscriptionId);
+	public void exportEvents(EventType eventType, Map<String, Object> configuration);
+
 }

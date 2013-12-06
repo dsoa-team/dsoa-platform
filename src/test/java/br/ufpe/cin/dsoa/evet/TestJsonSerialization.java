@@ -15,9 +15,9 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.epcenter.helper.HelperEpCenterTest;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
-import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.options;

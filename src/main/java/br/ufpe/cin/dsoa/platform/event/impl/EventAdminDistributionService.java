@@ -1,5 +1,6 @@
 package br.ufpe.cin.dsoa.platform.event.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -18,9 +19,10 @@ import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventAdapter;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
+import br.ufpe.cin.dsoa.api.event.Subscription;
 import br.ufpe.cin.dsoa.platform.event.EventAdapterCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventDistribuitionService;
-import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class EventAdminDistributionService implements EventDistribuitionService {
@@ -85,6 +87,59 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 		}, props);
 	}
 
+	@Override
+	public void importEvents(final EventType eventType, Map<String, Object> configuration) {
+
+		String adapterId = (String) configuration.get("adapter-id");
+		final EventAdapter adapter = eventAdapterCatalog.get(adapterId);
+		
+		if(adapter == null){
+			System.err.println("Adapter not found.");
+			return;
+		}
+
+		Subscription subscription = new Subscription(eventType, null);
+
+		adapter.importEvent(new EventConsumer() {
+
+			@Override
+			public void handleEvent(Event event) {
+				postEvent(event);
+			}
+
+			@Override
+			public String getId() {
+				return String.format("import-%s-from-%s", eventType.getName(), adapter.getId());
+			}
+		}, subscription);
+	}
+
+	@Override
+	public void exportEvents(final EventType eventType, final Map<String, Object> configuration) {
+
+		String adapterId = (String) configuration.get("adapter-id");
+		final EventAdapter adapter = eventAdapterCatalog.get(adapterId);
+		if(adapter == null){
+			System.err.println("Adapter not found.");
+			return;
+		}
+		
+		subscribe(new EventConsumer() {
+
+			public void handleEvent(Event event) {
+				adapter.exportEvent(event, configuration);
+			}
+
+			public String getId() {
+				return String.format("export-%s-to-%s", eventType.getName(), adapter.getId());
+			}
+		}, eventType);
+
+	}
+
+	// ////////////////////////////////////////////////////////////////////////////////////////
+	// //////////////Thread responsible to fire events to queue infrastructure
+	// ////////////////////////////////////////////////////////////////////////////////////////
 	class NotificationWorker implements Runnable {
 
 		private String eventTypeName;
@@ -115,10 +170,10 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 				this.eventTypeName = dsoaEvent.getEventType().getName();
 			}
 
-			this.notifyInvocation();
+			this.notifyEvent();
 		}
 
-		private void notifyInvocation() {
+		private void notifyEvent() {
 
 			String eventSource = (String) dsoaEvent.getMetadataProperty(Constants.EVENT_SOURCE)
 					.getValue();
@@ -133,6 +188,9 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 		}
 	}
 
+	// ////////////////////////////////////////////////////////////////////////////////////////
+	// //////////////internal class to listen arrivals from new adapters
+	// ////////////////////////////////////////////////////////////////////////////////////////
 	class AdapterCustomizer implements ServiceTrackerCustomizer {
 		@Override
 		public void removedService(ServiceReference reference, Object service) {
@@ -153,8 +211,18 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 			EventAdapter adapter = (EventAdapter) context.getService(reference);
 			EventAdapter registerdAdapter = eventAdapterCatalog.addAdapter(adapter);
 
+			//XXX: TEMP
+			Collection<EventType> types = eventTypeCatalog.getAll();
+			for (EventType eventType : types) {
+				if (!eventType.isPrimitive()) {
+					Map<String, Object> config = new HashMap<String, Object>();
+					config.put("adapter-id", "AMPQAdapter");
+					exportEvents(eventType, config);
+				}
+			}
+			//XXX: TEMP
+			
 			return registerdAdapter;
 		}
 	}
-
 }

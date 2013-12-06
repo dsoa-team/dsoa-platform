@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import br.ufpe.cin.dsoa.util.Constants;
-import br.ufpe.cin.dsoa.util.JsonSerializer;
 
 public class Event {
 	private EventType eventType;
@@ -74,16 +73,6 @@ public class Event {
 		return eventMap;
 	}
 
-	/**
-	 * Represents a platform event as a json file
-	 * 
-	 * @return
-	 */
-	public String toJson() {
-		String jsonEvent = JsonSerializer.getInstance().getJson(this);
-		return jsonEvent;
-	}
-	
 	public List<Property> getMetadataProperties() {
 		return getPropertyList(metadata);
 	}

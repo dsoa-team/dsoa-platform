@@ -6,7 +6,7 @@ import java.util.Map;
 
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
-import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
+import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 
 public class EventTypeCatalogImpl implements EventTypeCatalog {
 

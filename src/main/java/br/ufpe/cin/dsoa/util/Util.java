@@ -17,10 +17,10 @@ import org.osgi.framework.ServiceReference;
 import br.ufpe.cin.dsoa.api.attribute.AttributableId;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
+import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.api.event.EventTypeList;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
-import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 
 public class Util {
 

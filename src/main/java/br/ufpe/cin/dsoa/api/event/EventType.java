@@ -42,7 +42,7 @@ public class EventType {
 	private String superTypeName;
 
 	private EventType superType = null;
-	
+
 	private boolean primitive;
 
 	private List<PropertyType> metadata;
@@ -84,28 +84,27 @@ public class EventType {
 		};
 
 	}
-	
+
 	@XmlElementWrapper(name = METADATA)
 	@XmlElement(name = PROPERTY)
 	private List<PropertyType> getMetadata() {
 		return metadata;
 	}
-	
+
 	@XmlElementWrapper(name = DATA)
 	@XmlElement(name = PROPERTY)
 	private List<PropertyType> getData() {
 		return data;
 	}
 
-	public EventType(String name, List<PropertyType> metadata,
-			List<PropertyType> data) {
+	public EventType(String name, List<PropertyType> metadata, List<PropertyType> data) {
 		this.name = name;
 		this.metadata = metadata;
 		this.data = data;
 		this.loadMap(metadata, metadataMap, Constants.EVENT_METADATA);
-		this.loadMap(data, dataMap,  Constants.EVENT_DATA);
+		this.loadMap(data, dataMap, Constants.EVENT_DATA);
 	}
-	
+
 	public boolean isPrimitive() {
 		return primitive;
 	}
@@ -167,15 +166,13 @@ public class EventType {
 	public List<PropertyType> getMetadataList() {
 		return getPropertyTypeList(
 				new ArrayList<PropertyType>(metadataMap.values()),
-				superType == null ? null : new ArrayList<PropertyType>(
-						superType.metadataMap.values()));
+				superType == null ? null : new ArrayList<PropertyType>(superType.metadataMap
+						.values()));
 	}
 
 	public List<PropertyType> getDataList() {
-		return getPropertyTypeList(
-				new ArrayList<PropertyType>(dataMap.values()),
-				superType == null ? null : new ArrayList<PropertyType>(
-						superType.dataMap.values()));
+		return getPropertyTypeList(new ArrayList<PropertyType>(dataMap.values()),
+				superType == null ? null : new ArrayList<PropertyType>(superType.dataMap.values()));
 	}
 
 	public final Map<String, Object> toDefinitionMap() {
@@ -200,8 +197,8 @@ public class EventType {
 		return map;
 	}
 
-	private List<PropertyType> getPropertyTypeList(
-			List<PropertyType> propertyTypes, List<PropertyType> superPropTypes) {
+	private List<PropertyType> getPropertyTypeList(List<PropertyType> propertyTypes,
+			List<PropertyType> superPropTypes) {
 
 		Set<PropertyType> propertyTypesSet = new HashSet<PropertyType>();
 
@@ -218,8 +215,7 @@ public class EventType {
 		return new ArrayList<PropertyType>(propertyTypesSet);
 	}
 
-	private void loadMap(List<PropertyType> lista,
-			Map<String, PropertyType> mapa, String namespace) {
+	private void loadMap(List<PropertyType> lista, Map<String, PropertyType> mapa, String namespace) {
 
 		Iterator<PropertyType> it = lista.iterator();
 		while (it.hasNext()) {
@@ -229,8 +225,7 @@ public class EventType {
 		}
 	}
 
-	private List<PropertyType> getRequiredPropertyTypeList(
-			List<PropertyType> propertyTypes) {
+	private List<PropertyType> getRequiredPropertyTypeList(List<PropertyType> propertyTypes) {
 		List<PropertyType> required = null;
 		if (propertyTypes != null) {
 			required = new ArrayList<PropertyType>();
@@ -258,18 +253,48 @@ public class EventType {
 		return propMap;
 	}
 
-	public Event createEvent(Map<String, Object> metadata,
-			Map<String, Object> data) {
-		
+	public Event convertToEvent(Map<String, Object> map) {
+
+		Map<String, Object> metadata = this.extractMetadata(map);
+		Map<String, Object> data = this.extractData(map);
+
+		Map<String, Property> metadataValue = this.loadValues(metadata, true);
+		Map<String, Property> dataValue = this.loadValues(data, false);
+
+		Event event = new Event(this, metadataValue, dataValue);
+
+		return event;
+
+	}
+
+	/**
+	 * receive a map with property has a prefix (metadata_ or data_)
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public Event createEvent(Map<String, Object> map) {
+
+		Map<String, Object> metadata = this.extractMetadata(map);
+		Map<String, Object> data = this.extractData(map);
+
+		Event event = this.createEvent(metadata, data);
+
+		return event;
+	}
+
+	public Event createEvent(Map<String, Object> metadata, Map<String, Object> data) {
+
 		addGeneratedMetadataProperties(metadata);
 
 		Map<String, Property> metadataValue = this.loadValues(metadata, true);
 		Map<String, Property> dataValue = this.loadValues(data, false);
-		
+
 		Event event = new Event(this, metadataValue, dataValue);
+
 		return event;
 	}
-	
+
 	private void addGeneratedMetadataProperties(Map<String, Object> metadata) {
 		for (PropertyType propertyType : this.getMetadataList()) {
 			if (propertyType.isGenerated()) {
@@ -279,33 +304,39 @@ public class EventType {
 			}
 		}
 	}
-	
-	/**
-	 * receive a map with property has a prefix (metadata_ or data_)
-	 * 
-	 * @param map
-	 * @return
-	 */
-	public Event createEvent(Map<String, Object> map) {
-		
-		Map<String, Object> metadata = new HashMap<String, Object>();
-		Map<String, Object> data = new HashMap<String, Object>();
 
-		for (String key : map.keySet()) {
-			if (key.startsWith("data_")) {
-				String newKey = key.replace("data_", "");
-				data.put(newKey, map.get(key));
-			} else if (key.startsWith("metadata_")) {
-				String newKey = key.replace("metadata_", "");
-				metadata.put(newKey, map.get(key));
-			}
-		}
-		
-		return this.createEvent(metadata, data);
+	private Map<String, Object> extractMetadata(Map<String, Object> map) {
+
+		Map<String, Object> metadata = new HashMap<String, Object>();
+		metadata = this.extractFromMap(map, true);
+		return metadata;
 	}
 
-	private Map<String, Property> loadValues(Map<String, Object> valueMap,
-			boolean isMetadata) {
+	private Map<String, Object> extractData(Map<String, Object> map) {
+
+		Map<String, Object> data = new HashMap<String, Object>();
+		data = this.extractFromMap(map, false);
+
+		return data;
+	}
+
+	private Map<String, Object> extractFromMap(Map<String, Object> map, boolean isMetadata) {
+
+		Map<String, Object> extratedMap = new HashMap<String, Object>();
+		String keyMap = isMetadata ? "metadata_" : "data_";
+
+		for (String key : map.keySet()) {
+			if (key.startsWith(keyMap)) {
+				String newKey = key.replace(keyMap, "");
+				extratedMap.put(newKey, map.get(key));
+			}
+		}
+
+		return extratedMap;
+
+	}
+
+	private Map<String, Property> loadValues(Map<String, Object> valueMap, boolean isMetadata) {
 
 		Map<String, Property> propertyMap = new HashMap<String, Property>();
 
@@ -323,8 +354,7 @@ public class EventType {
 
 	@Override
 	public String toString() {
-		return "EventType [name=" + name + ", superTypeName=" + superTypeName
-				+ "]";
+		return "EventType [name=" + name + ", superTypeName=" + superTypeName + "]";
 	}
 
 	/**
@@ -333,8 +363,7 @@ public class EventType {
 	 * @param isMetadata
 	 * @return
 	 */
-	private PropertyType getPropertyType(String propertyTypeName,
-			boolean isMetadata) {
+	private PropertyType getPropertyType(String propertyTypeName, boolean isMetadata) {
 
 		PropertyType propertyType = null;
 
