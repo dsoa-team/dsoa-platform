@@ -216,7 +216,7 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 			for (EventType eventType : types) {
 				if (!eventType.isPrimitive()) {
 					Map<String, Object> config = new HashMap<String, Object>();
-					config.put("adapter-id", "AMPQAdapter");
+					config.put(Constants.ADAPTER_ID, registerdAdapter.getId());
 					exportEvents(eventType, config);
 				}
 			}

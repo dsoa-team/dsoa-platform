@@ -24,14 +24,9 @@ public class EventAdapterCatalogImpl implements EventAdapterCatalog {
 
 	@Override
 	public synchronized EventAdapter addAdapter(EventAdapter eventAdapter) {
+		this.adapterMap.put(eventAdapter.getId(), eventAdapter);
 		
-		if(this.adapterMap.containsKey(eventAdapter.getId())){ 
-			//TODO: throw exception
-		}
-		
-		EventAdapter registeredAdapter = this.adapterMap.put(eventAdapter.getId(), eventAdapter);
-		
-		return registeredAdapter;
+		return eventAdapter;
 	}
 
 	@Override

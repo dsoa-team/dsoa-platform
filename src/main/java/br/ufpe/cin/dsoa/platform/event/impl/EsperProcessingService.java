@@ -185,7 +185,6 @@ public class EsperProcessingService implements EventProcessingService {
 		if (eventType == null) {
 			String typeName = (String) esperEvent.get(Constants.EVENT_METADATA
 					+ Constants.UNDERLINE + Constants.EVENT_TYPE);
-			System.err.println("underlying type: " + typeName);
 			eventType = eventTypeCatalog.get(typeName);
 		}
 
@@ -218,6 +217,9 @@ public class EsperProcessingService implements EventProcessingService {
 				//XXX: TEMP
 				Map<String, Object> config = new HashMap<String, Object>();
 				config.put("adapter-id", "AMPQAdapter");
+				this.eventDistribuitionService.exportEvents(eventType, config);
+				
+				config.put("adapter-id", "RedisAdapter");
 				this.eventDistribuitionService.exportEvents(eventType, config);
 				//this.eventDistribuitionService.importEvents(eventType, null);
 				//XXX: TEMP
