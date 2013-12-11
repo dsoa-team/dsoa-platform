@@ -45,6 +45,19 @@ public class Event {
 		return data.get(name);
 	}
 
+	public boolean isRemote() {
+		Property remoteProperty = this.getMetadataProperty("remote");
+		boolean remote = (Boolean) ((remoteProperty == null) ? false : remoteProperty.getValue());
+
+		return remote;
+	}
+
+	public void setRemote() {
+		PropertyType remote = this.getEventType().getMetadataPropertyType("remote");
+		Property isRemote = remote.createProperty(true);
+		this.metadata.put("remote", isRemote);
+	}
+
 	/**
 	 * Represents a platform event as a map
 	 * 
@@ -55,16 +68,14 @@ public class Event {
 
 		if (!metadata.isEmpty()) {
 			for (Property property : metadata.values()) {
-				eventMap.put(property.getPropertyType().getFullname(),
-						property.getValue());
+				eventMap.put(property.getPropertyType().getFullname(), property.getValue());
 			}
 		}
 
 		// data
 		if (!data.isEmpty()) {
 			for (Property property : data.values()) {
-				eventMap.put(property.getPropertyType().getFullname(),
-						property.getValue());
+				eventMap.put(property.getPropertyType().getFullname(), property.getValue());
 			}
 		}
 
@@ -95,8 +106,7 @@ public class Event {
 
 	@Override
 	public String toString() {
-		return "Event [eventType=" + eventType.getName() + ", data=" + data
-				+ "]";
+		return "Event [eventType=" + eventType.getName() + ", data=" + data + "]";
 	}
 
 	private List<Property> getPropertyList(Map<String, Property> properties) {
@@ -108,35 +118,26 @@ public class Event {
 	}
 
 	private void validate() throws IllegalArgumentException {
-		List<PropertyType> requiredHeaderTypes = eventType
-				.getRequiredMetadataAttributeTypeList();
-		List<PropertyType> optionalHeaderTypes = eventType
-				.getOptionalMetadataAttributeTypeList();
+		List<PropertyType> requiredHeaderTypes = eventType.getRequiredMetadataAttributeTypeList();
+		List<PropertyType> optionalHeaderTypes = eventType.getOptionalMetadataAttributeTypeList();
 		List<Property> headerAttributes = this.getMetadataProperties();
 
-		List<PropertyType> requiredApplicationTypes = eventType
-				.getRequiredDataAttributeTypeList();
-		List<PropertyType> optionalApplicationTypes = eventType
-				.getOptionalDataAttributeTypeList();
+		List<PropertyType> requiredApplicationTypes = eventType.getRequiredDataAttributeTypeList();
+		List<PropertyType> optionalApplicationTypes = eventType.getOptionalDataAttributeTypeList();
 		List<Property> aplicationAttributes = this.getDataProperties();
 
-		this.validate(requiredHeaderTypes, optionalHeaderTypes,
-				headerAttributes);
-		this.validate(requiredApplicationTypes, optionalApplicationTypes,
-				aplicationAttributes);
+		this.validate(requiredHeaderTypes, optionalHeaderTypes, headerAttributes);
+		this.validate(requiredApplicationTypes, optionalApplicationTypes, aplicationAttributes);
 
-		if (!(requiredHeaderTypes.isEmpty() && requiredApplicationTypes
-				.isEmpty())) {
+		if (!(requiredHeaderTypes.isEmpty() && requiredApplicationTypes.isEmpty())) {
 			throw new IllegalArgumentException(
-					"Invalid event! These attributes are required: Headers: "
-							+ requiredHeaderTypes + " Application: "
-							+ requiredApplicationTypes);
+					"Invalid event! These attributes are required: Headers: " + requiredHeaderTypes
+							+ " Application: " + requiredApplicationTypes);
 		} else {
 			if (!(headerAttributes.isEmpty() && aplicationAttributes.isEmpty())) {
 				throw new IllegalArgumentException(
 						"Invalid event! These attributes are not declared: Headers: "
-								+ headerAttributes + " Application: "
-								+ aplicationAttributes);
+								+ headerAttributes + " Application: " + aplicationAttributes);
 			}
 		}
 	}
@@ -151,8 +152,7 @@ public class Event {
 				if (requiredAttributeTypes.contains(property.getPropertyType())) {
 					requiredAttributeTypes.remove(property.getPropertyType());
 					attItr.remove();
-				} else if (optionalAttributeTypes.contains(property
-						.getPropertyType())) {
+				} else if (optionalAttributeTypes.contains(property.getPropertyType())) {
 					optionalAttributeTypes.remove(property);
 					attItr.remove();
 				}

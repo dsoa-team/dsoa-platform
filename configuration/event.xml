@@ -5,6 +5,7 @@
 			<property id="id" type="java.lang.String" generated="true" required="true" />
 			<property id="source" type="java.lang.String" required="true" />
 			<property id="timestamp" type="java.lang.Long" generated="true" />
+			<property id="remote" type="java.lang.Boolean" />
 		</metadata>
 	</event>
 	

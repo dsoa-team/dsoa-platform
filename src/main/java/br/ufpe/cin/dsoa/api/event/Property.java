@@ -1,5 +1,7 @@
 package br.ufpe.cin.dsoa.api.event;
 
+import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -40,12 +42,18 @@ public class Property {
 			Class<?> type = this.propertyType.getType();
 			if (!type.isAssignableFrom(value.getClass())) {
 				//XXX: try cast values to their default event types
-				try {
-					value = propertyType.getType().cast(value);
-				} catch (ClassCastException e) {
-					throw new IllegalArgumentException("Value " + value + " is not an instance of "
-							+ type);
-				}
+					if(this.propertyType.getType().equals(Long.class)){
+						try {
+							BigDecimal bd = new BigDecimal(value+"");
+							value = bd.longValue();
+						} catch (ClassCastException e) {
+							throw new IllegalArgumentException("Value " + value + " is not an instance of "
+									+ type);
+						}
+					} else {
+						throw new IllegalArgumentException("Value " + value + " is not an instance of "
+								+ type);	
+					}
 			}
 		}
 	}

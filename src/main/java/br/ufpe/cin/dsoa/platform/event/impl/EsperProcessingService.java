@@ -1,5 +1,6 @@
 package br.ufpe.cin.dsoa.platform.event.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.xml.bind.JAXBException;
 import org.osgi.framework.BundleContext;
 
 import br.ufpe.cin.dsoa.api.event.Event;
+import br.ufpe.cin.dsoa.api.event.EventAdapter;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
@@ -24,6 +26,7 @@ import br.ufpe.cin.dsoa.api.event.agent.Processing;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingQuery;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
+import br.ufpe.cin.dsoa.platform.event.EventAdapterCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.util.Constants;
@@ -57,6 +60,8 @@ public class EsperProcessingService implements EventProcessingService {
 
 	private EventTypeCatalog eventTypeCatalog;
 
+	private EventAdapterCatalog eventAdapterCatalog;
+	
 	private AgentCatalog agentCatalog;
 
 	private EventDistribuitionService eventDistribuitionService;
@@ -215,13 +220,17 @@ public class EsperProcessingService implements EventProcessingService {
 			if (!eventType.isPrimitive()) {
 				
 				//XXX: TEMP
-				Map<String, Object> config = new HashMap<String, Object>();
-				config.put("adapter-id", "AMPQAdapter");
-				this.eventDistribuitionService.exportEvents(eventType, config);
-				
-				config.put("adapter-id", "RedisAdapter");
-				this.eventDistribuitionService.exportEvents(eventType, config);
-				//this.eventDistribuitionService.importEvents(eventType, null);
+				Collection<EventAdapter> adapters = this.eventAdapterCatalog.getAdapters();
+				if(!adapters.isEmpty()) {
+					Map<String, Object> config = new HashMap<String, Object>();
+
+					for(EventAdapter adapter : adapters) {
+						
+						config.put(Constants.ADAPTER_ID, adapter.getId());
+						this.eventDistribuitionService.exportEvents(eventType, config);
+						this.eventDistribuitionService.importEvents(eventType, config);
+					}
+				}
 				//XXX: TEMP
 				
 				

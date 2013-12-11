@@ -104,6 +104,7 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 
 			@Override
 			public void handleEvent(Event event) {
+				event.setRemote();
 				postEvent(event);
 			}
 
@@ -127,7 +128,9 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 		subscribe(new EventConsumer() {
 
 			public void handleEvent(Event event) {
-				adapter.exportEvent(event, configuration);
+				if(!event.isRemote()){
+					adapter.exportEvent(event, configuration);
+				}
 			}
 
 			public String getId() {
@@ -218,6 +221,7 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 					Map<String, Object> config = new HashMap<String, Object>();
 					config.put(Constants.ADAPTER_ID, registerdAdapter.getId());
 					exportEvents(eventType, config);
+					importEvents(eventType, config);
 				}
 			}
 			//XXX: TEMP
