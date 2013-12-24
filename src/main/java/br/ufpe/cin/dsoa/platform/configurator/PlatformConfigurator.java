@@ -5,11 +5,11 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
+import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
-import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 import br.ufpe.cin.dsoa.util.Constants;
 
@@ -58,8 +58,7 @@ public class PlatformConfigurator {
 			e.printStackTrace();
 			throw new IllegalStateException("Internal error configuring DSOA Platform: ");
 		}
-		this.configurePrimitiveEvents();
-		
+
 		tracker = new ServiceTracker(context, managedFilter, new DsoaServiceTracker(resourceManager));
 		tracker.open();
 		
@@ -71,31 +70,6 @@ public class PlatformConfigurator {
 		listener.setEventTypeCatalog(eventTypeCatalog);
 		listener.setResourceManager(resourceManager);
 		listener.open();
-	}
-
-	private void configurePrimitiveEvents() {
-/*		List<PropertyType> metadata = new ArrayList<PropertyType>();
-		List<PropertyType> data = new ArrayList<PropertyType>();
-
-		//add metadata
-		metadata.add(new PropertyType("id", String.class, true));
-		metadata.add(new PropertyType("timestamp", Long.class, true));
-		
-		//add data
-		data.add(new PropertyType("consumerId", String.class, false));
-		data.add(new PropertyType("serviceId", String.class, true));
-		data.add(new PropertyType("operationName", String.class, true));
-		data.add(new PropertyType("requestTimestamp", Long.class, true));
-		data.add(new PropertyType("responseTimestamp", Long.class, true));
-		data.add(new PropertyType("parameterTypes", Class[].class,	true));
-		data.add(new PropertyType("parameterValues", Object[].class, true));
-		data.add(new PropertyType("returnType", Class.class, true));
-		data.add( new PropertyType("returnValue", Object.class, true));
-		data.add(new PropertyType("success", Boolean.class, true));
-		data.add(new PropertyType("exception", Exception.class, false));
-		
-		EventType avgResponseTimeEventType = new EventType(Constants.INVOCATION_EVENT, metadata, data);
-		epService.registerEventType(avgResponseTimeEventType);*/
 	}
 
 	public void stop() throws Exception {

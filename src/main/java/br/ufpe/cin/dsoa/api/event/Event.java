@@ -12,9 +12,8 @@ public class Event {
 	private EventType eventType;
 	private Map<String, Property> metadata;
 	private Map<String, Property> data;
-	
-	public Event(EventType eventType,
-			Map<String, Property> metadataProperties,
+
+	public Event(EventType eventType, Map<String, Property> metadataProperties,
 			Map<String, Property> dataProperties) {
 		super();
 		this.eventType = eventType;
@@ -37,18 +36,36 @@ public class Event {
 		}
 		return property;
 	}
-	
+
 	public Property getMetadataProperty(String name) {
 		return metadata.get(name);
 	}
-	
+
 	public Property getDataProperty(String name) {
 		return data.get(name);
 	}
-	
+
+	public boolean isRemote() {
+		Property remoteProperty = this.getMetadataProperty("remote");
+		boolean remote = (Boolean) ((remoteProperty == null) ? false : remoteProperty.getValue());
+
+		return remote;
+	}
+
+	public void setRemote() {
+		PropertyType remote = this.getEventType().getMetadataPropertyType("remote");
+		Property isRemote = remote.createProperty(true);
+		this.metadata.put("remote", isRemote);
+	}
+
+	/**
+	 * Represents a platform event as a map
+	 * 
+	 * @return
+	 */
 	public final Map<String, Object> toMap() {
 		Map<String, Object> eventMap = new HashMap<String, Object>();
-		
+
 		if (!metadata.isEmpty()) {
 			for (Property property : metadata.values()) {
 				eventMap.put(property.getPropertyType().getFullname(), property.getValue());
@@ -61,32 +78,31 @@ public class Event {
 				eventMap.put(property.getPropertyType().getFullname(), property.getValue());
 			}
 		}
-		
+
 		eventMap.put(Constants.EVENT_TYPE, eventType.getName());
-		
+
 		return eventMap;
 	}
 
 	public List<Property> getMetadataProperties() {
 		return getPropertyList(metadata);
 	}
-	
+
 	public List<Property> getDataProperties() {
 		return getPropertyList(data);
 	}
-	
-	public Map<String, Property> getMetadata(){
+
+	public Map<String, Property> getMetadata() {
 		return this.metadata;
 	}
-	
-	public Map<String, Property> getData(){
+
+	public Map<String, Property> getData() {
 		return this.data;
 	}
-	
-	public String get(String key){
+
+	public String get(String key) {
 		return this.metadata.get("key").getValue().toString();
 	}
-	
 
 	@Override
 	public String toString() {
@@ -100,29 +116,34 @@ public class Event {
 		}
 		return attList;
 	}
-	
+
 	private void validate() throws IllegalArgumentException {
 		List<PropertyType> requiredHeaderTypes = eventType.getRequiredMetadataAttributeTypeList();
 		List<PropertyType> optionalHeaderTypes = eventType.getOptionalMetadataAttributeTypeList();
 		List<Property> headerAttributes = this.getMetadataProperties();
-		
+
 		List<PropertyType> requiredApplicationTypes = eventType.getRequiredDataAttributeTypeList();
 		List<PropertyType> optionalApplicationTypes = eventType.getOptionalDataAttributeTypeList();
 		List<Property> aplicationAttributes = this.getDataProperties();
-		
+
 		this.validate(requiredHeaderTypes, optionalHeaderTypes, headerAttributes);
 		this.validate(requiredApplicationTypes, optionalApplicationTypes, aplicationAttributes);
 
-		if ( !(requiredHeaderTypes.isEmpty() && requiredApplicationTypes.isEmpty()) ){
-			throw new IllegalArgumentException("Invalid event! These attributes are required: Headers: "  + requiredHeaderTypes + " Application: " + requiredApplicationTypes);
+		if (!(requiredHeaderTypes.isEmpty() && requiredApplicationTypes.isEmpty())) {
+			throw new IllegalArgumentException(
+					"Invalid event! These attributes are required: Headers: " + requiredHeaderTypes
+							+ " Application: " + requiredApplicationTypes);
 		} else {
-			if (!(headerAttributes.isEmpty() && aplicationAttributes.isEmpty()) ) {
-				throw new IllegalArgumentException("Invalid event! These attributes are not declared: Headers: "  + headerAttributes + " Application: " + aplicationAttributes);
+			if (!(headerAttributes.isEmpty() && aplicationAttributes.isEmpty())) {
+				throw new IllegalArgumentException(
+						"Invalid event! These attributes are not declared: Headers: "
+								+ headerAttributes + " Application: " + aplicationAttributes);
 			}
 		}
 	}
-	
-	private void validate(List<PropertyType> requiredAttributeTypes, List<PropertyType> optionalAttributeTypes, List<Property> attList) {
+
+	private void validate(List<PropertyType> requiredAttributeTypes,
+			List<PropertyType> optionalAttributeTypes, List<Property> attList) {
 		Iterator<Property> attItr = null;
 		if (attList != null) {
 			attItr = attList.iterator();
@@ -131,11 +152,11 @@ public class Event {
 				if (requiredAttributeTypes.contains(property.getPropertyType())) {
 					requiredAttributeTypes.remove(property.getPropertyType());
 					attItr.remove();
-				} else if (optionalAttributeTypes.contains(property.getPropertyType())){
+				} else if (optionalAttributeTypes.contains(property.getPropertyType())) {
 					optionalAttributeTypes.remove(property);
 					attItr.remove();
 				}
 			}
 		}
 	}
-}	
+}

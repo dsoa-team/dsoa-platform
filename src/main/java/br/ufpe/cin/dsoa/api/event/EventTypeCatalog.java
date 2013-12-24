@@ -1,9 +1,7 @@
-package br.ufpe.cin.dsoa.platform.event;
+package br.ufpe.cin.dsoa.api.event;
 
 import java.util.Collection;
 
-import br.ufpe.cin.dsoa.api.event.EventType;
-import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
 
 public interface EventTypeCatalog {
 

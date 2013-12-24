@@ -17,6 +17,8 @@ public interface EventProcessingService {
 	
 	public void subscribe(EventConsumer consumer, Subscription subscription, boolean shared);
 	
+	public void subscribe(EventConsumer consumer, Subscription subscription);
+	
 	public void unsubscribe(EventConsumer consumer, Subscription subscription);
 	
 	public void registerAgent(EventProcessingAgent agent);

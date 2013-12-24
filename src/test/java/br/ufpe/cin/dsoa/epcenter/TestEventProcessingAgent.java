@@ -26,13 +26,13 @@ import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.event.EventFilter;
 import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.Subscription;
 import br.ufpe.cin.dsoa.api.service.Expression;
 import br.ufpe.cin.dsoa.epcenter.helper.EventProducerMock;
 import br.ufpe.cin.dsoa.epcenter.helper.HelperEpCenterTest;
 import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
-import br.ufpe.cin.dsoa.platform.event.EventTypeCatalog;
 
 @RunWith(JUnit4TestRunner.class)
 public class TestEventProcessingAgent {
