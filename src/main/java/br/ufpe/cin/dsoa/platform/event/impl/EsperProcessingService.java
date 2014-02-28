@@ -169,15 +169,16 @@ public class EsperProcessingService implements EventProcessingService {
 			public void update(EventBean[] newEvents, EventBean[] oldEvents,
 					EPStatement statement, EPServiceProvider epServiceProvider) {
 
-				for (EventBean e : newEvents) {
-					Object event = e.getUnderlying();
-					String eventTypeName = e.getEventType().getName();
+				EventBean e = newEvents[0];
+				System.out.println("ENTRA");
+				System.out.println(e);
+				Object event = e.getUnderlying();
+				String eventTypeName = e.getEventType().getName();
 
-					@SuppressWarnings("unchecked")
-					Event dsoaEvent = convertEsperEvent(eventTypeName,
-							(Map<String, Object>) event);
-					consumer.handleEvent(dsoaEvent);
-				}
+				@SuppressWarnings("unchecked")
+				Event dsoaEvent = convertEsperEvent(eventTypeName,
+						(Map<String, Object>) event);
+				consumer.handleEvent(dsoaEvent);
 			}
 		});
 	}
