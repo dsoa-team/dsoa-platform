@@ -170,8 +170,6 @@ public class EsperProcessingService implements EventProcessingService {
 					EPStatement statement, EPServiceProvider epServiceProvider) {
 
 				EventBean e = newEvents[0];
-				System.out.println("ENTRA");
-				System.out.println(e);
 				Object event = e.getUnderlying();
 				String eventTypeName = e.getEventType().getName();
 
