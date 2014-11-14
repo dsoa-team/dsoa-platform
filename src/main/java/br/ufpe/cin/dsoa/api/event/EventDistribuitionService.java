@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.platform.event;
+package br.ufpe.cin.dsoa.api.event;
 
 import java.util.Map;
 
@@ -20,6 +20,8 @@ public interface EventDistribuitionService {
 	public void postEvent(Event event);
 
 	public void subscribe(EventConsumer consumer, EventType eventType);
+	
+	public void subscribe(EventConsumer consumer, EventType eventType, Map<String, Object> configuration);
 
 	public void importEvents(EventType eventType, Map<String, Object> configuration);
 

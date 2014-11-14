@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.platform.event;
+package br.ufpe.cin.dsoa.api.event;
 
 import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;

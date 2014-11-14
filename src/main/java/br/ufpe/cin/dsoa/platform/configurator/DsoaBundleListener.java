@@ -21,6 +21,7 @@ import br.ufpe.cin.dsoa.api.attribute.AttributeList;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperList;
+import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
@@ -34,7 +35,6 @@ import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCategoryAdapter;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
-import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 
 /**

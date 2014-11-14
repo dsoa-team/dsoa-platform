@@ -9,9 +9,9 @@ import javax.management.MBeanRegistrationException;
 import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 
+import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 import br.ufpe.cin.dsoa.api.service.Service;
-import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.management.ManagementInfomationBase;
 import br.ufpe.cin.dsoa.platform.management.jmx.ServiceMBean;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;

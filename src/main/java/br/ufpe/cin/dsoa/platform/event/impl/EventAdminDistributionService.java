@@ -18,11 +18,11 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventAdapter;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.api.event.Subscription;
 import br.ufpe.cin.dsoa.platform.event.EventAdapterCatalog;
-import br.ufpe.cin.dsoa.platform.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class EventAdminDistributionService implements EventDistribuitionService {
@@ -86,6 +86,37 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 			}
 		}, props);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void subscribe(final EventConsumer consumer, final EventType eventType,
+			Map<String, Object> configuration) {
+		
+		final String topic = String.format("%s/*", eventType.getName());
+
+		@SuppressWarnings("rawtypes")
+		Hashtable props = new Hashtable();
+		props.put(EventConstants.EVENT_TOPIC, new String[] { topic });
+		
+		//TODO: embutir mapa de filtros no mapa configuration (deixar o configuration mais generico) 
+		//filter remote
+		if(configuration.containsKey(Constants.REMOTE)){
+			String filter = String.format("(%s=%s)", Constants.REMOTE, configuration.get(Constants.REMOTE));
+			props.put(EventConstants.EVENT_FILTER, filter);
+		}
+
+		context.registerService(EventHandler.class.getName(), new EventHandler() {
+
+			@Override
+			public void handleEvent(org.osgi.service.event.Event event) {
+				Map<String, Object> rawEvent = (Map<String, Object>) event.getProperty(eventType
+						.getName());
+				Event dsoaEvent = eventType.createEvent(rawEvent);
+				consumer.handleEvent(dsoaEvent);
+			}
+		}, props);
+	}
+	
 
 	@Override
 	public void importEvents(final EventType eventType, Map<String, Object> configuration) {
@@ -187,6 +218,8 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 
 			Map<String, Object> eventTable = new HashMap<String, Object>();
 			eventTable.put(eventTypeName, dsoaEvent.toMap());
+			eventTable.put(Constants.REMOTE, dsoaEvent.isRemote());
+			//TODO: add event data and metadata (permitir filtros sobre os campos dos eventos diretamente do event admin) 
 			eventAdmin.postEvent(new org.osgi.service.event.Event(topic, eventTable));
 		}
 	}

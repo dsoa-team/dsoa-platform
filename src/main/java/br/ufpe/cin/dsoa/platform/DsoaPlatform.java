@@ -1,14 +1,13 @@
 package br.ufpe.cin.dsoa.platform;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.event.EventAdmin;
 
+import br.ufpe.cin.dsoa.api.event.EventDistribuitionService;
+import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
-import br.ufpe.cin.dsoa.platform.event.EventDistribuitionService;
-import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.platform.monitor.ProxyFactory;
 import br.ufpe.cin.dsoa.platform.registry.ServiceRegistry;

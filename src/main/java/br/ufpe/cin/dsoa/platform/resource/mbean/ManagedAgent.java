@@ -10,10 +10,10 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 
+import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 import br.ufpe.cin.dsoa.api.event.agent.InputEvent;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
-import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 
 public class ManagedAgent implements ManagedAgentMBean {
 

@@ -3,7 +3,6 @@ package br.ufpe.cin.dsoa.epcenter;
 import static org.ops4j.pax.exam.CoreOptions.bundle;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.vmOption;
 
 import javax.xml.bind.JAXBException;
 
@@ -14,17 +13,16 @@ import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.options.TimeoutOption;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.api.event.Event;
+import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.epcenter.helper.EventProducerMock;
 import br.ufpe.cin.dsoa.epcenter.helper.HelperEpCenterTest;
-import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 
 @RunWith(JUnit4TestRunner.class)
 public class TestMonitorable {

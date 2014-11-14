@@ -13,6 +13,8 @@ import org.osgi.framework.BundleContext;
 import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventAdapter;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.event.EventDistribuitionService;
+import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
@@ -27,8 +29,6 @@ import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingQuery;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventAdapterCatalog;
-import br.ufpe.cin.dsoa.platform.event.EventDistribuitionService;
-import br.ufpe.cin.dsoa.platform.event.EventProcessingService;
 import br.ufpe.cin.dsoa.util.Constants;
 import br.ufpe.cin.dsoa.util.Util;
 
@@ -232,12 +232,30 @@ public class EsperProcessingService implements EventProcessingService {
 				}
 				//XXX: TEMP
 				
+				Map<String, Object> subscriptionConfig = new HashMap<String, Object>();
+				subscriptionConfig.put(Constants.REMOTE, true);
+				this.eventDistribuitionService.subscribe(new EventConsumer() {
+					
+					@Override
+					public void handleEvent(Event event) {
+						publish(event);
+					}
+					
+					@Override
+					public String getId() {
+						return String.format("dsoa-%s", eventType.getName());
+					}
+				}, eventType, subscriptionConfig);
 				
+				//TODO: Verificar se vai continuar aqui essa subscription (eventos
+				//derivados devem voltar ao EDS?)
 				this.subscribe(new EventConsumer() {
 
 					@Override
 					public void handleEvent(Event event) {
-						eventDistribuitionService.postEvent(event);
+						if(!event.isRemote()) { 
+							eventDistribuitionService.postEvent(event);
+						}
 					}
 
 					@Override

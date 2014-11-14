@@ -60,6 +60,7 @@ public interface Constants {
 	public static final String SERVICE_INTERFACE		= "serviceInterface";
 	public static final Object METADATA_TIMESTAMP 		= "timestamp";
 	public static final Object METADATA_ID 				= "id";
+	public static final String REMOTE					= "remote";
 	
 	public static final String CONTEXT_NAME = "PartitionedByEventSource";
 }
