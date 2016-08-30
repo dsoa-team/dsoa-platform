@@ -174,9 +174,15 @@ public class OsgiServiceRegistry extends AbstractServiceRegistry {
 		new ServiceTracker(this.context, reference, null) {
 			@Override
 			public void removedService(ServiceReference reference, Object service) {
-				listener.onDeparture((Service) service);
-				super.removedService(reference, service);
-				this.close();
+				try {
+					listener.onDeparture(OsgiService.getOsgiService(listener.getServiceInterface(), reference));
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} finally {
+					super.removedService(reference, service);
+					this.close();
+				}
 			}
 		}.open();
 	}

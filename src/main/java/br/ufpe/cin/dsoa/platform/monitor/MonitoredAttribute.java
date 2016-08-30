@@ -61,7 +61,10 @@ public class MonitoredAttribute implements AttributeChangeListener {
 	@Override
 	public void update(AttributeValue value) {
 		this.attributeValue = value;
-		this.getMonitorListener().updated(this.monitoredServicePid, this.getStatusVariable());
+		MonitorListener listener = this.getMonitorListener();
+		if (listener != null) {
+			listener.updated(this.monitoredServicePid, this.getStatusVariable());
+		}
 	}
 	
 	private MonitorListener getMonitorListener(){

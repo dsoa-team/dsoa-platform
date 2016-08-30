@@ -19,8 +19,6 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	 */
 	private Dependency dependency;
 
-	private DsoaPlatform dsoa;
-
 	private Analyzer analyzer;
 
 	private Monitor monitor;
@@ -29,13 +27,10 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 	public DependencyManager(Dependency dependency) {
 		this.dependency = dependency;
-		this.dsoa = dependency.getHandler().getDsoaPlatform();
-
-		this.initializeControlLoop();
 	}
 
 	private void initializeControlLoop() {
-		this.monitor = new Monitor(this.dsoa);
+		this.monitor = new Monitor(this);
 		this.analyzer = new Analyzer();
 		this.planner = new Planner();
 	}
@@ -45,13 +40,18 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 		this.monitor.instrument(dependency);
 
 		// configure analyzer
-		this.analyzer.setPlatform(dsoa);
+		this.analyzer.setPlatform(getDsoaPlatform());
 
 		// configure planner
 		this.planner.setDependencyManager(this);
 	}
 
+	public DsoaPlatform getDsoaPlatform() {
+		return dependency.getHandler().getDsoaPlatform();
+	}
+	
 	public void start() {
+		this.initializeControlLoop();
 		this.configureControlLoop();
 		this.resolve();
 	}
@@ -62,7 +62,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 
 	public void resolve() {
 		System.err.println("dependency state: " + dependency.isValid());
-		dsoa.getServiceRegistry().getBestService(dependency.getSpecification(),
+		dependency.getHandler().getDsoaPlatform().getServiceRegistry().getBestService(dependency.getSpecification(),
 				dependency.getBlackList(), this);
 	}
 
@@ -147,7 +147,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 		Map<String, Object> metadata = new HashMap<String, Object>();
 		metadata.put(Constants.EVENT_SOURCE, dependency.getId());
 
-		dsoa.getEventDistribuitionService().postEvent(eventTypeName, metadata, data);
+		dependency.getHandler().getDsoaPlatform().getEventDistribuitionService().postEvent(eventTypeName, metadata, data);
 		
 	}
 }

@@ -1,5 +1,6 @@
 package br.ufpe.cin.dsoa.platform.monitor.impl;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +98,9 @@ public class MonitoringServiceImpl implements MonitoringService {
 				String operation = attributeConstraint.getOperation();
 				String attributeId = attributeConstraint.getAttributeId();
 				Attribute attribute = this.attributeCatalog.getAttribute(attributeId);
+				if (attribute == null) {
+					throw new InvalidParameterException("Attribute doesn't exists.");
+				}
 
 				this.addMonitoredAttribute(monitoredService, attribute, operation);
 

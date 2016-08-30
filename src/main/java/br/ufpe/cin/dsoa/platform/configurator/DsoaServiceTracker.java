@@ -32,7 +32,7 @@ public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 
 	/**
 	 * This method is called when a service is registered and it has a property
-	 * with name monitored.service set. It is responsible for parsing the
+	 * with name service.managed set. It is responsible for parsing the
 	 * metrics that should be monitored (indicated through the service's
 	 * properties) and starting monitoring them. To do that, it creates proxy
 	 * service that intercepts requests and creates an InvocationEvent that is

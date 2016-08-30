@@ -1,10 +1,14 @@
 package br.ufpe.cin.dsoa.platform.monitor;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.FileHandler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import br.ufpe.cin.dsoa.api.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.api.service.Service;
@@ -21,8 +25,34 @@ import br.ufpe.cin.dsoa.util.Constants;
  */
 public class DynamicProxyFactory implements ProxyFactory {
 
+	private Logger invocationLogger;
+	private FileHandler invocationLogFile;
 	
 	private EventDistribuitionService distribuitionService;
+	
+	public DynamicProxyFactory() {
+		java.util.logging.Formatter f = new java.util.logging.Formatter() {
+
+			public String format(LogRecord record) {
+				StringBuilder builder = new StringBuilder(1000);
+				builder.append(formatMessage(record));
+				builder.append("\n");
+				return builder.toString();
+			}
+		};
+
+		invocationLogger = Logger.getLogger("InvocationProxyLogger");
+		try {
+			invocationLogFile = new FileHandler("invocationProxy.log");
+			invocationLogFile.setFormatter(f);
+			invocationLogger.addHandler(invocationLogFile);
+			
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public Object getProxy(String consumerId, Service service) {
 		DynamicProxy dynaProxy = new DynamicProxy(consumerId, service);
@@ -61,7 +91,7 @@ public class DynamicProxyFactory implements ProxyFactory {
 			} catch (NoSuchMethodException e) {
 				throw new NoSuchMethodError(e.getMessage());
 			}
-
+			
 		}
 
 		/**
@@ -137,6 +167,7 @@ public class DynamicProxyFactory implements ProxyFactory {
 								requestTime, responseTime, success, exceptionClassName,
 								exceptionMessage, parameterTypes, parameterValues, returnType,
 								result);
+						invocationLogger.info(service.getProviderId()+","+ System.currentTimeMillis()+"," + (responseTime - requestTime));
 					}
 				}
 			}
