@@ -73,7 +73,7 @@ public class ManagedAgent implements ManagedAgentMBean {
 	}
 
 	public void update() {
-		epService.unRegisterAgent(this.getId());
+		epService.unregisterAgent(this.getId());
 		epService.registerAgent(this.agent);
 	}
 

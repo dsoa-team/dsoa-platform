@@ -1,9 +1,7 @@
 package br.ufpe.cin.dsoa.platform.configurator;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -57,8 +55,8 @@ public class DsoaFindHook implements FindHook {
 			return;
 		}
 
-		ClassLoader cl = this.getClass().getClassLoader();
-		List<ServiceReference> proxies = new ArrayList<ServiceReference>(); 
+		//ClassLoader cl = this.getClass().getClassLoader();
+		//List<ServiceReference> proxies = new ArrayList<ServiceReference>(); 
 		ServiceReference reference = null;
 		for (Iterator<?> it = references.iterator(); it.hasNext();) {
 			reference = (ServiceReference) it.next();

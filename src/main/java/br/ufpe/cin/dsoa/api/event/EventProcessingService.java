@@ -23,6 +23,6 @@ public interface EventProcessingService {
 	
 	public void registerAgent(EventProcessingAgent agent);
 	
-	public void unRegisterAgent(String agentId);
+	public void unregisterAgent(String agentId);
 	
 }

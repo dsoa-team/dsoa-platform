@@ -1,6 +1,8 @@
 package br.ufpe.cin.dsoa.util;
 
 public interface Constants {
+	
+	public static final String DSOA_PREFIX	= "DSOA";
 	/**
 	 * Tag Component
 	 */

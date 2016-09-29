@@ -23,6 +23,7 @@ import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.DsoaPlatform;
 import br.ufpe.cin.dsoa.util.Constants;
+import br.ufpe.cin.dsoa.util.DsoaSimpleLogger;
 
 public class DependencyHandler extends PrimitiveHandler {
 
@@ -38,7 +39,7 @@ public class DependencyHandler extends PrimitiveHandler {
 	
 	private DsoaPlatform dsoa;
 	
-	private Logger log = Logger.getLogger(DependencyHandler.class.getName());
+	private Logger log = DsoaSimpleLogger.getDsoaLogger(DependencyHandler.class.getName(), true, false);
 	
 	@SuppressWarnings("rawtypes")
 	@Override

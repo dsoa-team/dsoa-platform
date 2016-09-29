@@ -1,7 +1,11 @@
 package br.ufpe.cin.dsoa.platform.handler.dependency.manager;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.FileHandler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
 import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
@@ -24,9 +28,31 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	private Monitor monitor;
 
 	private Planner planner;
+	
+	private Logger logger;
+	private FileHandler adaptationLogFile;	
 
 	public DependencyManager(Dependency dependency) {
 		this.dependency = dependency;
+		java.util.logging.Formatter f = new java.util.logging.Formatter() {
+
+			public String format(LogRecord record) {
+				StringBuilder builder = new StringBuilder(1000);
+				builder.append(formatMessage(record));
+				builder.append("\n");
+				return builder.toString();
+			}
+		};
+		logger = Logger.getLogger("DependencyManagerLog");
+		try {
+			adaptationLogFile = new FileHandler("dependencyManager.log");
+			adaptationLogFile.setFormatter(f);
+			logger.addHandler(adaptationLogFile);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void initializeControlLoop() {
@@ -76,7 +102,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 					this.notifyUnbind();
 					this.dependency.getBlackList().clear();//TODO:REMOVE
 					if (dependency.getService() != null) {
-						this.dependency.getBlackList().add(dependency.getService().getProviderId());
+						//this.dependency.getBlackList().add(dependency.getService().getProviderId());
 						this.dependency.setService(null);
 					}
 				}
@@ -95,7 +121,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 		data.put(Constants.SERVICE_ID, serviceId);
 		data.put(Constants.CONSUMER_ID, consumerId);
 		data.put(Constants.SERVICE_INTERFACE, serviceInterface);
-		
+		logger.info("Unbinding: " + System.currentTimeMillis() + "," + consumerId + ":" + serviceId);
 		this.notify(Constants.UNBIND_EVENT, data);
 	}
 	
@@ -109,7 +135,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 		data.put(Constants.SERVICE_ID, serviceId);
 		data.put(Constants.CONSUMER_ID, consumerId);
 		data.put(Constants.SERVICE_INTERFACE, serviceInterface);
-		
+		logger.info("Binding: " + System.currentTimeMillis() + "," + consumerId + "," + serviceId);
 		this.notify(Constants.BIND_EVENT, data);
 	}
 
@@ -129,6 +155,7 @@ public class DependencyManager implements ServiceListener, AttributeNotification
 	}
 
 	public void onDeparture(Service service) {
+		
 		this.release();
 	}
 

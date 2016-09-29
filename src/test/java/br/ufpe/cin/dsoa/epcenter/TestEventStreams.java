@@ -1,7 +1,5 @@
 package br.ufpe.cin.dsoa.epcenter;
 
-import java.util.Random;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +56,7 @@ public class TestEventStreams implements UpdateListener {
 
 	@Test
 	public void sendEvents() {
-		String provider;
+/*		String provider;
 		String service;
 		String operation;
 		boolean success;
@@ -74,7 +72,7 @@ public class TestEventStreams implements UpdateListener {
 			operation = operations[random.nextInt(operations.length)];
 			success = true;
 			requestTimestamp = i;
-			responseTimestamp = i + n++;
+			responseTimestamp = i + n++;*/
 			//InvocationEvent invocation = new InvocationEvent(provider, service, operation, success, requestTimestamp,
 			//		responseTimestamp);
 			//System.out.println(invocation);
@@ -85,7 +83,7 @@ public class TestEventStreams implements UpdateListener {
 				System.out.println(((EventBean)itr.next()).getUnderlying());
 			}
 			System.out.println("----------------------------------------------------------------------------------------------------------");*/
-		}
+		//}
 	}
 
 	@After

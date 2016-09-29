@@ -25,7 +25,6 @@ import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.api.event.Subscription;
-import br.ufpe.cin.dsoa.epcenter.helper.EventProducerMock;
 import br.ufpe.cin.dsoa.epcenter.helper.HelperEpCenterTest;
 
 @RunWith(JUnit4TestRunner.class)
@@ -36,7 +35,7 @@ public class TestIntrospectionAgent {
 
 	private EventProcessingService epService;
 	private EventTypeCatalog eventTypeCatalog;
-	private EventProducerMock mock;
+	//private EventProducerMock mock;
 
 
 	@Before
@@ -56,8 +55,8 @@ public class TestIntrospectionAgent {
 
 		initializeDsoaPlatform();
 		
-		EventType invocationEvent = eventTypeCatalog.get("InvocationEvent");
-		mock = new EventProducerMock(invocationEvent);
+		//EventType invocationEvent = eventTypeCatalog.get("InvocationEvent");
+		//mock = new EventProducerMock(invocationEvent);
 
 	}
 	

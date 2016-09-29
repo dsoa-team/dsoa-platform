@@ -26,7 +26,7 @@ public class PlatformConfigurator {
 
 	private BundleContext 				context;
 	
-	private DsoaBundleListener 			listener;
+	private DsoaExtensionTracker		extender;
 	private ServiceTracker				tracker;
 	
 	/** 
@@ -59,21 +59,22 @@ public class PlatformConfigurator {
 			throw new IllegalStateException("Internal error configuring DSOA Platform: ");
 		}
 
+		extender = new DsoaExtensionTracker(this.context);
+		extender.setEventProcessingService(this.epService);
+		extender.setAttributeCatalog(this.attributeCatalog);
+		extender.setAttributeEventMapperCatalog(this.attributeEventMapperCatalog);
+		extender.setAgentCatalog(this.agentCatalog);
+		extender.setEventTypeCatalog(eventTypeCatalog);
+		extender.setResourceManager(resourceManager);
+		extender.open();
+		
 		tracker = new ServiceTracker(context, managedFilter, new DsoaServiceTracker(resourceManager));
 		tracker.open();
 		
-		listener = new DsoaBundleListener(this.context);
-		listener.setEventProcessingService(this.epService);
-		listener.setAttributeCatalog(this.attributeCatalog);
-		listener.setAttributeEventMapperCatalog(this.attributeEventMapperCatalog);
-		listener.setAgentCatalog(this.agentCatalog);
-		listener.setEventTypeCatalog(eventTypeCatalog);
-		listener.setResourceManager(resourceManager);
-		listener.open();
 	}
 
 	public void stop() throws Exception {
 		tracker.close();
-		listener.close();
+		extender.close();
 	}
 }

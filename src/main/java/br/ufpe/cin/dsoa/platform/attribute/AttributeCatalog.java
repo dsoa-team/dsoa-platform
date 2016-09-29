@@ -17,6 +17,8 @@ public interface AttributeCatalog {
 	public Collection<Attribute> getAttributes();
 
 	public void addAttribute(Attribute attribute) throws AttributeAlreadyCatalogedException;
+	
+	public void removeAttribute(Attribute attribute);
 
 	public AttributeCategory getCategory(String catId);
 

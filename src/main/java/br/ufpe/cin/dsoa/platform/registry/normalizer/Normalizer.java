@@ -15,6 +15,9 @@ public class Normalizer {
 	private List<AttributeConstraint> slos;
 	private ServiceReference[] references;
 	
+	double[] min = min(slos, references, matrix);
+	double[] max = max(slos, references, matrix);
+	
 	public Normalizer() {}
 	
 	public Normalizer(List<AttributeConstraint> slos, ServiceReference... references) {
@@ -23,10 +26,6 @@ public class Normalizer {
 		this.references = references;
 		this.matrix = mountMatrix(slos, references);
 	}
-	
-	double[] min = min(slos, references, matrix);
-	double[] max = max(slos, references, matrix);
-	
 
 	public double[][] normalizedMatrix(List<AttributeConstraint> slos, ServiceReference[] references) {
 		double[][] normalized =  new double[references.length][slos.size()];

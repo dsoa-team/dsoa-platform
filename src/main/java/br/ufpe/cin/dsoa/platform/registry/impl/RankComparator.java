@@ -11,8 +11,8 @@ public class RankComparator implements Comparator<ServiceReference>{
         Double grade0         = null;
         Double grade1         = null;
         
-            grade0 = (Double) ref0.getProperty("getCotation.ResponseTime");
-            grade1 = (Double) ref1.getProperty("getCotation.ResponseTime");
+            grade0 = (Double) ref0.getProperty("constraint.operation.qos.AvgResponseTime.getCotation.LE");
+            grade1 = (Double) ref1.getProperty("constraint.operation.qos.AvgResponseTime.getCotation.LE");
 
         if (grade0 != null && grade1 != null) {
             return grade0.compareTo(grade1); // Best grade first.

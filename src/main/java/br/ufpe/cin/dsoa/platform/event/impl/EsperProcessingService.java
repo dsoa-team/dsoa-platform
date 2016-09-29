@@ -427,7 +427,7 @@ public class EsperProcessingService implements EventProcessingService {
 	}
 
 	@Override
-	public void unRegisterAgent(String agentId) {
+	public void unregisterAgent(String agentId) {
 		destroyStatement(agentId);
 	}
 

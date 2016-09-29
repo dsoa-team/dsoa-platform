@@ -2,10 +2,10 @@ package br.ufpe.cin.dsoa.platform.monitor.impl;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.osgi.framework.BundleContext;
 
@@ -50,8 +50,6 @@ import br.ufpe.cin.dsoa.util.Constants;
  */
 public class MonitoringServiceImpl implements MonitoringService {
 
-	private Logger log;
-
 	private BundleContext ctx;
 
 	private EventProcessingService eventProcessingService;
@@ -66,9 +64,9 @@ public class MonitoringServiceImpl implements MonitoringService {
 	 */
 	private Map<String, List<MonitoredService>> serviceMonitorsMap = new HashMap<String, List<MonitoredService>>();
 
+
 	public MonitoringServiceImpl(BundleContext ctx) {
 		this.ctx = ctx;
-		this.log = Logger.getLogger(MonitoringService.class.getName());
 	}
 
 	public List<MonitoredService> getMonitoredServices() {
@@ -98,8 +96,15 @@ public class MonitoringServiceImpl implements MonitoringService {
 				String operation = attributeConstraint.getOperation();
 				String attributeId = attributeConstraint.getAttributeId();
 				Attribute attribute = this.attributeCatalog.getAttribute(attributeId);
+				Collection<Attribute> atts = this.attributeCatalog.getAttributes();
+				for(Attribute att : atts) {
+					System.out.println("AttId: " + att.getId());
+					System.out.println("AttName: " + att.getName());
+					System.out.println("AttDesc: " + att.getDescription());
+				}
+				
 				if (attribute == null) {
-					throw new InvalidParameterException("Attribute doesn't exists.");
+					throw new InvalidParameterException("Attribute doesn't exists: " + operation + ":" + attributeId);
 				}
 
 				this.addMonitoredAttribute(monitoredService, attribute, operation);

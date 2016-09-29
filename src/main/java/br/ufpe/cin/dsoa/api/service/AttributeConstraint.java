@@ -122,8 +122,8 @@ public class AttributeConstraint {
 		String keys[] = reference.getPropertyKeys();
 		List<AttributeConstraint> attConstraints = new ArrayList<AttributeConstraint>();
 		for (String key : keys) {
-			Object value = reference.getProperty(key);
 			if (key != null && key.toLowerCase().startsWith(Attribute.SERVICE_CONSTRAINT) || key.toLowerCase().startsWith(Attribute.OPERATION_CONSTRAINT) ) {
+				Object value = reference.getProperty(key);
 				AttributeConstraint attConstraint = AttributeConstraint.parse(key,
 					value);
 				if (attConstraint != null) {

@@ -1,7 +1,11 @@
 package br.ufpe.cin.dsoa.platform.handler.dependency.manager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import br.ufpe.cin.dsoa.api.attribute.AttributableId;
 import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
@@ -26,7 +30,34 @@ public class Analyzer {
 
 	private List<MonitoringRegistration> monitoringRegistrations;
 	private DsoaPlatform dsoa;
+	
+	private FileHandler logFile;
+	private Logger log;
 
+	public Analyzer() {
+		java.util.logging.Formatter f = new java.util.logging.Formatter() {
+
+			public String format(LogRecord record) {
+				StringBuilder builder = new StringBuilder(1000);
+				builder.append(formatMessage(record));
+				builder.append("\n");
+				return builder.toString();
+			}
+		};
+
+		log = Logger.getLogger("AnalyzerLogger");
+		try {
+			logFile = new FileHandler("analyzer.log");
+			logFile.setFormatter(f);
+			log.addHandler(logFile);
+			
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void start(final String componentId, final String servicePid, List<AttributeConstraint> constraints,
 			final AttributeNotificationListener listener) {
 		
@@ -72,7 +103,7 @@ public class Analyzer {
 					public void handleEvent(Event event) {
 
 						AttributeValue value = attMapper.convertToAttribute(event);
-
+						log.info(value.getAttribute().getId() + "," + value.getValue());
 						listener.handleNotification(servicePid, constraint, value);
 					}
 
@@ -87,6 +118,8 @@ public class Analyzer {
 			}
 		}
 	}
+
+	
 
 	public void stop() {
 		

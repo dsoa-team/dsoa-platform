@@ -234,11 +234,11 @@
 		<requires field="agentCatalog" />
 		<requires field="monitoringService" />
 		<requires field="managementInfomationBase" />
-		<provides >
+<!-- 		<provides >
 			<property name="org.apache.cxf.ws.address"   value="http://localhost:9090/ManagementService"  	type="java.lang.String"/>
 			<property name="service.exported.interfaces"  value="*"  type="java.lang.String"/>
 			<property name="service.exported.configs"  value="org.apache.cxf.ws"  type="java.lang.String"/>
-		</provides>
+		</provides> -->
 	</component>
 	
 	<component 	name="Platform.Management.ResourceManagerComponent" 
@@ -246,7 +246,7 @@
 		<requires field="monitoringService" />
 		<requires field="managementInfomationBase" />
 		<requires field="epService" />
-		<requires field="proxyFactory" />
+<!-- 	<requires field="proxyFactory" />  -->
 		<provides />
 	</component>
 	

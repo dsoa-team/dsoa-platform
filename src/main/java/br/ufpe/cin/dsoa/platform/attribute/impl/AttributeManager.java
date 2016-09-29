@@ -42,6 +42,12 @@ public class AttributeManager implements AttributeCatalog, AttributeEventMapperC
 		attribute.getCategory().addAttribute(attribute);
 		this.attributeMap.put(attribute.getId(), attribute);
 	}
+	
+	public synchronized void removeAttribute(Attribute attribute) {
+		if (attribute != null && attribute.getId() != null) {
+			this.attributeMap.remove(attribute.getId());
+		}
+	}
 
 	public AttributeCategory getCategory(String catId) {
 		return attributeCategoryMap.get(catId);

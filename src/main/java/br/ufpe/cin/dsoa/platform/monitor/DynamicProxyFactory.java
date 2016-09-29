@@ -27,7 +27,7 @@ public class DynamicProxyFactory implements ProxyFactory {
 
 	private Logger invocationLogger;
 	private FileHandler invocationLogFile;
-	
+	private Object proxy;
 	private EventDistribuitionService distribuitionService;
 	
 	public DynamicProxyFactory() {
@@ -55,9 +55,12 @@ public class DynamicProxyFactory implements ProxyFactory {
 	}
 	
 	public Object getProxy(String consumerId, Service service) {
-		DynamicProxy dynaProxy = new DynamicProxy(consumerId, service);
-		return java.lang.reflect.Proxy.newProxyInstance(this.getClass().getClassLoader(),
-				new Class[] { service.getSpecification().getClazz() }, dynaProxy);
+		if (this.proxy == null) {
+			DynamicProxy dynaProxy = new DynamicProxy(consumerId, service);
+			proxy = java.lang.reflect.Proxy.newProxyInstance(this.getClass().getClassLoader(),
+					new Class[] { service.getSpecification().getClazz() }, dynaProxy);
+		} 
+		return proxy;
 	}
 
 	class DynamicProxy implements InvocationHandler {

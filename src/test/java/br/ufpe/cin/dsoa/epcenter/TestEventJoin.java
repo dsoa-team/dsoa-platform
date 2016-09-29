@@ -1,6 +1,5 @@
 package br.ufpe.cin.dsoa.epcenter;
 
-import java.util.Map;
 import java.util.Random;
 
 import org.junit.After;

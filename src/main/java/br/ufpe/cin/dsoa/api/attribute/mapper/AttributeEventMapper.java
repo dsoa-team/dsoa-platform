@@ -87,7 +87,7 @@ public class AttributeEventMapper {
 	
 	void afterUnmarshal( Unmarshaller u, Object parent )
     {
-        System.out.println( "After unmarshal: " + parent.getClass() );
+        //System.out.println( "After unmarshal: " + parent.getClass() );
     }
 	
 	public AttributeValue convertToAttribute(Event event) {

@@ -11,6 +11,7 @@ import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.Service;
 import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
+import br.ufpe.cin.dsoa.platform.registry.InvalidServiceSpecificationException;
 import br.ufpe.cin.dsoa.util.Util;
 
 public class OsgiService implements Service {
@@ -29,21 +30,27 @@ public class OsgiService implements Service {
 		return svcList;
 	}
 		
-	public static OsgiService getOsgiService(String spec, ServiceReference reference) throws ClassNotFoundException {
+	public static OsgiService getOsgiService(String spec, ServiceReference reference) {
+		Class<?> clazz;
+		try {
+			clazz = reference.getBundle().loadClass(spec);
+		} catch (ClassNotFoundException e) {
+			throw new InvalidServiceSpecificationException("Could not load service interface", spec); 
+		}
+		
 		List<AttributeConstraint> attConstraints = AttributeConstraint.getAttributeConstraints(reference);
 		NonFunctionalSpecification nonFunctionalSpecification = null;
 		if (!attConstraints.isEmpty()) {
 			nonFunctionalSpecification = new NonFunctionalSpecification(
 					attConstraints);
 		}
-		Class<?> clazz = reference.getBundle().loadClass(spec);
+
 		ServiceSpecification serviceSpec = new ServiceSpecification(clazz, spec, nonFunctionalSpecification);
 		String serviceId = Util.getId(reference);
 		return new OsgiService(serviceId, serviceSpec, reference);
 	}
 	
-	private OsgiService(String id, ServiceSpecification spec, ServiceReference reference)
-			throws ClassNotFoundException {
+	private OsgiService(String id, ServiceSpecification spec, ServiceReference reference) {
 		super();
 		this.serviceId = id;
 		this.spec = spec;

@@ -12,6 +12,13 @@
 			<version>1.8.0</version>
 			<scope>compile</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.felix/org.apache.felix.ipojo.composite -->
+		<dependency>
+		    <groupId>org.apache.felix</groupId>
+		    <artifactId>org.apache.felix.ipojo.composite</artifactId>
+		    <version>1.8.0</version>
+		    <scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.compendium</artifactId>

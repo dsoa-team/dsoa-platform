@@ -1,17 +1,7 @@
 package br.ufpe.cin.dsoa.epcenter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import br.ufpe.cin.dsoa.api.event.Event;
-import br.ufpe.cin.dsoa.api.event.EventType;
-import br.ufpe.cin.dsoa.api.event.Property;
-import br.ufpe.cin.dsoa.api.event.PropertyType;
 
 public class TestEventValidation {
 

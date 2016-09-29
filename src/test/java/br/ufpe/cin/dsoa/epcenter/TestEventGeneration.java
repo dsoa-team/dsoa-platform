@@ -1,15 +1,12 @@
 package br.ufpe.cin.dsoa.epcenter;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +15,6 @@ import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.Property;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
-import br.ufpe.cin.dsoa.api.event.agent.AgentList;
 import br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService;
 
 import com.espertech.esper.client.Configuration;
@@ -166,10 +162,10 @@ public class TestEventGeneration {
 	@Test
 	public void getProcessingAgents() throws JAXBException, FileNotFoundException {
 		
-		JAXBContext context = JAXBContext.newInstance(AgentList.class);
+		/*JAXBContext context = JAXBContext.newInstance(AgentList.class);
 		Unmarshaller u = context.createUnmarshaller();
 		AgentList list = (AgentList) u.unmarshal(new FileInputStream(
-				"src/test/resources/epcenter/configuration/agent.xml"));
+				"src/test/resources/epcenter/configuration/agent.xml"));*/
 		
 		//return list;
 	}

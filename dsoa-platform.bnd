@@ -3,4 +3,6 @@
 --Private-Package: !br.ufpe.cin.dsoa.platform.management, !br.ufpe.cin.dsoa.platform.resource, !br.ufpe.cin.dsoa.api.attribute,!br.ufpe.cin.dsoa.platform.attribute, !br.ufpe.cin.dsoa.api.event, !br.ufpe.cin.dsoa.api.service, !br.ufpe.cin.dsoa.platform.event, br.ufpe.cin.dsoa.*
 Include-Resource: DSOA-INF=src/test/resources/epcenter/configuration, DSOA-INF=configuration
 Export-Package: *
+--Defines DsoaComponentType
+IPOJO-Extension: dsoa-component:br.ufpe.cin.dsoa.platform.component.DsoaComponentType
 DynamicImport-Package: *
