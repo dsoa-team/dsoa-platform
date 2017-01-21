@@ -24,7 +24,7 @@
 		 
 	-->
 	<handler name="provides" namespace="br.ufpe.cin.dsoa" 
-		classname="br.ufpe.cin.dsoa.platform.handler.provider.ProviderManager"  >
+		classname="br.ufpe.cin.dsoa.platform.handler.provider.ProviderHandler"  >
 	</handler>
 
 	<handler name="requires" namespace="br.ufpe.cin.dsoa"

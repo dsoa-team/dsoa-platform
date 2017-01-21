@@ -7,15 +7,16 @@ import java.util.List;
 
 import org.apache.felix.ipojo.metadata.Element;
 
+import br.ufpe.cin.dsoa.platform.component.metadata.DsoaComponentMetadata;
 import br.ufpe.cin.dsoa.platform.handler.provider.capability.PSlo;
 import br.ufpe.cin.dsoa.platform.handler.provider.capability.Profile;
 
 public class ProviderMetadata {
 
-	private String pid;
-	private String name;
-	private double duration;
-	private String unit;
+	private String componentName;
+	private String componentClassname;
+	private String portName;
+	private String portType;
 
 	private List<PSlo> slos;
 	private List<Profile> profiles;
@@ -28,15 +29,16 @@ public class ProviderMetadata {
 	@SuppressWarnings("rawtypes")
 	public void loadMetadata(Element metadata, Dictionary configuration) {
 
+		// Component meta-data
+		this.componentName = metadata.getAttribute(DsoaComponentMetadata.COMPONENT_NAME);
+		this.componentClassname = metadata.getAttribute(DsoaComponentMetadata.COMPONENT_CLASSNAME);
+		
+		// Provided port meta-data
 		Element[] elements = metadata
 				.getElements(HANDLE_NAME, HANDLE_NAMESPACE);
-
-		this.pid = elements[0].getAttribute(PROVIDER_PID_ATTR);
-		this.name = elements[0].getAttribute(PROVIDER_NAME_ATTR);
-		this.duration = Double.parseDouble(elements[0]
-				.getAttribute(PROVIDER_DURATION_ATTR));
-		this.unit = elements[0].getAttribute(PROVIDER_UNIT_ATTR);
-
+		for (Element element : elements) {}
+		this.portName = elements[0].getAttribute(PROVIDED_PORT_NAME);
+		this.portType = elements[0].getAttribute(PROVIDED_PORT_NAME);
 		// slo
 		if (elements[0].containsElement(SLO)) {
 			Element[] tagSlo = elements[0].getElements(SLO);
@@ -65,11 +67,9 @@ public class ProviderMetadata {
 	public Dictionary<String, Object> getRegisterProperties() {
 
 		Dictionary<String, Object> properties = new Hashtable<String, Object>();
-
-		properties.put(PROVIDER_NAME_ATTR, name);
-		properties.put(PROVIDER_PID_ATTR, pid);
-		properties.put(PROVIDER_DURATION_ATTR, duration);
-
+		properties.put(DsoaComponentMetadata.COMPONENT_NAME, componentName);
+		
+		
 		for (PSlo slo : slos) {
 
 			if (slo.getOperation() != null) {
@@ -86,35 +86,11 @@ public class ProviderMetadata {
 	}
 
 	public String getPid() {
-		return pid;
+		return componentName;
 	}
 
 	public void setPid(String pid) {
-		this.pid = pid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public double getDuration() {
-		return duration;
-	}
-
-	public void setDuration(double duration) {
-		this.duration = duration;
-	}
-
-	public String getUnit() {
-		return unit;
-	}
-
-	public void setUnit(String unit) {
-		this.unit = unit;
+		this.componentName = pid;
 	}
 
 	public List<PSlo> getSlos() {
@@ -134,15 +110,11 @@ public class ProviderMetadata {
 	}
 
 	// Constants//
-	public static final String PROVIDER_METADATA = "provider.metadata";
-	public static final String HANDLE_NAME = "provider-manager";
-	public static final String HANDLE_NAMESPACE = "br.ufpe.cin.dsoa.manager";
-
-	// provides
-	public static final String PROVIDER_NAME_ATTR = "name";
-	public static final String PROVIDER_PID_ATTR = "pid";
-	public static final String PROVIDER_DURATION_ATTR = "duration.value";
-	public static final String PROVIDER_UNIT_ATTR = "duration.unit";
+	public static final String HANDLE_NAME = "provides";
+	public static final String HANDLE_NAMESPACE = "br.ufpe.cin.dsoa";
+	
+	// Provided port
+	public static final String PROVIDED_PORT_NAME = "name";
 
 	// tags
 	public static final String SLO = "slo";

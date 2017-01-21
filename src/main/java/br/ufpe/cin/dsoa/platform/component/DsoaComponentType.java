@@ -13,16 +13,22 @@ import org.apache.felix.ipojo.composite.CompositeManager;
 import org.apache.felix.ipojo.metadata.Element;
 import org.osgi.framework.BundleContext;
 
+import br.ufpe.cin.dsoa.dsl.service.*;
+
 public class DsoaComponentType extends ComponentFactory {
 
 	/**
 	 * The component type name.
 	 */
 	private String m_name;
+	private Component component;
 
 	public DsoaComponentType(BundleContext context, Element element)
 			throws ConfigurationException {
 		super(context, element);
+		this.component = ServiceFactory.eINSTANCE.createComponent();
+		this.component.setName(element.getAttribute("name"));
+		this.component.setClassname(element.getAttribute("classname"));
 	}
 
 	/**
