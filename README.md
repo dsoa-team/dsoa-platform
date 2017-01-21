@@ -1,6 +1,25 @@
 Dynamic SOA Platform
 ====================
-DSOA implementation
+DSOA is a new service-component based platform that intends to support the execution of Quality-Aware Service-Based Applications (QSBAs).
+These applications are designed as service compositions, which are dynamically configured based on available services and corresponding
+quality of service specifications. To do that, DSOA defines a new component type, which represent application building blocks.
+
+Building instructions
+=====================
+Right click dsoa-platform.bnd and select makebundle. This option will compile and zip the platform elements. Besides that, it will build
+a manifest file which defines the new component type:
+
+IPOJO-Extension: dsoa-component:br.ufpe.cin.dsoa.platform.component.DsoaComponentType
+
+Since DSOA is built atop of iPojo, generated bundle (dsoa-platform.jar) needs to be manipulated in order to modify the classfiles to turn
+them iPojo components and to include corresponding meta-data into the manifest file.
+
+Important:
+==========
+You should use jdk1.7.0 (there are some problems with newer versions.
+
+Starting DSOA Platform:
+=======================
 
 
 Start bundles: 
