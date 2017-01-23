@@ -14,7 +14,7 @@ public interface Constants {
 	 */
 	public static final String REQUIRES_TAG_NAMESPACE	= "br.ufpe.cin.dsoa";
 	public static final String REQUIRES_TAG    			= "requires";
-	public static final String REQUIRES_ATT_FIELD		= "field";
+	public static final String REQUIRES_ATT_FIELD		= "name";
 	
 	/** 
 	 * Tag Constraint

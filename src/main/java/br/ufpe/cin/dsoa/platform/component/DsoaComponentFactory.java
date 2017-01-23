@@ -55,7 +55,7 @@ public class DsoaComponentFactory extends ComponentFactory {
 	public void check(Element metadata) throws ConfigurationException {
 		super.check(metadata);
 
-		if (this.componentType.getName() == null) {
+		if (metadata.getAttribute(DsoaComponentType.NAME) == null) {
 			throw new ConfigurationException("A component type needs a name : "
 					+ metadata);
 		}

@@ -1,6 +1,7 @@
 package br.ufpe.cin.dsoa.api.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +16,12 @@ public class PortInstanceImpl extends NamedElementImpl implements PortInstance {
 	
 	public PortInstanceImpl(String name) {
 		super(name);
+		this.propMap = new HashMap<String,Property>();
 	}
 	
 	public PortInstanceImpl(String name, Port port, List<Property> props) {
 		this(name);
+		this.port = port;
 		for (Property property: props) {
 			propMap.put(property.getName(),	property);
 		}

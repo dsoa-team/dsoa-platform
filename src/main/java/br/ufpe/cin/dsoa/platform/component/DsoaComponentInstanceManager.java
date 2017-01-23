@@ -136,6 +136,7 @@ public class DsoaComponentInstanceManager extends InstanceManager implements Com
     public DsoaComponentInstanceManager(DsoaComponentFactory factory, BundleContext context, HandlerManager[] handlers) {
     	super(factory, context, handlers);
     	this.factory = factory;
+    	this.ctx = context;
     	this.m_description = new DsoaComponentInstanceDescription(factory.getComponentDescription(), this);
     }
 
