@@ -26,7 +26,7 @@ public class Strategy extends CreationStrategy {
 
 		m_manager = arg0;
 
-		ProviderHandler providerManager = (ProviderHandler) m_manager
+		DsoaProvidesHandler providerManager = (DsoaProvidesHandler) m_manager
 				.getHandler("br.ufpe.cin.dsoa.manager:provider-manager");
 
 		p_metadata = providerManager.getProviderMetadata();

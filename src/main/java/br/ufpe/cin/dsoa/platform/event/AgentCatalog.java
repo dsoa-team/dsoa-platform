@@ -15,4 +15,6 @@ public interface AgentCatalog {
 	public EventProcessingAgent addAgent(EventProcessingAgent eventProcessingAgent) throws AgentAlreadyCatalogedException;
 
 	public EventProcessingAgent removeAgent(String id);
+	
+	public boolean containsAgent(String id);
 }

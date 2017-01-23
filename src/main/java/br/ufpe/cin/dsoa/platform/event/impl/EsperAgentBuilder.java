@@ -9,7 +9,7 @@ import br.ufpe.cin.dsoa.api.event.agent.Filter;
 import br.ufpe.cin.dsoa.api.event.agent.InputEvent;
 import br.ufpe.cin.dsoa.api.event.agent.OutputEvent;
 import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
-import br.ufpe.cin.dsoa.api.service.Expression;
+import br.ufpe.cin.dsoa.api.service.RelationalOperator;
 import br.ufpe.cin.dsoa.util.Constants;
 
 public class EsperAgentBuilder implements QueryBuilder {
@@ -79,7 +79,7 @@ public class EsperAgentBuilder implements QueryBuilder {
 					first = false;
 				}
 				String expression = filter.getExpression();
-				String operator = Expression.valueOf(filter.getOperator()).getOperator();
+				String operator = RelationalOperator.valueOf(filter.getOperator()).getOperator();
 				String value = filter.getValue();
 
 				String clause = String.format("%s%s'%s'", parseExpression(expression, alias),

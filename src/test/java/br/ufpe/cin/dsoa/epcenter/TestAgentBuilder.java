@@ -1,29 +1,8 @@
 package br.ufpe.cin.dsoa.epcenter;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import antlr.collections.List;
-import br.ufpe.cin.dsoa.api.event.Event;
-import br.ufpe.cin.dsoa.api.event.EventConsumer;
-import br.ufpe.cin.dsoa.api.event.EventFilter;
-import br.ufpe.cin.dsoa.api.event.EventType;
-import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
-import br.ufpe.cin.dsoa.api.event.PropertyType;
-import br.ufpe.cin.dsoa.api.event.Subscription;
-import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
-import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
-import br.ufpe.cin.dsoa.api.service.Expression;
-import br.ufpe.cin.dsoa.epcenter.helper.HelperEpCenterTest;
-import br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService;
-import br.ufpe.cin.dsoa.platform.event.impl.EventTypeCatalogImpl;
-import br.ufpe.cin.dsoa.platform.event.impl.Query;
-
-import com.espertech.esper.client.EPServiceProvider;
-import com.espertech.esper.client.EPStatement;
 
 public class TestAgentBuilder {
-
+/*
 	private List<EventProcessingAgent> agents;
 	private EsperProcessingService epService;
 	private List<EventType> eventTypes;
@@ -91,4 +70,5 @@ public class TestAgentBuilder {
 		epService.publish(HelperEpCenterTest.getSampleInvocationEvent(source));
 		
 	}
+	*/
 }

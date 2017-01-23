@@ -1,0 +1,35 @@
+package br.ufpe.cin.dsoa.api.service.impl;
+
+import br.ufpe.cin.dsoa.api.service.Port;
+
+public class PortImpl implements Port {
+
+	private String name;
+	private ServiceSpecification serviceSpec;
+	
+	public PortImpl(String name, ServiceSpecification serviceSpec) {
+		this.name = name;
+		this.serviceSpec = serviceSpec;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String getName() {
+		return this.name;
+	}
+
+	@Override
+	public void setServiceSpec(ServiceSpecification serviceSpec) {
+		this.serviceSpec = serviceSpec;
+	}
+
+	@Override
+	public ServiceSpecification getServiceSpecification() {
+		return this.serviceSpec;
+	}
+
+}

@@ -27,6 +27,21 @@ public class AttributeManager implements AttributeCatalog, AttributeEventMapperC
 	private Map<String,AttributeCategory> attributeCategoryMap = new HashMap<String,AttributeCategory>();
 	private Map<String,AttributeEventMapper> attributeEventMapperMap = new HashMap<String,AttributeEventMapper>();
 	
+	@Override
+	public boolean containsAttributeEventMapper(String id) {
+		return this.attributeEventMapperMap.containsKey(id);
+	}
+	
+	@Override
+	public boolean containsAttribute(String id) {
+		return this.attributeMap.containsKey(id);
+	}
+
+	@Override
+	public boolean containsCategory(String catId) {
+		return this.attributeCategoryMap.containsKey(catId);
+	}
+	
 	public Attribute getAttribute(String id) {
 		return this.attributeMap.get(id);
 	}
@@ -34,7 +49,7 @@ public class AttributeManager implements AttributeCatalog, AttributeEventMapperC
 	public Collection<Attribute> getAttributes() {
 		return this.attributeMap.values();
 	}
-
+	
 	public synchronized void addAttribute(Attribute attribute) throws AttributeAlreadyCatalogedException {
 		if (this.attributeMap.containsKey(attribute.getId())) {
 			throw new AttributeAlreadyCatalogedException(attribute);
@@ -107,5 +122,5 @@ public class AttributeManager implements AttributeCatalog, AttributeEventMapperC
 	public static String format(String category, String attribute) {
 		return category + Constants.TOKEN + attribute;
 	}
-	
+
 }

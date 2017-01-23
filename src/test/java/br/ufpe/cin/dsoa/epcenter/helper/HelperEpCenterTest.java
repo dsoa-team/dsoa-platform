@@ -36,7 +36,7 @@ import br.ufpe.cin.dsoa.api.event.Property;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.agent.AgentList;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
-import br.ufpe.cin.dsoa.api.service.Expression;
+import br.ufpe.cin.dsoa.api.service.RelationalOperator;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCategoryAdapter;
 import br.ufpe.cin.dsoa.platform.event.impl.EsperAgentBuilder;
@@ -510,7 +510,7 @@ public class HelperEpCenterTest {
 	}
 
 	public static EventFilter getEventFilter(PropertyType propertyType, Object propertyValue,
-			Expression expression) {
+			RelationalOperator expression) {
 
 		Property property = propertyType.createProperty(propertyValue);
 		FilterExpression filterExpression = new FilterExpression(property, expression);

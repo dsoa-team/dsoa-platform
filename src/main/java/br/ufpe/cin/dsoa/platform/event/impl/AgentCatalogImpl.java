@@ -22,6 +22,11 @@ import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 public class AgentCatalogImpl implements AgentCatalog {
 	private Map<String, EventProcessingAgent> agentMap = new HashMap<String, EventProcessingAgent>();
 
+	@Override
+	public boolean containsAgent(String id) {
+		return this.agentMap.containsKey(id);
+	}
+	
 	public EventProcessingAgent getAgent(String id) {
 		return this.agentMap.get(id);
 	}

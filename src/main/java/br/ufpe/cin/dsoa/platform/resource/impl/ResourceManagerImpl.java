@@ -11,7 +11,7 @@ import javax.management.NotCompliantMBeanException;
 
 import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
-import br.ufpe.cin.dsoa.api.service.Service;
+import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 import br.ufpe.cin.dsoa.platform.management.ManagementInfomationBase;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
@@ -28,10 +28,11 @@ public class ResourceManagerImpl implements ResourceManager {
 	private Map<String, ManagedService> managedServices = new HashMap<String, ManagedService>();
 	private Map<String, ManagedAgent> managedAgents = new HashMap<String, ManagedAgent>();
 
-	public synchronized void manage(Service service) {
+	public synchronized void manage(ServiceInstance service) {
 		ManagedService serviceManager = new ManagedService(service);
 		serviceManager.start();
-		this.managedServices.put(service.getProviderId(), serviceManager);
+		
+		this.managedServices.put(service.getName(), serviceManager);
 	}
 
 	public synchronized void release(String serviceId) {
@@ -80,12 +81,12 @@ public class ResourceManagerImpl implements ResourceManager {
 
 	class ManagedService {
 
-		private Service service;
+		private ServiceInstance service;
 		private MonitoredService monitoredService;
 /*		private ServiceEvaluator serviceEvaluator;
 		private ServiceMBean serviceMBean;*/
 
-		public ManagedService(Service service) {
+		public ManagedService(ServiceInstance service) {
 			this.service = service;
 //			this.serviceEvaluator = new ServiceEvaluator(service);
 		}

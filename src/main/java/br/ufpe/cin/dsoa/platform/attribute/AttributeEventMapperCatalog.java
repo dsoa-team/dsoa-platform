@@ -7,6 +7,8 @@ import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperAlreadyCataloge
 
 public interface AttributeEventMapperCatalog {
 	
+	public boolean containsAttributeEventMapper(String id);
+	
 	public AttributeEventMapper getAttributeEventMapper(String id) ;
 
 	public List<AttributeEventMapper> getAttributeEventMapperList();

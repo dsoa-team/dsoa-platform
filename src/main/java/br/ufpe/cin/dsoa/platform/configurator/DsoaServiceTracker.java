@@ -5,8 +5,8 @@ import java.util.List;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-import br.ufpe.cin.dsoa.api.service.Service;
-import br.ufpe.cin.dsoa.api.service.impl.OsgiService;
+import br.ufpe.cin.dsoa.api.service.ServiceInstance;
+import br.ufpe.cin.dsoa.api.service.impl.OsgiServiceFactory;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 import br.ufpe.cin.dsoa.util.Constants;
 import br.ufpe.cin.dsoa.util.Util;
@@ -47,8 +47,9 @@ public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 				.valueOf(reference.getProperty(Constants.SERVICE_PROXY).toString()));
 		if (!isProxy) {
 			try {
-				List<OsgiService> services = OsgiService.getOsgiServices(reference);
-				for (Service service : services) {
+				List<ServiceInstance> services = OsgiServiceFactory.getOsgiServices(reference);
+				// MODIFICAR PARA REFERENCIAR SERVICE INSTANCE
+				for (ServiceInstance service : services) {
 					resourceManagerImpl.manage(service);
 				}
 			} catch (ClassNotFoundException e) {

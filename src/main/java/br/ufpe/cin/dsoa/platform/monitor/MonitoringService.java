@@ -3,7 +3,7 @@ package br.ufpe.cin.dsoa.platform.monitor;
 import java.util.List;
 
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
-import br.ufpe.cin.dsoa.api.service.Service;
+import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 
 public interface MonitoringService {
 
@@ -11,7 +11,7 @@ public interface MonitoringService {
 
 	MonitoredService getMonitoredService(String id);
 
-	MonitoredService startMonitoring(Service service);
+	MonitoredService startMonitoring(ServiceInstance service);
 
 	void stopMonitoring(String serviceId);
 

@@ -1,0 +1,56 @@
+component { 
+	$id="HomebrokerClient" 
+	$name="HomebrokerClient" 
+	$classname="br.com.homebroker.bb.client.HomebrokerClient" 
+	callback { $transition="validate" $method="start" }
+	callback { $transition="invalidate" $method="stop" }
+	manipulation { 
+		field { $name="homebroker" $type="br.com.bb.homebroker.Homebroker" }
+		method { $name="$init" }
+		method { $name="start" }
+		method { $name="stop" }
+	}
+	br.ufpe.cin.dsoa:requires { 
+		service { 
+			$field="homebroker" 
+			manager { 
+				$id="QoSDependencyManager" 
+				qos { 
+					$expression="LT" 
+					$operation="priceAlert" 
+					$weight="2" 
+					$metric="ResponseTime" 
+					$value="800" 
+				}
+				qos { 
+					$expression="GT" 
+					$weight="1" 
+					$metric="Availability" 
+					$value="95" 
+				}
+			}
+		}
+	}
+}
+
+component { 
+	$id="HomebrokerClientv2" 
+	$name="HomebrokerClientv2" 
+	$classname="br.com.homebroker.bb.client.HomebrokerClientv2" 
+	callback { 
+		$transition="validate" $method="start" 
+	}
+	callback { 
+		$transition="invalidate" $method="stop" 
+	}
+	manipulation { 
+		field { $name="homebroker" $type="br.com.bb.homebroker.Homebroker" }
+		method { $name="$init" }
+		method { $name="start" }
+		method { $name="stop" }
+	}
+	requires { $field="homebroker" }
+}
+
+instance { $component="HomebrokerClient" $name="Homebroker Client 01" }
+instance { $component="HomebrokerClientv2" $name="Homebroker Client 02" }

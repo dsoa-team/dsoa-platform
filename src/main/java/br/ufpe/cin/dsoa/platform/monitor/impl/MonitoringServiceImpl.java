@@ -22,10 +22,10 @@ import br.ufpe.cin.dsoa.api.event.FilterExpression;
 import br.ufpe.cin.dsoa.api.event.Property;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.Subscription;
-import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.api.service.Expression;
+import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
-import br.ufpe.cin.dsoa.api.service.Service;
+import br.ufpe.cin.dsoa.api.service.RelationalOperator;
+import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredAttribute;
@@ -86,12 +86,11 @@ public class MonitoringServiceImpl implements MonitoringService {
 		}
 	}
 
-	public MonitoredService startMonitoring(Service service) {
-		NonFunctionalSpecification nfs = service.getSpecification().getNonFunctionalSpecification();
+	public MonitoredService startMonitoring(ServiceInstance service) {
+		NonFunctionalSpecification nfs = service.getPort().getServiceSpecification().getNonFunctionalSpecification();
 		MonitoredService monitoredService = new MonitoredService(ctx, service);
 		if (nfs != null) {
-			for (AttributeConstraint attributeConstraint : service.getSpecification()
-					.getNonFunctionalSpecification().getAttributeConstraints()) {
+			for (Constraint attributeConstraint : service.getPort().getServiceSpecification().getNonFunctionalSpecification().getConstraints()) {
 
 				String operation = attributeConstraint.getOperation();
 				String attributeId = attributeConstraint.getAttributeId();
@@ -116,13 +115,13 @@ public class MonitoringServiceImpl implements MonitoringService {
 		return monitoredService;
 	}
 
-	private void registerMonitoredService(Service service, MonitoredService monitoredService) {
+	private void registerMonitoredService(ServiceInstance service, MonitoredService monitoredService) {
 		synchronized (serviceMonitorsMap) {
-			String providedServiceId = service.getProviderId();
-			List<MonitoredService> monitors = serviceMonitorsMap.get(providedServiceId);
+			String serviceName = service.getName();
+			List<MonitoredService> monitors = serviceMonitorsMap.get(serviceName);
 			if (monitors == null) {
 				monitors = new ArrayList<MonitoredService>();
-				serviceMonitorsMap.put(providedServiceId, monitors);
+				serviceMonitorsMap.put(serviceName, monitors);
 			}
 			monitors.add(monitoredService);
 		}
@@ -186,7 +185,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 		PropertyType sourceType = eventType.getMetadataPropertyType(Constants.EVENT_SOURCE);
 
 		FilterExpression filterExp = new FilterExpression(new Property(attributableId.getId(),
-				sourceType), Expression.EQ);
+				sourceType), RelationalOperator.EQ);
 		List<FilterExpression> filterList = new ArrayList<FilterExpression>();
 		filterList.add(filterExp);
 		EventFilter filter = new EventFilter(filterList);

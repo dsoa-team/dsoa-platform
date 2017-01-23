@@ -7,10 +7,11 @@ import java.util.List;
 
 import org.apache.felix.ipojo.metadata.Element;
 
-import br.ufpe.cin.dsoa.platform.component.metadata.DsoaComponentMetadata;
 import br.ufpe.cin.dsoa.platform.handler.provider.capability.PSlo;
 import br.ufpe.cin.dsoa.platform.handler.provider.capability.Profile;
 
+
+//TODO Revisar o ProviderMetadata inteiro
 public class ProviderMetadata {
 
 	private String componentName;
@@ -30,14 +31,15 @@ public class ProviderMetadata {
 	public void loadMetadata(Element metadata, Dictionary configuration) {
 
 		// Component meta-data
-		this.componentName = metadata.getAttribute(DsoaComponentMetadata.COMPONENT_NAME);
-		this.componentClassname = metadata.getAttribute(DsoaComponentMetadata.COMPONENT_CLASSNAME);
+		//this.componentName = metadata.getAttribute(DsoaComponentMetadata.COMPONENT_NAME);
+		//this.componentClassname = metadata.getAttribute(DsoaComponentMetadata.COMPONENT_CLASSNAME);
 		
 		// Provided port meta-data
 		Element[] elements = metadata
 				.getElements(HANDLE_NAME, HANDLE_NAMESPACE);
 		for (Element element : elements) {}
 		this.portName = elements[0].getAttribute(PROVIDED_PORT_NAME);
+		
 		this.portType = elements[0].getAttribute(PROVIDED_PORT_NAME);
 		// slo
 		if (elements[0].containsElement(SLO)) {
@@ -67,7 +69,7 @@ public class ProviderMetadata {
 	public Dictionary<String, Object> getRegisterProperties() {
 
 		Dictionary<String, Object> properties = new Hashtable<String, Object>();
-		properties.put(DsoaComponentMetadata.COMPONENT_NAME, componentName);
+		//properties.put(DsoaComponentMetadata.COMPONENT_NAME, componentName);
 		
 		
 		for (PSlo slo : slos) {

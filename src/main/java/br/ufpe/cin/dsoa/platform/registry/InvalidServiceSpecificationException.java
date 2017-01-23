@@ -4,17 +4,17 @@ import java.util.List;
 
 import org.osgi.framework.InvalidSyntaxException;
 
-import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
+import br.ufpe.cin.dsoa.api.service.impl.ConstraintImpl;
+import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
 
 public class InvalidServiceSpecificationException extends RuntimeException {
 
 	private static final long serialVersionUID = 6448160017317723239L;
 	
 	private String serviceInterface;
-	private List<AttributeConstraint> constraints;
+	private List<ConstraintImpl> constraints;
 	
-	public InvalidServiceSpecificationException(String message, String serviceInterface, List<AttributeConstraint> constraints) {
+	public InvalidServiceSpecificationException(String message, String serviceInterface, List<ConstraintImpl> constraints) {
 		super(message);
 		this.serviceInterface = serviceInterface;
 		this.constraints = constraints;
@@ -22,8 +22,8 @@ public class InvalidServiceSpecificationException extends RuntimeException {
 	
 	public InvalidServiceSpecificationException(String message, ServiceSpecification spec, InvalidSyntaxException e) {
 		super(message, e);
-		this.serviceInterface = spec.getServiceInterface();
-		this.constraints = (spec.getNonFunctionalSpecification() == null ? null :spec.getNonFunctionalSpecification().getAttributeConstraints());
+		this.serviceInterface = spec.getFunctionalInterface().getInterfaceName();
+		this.constraints = (spec.getNonFunctionalSpecification() == null ? null :spec.getNonFunctionalSpecification().getConstraints());
 	}
 
 	public InvalidServiceSpecificationException(String message,
@@ -35,7 +35,7 @@ public class InvalidServiceSpecificationException extends RuntimeException {
 		return serviceInterface;
 	}
 	
-	public List<AttributeConstraint> getConstraints() {
+	public List<ConstraintImpl> getConstraints() {
 		return constraints;
 	}
 }

@@ -24,11 +24,11 @@
 		 
 	-->
 	<handler name="provides" namespace="br.ufpe.cin.dsoa" 
-		classname="br.ufpe.cin.dsoa.platform.handler.provider.ProviderHandler"  >
+		classname="br.ufpe.cin.dsoa.platform.handler.provider.DsoaProvidesHandler"  >
 	</handler>
 
 	<handler name="requires" namespace="br.ufpe.cin.dsoa"
-		classname="br.ufpe.cin.dsoa.platform.handler.dependency.DependencyHandler" >
+		classname="br.ufpe.cin.dsoa.platform.handler.requires.DsoaRequiresHandler" >
 	</handler>
 	
 	<!-- ============================================================================================================ -->		
@@ -120,7 +120,7 @@
 		
 		-->
 	<!-- <component 	name="Platform.Manager.Verifier" 
-				classname="br.ufpe.cin.dsoa.platform.handler.dependency.manager.Analyzer">
+				classname="br.ufpe.cin.dsoa.platform.handler.requires.manager.DsoaBindingAnalyzer">
 		<requires field="attributeMapperCatalog"/>
 		<requires field="eventProcessingService"/>
 		<provides />
@@ -344,7 +344,7 @@
 	<instance component="Platform.Event.EventDistributionService" />
 	
 		
-	<!-- <instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.Analyzer"/> -->
+	<!-- <instance component="br.ufpe.cin.dsoa.platform.handler.requires.manager.DsoaBindingAnalyzer"/> -->
 	
 	<!-- 	<instance component="Platform.Catalog.AgentCatalog" />
 	<instance component="Platform.Catalog.AttributeCatalog" />
@@ -360,7 +360,7 @@
 	<instance component="br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService" /> -->
 	<!-- 
 	<instance component="Platform.Registry.QoSAwareRegistryComponent"/>
-	<instance component="br.ufpe.cin.dsoa.platform.handler.dependency.manager.Analyzer"/>
+	<instance component="br.ufpe.cin.dsoa.platform.handler.requires.manager.DsoaBindingAnalyzer"/>
 	<instance component="br.ufpe.cin.dsoa.resource.impl.MonitoredServiceListenerImpl"/> -->
 	<!-- <instance component="br.ufpe.cin.dsoa.platform.configurator.DsoaFindHook" />  -->
 	

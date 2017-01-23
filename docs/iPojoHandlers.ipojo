@@ -1,0 +1,158 @@
+IPOJO-Extension: 
+	component:org.apache.felix.ipojo.ComponentFactory,   
+    handler:org.apache.felix.ipojo.HandlerManagerFactory
+
+iPOJO-Components: 
+handler { 
+	$name="controller" 
+	$classname="org.apache.felix.ipojo.handlers.lifecycle.controller.ControllerHandler" 
+	$architecture="false" 
+	manipulation { 
+		$super="org.apache.felix.ipojo.PrimitiveHandler" 
+		field {	$name="m_state" $type="boolean" }
+		field { $name="m_field"	$type="java.lang.String" }
+		method { $name="$init" }
+		method { $arguments="{org.apache.felix.ipojo.metadata.Element,java.util.Dictionary}" $name="configure" 	}
+		method { $name="start" }
+		method { $name="stop" }
+		method { $arguments="{java.lang.Object,java.lang.String,java.lang.Object}" 	$name="onGet" $return="java.lang.Object" }
+		method { $arguments="{java.lang.Object,java.lang.String,java.lang.Object}" 	$name="onSet" }
+		method { $arguments="{org.apache.felix.ipojo.architecture.ComponentTypeDescription,org.apache.felix.ipojo.metadata.Element}" $name="initializeComponentFactory" }
+	}
+}
+
+handler { 
+	$level="2" 
+	$name="callback" 
+	$classname="org.apache.felix.ipojo.handlers.lifecycle.callback.LifecycleCallbackHandler" 
+	$architecture="false" 
+	manipulation { 
+		$super="org.apache.felix.ipojo.PrimitiveHandler" 
+		field { $name="m_state" $type="int" }
+		field { $name="m_immediate" $type="boolean" }
+		field { $name="m_callbacks" $type="org.apache.felix.ipojo.handlers.lifecycle.callback.LifecycleCallback[]" }
+		method { $name="$init" }
+		method { $arguments="{org.apache.felix.ipojo.handlers.lifecycle.callback.LifecycleCallback}" $name="addCallback" }
+		method { $arguments="{org.apache.felix.ipojo.metadata.Element,java.util.Dictionary}" $name="configure" }
+		method { $name="start" }
+		method { $name="stop" }
+		method { $arguments="{int}" $name="stateChanged" }
+	}
+}
+
+handler { 
+	$level="0" 
+	$name="requires" 
+	$classname="org.apache.felix.ipojo.handlers.dependency.DependencyHandler" 
+	$architecture="false" 
+	manipulation { 
+		$super="org.apache.felix.ipojo.PrimitiveHandler" 
+		field { $name="m_description" $type="org.apache.felix.ipojo.handlers.dependency.DependencyHandlerDescription" }
+		field { $name="m_started" $type="boolean" }
+		field { $name="m_dependencies" $type="org.apache.felix.ipojo.handlers.dependency.Dependency[]" }
+		method { $name="$init" }
+		method { $arguments="{org.apache.felix.ipojo.handlers.dependency.Dependency}" $name="addDependency" }
+		method { $name="getDependencies" $return="org.apache.felix.ipojo.handlers.dependency.Dependency[]" }
+		method { $arguments="{org.apache.felix.ipojo.util.DependencyModel}" $name="validate" }
+		method { $arguments="{org.apache.felix.ipojo.util.DependencyModel}" $name="invalidate" }
+		method { $name="checkContext" }
+		method { $arguments="{org.apache.felix.ipojo.handlers.dependency.Dependency,org.apache.felix.ipojo.parser.PojoMetadata}" $name="checkDependency" $return="boolean" }
+		method { $arguments="{org.apache.felix.ipojo.handlers.dependency.Dependency,java.lang.String,boolean}" $name="setSpecification" }
+		method { $arguments="{org.apache.felix.ipojo.metadata.Element,java.util.Dictionary}" $name="configure" }
+		method { $arguments="{java.lang.Object}" $name="getRequiresFilters" $return="java.util.Dictionary" }
+		method { $name="start" }method { $name="stop" }
+		method { $arguments="{java.lang.Object}" $name="onCreation" }
+		method { $name="getDescription" $return="org.apache.felix.ipojo.architecture.HandlerDescription" }
+		method { $arguments="{java.lang.String}" $name="class$" $return="java.lang.Class" }
+		interface { $name="org.apache.felix.ipojo.util.DependencyStateListener" }
+	}
+}
+
+handler { 
+	$level="3" 
+	$name="provides" 
+	$classname="org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler" 
+	$architecture="false" 
+	manipulation { $super="org.apache.felix.ipojo.PrimitiveHandler" 
+		field { $name="m_providedServices" $type="org.apache.felix.ipojo.handlers.providedservice.ProvidedService[]" }
+		field { $name="m_description" $type="org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandlerDescription" }
+		method { $name="$init" }
+		method { $arguments="{org.apache.felix.ipojo.handlers.providedservice.ProvidedService}" $name="addProvidedService" }
+		method { $name="getProvidedServices" $return="org.apache.felix.ipojo.handlers.providedservice.ProvidedService[]" }
+		method { $arguments="{org.apache.felix.ipojo.metadata.Element,java.util.Dictionary}" $name="configure" }
+		method { $arguments="{java.lang.String[],java.lang.String,org.osgi.framework.Bundle}" $name="computeInterfaces" $return="java.util.Set" }
+		method { $arguments="{java.lang.Class,java.util.Set,org.osgi.framework.Bundle} " $name="collectInterfaces" }
+		method { $arguments="{java.lang.Class,java.util.Set,org.osgi.framework.Bundle}" $name="collectInterfacesFromClass" }
+		method { $arguments="{org.apache.felix.ipojo.handlers.providedservice.ProvidedService}" $name="checkProvidedService" $return="boolean" }
+		method { $arguments="{org.apache.felix.ipojo.metadata.Element}" $name="getAttachedDependency" $return="org.apache.felix.ipojo.handlers.dependency.Dependency" }
+		method { $arguments="{org.apache.felix.ipojo.handlers.dependency.Dependency,org.apache.felix.ipojo.metadata.Element}" $name="isDependencyCorrect" }
+		method { $name="stop" }
+		method { $name="start" }
+		method { $arguments="{java.lang.Object,java.lang.String,java.lang.Object}" $name="onSet" }
+		method { $arguments="{java.lang.Object,java.lang.String,java.lang.Object}" $name="onGet" $return="java.lang.Object" }
+		method { $arguments="{int}" $name="stateChanged" }
+		method { $arguments="{java.util.Dictionary}" $name="addProperties" }
+		method { $arguments="{java.util.Dictionary}" $name="removeProperties" }
+		method { $name="getDescription" $return="org.apache.felix.ipojo.architecture.HandlerDescription" }
+		method { $arguments="{java.util.Dictionary}" $name="reconfigure" }
+		method { $arguments="{org.apache.felix.ipojo.architecture.ComponentTypeDescription,org.apache.felix.ipojo.metadata.Element}" $name="initializeComponentFactory" }
+		method { $arguments="{java.lang.String}" $name="class$" $return="java.lang.Class" }
+	}
+}
+
+handler {
+	$level="1" 
+	$name="properties" 
+	$classname="org.apache.felix.ipojo.handlers.configuration.ConfigurationHandler" 
+	$architecture="false" 
+	manipulation { 
+		$super="org.apache.felix.ipojo.PrimitiveHandler" 
+		field { $name="m_sr" $type="org.osgi.framework.ServiceRegistration" }
+		field { $name="m_configurationAlreadyPushed" $type="boolean" }
+		field { $name="m_mustPropagate" $type="boolean" }
+		field { $name="m_description" $type="org.apache.felix.ipojo.handlers.configuration.ConfigurationHandlerDescription" }
+		field { $name="m_managedServicePID" $type="java.lang.String" }
+		field { $name="m_propagatedFromCA" $type="java.util.Dictionary" }
+		field { $name="m_updated" $type="org.apache.felix.ipojo.util.Callback" }
+		field { $name="m_providedServiceHandler" $type="org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler" }
+		field { $name="m_toPropagate" $type="java.util.Dictionary" }
+		field { $name="m_configurableProperties" $type="java.util.List" }
+		field { $name="m_propagatedFromInstance" $type="java.util.Dictionary" }
+		method { $name="$init" }
+		method { $arguments="{org.apache.felix.ipojo.architecture.ComponentTypeDescription,org.apache.felix.ipojo.metadata.Element}" $name="initializeComponentFactory" }
+		method { $arguments="{org.apache.felix.ipojo.metadata.Element,java.util.Dictionary}" $name="configure" }
+		method { $name="stop" }method { $name="start" }
+		method { $arguments="{org.apache.felix.ipojo.util.Property}" $name="addProperty" }
+		method { $arguments="{java.lang.String}" $name="containsProperty" $return="boolean" }
+		method { $arguments="{java.util.Dictionary}" $name="reconfigure" }
+		method { $arguments="{java.util.Dictionary}" $name="reconfigureProperties" $return="java.util.Properties" }
+		method { $arguments="{org.apache.felix.ipojo.util.Property,java.lang.Object}" $name="reconfigureProperty" }
+		method { $arguments="{java.util.Dictionary,java.util.Dictionary}" $name="propagate" }
+		method { $arguments="{java.lang.Object}" $name="onCreation" }
+		method { $arguments="{java.lang.Object}" $name="notifyUpdated"  }
+		method { $arguments="{java.util.Dictionary}" $name="updated" }
+		method { $name="getDescription" $return="org.apache.felix.ipojo.architecture.HandlerDescription" }
+		method { $arguments="{java.lang.String}" $name="class$" $return="java.lang.Class" }
+		interface { $name="org.osgi.service.cm.ManagedService" }
+	}
+}
+
+handler { 
+	$name="architecture" 
+	$classname="org.apache.felix.ipojo.handlers.architecture.ArchitectureHandler" 
+	$architecture="false" 
+	provides { 
+		$specifications="org.apache.felix.ipojo.architecture.Architecture" 
+		property { $field="m_name" $name="architecture.instance" }
+	}
+	manipulation { 
+		$super="org.apache.felix.ipojo.PrimitiveHandler" 
+		field { $name="m_name" $type="java.lang.String" }
+		method { $name="$init" }
+		method { $arguments="{org.apache.felix.ipojo.metadata.Element,java.util.Dictionary}" $name="configure" }
+		method { $name="stop" }
+		method { $name="start" }
+		method { $name="getInstanceDescription" $return="org.apache.felix.ipojo.architecture.InstanceDescription" }
+		interface { $name="org.apache.felix.ipojo.architecture.Architecture" }
+	}
+}

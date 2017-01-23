@@ -24,5 +24,7 @@ public interface AttributeCatalog {
 
 	public void addCategory(AttributeCategory cat);
 
+	public boolean containsAttribute(String id);
 	
+	public boolean containsCategory(String catId);
 }

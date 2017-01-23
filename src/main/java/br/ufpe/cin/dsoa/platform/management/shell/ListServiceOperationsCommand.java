@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
+import br.ufpe.cin.dsoa.api.service.impl.ConstraintImpl;
 import br.ufpe.cin.dsoa.platform.management.PlatformManagementService;
 import br.ufpe.cin.dsoa.platform.monitor.ServiceMetadata;
 
@@ -30,9 +30,9 @@ public class ListServiceOperationsCommand extends DsoaBaseCommand {
 				for (String operation : metadata.getOperations()) {
 					out.println(" - " + operation);
 				}
-				out.println("Attribute constraints:");
-				List<AttributeConstraint> constraints = metadata.getAttributeConstraints();
-				Iterator<AttributeConstraint> itrConstraints = constraints.iterator();
+				out.println("Constraints:");
+				List<ConstraintImpl> constraints = metadata.getAttributeConstraints();
+				Iterator<ConstraintImpl> itrConstraints = constraints.iterator();
 				while (itrConstraints.hasNext()) {
 					out.println(" - " + itrConstraints.next());
 				}

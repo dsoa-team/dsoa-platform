@@ -1,6 +1,6 @@
 package br.ufpe.cin.dsoa.platform.registry.filter;
 
-import br.ufpe.cin.dsoa.api.service.Expression;
+import br.ufpe.cin.dsoa.api.service.RelationalOperator;
 
 
 
@@ -18,7 +18,7 @@ public class IFilter extends FilterBuilder {
 	@Override
 	public StringBuilder append(StringBuilder builder) {
 		
-		String renderedExpression = Expression.EQ.renderExpression(this.name, value);
+		String renderedExpression = RelationalOperator.EQ.renderExpression(this.name, value);
 		return builder.append('(').append(renderedExpression).append(')');
 	}
 

@@ -1,6 +1,6 @@
 package br.ufpe.cin.dsoa.platform.registry.filter;
 
-import br.ufpe.cin.dsoa.api.service.Expression;
+import br.ufpe.cin.dsoa.api.service.RelationalOperator;
 
 
 
@@ -8,9 +8,9 @@ public class DFilter extends FilterBuilder{
 	
 	private final String name;
 	private final double value;
-	private final Expression expression;
+	private final RelationalOperator expression;
 	
-	public DFilter(String name, Expression expression, double value) {
+	public DFilter(String name, RelationalOperator expression, double value) {
 		super();
 		this.name = name;
 		this.value = value;

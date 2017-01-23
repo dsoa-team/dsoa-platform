@@ -11,8 +11,8 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.monitor.Monitorable;
 import org.osgi.service.monitor.StatusVariable;
 
-import br.ufpe.cin.dsoa.api.service.Service;
-import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
+import br.ufpe.cin.dsoa.api.service.ServiceInstance;
+import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
 
 public class MonitoredService implements Monitorable {
 	
@@ -23,7 +23,7 @@ public class MonitoredService implements Monitorable {
 	// <target, MonitoredAttribute>
 	private Map<String, MonitoredAttribute> attributeMonitorMap;
 	
-	private Service service;
+	private ServiceInstance service;
 	
 	private BundleContext ctx;
 	
@@ -37,7 +37,7 @@ public class MonitoredService implements Monitorable {
 
 	private ServiceMetadata metadata;
 	
-	public MonitoredService(BundleContext ctx, Service service) {
+	public MonitoredService(BundleContext ctx, ServiceInstance service) {
 		this.log = Logger.getLogger(getClass().getSimpleName());
 		this.attributeMonitorMap = new HashMap<String, MonitoredAttribute>();
 		this.service = service;
@@ -67,7 +67,7 @@ public class MonitoredService implements Monitorable {
 		log.info("Registering monitor...");
 		Hashtable ht = new Hashtable();
 		ht.put(Constants.SERVICE_PID, getMonitoredServicePid());
-		ht.put(REFERED_SERVICE_ID, service.getProviderId());
+		ht.put(REFERED_SERVICE_ID, service.getName());
 		String[] clazzes = {Monitorable.class.getName()};
 		this.monitorRegistration = this.ctx.registerService(clazzes, this, ht);
 	}
@@ -77,11 +77,11 @@ public class MonitoredService implements Monitorable {
 	}
 	
 	public String getMonitoredServicePid() {
-		return this.service.getProviderId() + "-m";
+		return this.service.getName() + "-m";
 	}
 	
 	public String getComponentId() {
-		return this.service.getProviderId();
+		return this.service.getName();
 	}
 	
 	public ServiceMetadata getMetadata() {
@@ -92,8 +92,12 @@ public class MonitoredService implements Monitorable {
 		return this.started;
 	}
 	
+	public ServiceInstance getServiceInstance() {
+		return this.service;
+	}
+	
 	public ServiceSpecification getServiceSpecification(){
-		return this.service.getSpecification();
+		return this.service.getPort().getServiceSpecification();
 	}
 	
 	public String[] getStatusVariableNames() {

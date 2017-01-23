@@ -1,0 +1,32 @@
+<iPOJO>
+	<handler level="3" name="provides" classname="org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler" architecture="false">
+		<manipulation super="org.apache.felix.ipojo.PrimitiveHandler">
+			<field name="m_providedServices" type="org.apache.felix.ipojo.handlers.providedservice.ProvidedService[]" />
+			<field name="m_description" type="org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandlerDescription" />
+			<method name="init" />
+			<method name="addProvidedService" arguments="org.apache.felix.ipojo.handlers.providedservice.ProvidedService" />
+			<method name="getProvidedServices" return="org.apache.felix.ipojo.handlers.providedservice.ProvidedService[]" />
+			<method name="configure" arguments="org.apache.felix.ipojo.metadata.Element,java.util.Dictionary" />
+			<method name="computeInterfaces" arguments="java.lang.String[],java.lang.String,org.osgi.framework.Bundle" return="java.util.Set" />
+			<method name="collectInterfaces" arguments="java.lang.Class,java.util.Set,org.osgi.framework.Bundle " />
+			<method name="collectInterfacesFromClass" arguments="java.lang.Class,java.util.Set,org.osgi.framework.Bundle" />
+			<method name="checkProvidedService"  arguments="org.apache.felix.ipojo.handlers.providedservice.ProvidedService"  return="boolean" />
+			<method name="getAttachedDependency" arguments="org.apache.felix.ipojo.metadata.Element" return="org.apache.felix.ipojo.handlers.dependency.Dependency" />
+			<method name="isDependencyCorrect" arguments="org.apache.felix.ipojo.handlers.dependency.Dependency,org.apache.felix.ipojo.metadata.Element" />
+			<method name="stop" />
+			<method name="start" />
+			<method name="onSet" arguments="java.lang.Object,java.lang.String,java.lang.Object" />
+			<method name="onGet" arguments="java.lang.Object,java.lang.String,java.lang.Object" return="java.lang.Object" />
+			<method name="stateChanged" arguments="int" />
+			<method name="addProperties" arguments="java.util.Dictionary" />
+			<method name="removeProperties" arguments="java.util.Dictionary" />
+			<method name="getDescription" return="org.apache.felix.ipojo.architecture.HandlerDescription" />
+			<method name="reconfigure" arguments="java.util.Dictionary" />
+			<method name="initializeComponentFactory" arguments="org.apache.felix.ipojo.architecture.ComponentTypeDescription,org.apache.felix.ipojo.metadata.Element" />
+			<method name="class" arguments="java.lang.String" return="java.lang.Class" />
+		</manipulation>
+	</handler>
+	
+	
+	...
+</iPojo>

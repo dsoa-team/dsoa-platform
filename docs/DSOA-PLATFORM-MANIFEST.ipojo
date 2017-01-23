@@ -1,0 +1,777 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: dsoa-platform
+Built-By: fabions
+Bundle-ManifestVersion: 2
+Bnd-LastModified: 1472449653395
+Include-Resource: DSOA-INF=src/test/resources/epcenter/configuration, 
+ DSOA-INF=configuration
+Import-Package: javax.xml.bind.annotation, br.ufpe.cin.dsoa.platform.m
+ anagement.shell, br.ufpe.cin.dsoa.platform.monitor.impl, br.ufpe.cin.
+ dsoa.platform.attribute, javax.xml.bind.annotation.adapters, org.osgi
+ .service.event, br.ufpe.cin.dsoa.platform.handler.dependency, com.esp
+ ertech.esper.util, org.apache.felix.ipojo.handlers.providedservice, b
+ r.ufpe.cin.dsoa.platform.registry.rank, br.ufpe.cin.dsoa.api.service.
+ impl, br.ufpe.cin.dsoa.platform.resource.mbean, org.osgi.util.tracker
+ , br.ufpe.cin.dsoa.api.event, br.ufpe.cin.dsoa.platform.registry.impl
+ , org.apache.commons.lang3.math, org.osgi.framework, br.ufpe.cin.dsoa
+ .platform.resource.impl, com.espertech.esper.client, br.ufpe.cin.dsoa
+ .platform.monitor, br.ufpe.cin.dsoa.platform.resource, br.ufpe.cin.ds
+ oa.platform.handler.provider, org.osgi.service.monitor, br.ufpe.cin.d
+ soa.platform, br.ufpe.cin.dsoa.platform.event.impl, br.ufpe.cin.dsoa.
+ platform.configurator, br.ufpe.cin.dsoa.platform.registry.normalizer,
+  br.ufpe.cin.dsoa.platform.management, br.ufpe.cin.dsoa.api.service, 
+ br.ufpe.cin.dsoa.api.event.agent, br.ufpe.cin.dsoa.platform.managemen
+ t.impl, org.apache.felix.ipojo, br.ufpe.cin.dsoa.platform.attribute.i
+ mpl, org.osgi.service.log;version=1.3, org.apache.felix.ipojo.archite
+ cture, org.osgi.framework.hooks.service, br.ufpe.cin.dsoa.platform.re
+ gistry, javax.xml.bind, br.ufpe.cin.dsoa.platform.management.jmx, br.
+ ufpe.cin.dsoa.platform.registry.filter, javax.management, org.osgi.se
+ rvice.cm, br.ufpe.cin.dsoa.platform.handler.dependency.manager, br.uf
+ pe.cin.dsoa.api.attribute.mapper, org.apache.felix.shell, br.ufpe.cin
+ .dsoa.util, org.apache.felix.ipojo.metadata, DSOA-INF, org.apache.fel
+ ix.ipojo.parser, br.ufpe.cin.dsoa.api.attribute, br.ufpe.cin.dsoa.pla
+ tform.handler.provider.capability, br.ufpe.cin.dsoa.platform.event
+DynamicImport-Package: *
+Tool: Bnd-0.0.249
+Originally-Created-By: Maven Integration for Eclipse
+Export-Package: br.ufpe.cin.dsoa.platform.configurator;uses:="br.ufpe.
+ cin.dsoa.platform.attribute,br.ufpe.cin.dsoa.api.service.impl,org.osg
+ i.util.tracker,br.ufpe.cin.dsoa.api.attribute.mapper,br.ufpe.cin.dsoa
+ .api.event,org.osgi.framework,javax.xml.bind.annotation.adapters,br.u
+ fpe.cin.dsoa.util,br.ufpe.cin.dsoa.api.service,br.ufpe.cin.dsoa.api.e
+ vent.agent,br.ufpe.cin.dsoa.platform.resource,br.ufpe.cin.dsoa.api.at
+ tribute,br.ufpe.cin.dsoa.platform.attribute.impl,org.osgi.framework.h
+ ooks.service,br.ufpe.cin.dsoa.platform.event,javax.xml.bind",br.ufpe.
+ cin.dsoa.platform.management.shell;uses:="org.osgi.framework,br.ufpe.
+ cin.dsoa.platform.monitor,org.apache.felix.shell,org.osgi.util.tracke
+ r,br.ufpe.cin.dsoa.platform.management",br.ufpe.cin.dsoa.platform.mon
+ itor.impl;uses:="org.osgi.framework,br.ufpe.cin.dsoa.api.service,br.u
+ fpe.cin.dsoa.platform.attribute,br.ufpe.cin.dsoa.platform.monitor,br.
+ ufpe.cin.dsoa.api.attribute,br.ufpe.cin.dsoa.api.attribute.mapper,br.
+ ufpe.cin.dsoa.api.event",br.ufpe.cin.dsoa.platform.attribute;uses:="b
+ r.ufpe.cin.dsoa.api.service,br.ufpe.cin.dsoa.api.attribute,br.ufpe.ci
+ n.dsoa.api.attribute.mapper",br.ufpe.cin.dsoa.platform.registry.norma
+ lizer;uses:="org.osgi.framework,br.ufpe.cin.dsoa.api.service",br.ufpe
+ .cin.dsoa.platform.management;uses:="br.ufpe.cin.dsoa.platform.monito
+ r",br.ufpe.cin.dsoa.api.service;uses:="org.osgi.framework,org.apache.
+ commons.lang3.math",br.ufpe.cin.dsoa.api.event.agent;uses:="javax.xml
+ .bind.annotation",br.ufpe.cin.dsoa.platform.management.impl;uses:="br
+ .ufpe.cin.dsoa.api.service,br.ufpe.cin.dsoa.api.event.agent,br.ufpe.c
+ in.dsoa.platform.attribute,br.ufpe.cin.dsoa.platform.monitor,br.ufpe.
+ cin.dsoa.api.attribute,br.ufpe.cin.dsoa.platform.management,br.ufpe.c
+ in.dsoa.platform.event",br.ufpe.cin.dsoa.platform.attribute.impl;uses
+ :="javax.xml.bind.annotation.adapters,br.ufpe.cin.dsoa.platform.attri
+ bute,br.ufpe.cin.dsoa.api.attribute,br.ufpe.cin.dsoa.api.attribute.ma
+ pper",br.ufpe.cin.dsoa.platform.handler.dependency;uses:="br.ufpe.cin
+ .dsoa.platform.handler.dependency.manager,org.osgi.util.tracker,org.a
+ pache.commons.lang3.math,org.osgi.framework,br.ufpe.cin.dsoa.api.serv
+ ice,org.apache.felix.ipojo.metadata,br.ufpe.cin.dsoa.platform.monitor
+ ,org.apache.felix.ipojo.parser,org.apache.felix.ipojo,org.apache.feli
+ x.ipojo.architecture,br.ufpe.cin.dsoa.platform",br.ufpe.cin.dsoa.plat
+ form.registry;uses:="org.osgi.framework,br.ufpe.cin.dsoa.api.service,
+ br.ufpe.cin.dsoa.platform.handler.dependency",br.ufpe.cin.dsoa.platfo
+ rm.registry.rank;uses:="org.osgi.framework,br.ufpe.cin.dsoa.platform.
+ registry.normalizer",br.ufpe.cin.dsoa.platform.management.jmx,br.ufpe
+ .cin.dsoa.platform.registry.filter;uses:="br.ufpe.cin.dsoa.api.servic
+ e",br.ufpe.cin.dsoa.api.service.impl;uses:="org.osgi.framework,br.ufp
+ e.cin.dsoa.util,br.ufpe.cin.dsoa.api.service",br.ufpe.cin.dsoa.platfo
+ rm.handler.dependency.manager;uses:="br.ufpe.cin.dsoa.platform.attrib
+ ute,br.ufpe.cin.dsoa.api.attribute.mapper,br.ufpe.cin.dsoa.api.event,
+ br.ufpe.cin.dsoa.api.service,br.ufpe.cin.dsoa.platform.monitor,br.ufp
+ e.cin.dsoa.api.attribute,br.ufpe.cin.dsoa.platform.handler.dependency
+ ,br.ufpe.cin.dsoa.platform.registry,br.ufpe.cin.dsoa.platform",br.ufp
+ e.cin.dsoa.platform.resource.mbean;uses:="br.ufpe.cin.dsoa.api.event.
+ agent,javax.management,br.ufpe.cin.dsoa.api.event",br.ufpe.cin.dsoa.a
+ pi.attribute.mapper;uses:="javax.xml.bind.annotation,br.ufpe.cin.dsoa
+ .api.attribute,br.ufpe.cin.dsoa.api.event,javax.xml.bind",br.ufpe.cin
+ .dsoa.api.event;uses:="javax.xml.bind.annotation,br.ufpe.cin.dsoa.uti
+ l,br.ufpe.cin.dsoa.api.service,br.ufpe.cin.dsoa.api.event.agent",br.u
+ fpe.cin.dsoa.platform.registry.impl;uses:="br.ufpe.cin.dsoa.platform.
+ registry.filter,br.ufpe.cin.dsoa.api.service.impl,org.osgi.util.track
+ er,br.ufpe.cin.dsoa.platform.registry.normalizer,org.osgi.framework,b
+ r.ufpe.cin.dsoa.api.service,br.ufpe.cin.dsoa.platform.handler.depende
+ ncy,br.ufpe.cin.dsoa.platform.registry,br.ufpe.cin.dsoa.platform.regi
+ stry.rank",br.ufpe.cin.dsoa.util;uses:="org.osgi.framework,br.ufpe.ci
+ n.dsoa.api.attribute,br.ufpe.cin.dsoa.api.event,javax.xml.bind",br.uf
+ pe.cin.dsoa.platform.resource.impl;uses:="br.ufpe.cin.dsoa.platform.m
+ anagement.jmx,javax.management,br.ufpe.cin.dsoa.platform.resource.mbe
+ an,br.ufpe.cin.dsoa.api.event,br.ufpe.cin.dsoa.platform.management,br
+ .ufpe.cin.dsoa.api.service,br.ufpe.cin.dsoa.api.event.agent,br.ufpe.c
+ in.dsoa.platform.monitor,br.ufpe.cin.dsoa.platform.resource",DSOA-INF
+ ,br.ufpe.cin.dsoa.platform.monitor;uses:="org.osgi.framework,br.ufpe.
+ cin.dsoa.api.service,br.ufpe.cin.dsoa.api.attribute,org.osgi.service.
+ monitor,br.ufpe.cin.dsoa.api.event",br.ufpe.cin.dsoa.platform.resourc
+ e;uses:="br.ufpe.cin.dsoa.api.service,br.ufpe.cin.dsoa.api.event.agen
+ t",br.ufpe.cin.dsoa.api.attribute;uses:="javax.xml.bind.annotation,ja
+ vax.xml.bind.annotation.adapters,br.ufpe.cin.dsoa.platform.attribute.
+ impl,br.ufpe.cin.dsoa.api.event",br.ufpe.cin.dsoa.platform.handler.pr
+ ovider;uses:="org.osgi.service.cm,javax.management,org.osgi.util.trac
+ ker,org.osgi.framework,org.apache.felix.ipojo.metadata,org.apache.fel
+ ix.ipojo.parser,org.apache.felix.ipojo,br.ufpe.cin.dsoa.platform.hand
+ ler.provider.capability,org.apache.felix.ipojo.handlers.providedservi
+ ce",br.ufpe.cin.dsoa.platform.handler.provider.capability;uses:="org.
+ apache.felix.ipojo.metadata",br.ufpe.cin.dsoa.platform;uses:="org.osg
+ i.framework,br.ufpe.cin.dsoa.platform.attribute,br.ufpe.cin.dsoa.plat
+ form.monitor,br.ufpe.cin.dsoa.api.event,br.ufpe.cin.dsoa.platform.reg
+ istry,br.ufpe.cin.dsoa.platform.event",br.ufpe.cin.dsoa.platform.even
+ t;uses:="br.ufpe.cin.dsoa.api.event.agent,br.ufpe.cin.dsoa.api.event"
+ ,br.ufpe.cin.dsoa.platform.event.impl;uses:="org.osgi.util.tracker,br
+ .ufpe.cin.dsoa.api.event,org.osgi.framework,br.ufpe.cin.dsoa.util,org
+ .osgi.service.event,br.ufpe.cin.dsoa.api.service,br.ufpe.cin.dsoa.api
+ .event.agent,com.espertech.esper.client,br.ufpe.cin.dsoa.api.attribut
+ e,com.espertech.esper.util,br.ufpe.cin.dsoa.platform.event,javax.xml.
+ bind"
+Bundle-Name: dsoa-platform
+Bundle-Version: 0
+iPOJO-Components: 
+	handler { 
+		$classname="br.ufpe.cin.dsoa.platform.handler.provider.ProviderManager" $name="provides" $namespace="br.ufpe.cin.dsoa" 
+		manipulation { 
+			field { $name="m_manager" $type="org.apache.felix.ipojo.InstanceManager" }
+			field { $name="servant" $type="java.lang.Object" }
+			field { $name="polices" $type="java.util.Map" }
+			field { $name="activePolicy" $type="br.ufpe.cin.dsoa.platform.handler.provider.CreationPolicy" }
+			field { $name="hashCode" $type="java.lang.reflect.Method" }
+			field { $name="equals" $type="java.lang.reflect.Method" }
+			field { $name="p_metadata" $type="br.ufpe.cin.dsoa.platform.handler.provider.ProviderMetadata" }
+			field { $name="toString" $type="java.lang.reflect.Method" }
+			method { $name="$init" $arguments="{org.apache.felix.ipojo.InstanceManager,br.ufpe.cin.dsoa.platform.handler.provider.ProviderMetadata}" }
+			method { $name="addingService" $arguments="{org.osgi.framework.ServiceReference}" $return="java.lang.Object" }
+			method { $name="invoke" $arguments="{java.lang.Object,java.lang.reflect.Method,java.lang.Object[]}" $return="java.lang.Object" }
+			method { $name="modifiedService" $arguments="{org.osgi.framework.ServiceReference,java.lang.Object}" }
+			method { $name="removedService" $arguments="{org.osgi.framework.ServiceReference,java.lang.Object}" }
+			method { $name="handleNotification" $arguments="{javax.management.Notification,java.lang.Object}" }
+			method { $name="getSpecifications" $arguments="{org.apache.felix.ipojo.InstanceManager}" $return="java.lang.Class[]" }
+			method { $name="createProxy" $arguments="{org.apache.felix.ipojo.InstanceManager,br.ufpe.cin.dsoa.platform.handler.provider.ProviderMetadata}" 		
+				$return="java.lang.Object" }
+			method { $name="setActivePolicy" $arguments="{br.ufpe.cin.dsoa.platform.handler.provider.CreationPolicy}" }
+			method { $name="getActivePolicy" $return="br.ufpe.cin.dsoa.platform.handler.provider.CreationPolicy" }
+			method { $name="existsActivePolicy" $return="boolean" }
+			method { $name="parsePolicy" $arguments="{java.lang.String,java.lang.Object}" }
+			method { $name="parseExpression" $arguments="{java.lang.String,java.lang.Double,java.lang.Double}" $return="boolean" }
+			interface { $name="java.lang.reflect.InvocationHandler" }
+			interface { $name="org.osgi.util.tracker.ServiceTrackerCustomizer" }
+			interface { $name="javax.management.NotificationListener" }
+		}
+	}
+	handler { 
+		$classname="br.ufpe.cin.dsoa.platform.handler.dependency.DependencyHandler" 
+		$name="requires"
+		$namespace="br.ufpe.cin.dsoa" 
+		manipulation { 
+			$super="org.apache.felix.ipojo.PrimitiveHandler" 
+			field { $name="log" $type="java.util.logging.Logger" }
+			field { $name="ctx" $type="org.osgi.framework.BundleContext" }
+			field { $name="dsoaServiceTracker" $type="org.osgi.util.tracker.ServiceTracker" }
+			field { $name="description" $type="br.ufpe.cin.dsoa.platform.handler.dependency.DependencyHandlerDescription" }
+			field { $name="started" $type="boolean" }
+			field { $name="dsoa" $type="br.ufpe.cin.dsoa.platform.DsoaPlatform" }
+			field { $name="dependencies" $type="java.util.List" }
+			method { $name="$init" }
+			method { $name="configure" $arguments="{org.apache.felix.ipojo.metadata.Element,java.util.Dictionary}" }
+			method { $name="start" }
+			method { $name="stop" }
+			method { $name="startDependencies" }
+			method { $name="stopDependencies" }
+			method { $name="computeState" }
+			method { $name="getDsoaPlatform" $return="br.ufpe.cin.dsoa.platform.DsoaPlatform" }
+			method { $name="getConstraintList" $arguments="{org.apache.felix.ipojo.metadata.Element[]}" $return="java.util.List" }
+			method { $name="defineConstraint" $arguments="{java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String}" $return="br.ufpe.cin.dsoa.api.service.AttributeConstraint" }
+			method { $name="register" $arguments="{org.apache.felix.ipojo.parser.FieldMetadata,br.ufpe.cin.dsoa.platform.handler.dependency.Dependency}" }
+			method { $name="toString" $return="java.lang.String" }
+			method { $name="getDescription" $return="org.apache.felix.ipojo.architecture.HandlerDescription" }
+			method { $name="access$0" $arguments="{br.ufpe.cin.dsoa.platform.handler.dependency.DependencyHandler}" $return="org.osgi.framework.BundleContext" }
+			method { $name="access$1" $arguments="{br.ufpe.cin.dsoa.platform.handler.dependency.DependencyHandler,br.ufpe.cin.dsoa.platform.DsoaPlatform}" }
+			method { $name="access$2" $arguments="{br.ufpe.cin.dsoa.platform.handler.dependency.DependencyHandler}" }
+			method { $name="access$3" $arguments="{br.ufpe.cin.dsoa.platform.handler.dependency.DependencyHandler}" $return="br.ufpe.cin.dsoa.platform.DsoaPlatform" }
+			method { $name="access$4" $arguments="{br.ufpe.cin.dsoa.platform.handler.dependency.DependencyHandler}" }
+		}
+	}
+	component { 
+		$classname="br.ufpe.cin.dsoa.platform.DsoaPlatform" $name="Platform.Dsoa" 
+		provides { }
+		manipulation { 
+			field { $name="agentCatalog" $type="br.ufpe.cin.dsoa.platform.event.AgentCatalog" }
+			field { $name="eventDistribuitionService" $type="br.ufpe.cin.dsoa.api.event.EventDistribuitionService" }
+			field { $name="proxyFactory" $type="br.ufpe.cin.dsoa.platform.monitor.ProxyFactory" }
+			field { $name="serviceRegistry" $type="br.ufpe.cin.dsoa.platform.registry.ServiceRegistry" }
+			field { $name="epService" $type="br.ufpe.cin.dsoa.api.event.EventProcessingService" }
+			field { $name="monitoringService" $type="br.ufpe.cin.dsoa.platform.monitor.MonitoringService" }
+			field { $name="context" $type="org.osgi.framework.BundleContext" }
+			field { $name="attributeCatalog" $type="br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog" }
+			field { $name="attEventMapperCatalog" $type="br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog" }
+			field { $name="eventTypeCatalog" $type="br.ufpe.cin.dsoa.api.event.EventTypeCatalog" }
+			method { $name="$init" $arguments="{org.osgi.framework.BundleContext}" }
+			method { $name="getContext" $return="org.osgi.framework.BundleContext" }
+			method { $name="getServiceRegistry" $return="br.ufpe.cin.dsoa.platform.registry.ServiceRegistry" }
+			method { $name="getAttributeCatalog" $return="br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog" }
+			method { $name="getAttEventMapperCatalog" $return="br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog" }
+			method { $name="getEventTypeCatalog" $return="br.ufpe.cin.dsoa.api.event.EventTypeCatalog" }
+			method { $name="getAgentCatalog" $return="br.ufpe.cin.dsoa.platform.event.AgentCatalog" }
+			method { $name="getMonitoringService" $return="br.ufpe.cin.dsoa.platform.monitor.MonitoringService" }
+			method { $name="getEpService" $return="br.ufpe.cin.dsoa.api.event.EventProcessingService" }
+			method { $name="getEventDistribuitionService" $return="br.ufpe.cin.dsoa.api.event.EventDistribuitionService" }
+			method { $name="getProxyFactory" $return="br.ufpe.cin.dsoa.platform.monitor.ProxyFactory" }
+		}
+		requires { $field="serviceRegistry" }
+		requires { $field="attributeCatalog" }
+		requires { $field="attEventMapperCatalog" }
+		requires { $field="eventTypeCatalog" }
+		requires { $field="agentCatalog" }
+		requires { $field="monitoringService" }
+		requires { $field="epService" }
+		requires { $field="proxyFactory" }
+		requires { $field="eventDistribuitionService" }
+	}
+	component { $classname="br.ufpe.cin.dsoa.
+ platform.monitor.DynamicProxyFactory" $name="Platform.Proxy.ProxyFact
+ ory" provides { }manipulation { field { $name="invocationLogFile" $ty
+ pe="java.util.logging.FileHandler" }
+			field { $name="invocationLogger" 
+ $type="java.util.logging.Logger" }
+			field { $name="distribuitionService
+ " $type="br.ufpe.cin.dsoa.api.event.EventDistribuitionService" }metho
+ d { $name="$init" }
+			method { $name="getProxy" $arguments="{java.lang.S
+ tring,br.ufpe.cin.dsoa.api.service.Service}" $return="java.lang.Objec
+ t" }
+			method { $name="access$0" $arguments="{br.ufpe.cin.dsoa.platform.
+ monitor.DynamicProxyFactory}" $return="java.util.logging.Logger" }met
+ hod { $name="access$1" $arguments="{br.ufpe.cin.dsoa.platform.monitor
+ .DynamicProxyFactory}" $return="br.ufpe.cin.dsoa.api.event.EventDistr
+ ibuitionService" }interface { $name="br.ufpe.cin.dsoa.platform.monito
+ r.ProxyFactory" }}requires { $field="distribuitionService" }}componen
+ t { $classname="br.ufpe.cin.dsoa.platform.attribute.impl.AttributeMan
+ ager" $name="Platform.Metric.MetricComputingComponent" provides { }ma
+ nipulation { field { $name="attributeEventMapperMap" $type="java.util
+ .Map" }
+			field { $name="attributeMap" $type="java.util.Map" }
+			field { $n
+ ame="attributeCategoryMap" $type="java.util.Map" }
+			method { $name="$in
+ it" }
+			method { $name="getAttribute" $arguments="{java.lang.String}" $r
+ eturn="br.ufpe.cin.dsoa.api.attribute.Attribute" }
+			method { $name="get
+ Attributes" $return="java.util.Collection" }
+			method { $name="addAttrib
+ ute" $arguments="{br.ufpe.cin.dsoa.api.attribute.Attribute}" }
+			method 
+ { $name="getCategory" $arguments="{java.lang.String}" $return="br.ufp
+ e.cin.dsoa.api.attribute.AttributeCategory" }
+			method { $name="addCateg
+ ory" $arguments="{br.ufpe.cin.dsoa.api.attribute.AttributeCategory}" 
+ }
+			method { $name="getAttributeEventMapper" $arguments="{java.lang.Stri
+ ng}" $return="br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMap
+ per" }
+			method { $name="getAttributeEventMapperList" $return="java.util
+ .List" }
+			method { $name="addAttributeEventMapper" $arguments="{br.ufpe
+ .cin.dsoa.api.attribute.mapper.AttributeEventMapper}" }
+			method { $name
+ ="getAttribute" $arguments="{java.lang.String,java.lang.String}" $ret
+ urn="br.ufpe.cin.dsoa.api.attribute.Attribute" }
+			method { $name="parse
+ Category" $arguments="{br.ufpe.cin.dsoa.platform.attribute.AttributeC
+ atalog,java.lang.String}" $return="br.ufpe.cin.dsoa.api.attribute.Att
+ ributeCategory" }
+			method { $name="format" $arguments="{java.lang.Strin
+ g,java.lang.String}" $return="java.lang.String" }interface { $name="b
+ r.ufpe.cin.dsoa.platform.attribute.AttributeCatalog" }interface { $na
+ me="br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog" 
+ }}}component { $classname="br.ufpe.cin.dsoa.platform.registry.impl.Os
+ giServiceRegistry" $name="Platform.Registry.QoSAwareRegistryComponent
+ " provides { }manipulation { $super="br.ufpe.cin.dsoa.platform.regist
+ ry.impl.AbstractServiceRegistry" field { $name="context" $type="org.o
+ sgi.framework.BundleContext" }
+			method { $name="$init" $arguments="{org
+ .osgi.framework.BundleContext}" }
+			method { $name="findService" $argume
+ nts="{java.lang.String,java.util.List,java.util.List}" $return="java.
+ util.List" }
+			method { $name="findService" $arguments="{java.lang.Strin
+ g}" $return="java.util.List" }
+			method { $name="rankServices" $argument
+ s="{java.lang.String,java.util.List,java.util.List}" $return="br.ufpe
+ .cin.dsoa.api.service.Service" }
+			method { $name="trackService" $argume
+ nts="{br.ufpe.cin.dsoa.api.service.Service,br.ufpe.cin.dsoa.platform.
+ handler.dependency.ServiceListener}" }
+			method { $name="waitForService"
+  $arguments="{br.ufpe.cin.dsoa.api.service.ServiceSpecification,br.uf
+ pe.cin.dsoa.platform.handler.dependency.ServiceListener,java.util.Lis
+ t}" }
+			method { $name="openTracker" $arguments="{org.osgi.framework.Ser
+ viceReference,br.ufpe.cin.dsoa.platform.handler.dependency.ServiceLis
+ tener}" }
+			method { $name="createFilter" $arguments="{java.lang.String,
+ java.util.List,java.util.List}" $return="org.osgi.framework.Filter" }
+ method { $name="addServiceInterfaceFilter" $arguments="{java.util.Lis
+ t,java.lang.String}" }
+			method { $name="addConstraintFilters" $argument
+ s="{java.util.List,java.util.List}" }
+			method { $name="addBlackListFilt
+ ers" $arguments="{java.util.List,java.util.List}" }
+			method { $name="ac
+ cess$0" $arguments="{br.ufpe.cin.dsoa.platform.registry.impl.OsgiServ
+ iceRegistry,org.osgi.framework.ServiceReference,br.ufpe.cin.dsoa.plat
+ form.handler.dependency.ServiceListener}" }}}component { $classname="
+ br.ufpe.cin.dsoa.platform.monitor.impl.MonitoringServiceImpl" $name="
+ Platform.Monitor.MonitoringComponent" provides { }manipulation { fiel
+ d { $name="serviceMonitorsMap" $type="java.util.Map" }
+			field { $name="
+ log" $type="java.util.logging.Logger" }
+			field { $name="attributeMapper
+ Catalog" $type="br.ufpe.cin.dsoa.platform.attribute.AttributeEventMap
+ perCatalog" }
+			field { $name="ctx" $type="org.osgi.framework.BundleCont
+ ext" }
+			field { $name="attributeCatalog" $type="br.ufpe.cin.dsoa.platfo
+ rm.attribute.AttributeCatalog" }
+			field { $name="eventProcessingService
+ " $type="br.ufpe.cin.dsoa.api.event.EventProcessingService" }
+			method {
+  $name="$init" $arguments="{org.osgi.framework.BundleContext}" }metho
+ d { $name="getMonitoredServices" $return="java.util.List" }
+			method { $
+ name="getMonitoredService" $arguments="{java.lang.String}" $return="b
+ r.ufpe.cin.dsoa.platform.monitor.MonitoredService" }
+			method { $name="s
+ tartMonitoring" $arguments="{br.ufpe.cin.dsoa.api.service.Service}" $
+ return="br.ufpe.cin.dsoa.platform.monitor.MonitoredService" }
+			method {
+  $name="registerMonitoredService" $arguments="{br.ufpe.cin.dsoa.api.s
+ ervice.Service,br.ufpe.cin.dsoa.platform.monitor.MonitoredService}" }
+ method { $name="stopMonitoring" $arguments="{java.lang.String}" }meth
+ od { $name="addMonitoredAttribute" $arguments="{br.ufpe.cin.dsoa.plat
+ form.monitor.MonitoredService,br.ufpe.cin.dsoa.api.attribute.Attribut
+ e,java.lang.String}" }
+			method { $name="createSubscription" $arguments=
+ "{br.ufpe.cin.dsoa.platform.monitor.MonitoredAttribute,br.ufpe.cin.ds
+ oa.api.attribute.AttributableId,java.lang.String,br.ufpe.cin.dsoa.api
+ .attribute.mapper.AttributeEventMapper}" $return="br.ufpe.cin.dsoa.ap
+ i.event.Subscription" }interface { $name="br.ufpe.cin.dsoa.platform.m
+ onitor.MonitoringService" }}requires { $field="eventProcessingService
+ " }requires { $field="attributeCatalog" }requires { $field="attribute
+ MapperCatalog" }}component { $classname="br.ufpe.cin.dsoa.platform.ev
+ ent.impl.AgentCatalogImpl" $name="Platform.Event.AgentCatalog" provid
+ es { }manipulation { field { $name="agentMap" $type="java.util.Map" }
+ method { $name="$init" }
+			method { $name="getAgent" $arguments="{java.l
+ ang.String}" $return="br.ufpe.cin.dsoa.api.event.agent.EventProcessin
+ gAgent" }
+			method { $name="getAgents" $return="java.util.Collection" }m
+ ethod { $name="addAgent" $arguments="{br.ufpe.cin.dsoa.api.event.agen
+ t.EventProcessingAgent}" $return="br.ufpe.cin.dsoa.api.event.agent.Ev
+ entProcessingAgent" }
+			method { $name="removeAgent" $arguments="{java.l
+ ang.String}" $return="br.ufpe.cin.dsoa.api.event.agent.EventProcessin
+ gAgent" }
+			method { $name="getAgent" $arguments="{br.ufpe.cin.dsoa.api.
+ event.EventType}" $return="br.ufpe.cin.dsoa.api.event.agent.EventProc
+ essingAgent" }interface { $name="br.ufpe.cin.dsoa.platform.event.Agen
+ tCatalog" }}}component { $classname="br.ufpe.cin.dsoa.platform.event.
+ impl.EventTypeCatalogImpl" $name="Platform.Event.EventTypeCatalog" pr
+ ovides { }manipulation { field { $name="eventTypes" $type="java.util.
+ Map" }
+			method { $name="$init" }
+			method { $name="get" $arguments="{java.
+ lang.String}" $return="br.ufpe.cin.dsoa.api.event.EventType" }
+			method 
+ { $name="getAll" $return="java.util.Collection" }
+			method { $name="add"
+  $arguments="{br.ufpe.cin.dsoa.api.event.EventType}" $return="br.ufpe
+ .cin.dsoa.api.event.EventType" }
+			method { $name="remove" $arguments="{
+ java.lang.String}" $return="br.ufpe.cin.dsoa.api.event.EventType" }me
+ thod { $name="contains" $arguments="{java.lang.String}" $return="bool
+ ean" }interface { $name="br.ufpe.cin.dsoa.api.event.EventTypeCatalog"
+  }}}component { $classname="br.ufpe.cin.dsoa.platform.event.impl.Even
+ tAdapterCatalogImpl" $name="Platform.Event.EventAdapterCatalog" provi
+ des { }manipulation { field { $name="adapterMap" $type="java.util.Map
+ " }
+			method { $name="$init" }
+			method { $name="get" $arguments="{java.lan
+ g.String}" $return="br.ufpe.cin.dsoa.api.event.EventAdapter" }
+			method 
+ { $name="getAdapters" $return="java.util.Collection" }
+			method { $name=
+ "addAdapter" $arguments="{br.ufpe.cin.dsoa.api.event.EventAdapter}" $
+ return="br.ufpe.cin.dsoa.api.event.EventAdapter" }
+			method { $name="rem
+ oveAdapter" $arguments="{java.lang.String}" $return="br.ufpe.cin.dsoa
+ .api.event.EventAdapter" }interface { $name="br.ufpe.cin.dsoa.platfor
+ m.event.EventAdapterCatalog" }}}component { $classname="br.ufpe.cin.d
+ soa.platform.event.impl.EsperProcessingService" $name="Platform.Event
+ .EventProcessingService" provides { }callback { $method="start" $tran
+ sition="validate" }callback { $method="stop" $transition="invalidate"
+  }manipulation { field { $name="agentCatalog" $type="br.ufpe.cin.dsoa
+ .platform.event.AgentCatalog" }
+			field { $name="eventAdapterCatalog" $t
+ ype="br.ufpe.cin.dsoa.platform.event.EventAdapterCatalog" }
+			field { $n
+ ame="eventDistribuitionService" $type="br.ufpe.cin.dsoa.api.event.Eve
+ ntDistribuitionService" }
+			field { $name="ctx" $type="org.osgi.framewor
+ k.BundleContext" }
+			field { $name="eventTypeCatalog" $type="br.ufpe.cin
+ .dsoa.api.event.EventTypeCatalog" }
+			field { $name="epServiceProvider" 
+ $type="com.espertech.esper.client.EPServiceProvider" }
+			method { $name=
+ "$init" $arguments="{org.osgi.framework.BundleContext}" }
+			method { $na
+ me="start" }
+			method { $name="stop" }
+			method { $name="publish" $argument
+ s="{br.ufpe.cin.dsoa.api.event.Event}" }
+			method { $name="registerAgent
+ " $arguments="{br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent}
+ " }
+			method { $name="subscribe" $arguments="{br.ufpe.cin.dsoa.api.event
+ .EventConsumer,br.ufpe.cin.dsoa.api.event.Subscription}" }
+			method { $n
+ ame="subscribe" $arguments="{br.ufpe.cin.dsoa.api.event.EventConsumer
+ ,br.ufpe.cin.dsoa.api.event.Subscription,boolean}" }
+			method { $name="c
+ onvertEsperEvent" $arguments="{java.lang.String,java.util.Map}" $retu
+ rn="br.ufpe.cin.dsoa.api.event.Event" }
+			method { $name="unsubscribe" $
+ arguments="{br.ufpe.cin.dsoa.api.event.EventConsumer,br.ufpe.cin.dsoa
+ .api.event.Subscription}" }
+			method { $name="registerEventType" $argume
+ nts="{br.ufpe.cin.dsoa.api.event.EventType}" }
+			method { $name="registe
+ rEventDistributionListener" $arguments="{br.ufpe.cin.dsoa.api.event.E
+ ventType}" }
+			method { $name="registerEventTypeOnEsper" $arguments="{ja
+ va.lang.String,java.util.Map}" }
+			method { $name="createAgentContext" }
+ method { $name="addOutputEventType" $arguments="{br.ufpe.cin.dsoa.api
+ .event.agent.InputEvent,br.ufpe.cin.dsoa.api.event.agent.OutputEvent}
+ " }
+			method { $name="unregisterEventType" $arguments="{br.ufpe.cin.dsoa
+ .api.event.EventType}" }
+			method { $name="removeEventType" $arguments="
+ {java.lang.String}" }
+			method { $name="getQueryBuilder" $arguments="{br
+ .ufpe.cin.dsoa.api.event.agent.EventProcessingAgent}" $return="br.ufp
+ e.cin.dsoa.platform.event.impl.QueryBuilder" }
+			method { $name="getQuer
+ yBuilder" $arguments="{br.ufpe.cin.dsoa.api.event.EventConsumer,br.uf
+ pe.cin.dsoa.api.event.Subscription,boolean}" $return="br.ufpe.cin.dso
+ a.platform.event.impl.QueryBuilder" }
+			method { $name="startQuery" $arg
+ uments="{br.ufpe.cin.dsoa.platform.event.impl.Query}" $return="com.es
+ pertech.esper.client.EPStatement" }
+			method { $name="unRegisterAgent" $
+ arguments="{java.lang.String}" }
+			method { $name="getEpProvider" $retur
+ n="com.espertech.esper.client.EPServiceProvider" }
+			method { $name="des
+ troyStatement" $arguments="{java.lang.String}" }
+			method { $name="acces
+ s$0" $arguments="{br.ufpe.cin.dsoa.platform.event.impl.EsperProcessin
+ gService,java.lang.String,java.util.Map}" $return="br.ufpe.cin.dsoa.a
+ pi.event.Event" }
+			method { $name="access$1" $arguments="{br.ufpe.cin.d
+ soa.platform.event.impl.EsperProcessingService}" $return="br.ufpe.cin
+ .dsoa.api.event.EventDistribuitionService" }interface { $name="br.ufp
+ e.cin.dsoa.api.event.EventProcessingService" }}requires { $field="eve
+ ntTypeCatalog" }requires { $field="agentCatalog" }requires { $field="
+ eventAdapterCatalog" }requires { $field="eventDistribuitionService" }
+ }component { $classname="br.ufpe.cin.dsoa.platform.event.impl.EventAd
+ minDistributionService" $name="Platform.Event.EventDistributionServic
+ e" provides { }callback { $method="start" $transition="validate" }cal
+ lback { $method="stop" $transition="invalidate" }manipulation { field
+  { $name="eventAdapterCatalog" $type="br.ufpe.cin.dsoa.platform.event
+ .EventAdapterCatalog" }
+			field { $name="executorService" $type="java.ut
+ il.concurrent.ExecutorService" }
+			field { $name="adapterTracker" $type=
+ "org.osgi.util.tracker.ServiceTracker" }
+			field { $name="context" $type
+ ="org.osgi.framework.BundleContext" }
+			field { $name="eventTypeCatalog"
+  $type="br.ufpe.cin.dsoa.api.event.EventTypeCatalog" }
+			field { $name="
+ eventAdmin" $type="org.osgi.service.event.EventAdmin" }
+			method { $name
+ ="$init" $arguments="{org.osgi.framework.BundleContext}" }
+			method { $n
+ ame="start" }
+			method { $name="stop" }
+			method { $name="postEvent" $argum
+ ents="{java.lang.String,java.util.Map,java.util.Map}" }
+			method { $name
+ ="postEvent" $arguments="{br.ufpe.cin.dsoa.api.event.Event}" }
+			method 
+ { $name="subscribe" $arguments="{br.ufpe.cin.dsoa.api.event.EventCons
+ umer,br.ufpe.cin.dsoa.api.event.EventType}" }
+			method { $name="subscrib
+ e" $arguments="{br.ufpe.cin.dsoa.api.event.EventConsumer,br.ufpe.cin.
+ dsoa.api.event.EventType,java.util.Map}" }
+			method { $name="importEvent
+ s" $arguments="{br.ufpe.cin.dsoa.api.event.EventType,java.util.Map}" 
+ }
+			method { $name="exportEvents" $arguments="{br.ufpe.cin.dsoa.api.even
+ t.EventType,java.util.Map}" }
+			method { $name="access$0" $arguments="{b
+ r.ufpe.cin.dsoa.platform.event.impl.EventAdminDistributionService}" $
+ return="br.ufpe.cin.dsoa.api.event.EventTypeCatalog" }
+			method { $name=
+ "access$1" $arguments="{br.ufpe.cin.dsoa.platform.event.impl.EventAdm
+ inDistributionService}" $return="org.osgi.service.event.EventAdmin" }
+ method { $name="access$2" $arguments="{br.ufpe.cin.dsoa.platform.even
+ t.impl.EventAdminDistributionService}" $return="br.ufpe.cin.dsoa.plat
+ form.event.EventAdapterCatalog" }
+			method { $name="access$3" $arguments
+ ="{br.ufpe.cin.dsoa.platform.event.impl.EventAdminDistributionService
+ }" $return="org.osgi.framework.BundleContext" }interface { $name="br.
+ ufpe.cin.dsoa.api.event.EventDistribuitionService" }}requires { $fiel
+ d="eventTypeCatalog" }requires { $field="eventAdmin" }requires { $fie
+ ld="eventAdapterCatalog" }}component { $classname="br.ufpe.cin.dsoa.p
+ latform.configurator.PlatformConfigurator" $name="Platform.Configurat
+ ion.ConfiguratorComponent" callback { $method="start" $transition="va
+ lidate" }callback { $method="stop" $transition="invalidate" }manipula
+ tion { field { $name="agentCatalog" $type="br.ufpe.cin.dsoa.platform.
+ event.AgentCatalog" }
+			field { $name="epService" $type="br.ufpe.cin.dso
+ a.api.event.EventProcessingService" }
+			field { $name="attributeEventMap
+ perCatalog" $type="br.ufpe.cin.dsoa.platform.attribute.AttributeEvent
+ MapperCatalog" }
+			field { $name="context" $type="org.osgi.framework.Bun
+ dleContext" }
+			field { $name="listener" $type="br.ufpe.cin.dsoa.platfor
+ m.configurator.DsoaBundleListener" }
+			field { $name="tracker" $type="or
+ g.osgi.util.tracker.ServiceTracker" }
+			field { $name="attributeCatalog"
+  $type="br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog" }
+			field 
+ { $name="eventTypeCatalog" $type="br.ufpe.cin.dsoa.api.event.EventTyp
+ eCatalog" }
+			field { $name="resourceManager" $type="br.ufpe.cin.dsoa.pl
+ atform.resource.ResourceManager" }
+			method { $name="$init" $arguments="
+ {org.osgi.framework.BundleContext}" }
+			method { $name="start" }
+			method {
+  $name="stop" }}requires { $field="attributeCatalog" }requires { $fie
+ ld="attributeEventMapperCatalog" }requires { $field="agentCatalog" }r
+ equires { $field="eventTypeCatalog" }requires { $field="epService" }r
+ equires { $field="resourceManager" }}component { $classname="br.ufpe.
+ cin.dsoa.platform.management.impl.PlatformManagementServiceImpl" $nam
+ e="Platform.Management.ManagementComponent" provides { property { $na
+ me="org.apache.cxf.ws.address" $type="java.lang.String" $value="http:
+ //localhost:9090/ManagementService" }property { $name="service.export
+ ed.interfaces" $type="java.lang.String" $value="*" }property { $name=
+ "service.exported.configs" $type="java.lang.String" $value="org.apach
+ e.cxf.ws" }}manipulation { field { $name="agentCatalog" $type="br.ufp
+ e.cin.dsoa.platform.event.AgentCatalog" }
+			field { $name="managementInf
+ omationBase" $type="br.ufpe.cin.dsoa.platform.management.ManagementIn
+ fomationBase" }
+			field { $name="monitoringService" $type="br.ufpe.cin.d
+ soa.platform.monitor.MonitoringService" }
+			field { $name="attributeCata
+ log" $type="br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog" }me
+ thod { $name="$init" }
+			method { $name="getManagedServicesMetadata" $re
+ turn="java.util.List" }
+			method { $name="getManagedServiceMetadata" $ar
+ guments="{java.lang.String}" $return="br.ufpe.cin.dsoa.platform.monit
+ or.ServiceMetadata" }
+			method { $name="getAttributeList" $return="java.
+ util.List" }
+			method { $name="getAgentList" $return="java.util.List" }m
+ ethod { $name="getMonitoredServices" $return="java.util.List" }
+			method
+  { $name="getMonitoredService" $arguments="{java.lang.String}" $retur
+ n="br.ufpe.cin.dsoa.platform.monitor.MonitoredService" }
+			method { $nam
+ e="addAttributeMonitor" $arguments="{java.lang.String,java.lang.Strin
+ g,java.lang.String,java.lang.String,java.lang.String}" }interface { $
+ name="br.ufpe.cin.dsoa.platform.management.PlatformManagementService"
+  }}requires { $field="attributeCatalog" }requires { $field="agentCata
+ log" }requires { $field="monitoringService" }requires { $field="manag
+ ementInfomationBase" }}component { $classname="br.ufpe.cin.dsoa.platf
+ orm.resource.impl.ResourceManagerImpl" $name="Platform.Management.Res
+ ourceManagerComponent" provides { }manipulation { field { $name="prox
+ yFactory" $type="br.ufpe.cin.dsoa.platform.monitor.ProxyFactory" }fie
+ ld { $name="managementInfomationBase" $type="br.ufpe.cin.dsoa.platfor
+ m.management.ManagementInfomationBase" }
+			field { $name="epService" $ty
+ pe="br.ufpe.cin.dsoa.api.event.EventProcessingService" }
+			field { $name
+ ="monitoringService" $type="br.ufpe.cin.dsoa.platform.monitor.Monitor
+ ingService" }
+			field { $name="managedServices" $type="java.util.Map" }f
+ ield { $name="managedAgents" $type="java.util.Map" }
+			method { $name="$
+ init" }
+			method { $name="manage" $arguments="{br.ufpe.cin.dsoa.api.serv
+ ice.Service}" }
+			method { $name="release" $arguments="{java.lang.String
+ }" }
+			method { $name="manage" $arguments="{br.ufpe.cin.dsoa.api.event.a
+ gent.EventProcessingAgent}" }
+			method { $name="release" $arguments="{br
+ .ufpe.cin.dsoa.api.event.agent.EventProcessingAgent}" }
+			method { $name
+ ="access$0" $arguments="{br.ufpe.cin.dsoa.platform.resource.impl.Reso
+ urceManagerImpl}" $return="br.ufpe.cin.dsoa.platform.monitor.Monitori
+ ngService" }
+			method { $name="access$1" $arguments="{br.ufpe.cin.dsoa.p
+ latform.resource.impl.ResourceManagerImpl}" $return="br.ufpe.cin.dsoa
+ .platform.management.ManagementInfomationBase" }interface { $name="br
+ .ufpe.cin.dsoa.platform.resource.ResourceManager" }}requires { $field
+ ="monitoringService" }requires { $field="managementInfomationBase" }r
+ equires { $field="epService" }requires { $field="proxyFactory" }}comp
+ onent { $classname="br.ufpe.cin.dsoa.platform.management.impl.DsoaMan
+ agementInformationBase" $name="Plataform.Management.InformationBase" 
+ provides { }manipulation { field { $name="serviceMonitorsMap" $type="
+ java.util.Map" }
+			method { $name="$init" }
+			method { $name="getMonitoredS
+ ervice" $arguments="{java.lang.String,java.lang.String}" $return="br.
+ ufpe.cin.dsoa.platform.monitor.MonitoredService" }
+			method { $name="add
+ MonitoredService" $arguments="{br.ufpe.cin.dsoa.platform.monitor.Moni
+ toredService}" }
+			method { $name="getMonitoredService" $arguments="{jav
+ a.lang.String}" $return="java.util.List" }
+			method { $name="getMonitore
+ dServicesMap" $arguments="{java.lang.String}" $return="java.util.Map"
+  }
+			method { $name="toList" $arguments="{java.util.Map}" $return="java.
+ util.List" }interface { $name="br.ufpe.cin.dsoa.platform.management.M
+ anagementInfomationBase" }}}component { $classname="br.ufpe.cin.dsoa.
+ platform.management.shell.DsoaShell" $name="Platform.Shell.DsoaShell"
+  provides { }callback { $method="start" $transition="validate" }callb
+ ack { $method="stop" $transition="invalidate" }manipulation { $super=
+ "br.ufpe.cin.dsoa.platform.management.shell.DsoaBaseCommand" field { 
+ $name="ctx" $type="org.osgi.framework.BundleContext" }
+			field { $name="
+ tracker" $type="org.osgi.util.tracker.ServiceTracker" }
+			field { $name=
+ "shellService" $type="org.apache.felix.shell.ShellService" }
+			field { $
+ name="commands" $type="java.util.Map" }
+			method { $name="$init" $argume
+ nts="{org.osgi.framework.BundleContext}" }
+			method { $name="execute" $a
+ rguments="{java.lang.String,java.io.PrintStream,java.io.PrintStream}"
+  }
+			method { $name="start" }
+			method { $name="stop" }
+			method { $name="getN
+ ame" $return="java.lang.String" }
+			method { $name="getShortDescription"
+  $return="java.lang.String" }
+			method { $name="getUsage" $return="java.
+ lang.String" }
+			method { $name="getParameters" $return="java.util.List"
+  }
+			method { $name="addingService" $arguments="{org.osgi.framework.Serv
+ iceReference}" $return="java.lang.Object" }
+			method { $name="modifiedSe
+ rvice" $arguments="{org.osgi.framework.ServiceReference,java.lang.Obj
+ ect}" }
+			method { $name="removedService" $arguments="{org.osgi.framewor
+ k.ServiceReference,java.lang.Object}" }interface { $name="org.osgi.ut
+ il.tracker.ServiceTrackerCustomizer" }}requires { $field="shellServic
+ e" }}component { $classname="br.ufpe.cin.dsoa.platform.management.she
+ ll.ListAttributesCommand" $name="Platform.Shell.ListAttributesCmd" pr
+ ovides { }manipulation { $super="br.ufpe.cin.dsoa.platform.management
+ .shell.DsoaBaseCommand" field { $name="managementService" $type="br.u
+ fpe.cin.dsoa.platform.management.PlatformManagementService" }
+			method {
+  $name="$init" }
+			method { $name="getName" $return="java.lang.String" }
+ method { $name="getShortDescription" $return="java.lang.String" }meth
+ od { $name="execute" $arguments="{java.lang.String,java.io.PrintStrea
+ m,java.io.PrintStream}" }
+			method { $name="getParameters" $return="java
+ .util.List" }}requires { $field="managementService" }}component { $cl
+ assname="br.ufpe.cin.dsoa.platform.management.shell.ListAgentsCommand
+ " $name="Platform.Shell.ListAgentsCmd" provides { }manipulation { $su
+ per="br.ufpe.cin.dsoa.platform.management.shell.DsoaBaseCommand" fiel
+ d { $name="managementService" $type="br.ufpe.cin.dsoa.platform.manage
+ ment.PlatformManagementService" }
+			method { $name="$init" }
+			method { $na
+ me="getName" $return="java.lang.String" }
+			method { $name="getShortDesc
+ ription" $return="java.lang.String" }
+			method { $name="execute" $argume
+ nts="{java.lang.String,java.io.PrintStream,java.io.PrintStream}" }met
+ hod { $name="getParameters" $return="java.util.List" }}requires { $fi
+ eld="managementService" }}component { $classname="br.ufpe.cin.dsoa.pl
+ atform.management.shell.ListServicesCommand" $name="Platform.Shell.Li
+ stServicesCmd" provides { }manipulation { $super="br.ufpe.cin.dsoa.pl
+ atform.management.shell.DsoaBaseCommand" field { $name="managementSer
+ vice" $type="br.ufpe.cin.dsoa.platform.management.PlatformManagementS
+ ervice" }
+			method { $name="$init" }
+			method { $name="getName" $return="ja
+ va.lang.String" }
+			method { $name="getShortDescription" $return="java.l
+ ang.String" }
+			method { $name="execute" $arguments="{java.lang.String,j
+ ava.io.PrintStream,java.io.PrintStream}" }
+			method { $name="getParamete
+ rs" $return="java.util.List" }}requires { $field="managementService" 
+ }}component { $classname="br.ufpe.cin.dsoa.platform.management.shell.
+ ListServiceOperationsCommand" $name="Platform.Shell.ListServiceOperat
+ ionsCmd" provides { }manipulation { $super="br.ufpe.cin.dsoa.platform
+ .management.shell.DsoaBaseCommand" field { $name="managementService" 
+ $type="br.ufpe.cin.dsoa.platform.management.PlatformManagementService
+ " }
+			method { $name="$init" }
+			method { $name="execute" $arguments="{java
+ .lang.String,java.io.PrintStream,java.io.PrintStream}" }
+			method { $nam
+ e="getName" $return="java.lang.String" }
+			method { $name="getShortDescr
+ iption" $return="java.lang.String" }
+			method { $name="getParameters" $r
+ eturn="java.util.List" }}requires { $field="managementService" }}comp
+ onent { $classname="br.ufpe.cin.dsoa.platform.management.shell.AddMon
+ itorCommand" $name="Platform.Shell.AddMonitorCmd" provides { }manipul
+ ation { $super="br.ufpe.cin.dsoa.platform.management.shell.DsoaBaseCo
+ mmand" field { $name="managementService" $type="br.ufpe.cin.dsoa.plat
+ form.management.PlatformManagementService" }
+			method { $name="$init" }m
+ ethod { $name="getName" $return="java.lang.String" }
+			method { $name="g
+ etShortDescription" $return="java.lang.String" }
+			method { $name="execu
+ te" $arguments="{java.lang.String,java.io.PrintStream,java.io.PrintSt
+ ream}" }
+			method { $name="getParameters" $return="java.util.List" }}req
+ uires { $field="managementService" }}instance { $component="Platform.
+ Dsoa" }instance { $component="Platform.Event.EventProcessingComponent
+ " }instance { $component="Platform.Metric.MetricComputingComponent" }
+ instance { $component="Platform.Monitor.MonitoringComponent" }instanc
+ e { $component="Platform.Registry.QoSAwareRegistryComponent" }instanc
+ e { $component="Platform.Configuration.ConfiguratorComponent" }instan
+ ce { $component="Platform.Proxy.ProxyFactory" }instance { $component=
+ "Platform.Management.ManagementComponent" }instance { $component="Pla
+ tform.Management.ResourceManagerComponent" }instance { $component="Pl
+ ataform.Management.InformationBase" }instance { $component="Platform.
+ Manager.Verifier" }instance { $component="Platform.Shell.DsoaShell" }
+ instance { $component="Platform.Shell.ListAttributesCmd" }instance { 
+ $component="Platform.Shell.ListAgentsCmd" }instance { $component="Pla
+ tform.Shell.ListServicesCmd" }instance { $component="Platform.Shell.L
+ istServiceOperationsCmd" }instance { $component="Platform.Shell.AddMo
+ nitorCmd" }instance { $component="Platform.Event.AgentCatalog" }insta
+ nce { $component="Platform.Event.EventTypeCatalog" }instance { $compo
+ nent="Platform.Event.EventAdapterCatalog" }instance { $component="Pla
+ tform.Event.EventProcessingService" }instance { $component="Platform.
+ Event.EventDistributionService" }
+Created-By: 1.8.0_91 (Oracle Corporation) & iPOJO
+Build-Jdk: 1.8.0_91
+

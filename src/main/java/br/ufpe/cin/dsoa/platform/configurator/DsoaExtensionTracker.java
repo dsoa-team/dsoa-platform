@@ -36,6 +36,7 @@ import br.ufpe.cin.dsoa.api.event.agent.ProcessingMapping;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCategoryAdapter;
+import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeManager;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 import br.ufpe.cin.dsoa.util.DsoaSimpleLogger;
@@ -146,69 +147,79 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 					if (action == ADDED) {
 						if (!types.isEmpty()) {
 							for (EventType type : types) {
-								try {
-									this.eventTypeCatalog.add(type);
-									this.epService.registerEventType(type);
-								} catch (EventTypeAlreadyCatalogedException e) {
-									logger.warning(e.getMessage());
+								
+								if (!this.eventTypeCatalog.contains(type.getName())) {
+									try {
+										this.eventTypeCatalog.add(type);
+										this.epService.registerEventType(type);
+									} catch (EventTypeAlreadyCatalogedException e) {
+										logger.warning(e.getMessage());
+									}
 								}
+								
 							}
 						}
 
 						if (!subtypes.isEmpty()) {
 							for (EventType subtype : subtypes) {
-								EventType superType = this.eventTypeCatalog
-										.get(subtype.getSuperTypeName());
-								if (superType != null) {
-									Map<String, PropertyType> superMetaProps = superType
-											.getMetadataMap();
-									Map<String, PropertyType> subMetadataProps = subtype
-											.getMetadataMap();
-									copyProperties(superMetaProps,
-											subMetadataProps);
-
-									Map<String, PropertyType> superDataProps = superType
-											.getDataMap();
-									Map<String, PropertyType> subDataProps = subtype
-											.getDataMap();
-									copyProperties(superDataProps, subDataProps);
-								}
-								try {
-									this.eventTypeCatalog.add(subtype);
-									this.epService.registerEventType(subtype);
-								} catch (EventTypeAlreadyCatalogedException e) {
-									logger.warning(e.getMessage());
+								if (!this.eventTypeCatalog.contains(subtype.getName())) {
+									EventType superType = this.eventTypeCatalog
+											.get(subtype.getSuperTypeName());
+									if (superType != null) {
+										Map<String, PropertyType> superMetaProps = superType
+												.getMetadataMap();
+										Map<String, PropertyType> subMetadataProps = subtype
+												.getMetadataMap();
+										copyProperties(superMetaProps,
+												subMetadataProps);
+	
+										Map<String, PropertyType> superDataProps = superType
+												.getDataMap();
+										Map<String, PropertyType> subDataProps = subtype
+												.getDataMap();
+										copyProperties(superDataProps, subDataProps);
+									}
+									try {
+										this.eventTypeCatalog.add(subtype);
+										this.epService.registerEventType(subtype);
+									} catch (EventTypeAlreadyCatalogedException e) {
+										logger.warning(e.getMessage());
+									}
 								}
 							}
 						}
 					} else if (action == REMOVED) {
 						if (!subtypes.isEmpty()) {
 							for (EventType subtype : subtypes) {
-								EventType superType = this.eventTypeCatalog
-										.get(subtype.getSuperTypeName());
-								if (superType != null) {
-									Map<String, PropertyType> superMetaProps = superType
-											.getMetadataMap();
-									Map<String, PropertyType> subMetadataProps = subtype
-											.getMetadataMap();
-									copyProperties(superMetaProps,
-											subMetadataProps);
-
-									Map<String, PropertyType> superDataProps = superType
-											.getDataMap();
-									Map<String, PropertyType> subDataProps = subtype
-											.getDataMap();
-									copyProperties(superDataProps, subDataProps);
+								if (this.eventTypeCatalog.contains(subtype.getName())) {
+									EventType superType = this.eventTypeCatalog
+											.get(subtype.getSuperTypeName());
+									if (superType != null) {
+										Map<String, PropertyType> superMetaProps = superType
+												.getMetadataMap();
+										Map<String, PropertyType> subMetadataProps = subtype
+												.getMetadataMap();
+										copyProperties(superMetaProps,
+												subMetadataProps);
+	
+										Map<String, PropertyType> superDataProps = superType
+												.getDataMap();
+										Map<String, PropertyType> subDataProps = subtype
+												.getDataMap();
+										copyProperties(superDataProps, subDataProps);
+									}
+									this.eventTypeCatalog.remove(subtype.getName());
+									this.epService.unregisterEventType(subtype);
 								}
-								this.eventTypeCatalog.remove(subtype.getName());
-								this.epService.unregisterEventType(subtype);
 							}
 						}
 
 						if (!types.isEmpty()) {
 							for (EventType type : types) {
-								this.eventTypeCatalog.remove(type.getName());
-								this.epService.unregisterEventType(type);
+								if (this.eventTypeCatalog.contains(type.getName())) {
+									this.eventTypeCatalog.remove(type.getName());
+									this.epService.unregisterEventType(type);
+								}
 							}
 						}
 					}
@@ -250,9 +261,12 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 							.getEventTypeName());
 					mapper.setEventType(eventType);
 					try {
-						if (action == ADDED) {
+						if (action == ADDED && !this.attributeEventMapperCatalog.containsAttributeEventMapper(
+								AttributeManager.format(mapper.getCategory(), mapper.getName()))) {
+							
 							this.attributeEventMapperCatalog
 									.addAttributeEventMapper(mapper);
+							
 						}
 					} catch (AttributeEventMapperAlreadyCatalogedException e) {
 						logger.warning(e.getMessage());
@@ -279,27 +293,32 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 				for (EventProcessingAgent eventProcessingAgent : agentList
 						.getAgents()) {
 					try {
-						if (action == ADDED) {
-							this.agentCatalog.addAgent(eventProcessingAgent);
-							this.epService.registerAgent(eventProcessingAgent);
-
-							if (eventProcessingAgent.getProcessing() instanceof ProcessingMapping) {
-								this.resourceManager
-										.manage(eventProcessingAgent);
+						if (action == ADDED) {	
+							if (!this.agentCatalog.containsAgent(eventProcessingAgent.getId())) {
+								this.agentCatalog.addAgent(eventProcessingAgent);
+								this.epService.registerAgent(eventProcessingAgent);
+	
+								if (eventProcessingAgent.getProcessing() instanceof ProcessingMapping) {
+									this.resourceManager
+											.manage(eventProcessingAgent);
+								}
 							}
 						} else {
-							this.agentCatalog.removeAgent(eventProcessingAgent
-									.getId());
-							this.epService.unregisterAgent(eventProcessingAgent
-									.getId());
-
-							if (eventProcessingAgent.getProcessing() instanceof ProcessingMapping) {
-								this.resourceManager
-										.release(eventProcessingAgent.getId());
+							if (this.agentCatalog.containsAgent(eventProcessingAgent.getId())) {
+								this.agentCatalog.removeAgent(eventProcessingAgent
+										.getId());
+								this.epService.unregisterAgent(eventProcessingAgent
+										.getId());
+	
+								if (eventProcessingAgent.getProcessing() instanceof ProcessingMapping) {
+									this.resourceManager
+											.release(eventProcessingAgent.getId());
+								}
 							}
 						}
 
 					} catch (AgentAlreadyCatalogedException e) {
+						// This  should not happen
 						logger.warning(e.getMessage());
 					}
 				}
@@ -363,9 +382,13 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 					}
 					try {
 						if (action == ADDED) {
-							attributeCatalog.addAttribute(att);
+							if (!this.attributeCatalog.containsAttribute(att.getId())) {
+								attributeCatalog.addAttribute(att);
+							}
 						} else {
-							attributeCatalog.removeAttribute(att);
+							if (this.attributeCatalog.containsAttribute(att.getId())) {
+								attributeCatalog.removeAttribute(att);
+							}
 						}
 					} catch (AttributeAlreadyCatalogedException e) {
 						logger.warning(e.getMessage());

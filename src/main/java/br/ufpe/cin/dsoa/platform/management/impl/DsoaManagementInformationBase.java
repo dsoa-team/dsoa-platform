@@ -28,7 +28,7 @@ public class DsoaManagementInformationBase implements ManagementInfomationBase {
 	public synchronized void addMonitoredService(MonitoredService monitoredService) {
 
 		String componentId = monitoredService.getComponentId();
-		String specification = monitoredService.getServiceSpecification().getServiceInterface();
+		String specification = monitoredService.getServiceInstance().getPort().getServiceSpecification().getFunctionalInterface().getInterfaceName();
 
 		Map<String, MonitoredService> monitoredServices = this.getMonitoredServicesMap(componentId);
 		monitoredServices.put(specification, monitoredService);

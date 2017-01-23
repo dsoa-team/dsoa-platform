@@ -11,7 +11,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import br.ufpe.cin.dsoa.api.event.EventDistribuitionService;
-import br.ufpe.cin.dsoa.api.service.Service;
+import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 import br.ufpe.cin.dsoa.util.Constants;
 
 /**
@@ -54,11 +54,22 @@ public class DynamicProxyFactory implements ProxyFactory {
 		}
 	}
 	
-	public Object getProxy(String consumerId, Service service) {
+	public Object getProxy(String consumerId, ServiceInstance service) {
 		if (this.proxy == null) {
 			DynamicProxy dynaProxy = new DynamicProxy(consumerId, service);
-			proxy = java.lang.reflect.Proxy.newProxyInstance(this.getClass().getClassLoader(),
-					new Class[] { service.getSpecification().getClazz() }, dynaProxy);
+			
+			ClassLoader cl = this.getClass().getClassLoader();
+			String itfClassname = service.getPort().getServiceSpecification().getFunctionalInterface().getInterfaceName();
+			Class<?> itfClass;
+			try {
+				itfClass = cl.loadClass(itfClassname);
+				proxy = java.lang.reflect.Proxy.newProxyInstance(cl,
+						new Class[] { itfClass }, dynaProxy);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
 		} 
 		return proxy;
 	}
@@ -66,7 +77,7 @@ public class DynamicProxyFactory implements ProxyFactory {
 	class DynamicProxy implements InvocationHandler {
 
 		private String consumerId;
-		private Service service;
+		private ServiceInstance service;
 
 		/**
 		 * HashCode method.
@@ -83,7 +94,7 @@ public class DynamicProxyFactory implements ProxyFactory {
 		 */
 		private Method m_toStringMethod;
 
-		public DynamicProxy(String consumerId, Service service) {
+		public DynamicProxy(String consumerId, ServiceInstance service) {
 			this.consumerId = consumerId;
 			this.service = service;
 
@@ -166,11 +177,11 @@ public class DynamicProxyFactory implements ProxyFactory {
 						}
 						String returnType = method.getReturnType().getName();
 
-						notifyInvocation(consumerId, service.getProviderId(), method.getName(),
+						notifyInvocation(consumerId, service.getName(), method.getName(),
 								requestTime, responseTime, success, exceptionClassName,
 								exceptionMessage, parameterTypes, parameterValues, returnType,
 								result);
-						invocationLogger.info(service.getProviderId()+","+ System.currentTimeMillis()+"," + (responseTime - requestTime));
+						invocationLogger.info(service.getName()+","+ System.currentTimeMillis()+"," + (responseTime - requestTime));
 					}
 				}
 			}

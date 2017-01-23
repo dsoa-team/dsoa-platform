@@ -30,7 +30,7 @@ import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 import br.ufpe.cin.dsoa.api.event.Subscription;
-import br.ufpe.cin.dsoa.api.service.Expression;
+import br.ufpe.cin.dsoa.api.service.RelationalOperator;
 import br.ufpe.cin.dsoa.epcenter.helper.EventProducerMock;
 import br.ufpe.cin.dsoa.epcenter.helper.HelperEpCenterTest;
 
@@ -106,7 +106,7 @@ public class TestEventProcessingAgent {
 
 		final EventType subscribedEventType = eventTypeCatalog.get("InvocationEvent");
 		PropertyType propertyType = subscribedEventType.getMetadataPropertyType("source");
-		EventFilter filter = HelperEpCenterTest.getEventFilter(propertyType, source, Expression.EQ);
+		EventFilter filter = HelperEpCenterTest.getEventFilter(propertyType, source, RelationalOperator.EQ);
 
 		epCenter.subscribe(new EventConsumer() {
 
@@ -138,7 +138,7 @@ public class TestEventProcessingAgent {
 
 		final EventType subscribedEventType = eventTypeCatalog.get("AvgResponseTimeEvent");
 		PropertyType propertyType = subscribedEventType.getMetadataPropertyType("source");
-		EventFilter filter = HelperEpCenterTest.getEventFilter(propertyType, source, Expression.EQ);
+		EventFilter filter = HelperEpCenterTest.getEventFilter(propertyType, source, RelationalOperator.EQ);
 
 		epCenter.subscribe(new EventConsumer() {
 

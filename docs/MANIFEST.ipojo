@@ -1,0 +1,85 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: HomebrokerBB
+Bundle-Name: HomebrokerBB
+Bundle-Version: 0
+Bundle-ManifestVersion: 2
+Bnd-LastModified: 1474932591942
+Private-Package: br.com.homebroker.bb
+Import-Package: org.osgi.framework;version=1.5, br.com.bb.provider, br
+ .com.bb.homebroker, org.osgi.service.cm;version=1.2, br.com.bb.broker
+ , br.com.bb.stock, org.apache.felix.ipojo;version=0.9.0, org.osgi.ser
+ vice.log;version=1.3, org.apache.felix.ipojo.architecture;version=0.9
+ .0
+iPOJO-Components: 
+	instance { 
+		$component="Homebroker-BB" $name="Homebroker-BB-Instance" 
+		property { $name="service.pid" $type="java.lang.String" $value="hb" }
+	}
+	dsoa-component { 
+		$classname="br.com.homebroker.bb.HomebrokerBB" 
+		$name="Homebroker-BB" 
+		br.ufpe.cin.dsoa:requires { 
+			$field="provider" 
+			constraint { 
+				$expression="LE" $threashold="200" $weight="1" $attribute="qos.AvgResponseTime" $operation="getCotation" 
+			}
+		}
+		provides { 
+			property { 
+				$name="service.pid" 
+				$type="java.lang.String" 
+				$value="Homebroker-BB" 
+			}
+			property { 
+				$name="service.managed" 
+				$type="java.lang.String" 
+				$value="true" 
+			}
+			property { 
+				$name="service.description" 
+				$type="java.lang.String" 
+				$value="Homebroker do Banco do Brasil" 
+			}
+			property { 
+				$name="constraint.operation.qos.AvgResponseTime.getCurrentPrice.LE" 
+				$type="java.lang.Double" 
+				$value="900"
+			}
+			property { 
+				$name="constraint.service.qos.Availability.GE" 
+				$type="java.lang.Double" $value="90" 
+			}
+			property { 
+				$name="org.apache.cxf.ws.address" $type="java.lang.String" $value="http://localhost:9096/homeBrokerBB" 
+			}
+			property { 
+				$name="service.exported.interfaces" 
+				$type="java.lang.String" 
+				$value="*" 
+			}
+			property { 
+				$name="service.exported.configs" 
+				$type="java.lang.String" 
+				$value="org.apache.cxf.ws" 
+			}
+		}
+		callback { 
+			$method="start" $transition="validate" 
+		}
+		callback { 
+			$method="stop" $transition="invalidate" 
+		}
+		manipulation { 
+			field { $name="provider" $type="br.com.bb.provider.InformationProvider" }
+			method { $name="$init" }
+			method { $name="start" }
+			method { $name="stop" }
+			method { $name="priceAlert" $arguments="{java.lang.String,br.com.bb.stock.Stock,double,double}" $return="double" }
+			method { $name="schedulingOrder" $arguments="{java.lang.String,br.com.bb.stock.Stock,int,double,double,double}" }
+			method { $name="getCurrentPrice" $arguments="{br.com.bb.stock.Stock}" $return="double" }
+			interface { $name="br.com.bb.homebroker.Homebroker" }
+		}
+	}
+Created-By: 1.8.0_91 (Oracle Corporation) & iPOJO
+Tool: Bnd-0.0.249
+

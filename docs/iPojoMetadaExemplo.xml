@@ -1,0 +1,45 @@
+<component  id="HomebrokerClient" name="HomebrokerClient" classname="br.com.homebroker.bb.client.HomebrokerClient" >
+	<callback  transition="validate" method="start" />
+	<callback  transition="invalidate" method="stop" />
+	
+	<manipulation>
+		<field  name="homebroker" type="br.com.bb.homebroker.Homebroker" />
+		<method  name="init" />
+		<method  name="start" />
+		<method  name="stop" />
+	</manipulation>
+	
+	<br.ufpe.cin.dsoa:requires>
+		<service field="homebroker" /> 
+			<manager id="QoSDependencyManager" >
+				<qos expression="LT" operation="priceAlert" weight="2" metric="ResponseTime" value="800" />
+				<qos expression="GT" weight="1" metric="Availability" value="95" />
+			</manager>
+		</service>
+	</br.ufpe.cin.dsoa:requires>
+</component>
+	
+	<component classname="br.com.homebroker.bb.client.HomebrokerClient"
+     			id="HomebrokerClient"
+             	name="HomebrokerClient">
+                
+           <callback transition="validate" method="start" />
+           <callback transition="invalidate" method="stop" />
+
+           <qos:requires>
+                 <service field="homebroker">
+                 	  <manager id="QoSDependencyManager" >
+	                      <qos metric="ResponseTime" 
+	                      	  expression="LT" 
+	                      	  value="800" 
+	                      	  weight="2" 
+	                      	  operation="priceAlert" />
+	                      		 	
+	                      <qos metric="Availability" 
+	                      	  expression="GT" 
+	                      	  value="95" 
+	                      	  weight="1" /> 
+	                    </manager>
+                 </service>
+           </qos:requires>
+    </component>

@@ -14,13 +14,15 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import br.ufpe.cin.dsoa.api.service.AttributeConstraint;
-import br.ufpe.cin.dsoa.api.service.Expression;
+import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
-import br.ufpe.cin.dsoa.api.service.Service;
-import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
-import br.ufpe.cin.dsoa.api.service.impl.OsgiService;
-import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
+import br.ufpe.cin.dsoa.api.service.RelationalOperator;
+import br.ufpe.cin.dsoa.api.service.ServiceInstance;
+import br.ufpe.cin.dsoa.api.service.impl.ConstraintImpl;
+import br.ufpe.cin.dsoa.api.service.impl.OsgiServiceFactory;
+import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceImpl;
+import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
+import br.ufpe.cin.dsoa.platform.handler.requires.ServiceListener;
 import br.ufpe.cin.dsoa.platform.registry.InvalidServiceSpecificationException;
 import br.ufpe.cin.dsoa.platform.registry.ServiceRegistry;
 import br.ufpe.cin.dsoa.platform.registry.filter.AndFilter;
@@ -51,9 +53,9 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 				specification, blackList);
 
 		if (references != null) {
-			Service bestService = this.rankServices(specification
-					.getServiceInterface(), references, specification
-					.getNonFunctionalSpecification().getAttributeConstraints());
+			ServiceInstance bestService = this.rankServices(specification
+					.getFunctionalInterface().getInterfaceName(), references, specification
+					.getNonFunctionalSpecification().getConstraints());
 			listener.onArrival(bestService);
 			this.trackService(bestService, listener);
 		} else {
@@ -63,7 +65,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 
 	private ServiceReference[] getServiceReferences(ServiceSpecification spec,
 			List<String> blackList) throws InvalidServiceSpecificationException {
-		String serviceInterface = spec.getServiceInterface();
+		String serviceInterface = spec.getFunctionalInterface().getInterfaceName();
 		if (serviceInterface == null) {
 			throw new InvalidServiceSpecificationException(
 					"Invalid service interface", serviceInterface);
@@ -79,11 +81,18 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 		}
 	}
 
+	/**
+	 * Filter out service that do not support the required QoS characteristics or
+	 * that are part of a black list.
+	 * @param spec
+	 * @param blackList
+	 * @return
+	 */
 	private Filter createFilter(ServiceSpecification spec,
 			List<String> blackList) {
 		NonFunctionalSpecification nfs = spec.getNonFunctionalSpecification();
 		List<FilterBuilder> filterBuilders = new ArrayList<FilterBuilder>();
-		addServiceInterfaceFilter(filterBuilders, spec.getServiceInterface());
+		addServiceInterfaceFilter(filterBuilders, spec.getFunctionalInterface().getInterfaceName());
 		addConstraintFilters(filterBuilders, nfs);
 		addBlackListFilters(filterBuilders, blackList);
 		try {
@@ -93,10 +102,10 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 			// TODO Auto-generated catch block
 			throw new InvalidServiceSpecificationException(
 					"Invalid service specification",
-					spec.getServiceInterface(),
+					spec.getFunctionalInterface().getInterfaceName(),
 					(spec.getNonFunctionalSpecification() == null ? null : spec
 							.getNonFunctionalSpecification()
-							.getAttributeConstraints()));
+							.getConstraints()));
 		}
 	}
 
@@ -109,10 +118,10 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 	private void addConstraintFilters(List<FilterBuilder> filterBuilders,
 			NonFunctionalSpecification nfs) {
 		if (nfs != null) {
-			List<AttributeConstraint> constraints = nfs
-					.getAttributeConstraints();
+			List<ConstraintImpl> constraints = nfs
+					.getConstraints();
 			if (constraints != null && !constraints.isEmpty()) {
-				for (AttributeConstraint constraint : constraints) {
+				for (Constraint constraint : constraints) {
 					filterBuilders.add(new DFilter(constraint.format(),
 							constraint.getExpression(), constraint
 									.getThreashold()));
@@ -126,13 +135,13 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 		if (blackList != null && !blackList.isEmpty()) {
 			for (String serviceId : blackList) {
 				filterBuilders.add(new ObjectFilter(Constants.SERVICE_ID,
-						Expression.NE, serviceId));
+						RelationalOperator.NE, serviceId));
 			}
 		}
 	}
 
-	private Service rankServices(String serviceInterface,
-			ServiceReference[] references, List<AttributeConstraint> constraints) {
+	private ServiceInstance rankServices(String serviceInterface,
+			ServiceReference[] references, List<ConstraintImpl> constraints) {
 		List<ServiceReference> referenceList = Arrays.asList(references);
 		ServiceReference ranking = context.getServiceReference(Rank.class
 				.getName());
@@ -146,11 +155,12 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 			Rank rank = (Rank) context.getService(ranking);
 			reference = rank.ranking(constraints, normalizer, references);
 		}
-		return OsgiService.getOsgiService(serviceInterface, reference);
+		//MODIFICAR PARA REFERENCIAR UMA SERVICE INSTANCE
+		return OsgiServiceFactory.getOsgiService(serviceInterface, reference);
 	}
 
-	public void trackService(Service bestService, ServiceListener listener) {
-		ServiceReference reference = ((OsgiService) bestService).getReference();
+	public void trackService(ServiceInstance bestService, ServiceListener listener) {
+		ServiceReference reference = ((ServiceInstanceImpl) bestService).getServiceReference();
 		this.openTracker(reference, listener);
 	}
 
@@ -169,8 +179,9 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 			@Override
 			public void removedService(ServiceReference reference,
 					Object service) {
-				listener.onDeparture(OsgiService.getOsgiService(
-						listener.getServiceInterface(), reference));
+				// MODIFICAR PARA REFERENCIAR UMA SERVICE INSTANCE
+				listener.onDeparture(OsgiServiceFactory.getOsgiService(
+						listener.getServiceInterfaceName(), reference));
 				super.removedService(reference, service);
 				this.close();
 			}
@@ -197,11 +208,12 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 
 		public Object addingService(ServiceReference reference) {
 
-			Service service = null;
+			ServiceInstance service = null;
 
 			if (!blackList.contains(reference)) {
-				service = OsgiService.getOsgiService(
-						listener.getServiceInterface(), reference);
+				//TODO MODIFICAR PARA REFERENCIAR UMA SERVICE INSTANCE
+				service = OsgiServiceFactory.getOsgiService(
+						listener.getServiceInterfaceName(), reference);
 				this.listener.onArrival(service);
 				// open tracker for departures
 				openTracker(reference, listener);

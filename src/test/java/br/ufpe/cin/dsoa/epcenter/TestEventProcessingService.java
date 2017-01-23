@@ -1,12 +1,10 @@
 package br.ufpe.cin.dsoa.epcenter;
 
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
 import br.ufpe.cin.dsoa.api.attribute.AttributeChangeListener;
+import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
 import br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService;
 
 public class TestEventProcessingService implements AttributeChangeListener {
@@ -133,7 +131,7 @@ public class TestEventProcessingService implements AttributeChangeListener {
 		}*/
 	}
 
-	public void receive(Map result, Object userObject, String statementName) {
+/*	public void receive(Map result, Object userObject, String statementName) {
 		// TODO Auto-generated method stub
 		System.out.println(result);
 	}
@@ -142,7 +140,7 @@ public class TestEventProcessingService implements AttributeChangeListener {
 		// TODO Auto-generated method stub
 		System.out.println("Stmt: " + statementName);
 		System.out.println("Result: " + result);
-	}
+	}*/
 
 	@Override
 	public void update(AttributeValue value) {

@@ -1,13 +1,13 @@
 package br.ufpe.cin.dsoa.api.event;
 
-import br.ufpe.cin.dsoa.api.service.Expression;
+import br.ufpe.cin.dsoa.api.service.RelationalOperator;
 
 public class FilterExpression {
 
 	private Property property;
-	private Expression expression;
+	private RelationalOperator expression;
 
-	public FilterExpression(Property property, Expression expression) {
+	public FilterExpression(Property property, RelationalOperator expression) {
 		super();
 		this.property = property;
 		this.expression = expression;
@@ -17,7 +17,7 @@ public class FilterExpression {
 		return property;
 	}
 
-	public Expression getExpression() {
+	public RelationalOperator getExpression() {
 		return expression;
 	}
 

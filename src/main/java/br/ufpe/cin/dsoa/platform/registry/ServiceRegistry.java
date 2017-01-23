@@ -2,8 +2,8 @@ package br.ufpe.cin.dsoa.platform.registry;
 
 import java.util.List;
 
-import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
-import br.ufpe.cin.dsoa.platform.handler.dependency.ServiceListener;
+import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
+import br.ufpe.cin.dsoa.platform.handler.requires.ServiceListener;
 
 public interface ServiceRegistry {
 	

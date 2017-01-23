@@ -35,6 +35,7 @@ public class DsoaFindHook implements FindHook {
 		registration.unregister();
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public void find(BundleContext context, String name, String filter,
 			boolean allServices, Collection references) {
 

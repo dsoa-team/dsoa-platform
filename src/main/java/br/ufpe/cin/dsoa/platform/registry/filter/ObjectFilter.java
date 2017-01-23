@@ -1,14 +1,14 @@
 package br.ufpe.cin.dsoa.platform.registry.filter;
 
-import br.ufpe.cin.dsoa.api.service.Expression;
+import br.ufpe.cin.dsoa.api.service.RelationalOperator;
 
 public class ObjectFilter extends FilterBuilder {
 
 	private final String name;
 	private final Object value;
-	private final Expression expression;
+	private final RelationalOperator expression;
 	
-	public ObjectFilter(String name, Expression expression, Object value) {
+	public ObjectFilter(String name, RelationalOperator expression, Object value) {
 		super();
 		this.name = name;
 		this.value = value;

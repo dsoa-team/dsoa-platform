@@ -4,6 +4,7 @@ import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
 
 
+
 /**
  * Composite Instance Description.
  * 
@@ -16,7 +17,7 @@ public class DsoaComponentInstanceDescription extends InstanceDescription {
      * @param type the component type description
      * @param instance the instance description
      */
-    public DsoaComponentInstanceDescription(ComponentTypeDescription type, DsoaComponentInstance instance) {
+    public DsoaComponentInstanceDescription(ComponentTypeDescription type, DsoaComponentInstanceManager instance) {
         super(type, instance);
     }
 

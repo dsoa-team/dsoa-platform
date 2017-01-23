@@ -1,36 +1,9 @@
 package br.ufpe.cin.dsoa.epcenter.configuration.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import br.ufpe.cin.dsoa.api.event.EventType;
-import br.ufpe.cin.dsoa.api.event.EventTypeList;
-import br.ufpe.cin.dsoa.api.event.PropertyType;
-import br.ufpe.cin.dsoa.api.event.agent.AgentList;
-import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
-import br.ufpe.cin.dsoa.platform.event.impl.EsperProcessingService;
-
-import com.espertech.esper.client.Configuration;
-import com.espertech.esper.client.EPServiceProvider;
-import com.espertech.esper.client.EPServiceProviderManager;
 
 public class AgentParserSpec {
 
-	private AgentList agentList;
+/*	private AgentList agentList;
 	private EventTypeList eventList;
 	private EsperProcessingService epService;
 	private EPServiceProvider esperProvider;
@@ -151,5 +124,5 @@ public class AgentParserSpec {
 			assertNotNull(query);
 		}
 	}
-	
+	*/
 }
