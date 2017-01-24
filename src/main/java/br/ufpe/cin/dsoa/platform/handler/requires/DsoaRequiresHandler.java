@@ -13,12 +13,12 @@ import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
 
 import br.ufpe.cin.dsoa.api.service.Binding;
+import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.DsoaComponentInstance;
 import br.ufpe.cin.dsoa.api.service.DsoaComponentType;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.RequiredPort;
 import br.ufpe.cin.dsoa.api.service.impl.BindingImpl;
-import br.ufpe.cin.dsoa.api.service.impl.ConstraintImpl;
 import br.ufpe.cin.dsoa.api.service.impl.NonFunctionalSpecificationImpl;
 import br.ufpe.cin.dsoa.api.service.impl.RequiredPortImpl;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
@@ -81,7 +81,7 @@ public class DsoaRequiresHandler extends PrimitiveHandler {
 		Element[] requiresTags = metadata.getElements(Constants.REQUIRES_TAG, Constants.REQUIRES_TAG_NAMESPACE);
 		for (Element requiresTag : requiresTags) {
 			String field = (String) requiresTag.getAttribute(Constants.REQUIRES_ATT_FIELD);
-			List<ConstraintImpl> constraintList = DsoaConstraintParser.getConstraintList(requiresTag.getElements(Constants.CONSTRAINT_TAG));
+			List<Constraint> constraintList = DsoaConstraintParser.getConstraintList(requiresTag.getElements(Constants.CONSTRAINT_TAG),null);
 			NonFunctionalSpecification nonFunctionalSpecification = new NonFunctionalSpecificationImpl(constraintList);
 			
 			FieldMetadata fieldMetadata = pojoMetadata.getField(field);

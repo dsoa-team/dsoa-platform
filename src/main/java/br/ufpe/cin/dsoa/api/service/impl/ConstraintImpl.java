@@ -1,36 +1,34 @@
 package br.ufpe.cin.dsoa.api.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.math.NumberUtils;
-import org.osgi.framework.ServiceReference;
-
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
 import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.RelationalOperator;
-import br.ufpe.cin.dsoa.util.Constants;
 
 
 public class ConstraintImpl implements Constraint {
 	
+	public static final double WEIGHT_UNSET = -1;
+
 	/** Metric id */
 	private String attributeId;
 	
 	/** Relational operator */
 	private RelationalOperator expression;
 	
-	//INCLUDE UNIT
+	//INCLUDE UNIT: The main problem is that I will not be able to use LDP to make comparations
 	
 	/** value */
 	private double threashold;
 	
 	/** Operation name*/
 	private String operation;
+
+	private double weight;
 	
-	public ConstraintImpl(String attributeId, String operation, RelationalOperator expression, double threashold) {
+	public ConstraintImpl(String attributeId, String operation, RelationalOperator expression, double threashold, double wgt) {
 		this(attributeId,expression,threashold);	
 		this.operation = operation;
+		this.weight = wgt;
 	}
 	
 	public ConstraintImpl(String attributeId, RelationalOperator expression, double threashold) {
@@ -71,6 +69,12 @@ public class ConstraintImpl implements Constraint {
 		return threashold;
 	}
 
+
+	@Override
+	public double getWeight() {
+		return weight;
+	}
+	
 	@Override
 	public String toString() {
 		return "AttributeConstraint [attributeId=" + attributeId + ", operation=" + operation + ", expression="
@@ -93,74 +97,6 @@ public class ConstraintImpl implements Constraint {
 		buffer.append(getExpression().getAlias());
 		return buffer.toString();
 	}
-	
-	/**
-	 * This method assumes that attribute constraints are represented as properties following the format presented bellow:
-	 * 
-	 * 1. For constraints on service related attributes:
-	 * 		<"constraint.service"> <"."> <att-id> <"."> <expression>
-	 * 		eg. constraint.service.qos.availiability.GT = 95
-	 * 
-	 * 2. For constraints on operation related attributes:
-	 *		<"constraint.operation"> <"."> <att-id> <"."> <operation> <"."> <expression>
-	 *		eg. constraint.operation.qos.avgResponseTime.LT = 10
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public static ConstraintImpl parse(String key, Object value) {
-		ConstraintImpl attributeConstraint = null;
-		if (key != null && key.toLowerCase().startsWith(Attribute.SERVICE_CONSTRAINT) || key.toLowerCase().startsWith(Attribute.OPERATION_CONSTRAINT) ) {
-				Double doubleVal = null;
-				if (NumberUtils.isNumber(value.toString())) {
-					doubleVal = NumberUtils.createDouble(value.toString());
-				}
-				
-				int index = key.lastIndexOf('.');
-				String expStr = key.substring(index+1);
-				RelationalOperator exp = RelationalOperator.valueOf(expStr);
-				String attributeId = key.substring(0, index);
-				String operationName = null;
-				if (attributeId.toLowerCase().startsWith(Attribute.OPERATION_CONSTRAINT)) {
-					attributeId = attributeId.replaceFirst(Attribute.OPERATION_CONSTRAINT + Constants.TOKEN, "");
-					index = attributeId.lastIndexOf('.');
-					operationName = attributeId.substring(index+1);
-					attributeId = attributeId.substring(0, index);
-				} else {
-					attributeId = attributeId.replaceFirst(Attribute.SERVICE_CONSTRAINT + Constants.TOKEN, "");
-				}
-				attributeConstraint = new ConstraintImpl(attributeId, operationName, exp, doubleVal);
-		}
-		return attributeConstraint;
-	}
-	
-	/**
-	 * This method is responsible for translating service properties into attribute constraints.
-	 * @param reference
-	 * @return
-	 */
-	public static List<ConstraintImpl> getAttributeConstraints(ServiceReference reference) {
-		String keys[] = reference.getPropertyKeys();
-		List<ConstraintImpl> attConstraints = new ArrayList<ConstraintImpl>();
-		for (String key : keys) {
-			if (key != null && key.toLowerCase().startsWith(Attribute.SERVICE_CONSTRAINT) || key.toLowerCase().startsWith(Attribute.OPERATION_CONSTRAINT) ) {
-				Object value = reference.getProperty(key);
-				ConstraintImpl attConstraint = ConstraintImpl.parse(key,
-					value);
-				if (attConstraint != null) {
-					attConstraints.add(attConstraint);
-				}
-			}
-		}
-		return attConstraints;
-	}
-	
-	/*public static void main(String args[] ) {
-		AttributeConstraint opConstraint = parse ("constraint.operation.qos.performance.avgResponseTime.getCotation.LT",500);
-		AttributeConstraint svConstraint = parse ("constraint.service.qos.availability.LT", 99);
-		System.out.println(opConstraint);
-		System.out.println(svConstraint);
-	}*/
 
+	
 }

@@ -1,14 +1,12 @@
 package br.ufpe.cin.dsoa.platform.monitor;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
-import br.ufpe.cin.dsoa.api.service.impl.ConstraintImpl;
 
 public class ServiceMetadata {
 	
@@ -57,9 +55,9 @@ public class ServiceMetadata {
 		return service.getProperty(name);
 	}
 	
-	public List<ConstraintImpl> getAttributeConstraints() {
+	public List<Constraint> getAttributeConstraints() {
 		
-		List<ConstraintImpl> attConsts = new ArrayList<ConstraintImpl>(); 
+		List<Constraint> attConsts = new ArrayList<Constraint>(); 
 		NonFunctionalSpecification nfs = service.getPort().getServiceSpecification().getNonFunctionalSpecification();
 		
 		if(nfs != null) {

@@ -5,7 +5,4 @@ public interface ServiceInstance extends PortInstance {
 	/** Corresponding ProvidedPort */
 	Port getPort();
 	
-	public Object getServiceObject();
-
-	public void ungetServiceObject();
 }

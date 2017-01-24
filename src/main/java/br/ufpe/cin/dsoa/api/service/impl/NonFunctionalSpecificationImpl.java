@@ -3,23 +3,24 @@ package br.ufpe.cin.dsoa.api.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 
 
 public class NonFunctionalSpecificationImpl implements NonFunctionalSpecification {
 	
-	private List<ConstraintImpl> attributeConstraints = new ArrayList<ConstraintImpl>();
+	private List<Constraint> attributeConstraints = new ArrayList<Constraint>();
 	
-	public NonFunctionalSpecificationImpl(List<ConstraintImpl> attributeConstraints) {
+	public NonFunctionalSpecificationImpl(List<Constraint> attributeConstraints) {
 		super();
-		this.attributeConstraints = new ArrayList<ConstraintImpl>(attributeConstraints);
+		this.attributeConstraints = new ArrayList<Constraint>(attributeConstraints);
 	}
 
 	/* (non-Javadoc)
 	 * @see br.ufpe.cin.dsoa.api.service.impl.NonFunctionalSpecification#getAttributeConstraints()
 	 */
 	@Override
-	public List<ConstraintImpl> getConstraints() {
-		return new ArrayList<ConstraintImpl>(attributeConstraints);
+	public List<Constraint> getConstraints() {
+		return new ArrayList<Constraint>(attributeConstraints);
 	}
 }

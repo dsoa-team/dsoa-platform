@@ -6,13 +6,14 @@ import java.util.List;
 
 import org.osgi.framework.ServiceReference;
 
+import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.impl.ConstraintImpl;
 
 public class Normalizer {
 	
 	private double[][] matrix;
 	
-	private List<ConstraintImpl> slos;
+	private List<Constraint> slos;
 	private ServiceReference[] references;
 	
 	double[] min = min(slos, references, matrix);
@@ -20,14 +21,14 @@ public class Normalizer {
 	
 	public Normalizer() {}
 	
-	public Normalizer(List<ConstraintImpl> slos, ServiceReference... references) {
+	public Normalizer(List<Constraint> slos, ServiceReference... references) {
 		super();
 		this.slos = slos;
 		this.references = references;
 		this.matrix = mountMatrix(slos, references);
 	}
 
-	public double[][] normalizedMatrix(List<ConstraintImpl> slos, ServiceReference[] references) {
+	public double[][] normalizedMatrix(List<Constraint> slos, ServiceReference[] references) {
 		double[][] normalized =  new double[references.length][slos.size()];
 		//double[][] matrix = mountMatrix(slos, references);
 		
@@ -63,7 +64,7 @@ public class Normalizer {
 		return normalized;
 	}
 
-	private double[][] mountMatrix(List<ConstraintImpl> slos,
+	private double[][] mountMatrix(List<Constraint> slos,
 			ServiceReference[] references) {
 		double matrix[][] =  new double[references.length][slos.size()];
 		//double dbmatrix[][] = new double[references.length][slos.size()];
@@ -169,7 +170,7 @@ public class Normalizer {
 		//}
 	}
 	
-	private double[] min(List<ConstraintImpl> slos, ServiceReference[] references,
+	private double[] min(List<Constraint> slos, ServiceReference[] references,
 			double[][] matrix) {
 		double[] min = new double[slos.size()];
 		
@@ -188,7 +189,7 @@ public class Normalizer {
 		return min;
 	}
 	
-	private double[] max(List<ConstraintImpl> slos, ServiceReference[] references,
+	private double[] max(List<Constraint> slos, ServiceReference[] references,
 			double[][] matrix) {
 		double[] max = new double[slos.size()];
 		

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.osgi.framework.InvalidSyntaxException;
 
+import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.impl.ConstraintImpl;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
 
@@ -12,9 +13,9 @@ public class InvalidServiceSpecificationException extends RuntimeException {
 	private static final long serialVersionUID = 6448160017317723239L;
 	
 	private String serviceInterface;
-	private List<ConstraintImpl> constraints;
+	private List<Constraint> constraints;
 	
-	public InvalidServiceSpecificationException(String message, String serviceInterface, List<ConstraintImpl> constraints) {
+	public InvalidServiceSpecificationException(String message, String serviceInterface, List<Constraint> constraints) {
 		super(message);
 		this.serviceInterface = serviceInterface;
 		this.constraints = constraints;
@@ -35,7 +36,7 @@ public class InvalidServiceSpecificationException extends RuntimeException {
 		return serviceInterface;
 	}
 	
-	public List<ConstraintImpl> getConstraints() {
+	public List<Constraint> getConstraints() {
 		return constraints;
 	}
 }

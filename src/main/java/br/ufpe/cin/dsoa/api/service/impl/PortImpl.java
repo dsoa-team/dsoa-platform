@@ -23,11 +23,6 @@ public class PortImpl implements Port {
 	}
 
 	@Override
-	public void setServiceSpec(ServiceSpecification serviceSpec) {
-		this.serviceSpec = serviceSpec;
-	}
-
-	@Override
 	public ServiceSpecification getServiceSpecification() {
 		return this.serviceSpec;
 	}

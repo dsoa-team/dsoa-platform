@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import br.ufpe.cin.dsoa.api.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
+import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceProxyItf;
 import br.ufpe.cin.dsoa.util.Constants;
 
 /**
@@ -77,7 +78,7 @@ public class DynamicProxyFactory implements ProxyFactory {
 	class DynamicProxy implements InvocationHandler {
 
 		private String consumerId;
-		private ServiceInstance service;
+		private ServiceInstanceProxyItf service;
 
 		/**
 		 * HashCode method.
@@ -96,7 +97,7 @@ public class DynamicProxyFactory implements ProxyFactory {
 
 		public DynamicProxy(String consumerId, ServiceInstance service) {
 			this.consumerId = consumerId;
-			this.service = service;
+			this.service = (ServiceInstanceProxyItf)service;
 
 			try {
 				m_hashCodeMethod = Object.class.getMethod("hashCode", null);
@@ -107,7 +108,8 @@ public class DynamicProxyFactory implements ProxyFactory {
 			}
 			
 		}
-
+		
+		
 		/**
 		 * Invocation Handler delegating invocation on the dependency object.
 		 * 

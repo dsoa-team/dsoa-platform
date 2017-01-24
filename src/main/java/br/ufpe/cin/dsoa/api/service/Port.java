@@ -9,8 +9,6 @@ public interface Port extends NamedElement {
 
 	public String getName();
 
-	public void setServiceSpec(ServiceSpecification serviceSpec);
-
 	public ServiceSpecification getServiceSpecification() ;
 	
 	

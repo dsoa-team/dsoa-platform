@@ -10,6 +10,8 @@ public interface Constraint {
 	public abstract RelationalOperator getExpression();
 
 	public abstract double getThreashold();
+	
+	public double getWeight();
 
 	public abstract String format();
 

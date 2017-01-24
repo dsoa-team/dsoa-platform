@@ -118,7 +118,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 	private void addConstraintFilters(List<FilterBuilder> filterBuilders,
 			NonFunctionalSpecification nfs) {
 		if (nfs != null) {
-			List<ConstraintImpl> constraints = nfs
+			List<Constraint> constraints = nfs
 					.getConstraints();
 			if (constraints != null && !constraints.isEmpty()) {
 				for (Constraint constraint : constraints) {
@@ -141,7 +141,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 	}
 
 	private ServiceInstance rankServices(String serviceInterface,
-			ServiceReference[] references, List<ConstraintImpl> constraints) {
+			ServiceReference[] references, List<Constraint> constraints) {
 		List<ServiceReference> referenceList = Arrays.asList(references);
 		ServiceReference ranking = context.getServiceReference(Rank.class
 				.getName());

@@ -16,6 +16,11 @@ public interface Constants {
 	public static final String REQUIRES_TAG    			= "requires";
 	public static final String REQUIRES_ATT_FIELD		= "name";
 	
+	public static final String PROVIDES_TAG_NAMESPACE	= REQUIRES_TAG_NAMESPACE;
+	public static final String PROVIDES_TAG    			= "provides";
+	public static final String PROVIDES_ATT_FIELD		= "name";
+	public static final String PROVIDES_ATT_CLASSNAME	= "classname";
+	
 	/** 
 	 * Tag Constraint
 	 */

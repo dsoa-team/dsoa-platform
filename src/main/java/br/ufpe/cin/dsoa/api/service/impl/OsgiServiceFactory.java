@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.osgi.framework.ServiceReference;
 
+import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.Property;
 import br.ufpe.cin.dsoa.api.service.ProvidedPort;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
+import br.ufpe.cin.dsoa.platform.component.DsoaConstraintParser;
 import br.ufpe.cin.dsoa.util.Util;
 
 public class OsgiServiceFactory {
@@ -23,7 +25,7 @@ public class OsgiServiceFactory {
 		
 	public static ServiceInstance getOsgiService(String itfName, ServiceReference reference) {
 		// MODIFICAR A CHAMADA PARA GETCONSTRAINTS
-		List<ConstraintImpl> attConstraints = ConstraintImpl.getAttributeConstraints(reference);
+		List<Constraint> attConstraints = DsoaConstraintParser.getAttributeConstraints(reference);
 		NonFunctionalSpecification nonFunctionalSpecification = null;
 		if (!attConstraints.isEmpty()) {
 			nonFunctionalSpecification = new NonFunctionalSpecificationImpl(
@@ -45,6 +47,6 @@ public class OsgiServiceFactory {
 			Property prop = new PropertyImpl(key, value, value.getClass().getName());
 			props.add(prop);
 		}
-		return new ServiceInstanceImpl(providedPort, props, reference);
+		return new ServiceInstanceProxy(providedPort, props, reference);
 	}
 }

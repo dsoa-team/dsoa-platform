@@ -162,7 +162,7 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	public void unbind() {
 		if (isBound()) {
 			synchronized(this) {
-				this.serviceInstance.ungetServiceObject();
+				((ServiceInstanceProxyItf)this.serviceInstance).ungetServiceObject();
 				this.proxy = null;
 				this.setValid(false);
 			}
