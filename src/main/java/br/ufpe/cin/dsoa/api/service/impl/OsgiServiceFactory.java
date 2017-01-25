@@ -10,6 +10,7 @@ import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.Property;
 import br.ufpe.cin.dsoa.api.service.ProvidedPort;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
+import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.component.DsoaConstraintParser;
 import br.ufpe.cin.dsoa.util.DsoaUtil;
 
@@ -35,8 +36,8 @@ public class OsgiServiceFactory {
 		// TODO VER O EFEITO DA RETIRADA DA CLASSE DA INTERFACE DO CONSTRUTOR ABAIXO
 		ServiceSpecification serviceSpec = new ServiceSpecificationImpl(itfName, nonFunctionalSpecification);
 		
-		// TODO POR ENQUANTO O ID DO SERVIÇO VIRÁ DE UMA DAS PROPRIEDADES ( "service.pid" ou  "service.id").
-		// Quando o ProvidesHandler estiver funcional, isso deverá ser modificado para obter o nome 
+		// TODO POR ENQUANTO O ID DO SERVIï¿½O VIRï¿½ DE UMA DAS PROPRIEDADES ( "service.pid" ou  "service.id").
+		// Quando o ProvidesHandler estiver funcional, isso deverï¿½ ser modificado para obter o nome 
 		// da porta provida.
 		String portName = DsoaUtil.getId(reference);
 		ProvidedPort providedPort = new ProvidedPortImpl(portName, serviceSpec);

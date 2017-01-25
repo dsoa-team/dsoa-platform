@@ -1,6 +1,5 @@
 package br.ufpe.cin.dsoa.api.service;
 
-import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
 
 
 public interface Port extends NamedElement {

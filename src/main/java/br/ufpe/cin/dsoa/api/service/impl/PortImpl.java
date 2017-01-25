@@ -1,6 +1,7 @@
 package br.ufpe.cin.dsoa.api.service.impl;
 
 import br.ufpe.cin.dsoa.api.service.Port;
+import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 
 public class PortImpl implements Port {
 
