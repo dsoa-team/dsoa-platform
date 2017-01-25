@@ -18,9 +18,8 @@ import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.RelationalOperator;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
-import br.ufpe.cin.dsoa.api.service.impl.ConstraintImpl;
 import br.ufpe.cin.dsoa.api.service.impl.OsgiServiceFactory;
-import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceImpl;
+import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceProxy;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.handler.requires.ServiceListener;
 import br.ufpe.cin.dsoa.platform.registry.InvalidServiceSpecificationException;
@@ -38,8 +37,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 
 	private BundleContext context;
 
-	protected static Logger logger = DsoaSimpleLogger.getDsoaLogger(
-			ServiceRegistry.class.getName(), true, true);
+	protected static Logger logger = DsoaSimpleLogger.getDsoaLogger("OsgiServiceRegistry","OsgiServiceRegistry" , true, true);
 
 	public OsgiServiceRegistry(BundleContext context) {
 		this.context = context;
@@ -56,8 +54,9 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 			ServiceInstance bestService = this.rankServices(specification
 					.getFunctionalInterface().getInterfaceName(), references, specification
 					.getNonFunctionalSpecification().getConstraints());
-			listener.onArrival(bestService);
+			
 			this.trackService(bestService, listener);
+			listener.onArrival(bestService);
 		} else {
 			this.waitForService(specification, listener, blackList);
 		}
@@ -156,11 +155,11 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 			reference = rank.ranking(constraints, normalizer, references);
 		}
 		//MODIFICAR PARA REFERENCIAR UMA SERVICE INSTANCE
-		return OsgiServiceFactory.getOsgiService(serviceInterface, reference);
+		return OsgiServiceFactory.getOsgiService(serviceInterface, reference, true);
 	}
 
 	public void trackService(ServiceInstance bestService, ServiceListener listener) {
-		ServiceReference reference = ((ServiceInstanceImpl) bestService).getServiceReference();
+		ServiceReference reference = ((ServiceInstanceProxy) bestService).getServiceReference();
 		this.openTracker(reference, listener);
 	}
 
@@ -180,8 +179,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 			public void removedService(ServiceReference reference,
 					Object service) {
 				// MODIFICAR PARA REFERENCIAR UMA SERVICE INSTANCE
-				listener.onDeparture(OsgiServiceFactory.getOsgiService(
-						listener.getServiceInterfaceName(), reference));
+				listener.onDeparture(null);
 				super.removedService(reference, service);
 				this.close();
 			}
@@ -213,7 +211,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 			if (!blackList.contains(reference)) {
 				//TODO MODIFICAR PARA REFERENCIAR UMA SERVICE INSTANCE
 				service = OsgiServiceFactory.getOsgiService(
-						listener.getServiceInterfaceName(), reference);
+						listener.getServiceInterfaceName(), reference, true);
 				this.listener.onArrival(service);
 				// open tracker for departures
 				openTracker(reference, listener);

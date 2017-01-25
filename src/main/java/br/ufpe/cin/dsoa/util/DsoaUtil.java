@@ -22,9 +22,13 @@ import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.api.event.EventTypeList;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
 
-public class Util {
+public class DsoaUtil {
 
-	private static Logger logger = Logger.getLogger(Util.class.getName());
+	private static Logger logger = Logger.getLogger(Constants.LOG_FOLDER+DsoaUtil.class.getName());
+	
+	public static String getLoggerName(String classname) {
+		return Constants.LOG_FOLDER + classname + Constants.LOG_EXTENSION;
+	}
 	
 	public static boolean isRemote(ServiceReference reference) {
 		return reference.getProperty(Constants.REMOTE_SERVICE) != null;

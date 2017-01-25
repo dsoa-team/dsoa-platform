@@ -9,7 +9,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.hooks.service.EventHook;
 import org.osgi.framework.hooks.service.FindHook;
 
-import br.ufpe.cin.dsoa.util.Util;
+import br.ufpe.cin.dsoa.util.DsoaUtil;
 
 public class DsoaFindHook implements FindHook {
 
@@ -61,7 +61,7 @@ public class DsoaFindHook implements FindHook {
 		ServiceReference reference = null;
 		for (Iterator<?> it = references.iterator(); it.hasNext();) {
 			reference = (ServiceReference) it.next();
-			if (Util.isRemote(reference) && !Util.isProxy(reference)) {
+			if (DsoaUtil.isRemote(reference) && !DsoaUtil.isProxy(reference)) {
 				references.remove(reference);
 			}
 		}

@@ -30,7 +30,7 @@ import br.ufpe.cin.dsoa.api.event.agent.ProcessingQuery;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.event.EventAdapterCatalog;
 import br.ufpe.cin.dsoa.util.Constants;
-import br.ufpe.cin.dsoa.util.Util;
+import br.ufpe.cin.dsoa.util.DsoaUtil;
 
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPServiceProvider;
@@ -81,7 +81,7 @@ public class EsperProcessingService implements EventProcessingService {
 				"Dsoa-EsperEngine", configuration);
 
 		// defines invocation event
-		EventTypeList primitiveEvents = Util.handlePlatformEventDefinitions(
+		EventTypeList primitiveEvents = DsoaUtil.handlePlatformEventDefinitions(
 				ctx.getBundle(), this.eventTypeCatalog, this);
 		if (primitiveEvents != null && primitiveEvents.getEvents() != null) {
 			for (EventType primitiveEvent : primitiveEvents.getEvents()) {

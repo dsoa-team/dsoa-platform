@@ -14,6 +14,7 @@ import br.ufpe.cin.dsoa.api.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceProxyItf;
 import br.ufpe.cin.dsoa.util.Constants;
+import br.ufpe.cin.dsoa.util.DsoaUtil;
 
 /**
  * A Service Proxy that intercepts requests at the client side. It generates
@@ -26,12 +27,8 @@ import br.ufpe.cin.dsoa.util.Constants;
  */
 public class DynamicProxyFactory implements ProxyFactory {
 
-	private Logger invocationLogger;
-	private FileHandler invocationLogFile;
-	private Object proxy;
-	private EventDistribuitionService distribuitionService;
-	
-	public DynamicProxyFactory() {
+	private static Logger logger;
+	{
 		java.util.logging.Formatter f = new java.util.logging.Formatter() {
 
 			public String format(LogRecord record) {
@@ -42,11 +39,11 @@ public class DynamicProxyFactory implements ProxyFactory {
 			}
 		};
 
-		invocationLogger = Logger.getLogger("InvocationProxyLogger");
+		logger = Logger.getLogger("InvocationProxyLogger");
 		try {
-			invocationLogFile = new FileHandler("invocationProxy.log");
+			FileHandler invocationLogFile = new FileHandler(DsoaUtil.getLoggerName(this.getClass().getCanonicalName()));
 			invocationLogFile.setFormatter(f);
-			invocationLogger.addHandler(invocationLogFile);
+			logger.addHandler(invocationLogFile);
 			
 		} catch (SecurityException e) {
 			e.printStackTrace();
@@ -54,6 +51,9 @@ public class DynamicProxyFactory implements ProxyFactory {
 			e.printStackTrace();
 		}
 	}
+	
+	private Object proxy;
+	private EventDistribuitionService distribuitionService;
 	
 	public Object getProxy(String consumerId, ServiceInstance service) {
 		if (this.proxy == null) {
@@ -183,7 +183,7 @@ public class DynamicProxyFactory implements ProxyFactory {
 								requestTime, responseTime, success, exceptionClassName,
 								exceptionMessage, parameterTypes, parameterValues, returnType,
 								result);
-						invocationLogger.info(service.getName()+","+ System.currentTimeMillis()+"," + (responseTime - requestTime));
+						logger.info(service.getName()+","+ System.currentTimeMillis()+"," + (responseTime - requestTime));
 					}
 				}
 			}

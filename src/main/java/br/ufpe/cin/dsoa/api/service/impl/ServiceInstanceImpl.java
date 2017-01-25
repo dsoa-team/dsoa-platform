@@ -24,16 +24,6 @@ import br.ufpe.cin.dsoa.platform.handler.provider.DsoaProvidesHandler;
 
 public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInstance, ServiceFactory {
 
-	/**
-	 * IPojo REGISTRED State
-     */
-    public static final int REGISTERED = 1;
-
-    /**
-     * IPojo UNREGISTRED State
-     */
-    public static final int UNREGISTERED = 0;
-	
     /**
      * The Dsoa Provides Handler responsible for managing
      * service provisioning
@@ -205,6 +195,7 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
     	return new String[] { getPort().getServiceSpecification().getFunctionalInterface().getInterfaceName() } ;
     }
     
+    @SuppressWarnings("rawtypes")
     private Properties getRegisteredProperties() {
     	Properties publishedProps = new Properties();
     	addProperty("service.pid", this.getName(), String.class.getName());
@@ -233,12 +224,7 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
      * Unregisters the service.
      */
     protected synchronized void unregisterService() {
-    	// Create a copy of the service reference in the case we need
-    	// to inject it to the post-unregistration callback.
-
-    	ServiceReference ref = null;
         if (serviceRegistration != null) {
-    		ref = serviceRegistration.getReference();
             serviceRegistration.unregister();
             serviceRegistration = null;
         }
@@ -246,15 +232,11 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
     }
 
     /**
-     * Get the current provided service state.
-     * @return The state of the provided service.
+     * Determines whether the Service Instance is published
+     * 
      */
-    public int getState() {
-        if (serviceRegistration == null) {
-            return UNREGISTERED;
-        } else {
-            return REGISTERED;
-        }
+    public boolean isPublished() {
+        return (this.serviceRegistration != null) ? true : false;
     }
     
 }

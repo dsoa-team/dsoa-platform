@@ -35,6 +35,7 @@ import br.ufpe.cin.dsoa.platform.handler.requires.DsoaBindingManager;
 import br.ufpe.cin.dsoa.platform.handler.requires.DsoaRequiresHandler;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringRegistration;
 import br.ufpe.cin.dsoa.util.Constants;
+import br.ufpe.cin.dsoa.util.DsoaUtil;
 
 /**
  * Represents an Binding implementation
@@ -45,6 +46,30 @@ import br.ufpe.cin.dsoa.util.Constants;
 public class BindingImpl extends PortInstanceImpl implements Binding,
 		FieldInterceptor {
 
+	private static Logger logger;
+	
+	{
+		java.util.logging.Formatter f = new java.util.logging.Formatter() {
+
+			public String format(LogRecord record) {
+				StringBuilder builder = new StringBuilder(1000);
+				builder.append(formatMessage(record));
+				builder.append("\n");
+				return builder.toString();
+			}
+		};
+		logger = Logger.getLogger("BindingLogger");
+		try {
+			FileHandler adaptationLogFile = new FileHandler(DsoaUtil.getLoggerName("Binding"));
+			adaptationLogFile.setFormatter(f);
+			logger.addHandler(adaptationLogFile);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * A meta-object that represents the component instance which owns this
 	 * binding
@@ -80,8 +105,6 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	
 	private List<MonitoringRegistration> monitoringRegistrations;
 
-	private Logger logger;
-
 	public BindingImpl(DsoaRequiresHandler handler,
 			DsoaComponentInstance componentInstance, Port port,
 			List<br.ufpe.cin.dsoa.api.service.Property> props) {
@@ -99,40 +122,10 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 		// Instantiate the Autonomic Binding Manager
 		this.manager = new DsoaBindingManager(this);
 
-		// TODO Verify where exactly the class is required
-		/*
-		 * Class<?> clazz = null; try { clazz =
-		 * getInstanceManager().getClazz().getClassLoader
-		 * ().loadClass(itfClassname);
-		 */
-		createLogger();
 	}
 
-	public void createLogger() {
-		java.util.logging.Formatter f = new java.util.logging.Formatter() {
-
-			public String format(LogRecord record) {
-				StringBuilder builder = new StringBuilder(1000);
-				builder.append(formatMessage(record));
-				builder.append("\n");
-				return builder.toString();
-			}
-		};
-		logger = Logger.getLogger("BindingLogger");
-		try {
-			FileHandler adaptationLogFile = new FileHandler("Binding.log");
-			adaptationLogFile.setFormatter(f);
-			logger.addHandler(adaptationLogFile);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public DsoaPlatform getDsoaPlatform() {
-		return ((DsoaComponentInstanceImpl) this.componentInstance)
-				.getInstanceManager().getDsoaPlatform();
+		return this.handler.getDsoaPlatform();
 	}
 
 	/**
@@ -141,18 +134,19 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	 */
 	public void bind(ServiceInstance serviceInstance) {
 		if (!isBound()) {
-			synchronized(this) {
+			synchronized (this) {
 				this.serviceInstance = serviceInstance;
 				this.proxy = this.getDsoaPlatform().getProxyFactory()
 					.getProxy(componentInstance.getName(), serviceInstance);
-				this.setValid(true);
 			}
-			this.startMonitoring();
-			this.notifyBind();
+
 		} else {
-			logger.log(Level.WARNING, "Binding " + this.getName()
-					+ " is already bound");
+			logger.warning("Binding " + this.getName() + " was already bound on bind request");
 		}
+		String serviceId = serviceInstance.getName();
+		this.setValid(true);
+		this.startMonitoring(serviceId);
+		this.notifyBind(serviceId, getComponentInstance().getName());
 	}
 
 	/**
@@ -160,13 +154,18 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	 * BindingManager
 	 */
 	public void unbind() {
+		String serviceId = null;
+		String consumerId = null;
 		if (isBound()) {
 			synchronized(this) {
+				serviceId = this.serviceInstance.getName();
+				consumerId = getComponentInstance().getName();
 				((ServiceInstanceProxyItf)this.serviceInstance).ungetServiceObject();
+				this.serviceInstance = null;
 				this.proxy = null;
 				this.setValid(false);
 			}
-			this.notifyUnbind();
+			this.notifyUnbind(serviceId, consumerId);
 		} else {
 			logger.log(Level.WARNING, "Binding " + this.getName()
 					+ " is already unbound");
@@ -181,6 +180,7 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 		// Just do nothing...
 	}
 
+	// se chamar, a instância está válida
 	public Object onGet(Object pojo, String fieldName, Object value) {
 		return this.proxy;
 	}
@@ -200,23 +200,28 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 
 	public void setValid(boolean valid) {
 		this.valid = valid;
-		if (valid) {
+		if (valid && !handler.isValid()) {
 			handler.computeState();
 		} else {
-			handler.setValidity(false);
+			if(!valid && handler.isValid())
+				handler.setValidity(false);
 		}
 	}
 
 	public void start() {
-		manager.start();
+		if (!isBound()) {
+			manager.serviceSelection();
+		}
 	}
 
 	public void stop() {
-		this.unbind();
-		manager.stop();
+		if (isBound()) {
+			this.unbind();
+			manager.serviceSelection();
+		}
 	}
 
-	private void startMonitoring() {
+	private void startMonitoring(String serviceId) {
 
 		this.monitoringRegistrations = new ArrayList<MonitoringRegistration>();
 
@@ -224,7 +229,7 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 				.getServiceSpecification().getNonFunctionalSpecification()
 				.getConstraints()) {
 			String operationName = constraint.getOperation();
-			AttributableId attributableId = new AttributableId(this.getServiceInstance().getName(), operationName);
+			AttributableId attributableId = new AttributableId(serviceId, operationName);
 			String attributeId = constraint.getAttributeId();
 			final AttributeEventMapper attMapper = this.getDsoaPlatform().getAttEventMapperCatalog()
 					.getAttributeEventMapper(attributeId);
@@ -284,11 +289,9 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 		this.monitoringRegistrations = null; 
 	}
 
-	private void notify(String eventTypeName) {
+	private void notify(String eventTypeName, String serviceId, String consumerId) {
 		// TODO Assert that the instance is always not null whenever this method
 		// is called.
-		String serviceId = getServiceInstance().getName();
-		String consumerId = getComponentInstance().getName();
 		String serviceInterface = getPort().getServiceSpecification()
 				.getFunctionalInterface().getInterfaceName();
 
@@ -309,12 +312,12 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 				+ serviceId);
 	}
 
-	private void notifyUnbind() {
-		this.notify(Constants.UNBIND_EVENT);
+	private void notifyUnbind(String serviceId, String consumerId) {
+		this.notify(Constants.UNBIND_EVENT, serviceId, consumerId);
 	}
 
-	private void notifyBind() {
-		this.notify(Constants.BIND_EVENT);
+	private void notifyBind(String serviceId, String consumerId) {
+		this.notify(Constants.BIND_EVENT, serviceId, consumerId);
 	}
 
 	private class EventConsumerImpl implements EventConsumer {

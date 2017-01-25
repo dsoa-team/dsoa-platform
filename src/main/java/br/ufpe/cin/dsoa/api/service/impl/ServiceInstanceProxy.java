@@ -6,7 +6,6 @@ import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.api.service.Port;
 import br.ufpe.cin.dsoa.api.service.Property;
-import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 
 public class ServiceInstanceProxy extends PortInstanceImpl implements ServiceInstanceProxyItf {
 

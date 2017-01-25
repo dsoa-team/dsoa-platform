@@ -9,27 +9,22 @@ import java.util.logging.Logger;
 
 public final class DsoaSimpleLogger {
 	
-	
-	public static Logger getDsoaLogger(String loggerName, final boolean prefix, final boolean newLine) {
-		return getDsoaLogger(loggerName, null, prefix, newLine);
-	}
-	
-	public static Logger getDsoaLogger(String loggerName, String filename, final boolean prefix, final boolean newLine) {
+	public static Logger getDsoaLogger(String loggerName, String classname, final boolean prefix, final boolean newLine) {
 		final Logger logger = Logger.getLogger(loggerName);
 		logger.setUseParentHandlers(false);
 		java.util.logging.Formatter formatter = getFormatter(prefix,newLine);
-		Handler handler = getHandler(filename, formatter);
+		Handler handler = getHandler(classname, formatter);
 		logger.addHandler(handler);
 		return logger;
 	}
 
-	private static Handler getHandler(String filename, Formatter formatter) {
+	private static Handler getHandler(String classname, Formatter formatter) {
 		Handler handler = null;
-		if (null == filename) {
+		if (null == classname) {
 			handler = new ConsoleHandler();
 		} else {
 			try {
-				handler = new FileHandler(filename);
+				handler = new FileHandler(DsoaUtil.getLoggerName(classname));
 			} catch (Exception e) {
 				handler = new ConsoleHandler();
 			}

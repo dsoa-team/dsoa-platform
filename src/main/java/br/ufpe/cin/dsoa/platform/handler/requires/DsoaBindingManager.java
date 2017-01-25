@@ -17,7 +17,7 @@ import br.ufpe.cin.dsoa.platform.attribute.ConstraintViolationListener;
  * 
  * @author fabions
  */
-public class DsoaBindingManager implements ConstraintViolationListener {
+public class DsoaBindingManager implements ConstraintViolationListener, ServiceListener {
 
 	/** 
 	 * The meta-object representing a binding between the field and a ServiceInstance 
@@ -29,46 +29,26 @@ public class DsoaBindingManager implements ConstraintViolationListener {
 	 */
 	private List<String> blackList;	
 	
-	/**
-	 * An internal element used to receive notifications concerning services arrivals and
-	 * departures on the supporting platform
-	 */
-	private ServiceListener serviceListener;
 
 	public DsoaBindingManager(Binding binding) {
 		super();
 		this.blackList = new ArrayList<String>();
 		this.binding = binding;
-		this.serviceListener = new ServiceListenerImpl();
 	}
 	
 	public List<String> getBlackList() {
 		return blackList;
 	}
 
-	/**
-	 * When a dependency is starting, it must start corresponding manager (DependencyManager) which will configure
-	 * its autonomic loop
-	 */
-	public void start() {
-		this.resolve();
-	}
-	
-	public void stop() {
-		// Just to nothing since the binding is already unbound...
-	}
-	
-	private void resolve() {
+	public void serviceSelection() {
 		((BindingImpl)binding).getDsoaPlatform().getServiceRegistry().getBestService(binding.getPort().getServiceSpecification(),
-				getBlackList(), this.serviceListener);
+				getBlackList(), this);
 	}
 
 	@Override
 	public void constraintViolated(String serviceId, Constraint constraint,
 			AttributeValue value) {
-		synchronized (binding) {
 			this.evaluate(serviceId, constraint, value);
-		}
 	}
 	
 	public void evaluate(String serviceId, Constraint constraint, AttributeValue value) {
@@ -86,30 +66,28 @@ public class DsoaBindingManager implements ConstraintViolationListener {
 		System.err.println("====================================================");
 		
 		this.binding.unbind();
-		this.resolve();
+		this.serviceSelection();
 	}
 	
-	private class ServiceListenerImpl implements ServiceListener {
-		
-		/**
-		 * This method is called whenever a compatible service is chosen to be used by this component.
-		 * 
-		 */
-		public void onArrival(ServiceInstance service) {
-			binding.bind(service);
-		}
-	
-		public void onDeparture(ServiceInstance service) {
-			binding.unbind();
-			blackList.clear();//TODO:REMOVE
-		}
-		
-		public void onError(Exception e) {
-		}
+	/**
+	 * This method is called whenever a compatible service is chosen to be used by this component.
+	 * 
+	 */
+	public void onArrival(ServiceInstance service) {
+		binding.bind(service);
+	}
 
-		public String getServiceInterfaceName() {
-			return binding.getPort().getServiceSpecification().getFunctionalInterface().getInterfaceName();
-		}
+	public void onDeparture(ServiceInstance service) {
+		binding.unbind();
+		blackList.clear();//TODO:REMOVE
+		serviceSelection();
+	}
+	
+	public void onError(Exception e) {
+	}
+
+	public String getServiceInterfaceName() {
+		return binding.getPort().getServiceSpecification().getFunctionalInterface().getInterfaceName();
 	}
 	
 }

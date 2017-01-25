@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.PrimitiveHandler;
 import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
+import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Element;
 import org.osgi.framework.ServiceRegistration;
@@ -36,6 +37,7 @@ public class DsoaProvidesHandler extends PrimitiveHandler implements ManagedServ
 	private ServiceRegistration registration;
 	private ProviderMetadata p_metadata;
 	private List<ServiceInstance> serviceInstanceList = new ArrayList<ServiceInstance>();
+	private DsoaProvidesHandlerDescription description;
 
 	 /**
      * Initialize the component type.
@@ -84,13 +86,12 @@ public class DsoaProvidesHandler extends PrimitiveHandler implements ManagedServ
 			this.serviceInstanceList .add(serviceInstance);
 		}
 		
-		//description = new DsoaRequiresHandlerDescription(this); 
-		
+		description = new DsoaProvidesHandlerDescription(this); 
+		manager.getInstanceDescription().addHandler(this.getDescription());
 	}
 
 	@Override
 	public void stop() {
-
 	}
 
 	@Override
@@ -142,8 +143,17 @@ public class DsoaProvidesHandler extends PrimitiveHandler implements ManagedServ
 		}
 
 	}
-
+	
 	public ProviderMetadata getProviderMetadata() {
 		return this.p_metadata;
+	}
+	
+	public List<ServiceInstance> getServiceInstances() {
+		return new ArrayList<ServiceInstance>(this.serviceInstanceList);
+	}
+	
+	@Override
+	public HandlerDescription getDescription() {
+		return this.description;
 	}
 }

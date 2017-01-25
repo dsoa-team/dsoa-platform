@@ -26,14 +26,10 @@ import org.apache.felix.ipojo.InstanceStateListener;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import br.ufpe.cin.dsoa.api.service.DsoaComponentInstance;
 import br.ufpe.cin.dsoa.api.service.impl.DsoaComponentInstanceImpl;
 import br.ufpe.cin.dsoa.platform.DsoaPlatform;
-import br.ufpe.cin.dsoa.platform.handler.requires.DsoaRequiresHandler;
 
 
 /**
@@ -104,15 +100,6 @@ public class DsoaComponentInstanceManager extends InstanceManager implements Com
      */
     private DsoaComponentInstance instance;
     
-    /**
-     * A reference to the DsoaPlatform
-     */
-	private DsoaPlatform dsoa;
-	
-	private BundleContext ctx;
-	
-	private ServiceTracker dsoaServiceTracker;	
-    
     /*
      * Inherited Attributes:
      * 
@@ -136,7 +123,6 @@ public class DsoaComponentInstanceManager extends InstanceManager implements Com
     public DsoaComponentInstanceManager(DsoaComponentFactory factory, BundleContext context, HandlerManager[] handlers) {
     	super(factory, context, handlers);
     	this.factory = factory;
-    	this.ctx = context;
     	this.m_description = new DsoaComponentInstanceDescription(factory.getComponentDescription(), this);
     }
 
@@ -146,54 +132,35 @@ public class DsoaComponentInstanceManager extends InstanceManager implements Com
     public void configure(Element metadata, java.util.Dictionary configuration) throws org.apache.felix.ipojo.ConfigurationException {
     	/* 
     	 * The instance creation must occur before the superclass delegation in order
-    	 * to guarantee that the handlers can have access to the DsoaComponentInstance
-    	 * configuration. It is important to observe that m_name contains the component
+    	 * to guarantee that the handlers can have access to the DsoaComponentInstance during
+    	 * their configuration. It is important to observe that m_name contains the component
     	 * instance name, that is configured using the "instance.name" property, which,
-    	 * as mentioned above comes from the "name" attribute (vide comments above).
+    	 * as mentioned above comes from the "name" attribute (vide comments above). This
+    	 * is the reason that the DsoaComponentInstance is instantiated just here, not in the
+    	 * constructor, since there we have no access to the configuration data.
     	 */
-    	this.instance = new DsoaComponentInstanceImpl(this, m_name, this.factory.getComponentType());
+    	this.instance = new DsoaComponentInstanceImpl(this, (String) configuration.get("instance.name"), this.factory.getComponentType());
+    	
+    	/*
+    	 * The following code should not be required since it is part
+    	 * of the starting process, as we can see in InstanceManager.start() ln. 332.
+    	 */
+    	
+/*    	Handler[] handlers = this.getRegistredHandlers();
+    	for (Handler handler : handlers) {
+    		handler.getHandlerManager().addInstanceStateListener(this);
+    	}*/
+    	
     	super.configure(metadata, configuration);
-		dsoaServiceTracker = new ServiceTracker(ctx, DsoaPlatform.class.getName(), new DsoaTrackerCustomizer());
-		dsoaServiceTracker.open();
     } 
     
-	@Override
-	public InstanceDescription getInstanceDescription() {
-		return m_description;
-	}
-	
 	public DsoaComponentInstance getDsoaComponentInstance() {
 		return this.instance;
 	}
-	
-    /**
-     * Check the validity of the bindingManagers.
-     */
-    class DsoaTrackerCustomizer implements ServiceTrackerCustomizer {
 
-    	public Object addingService(ServiceReference reference) {
-			dsoa = (DsoaPlatform) ctx.getService(reference);
-			DsoaRequiresHandler requiresHandler = (DsoaRequiresHandler)getHandler(DsoaRequiresHandler.HANDLER_NAME);
-			requiresHandler.startDependencies();
-			return dsoa;
-		}
-		
-		public void modifiedService(ServiceReference reference, Object service) {
-			// Just do nothing!
-		}
-		
-		public void removedService(ServiceReference reference, Object service) {
-			DsoaRequiresHandler requiresHandler = (DsoaRequiresHandler)getHandler(DsoaRequiresHandler.HANDLER_NAME);
-			requiresHandler.stopDependencies();
-			dsoa = null;
-			ctx.ungetService(reference);
-			requiresHandler.computeState();
-		}	
-    	
-    }
     
     public DsoaPlatform getDsoaPlatform() {
-    	return this.dsoa;
+    	return this.factory.getDsoaPlatform();
     }
 }
 

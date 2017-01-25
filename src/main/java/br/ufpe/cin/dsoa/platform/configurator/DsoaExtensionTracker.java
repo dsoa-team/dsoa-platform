@@ -68,7 +68,8 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 	private AttributeCategoryAdapter attCatAdapter;
 
 	private static Logger logger = DsoaSimpleLogger.getDsoaLogger(DsoaExtensionTracker.class
-			.getName(), true, false);
+			.getCanonicalName(),DsoaExtensionTracker.class
+			.getCanonicalName() ,true, false);
 
 	public DsoaExtensionTracker(BundleContext context) {
 		super(context);
@@ -95,7 +96,6 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 
 		for (final AttributeEventMapper attMapper : mappers) {
 			if (attMapper.getEventType().getName().startsWith("AvgResponseTimeEvent")) {
-				final Logger log = DsoaSimpleLogger.getDsoaLogger(attMapper.getEventType().getName(), attMapper.getEventType().getName(), false, true);
 	
 				EventType eventType = attMapper.getEventType();
 				Subscription subscription = new Subscription(eventType, null);
@@ -106,7 +106,7 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 					public void handleEvent(Event event) {
 	
 						AttributeValue value = attMapper.convertToAttribute(event);
-						log.info(System.currentTimeMillis() + "," + value.getValue());
+						logger.info(System.currentTimeMillis() + "," + value.getValue());
 					}
 	
 					@Override

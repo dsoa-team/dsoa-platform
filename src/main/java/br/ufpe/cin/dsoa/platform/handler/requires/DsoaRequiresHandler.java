@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.PrimitiveHandler;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
+import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
@@ -30,37 +31,32 @@ import br.ufpe.cin.dsoa.platform.component.DsoaConstraintParser;
 import br.ufpe.cin.dsoa.util.Constants;
 
 /**
- * The DsoaDependencyHandler is responsible for taking care of the service binding process, which is enacted by a dependency injection mechanism.
+ * The DsoaDependencyHandler is responsible for taking care of the service binding process, which is enacted by a 
+ * dependency injection mechanism. This handler is a core element on the DsoaPlatform, and should only be used in
+ * applications that use the DsoaComponentType.
+ * 
  * In a Dsoa application, the required services are represented by a collection of declared required fields, which specified
  * using dsoa:requires tag. Each required field is represented by an instance of the Dependency class, which is maintained in
  * a List<Dependency>. In DSOA, each one of those bindings is managed by a DependencyManager, which is an autonomic qos-aware biding
- * manager. Whenever a component instance is starting, this handler iterate over the dependency list and asks each dependency to start itself. 
+ * manager. Whenever a component instance is starting, this handler iterate over the dependency list and asks each dependency
+ * to start itself. 
  *
  * @author fabions
  */
-public class DsoaRequiresHandler extends PrimitiveHandler {
+public class DsoaRequiresHandler extends PrimitiveHandler  {
 	
 	public static final String HANDLER_NAME = "br.ufpe.cin.dsoa:requires";
-	
-	/*
-	 * A handler has access to the corresponding ComponentInstance (InstanceManager) via
-	 * the inherited getInstanceManager() method.
-	 */
-	private boolean started;
 	
 	/**
 	 * A list of Binding meta-objects, each one corresponding to a required service 
 	 */
 	private List<Binding> bindings = new ArrayList<Binding>();
 	
-	/**
-	 * A description object intended to keep compatibility with iPojo expectations
-	 */
-	private DsoaRequiresHandlerDescription description;
 	
-
 	/**
 	 * Initialize the ComponentFactory in order to help the building of the DsoaComponentType meta-object.
+	 * This method is only called when the factory is when the factory becomes valid for the first time!
+	 * It is called without an attached instance, so we can not depend on instances here!
 	 * This method identifies every required service and builds a corresponding RequiredPort meta-object.
 	 * The RequiredPort meta-object is added to the DsoaComponentType meta-object in order to complete 
 	 * its description.
@@ -69,13 +65,13 @@ public class DsoaRequiresHandler extends PrimitiveHandler {
 	 */
 	@Override
 	public void initializeComponentFactory(org.apache.felix.ipojo.architecture.ComponentTypeDescription typeDesc, Element metadata) throws ConfigurationException {
-		DsoaComponentFactory dsoaFactory = (DsoaComponentFactory)this.getFactory();
-		DsoaComponentType dsoaComponentType = dsoaFactory.getComponentType();
-
+		
 		/* 
 		 * The pojoMetadata is available since the Factory instantiation. Remember that
 		 * the pojoMetadata represents ComponentType meta-data, not instance meta-data.
 		 */
+		DsoaComponentFactory dsoaFactory = (DsoaComponentFactory)this.getFactory();
+		DsoaComponentType dsoaComponentType = dsoaFactory.getComponentType();
 		PojoMetadata pojoMetadata = getFactory().getPojoMetadata();
 		
 		Element[] requiresTags = metadata.getElements(Constants.REQUIRES_TAG, Constants.REQUIRES_TAG_NAMESPACE);
@@ -112,6 +108,8 @@ public class DsoaRequiresHandler extends PrimitiveHandler {
 	 * injected on the corresponding field. This proxy is used as an indirection mechanism to enable the binding management. 
 	 * As we mentioned previously, this management task is performed by a DsoaBindingManager.
 	 * 
+	 * THIS METHOD IS CALLED WITH THE INSTANCE ALREADY CREATED AND ATTACHED BUT NOT STARTED!!! STARTING PROCESS COME NEXT!
+	 * 
 	 * @param metadata the description of the component type. This metadata represents the component as a whole,
 	 *  that is, it includes the whole component tag, not just the handler part.
 	 * @param context the bundle context of the bundle containing the factory.
@@ -124,22 +122,14 @@ public class DsoaRequiresHandler extends PrimitiveHandler {
 		DsoaComponentInstance componentInstance = manager.getDsoaComponentInstance();
 		DsoaComponentType componentType = componentInstance.getComponentType();
 		
-		/*
-		 * It is important to see that we can only create Bindings here
-		 * since in the initializeComponentFactory only the ComponentType
-		 * was available, not the ComponentInstance.
-		 */
 		PojoMetadata pojoMetadata = getFactory().getPojoMetadata();
 		for(RequiredPort requiredPort : componentType.getRequiredPortList()) {
 			FieldMetadata fieldMetadata = pojoMetadata.getField(requiredPort.getName());
 			BindingImpl binding = new BindingImpl(this, componentInstance, requiredPort, buildProperties(configuration));
 			this.register(fieldMetadata, binding);
-			this.bindings.add(binding);
 		}
+	}	
 		
-		description = new DsoaRequiresHandlerDescription(this); 
-	}
-	
 	@SuppressWarnings("rawtypes")
 	protected List<br.ufpe.cin.dsoa.api.service.Property> buildProperties(Dictionary props) {
 		List<br.ufpe.cin.dsoa.api.service.Property> propList = new ArrayList<br.ufpe.cin.dsoa.api.service.Property>();
@@ -160,11 +150,8 @@ public class DsoaRequiresHandler extends PrimitiveHandler {
      * @see org.apache.felix.ipojo.Handler#start()
      */
     public void start() {
-        started = true;
-        setValidity(false);
-    	if (getDsoaPlatform() != null) {
-	    	startDependencies();
-    	}
+    	setValidity(false);
+		startDependencies();
     }
     
     /**
@@ -172,9 +159,10 @@ public class DsoaRequiresHandler extends PrimitiveHandler {
      * @see org.apache.felix.ipojo.Handler#stop()
      */
     public void stop() {
-        this.stopDependencies();
-        this.setValidity(false);
-        started = false;
+    	if (this.isValid()) {
+    		this.stopDependencies();
+    	}
+	    this.setValidity(false);
     }
 
 	public void startDependencies() {
@@ -192,13 +180,10 @@ public class DsoaRequiresHandler extends PrimitiveHandler {
 		        binding.stop();
 		    }
 		}
+		computeState();
 	}
 
     public void computeState() {
-        if (!started) {
-            return;
-        }
-        
         boolean initialState = getValidity();
         boolean valid = true;
         
@@ -222,9 +207,10 @@ public class DsoaRequiresHandler extends PrimitiveHandler {
 
         }
     }
-
+    
 	public DsoaPlatform getDsoaPlatform() {
-		return ((DsoaComponentInstanceManager)this.getInstanceManager()).getDsoaPlatform();
+		DsoaComponentInstanceManager manager = (DsoaComponentInstanceManager)this.getInstanceManager();
+		return manager.getDsoaPlatform();
 	}
     
 	/**
@@ -246,10 +232,39 @@ public class DsoaRequiresHandler extends PrimitiveHandler {
 
 	@Override
 	public HandlerDescription getDescription() {
-		return this.description;
+		
+		return new DsoaRequiresHandlerDescription(this);
 	}
 
 	public List<Binding> getBindings() {
 		return this.bindings;
 	}
+	
+	
+	 class DsoaRequiresHandlerDescription extends HandlerDescription {
+
+			private static final String STATUS_ELEMENT = "status";
+
+			public DsoaRequiresHandlerDescription(DsoaRequiresHandler depHandler) {
+				super(depHandler);
+			}
+			
+			public Element getHandlerInfo() {
+				Element descInfo = new Element("Handler", "");
+				descInfo.addAttribute(new Attribute("name","br.ufpe.cin.dsoa:requires"));
+		        String state = "valid";
+		        for (Binding binding : bindings) {
+		        	DsoaBindingDescription bd = new DsoaBindingDescription(binding);
+		            if (!binding.isBound()) {
+		                state = "invalid";
+		            }
+		            descInfo.addElement(bd.getInfo());
+		        }
+		        descInfo.addAttribute(new Attribute(STATUS_ELEMENT, state));
+		        return descInfo;
+		        
+		    }
+
+	}
+	
 }

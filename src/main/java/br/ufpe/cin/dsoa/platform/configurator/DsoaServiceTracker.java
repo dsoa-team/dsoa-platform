@@ -9,7 +9,7 @@ import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 import br.ufpe.cin.dsoa.api.service.impl.OsgiServiceFactory;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 import br.ufpe.cin.dsoa.util.Constants;
-import br.ufpe.cin.dsoa.util.Util;
+import br.ufpe.cin.dsoa.util.DsoaUtil;
 
 /**
  * 
@@ -65,7 +65,7 @@ public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 	}
 
 	public void removedService(ServiceReference reference, Object service) {
-		String serviceId = Util.getId(reference);
+		String serviceId = DsoaUtil.getId(reference);
 		resourceManagerImpl.release(serviceId);
 	}
 

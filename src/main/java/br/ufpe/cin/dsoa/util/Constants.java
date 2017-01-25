@@ -70,4 +70,6 @@ public interface Constants {
 	public static final String REMOTE					= "remote";
 	
 	public static final String CONTEXT_NAME = "PartitionedByEventSource";
+	public static final String LOG_FOLDER = "logs/";
+	public static final String LOG_EXTENSION = ".log";
 }
