@@ -3,6 +3,7 @@ package br.ufpe.cin.dsoa.api.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.ufpe.cin.dsoa.api.core.impl.NamedElementImpl;
 import br.ufpe.cin.dsoa.api.service.DsoaComponentType;
 import br.ufpe.cin.dsoa.api.service.ProvidedPort;
 import br.ufpe.cin.dsoa.api.service.RequiredPort;
@@ -15,12 +16,12 @@ public class DsoaComponentTypeImpl extends NamedElementImpl implements DsoaCompo
 	
 	public DsoaComponentTypeImpl(String name, String classname) {
 		super(name);
-		super.setName(name);
 		this.classname = classname;
 		this.providedPortList = new ArrayList<ProvidedPort>();
 		this.requiredPortList = new ArrayList<RequiredPort>();
 	}
 
+	
 	@Override
 	public List<ProvidedPort> getProvidedPortList() {
 		return providedPortList;
@@ -43,4 +44,5 @@ public class DsoaComponentTypeImpl extends NamedElementImpl implements DsoaCompo
 	public String getClassname() {
 		return classname;
 	}
+
 }

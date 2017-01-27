@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.ufpe.cin.dsoa.api.core.impl.NamedElementImpl;
 import br.ufpe.cin.dsoa.api.service.Port;
 import br.ufpe.cin.dsoa.api.service.PortInstance;
 import br.ufpe.cin.dsoa.api.service.Property;

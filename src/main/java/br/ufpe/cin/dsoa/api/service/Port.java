@@ -1,5 +1,6 @@
 package br.ufpe.cin.dsoa.api.service;
 
+import br.ufpe.cin.dsoa.api.core.NamedElement;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
 
 

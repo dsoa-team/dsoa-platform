@@ -2,6 +2,8 @@ package br.ufpe.cin.dsoa.api.service;
 
 import java.util.List;
 
+import br.ufpe.cin.dsoa.api.core.NamedElement;
+
 public interface DsoaComponentType extends NamedElement {
 	String NAME = "name";
 	String CLASSNAME = "classname";
@@ -12,4 +14,5 @@ public interface DsoaComponentType extends NamedElement {
 	
 	public void addRequiredPort(RequiredPort requiredPort);
 	public void addProvidedPort(ProvidedPort providedPort);
+	
 }

@@ -11,20 +11,27 @@ import org.apache.felix.ipojo.Handler;
 import org.apache.felix.ipojo.HandlerManager;
 import org.apache.felix.ipojo.IPojoContext;
 import org.apache.felix.ipojo.MissingHandlerException;
-import org.apache.felix.ipojo.ServiceContext;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
 import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
 import org.apache.felix.ipojo.composite.CompositeManager;
 import org.apache.felix.ipojo.metadata.Element;
-import org.apache.felix.ipojo.util.Logger;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
+import br.ufpe.cin.dsoa.api.qos.Attribute;
+import br.ufpe.cin.dsoa.api.qos.Category;
+import br.ufpe.cin.dsoa.api.qos.Metric;
+import br.ufpe.cin.dsoa.api.qos.QoSLibrary;
+import br.ufpe.cin.dsoa.api.qos.impl.AttributeImpl;
+import br.ufpe.cin.dsoa.api.qos.impl.CategoryImpl;
+import br.ufpe.cin.dsoa.api.qos.impl.MetricImpl;
+import br.ufpe.cin.dsoa.api.qos.impl.QoSLibraryImpl;
 import br.ufpe.cin.dsoa.api.service.DsoaComponentType;
 import br.ufpe.cin.dsoa.api.service.impl.DsoaComponentTypeImpl;
 import br.ufpe.cin.dsoa.platform.DsoaPlatform;
+import br.ufpe.cin.dsoa.util.Constants;
 
 /**
  * This class defines a factory responsible for the DsoaComponentType. When a
@@ -175,8 +182,8 @@ public class DsoaComponentFactory extends ComponentFactory  {
 	public ComponentTypeDescription getComponentTypeDescription() {
 		this.componentType = new DsoaComponentTypeImpl(
 				this.m_componentMetadata.getAttribute(DsoaComponentType.NAME),
-				this.m_componentMetadata
-						.getAttribute(DsoaComponentType.CLASSNAME));
+				this.m_componentMetadata.getAttribute(DsoaComponentType.CLASSNAME));
+		
 		// Called to let iPojo build its internal description
 		return super.getComponentTypeDescription();
 	};

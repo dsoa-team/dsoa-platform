@@ -2,6 +2,8 @@ package br.ufpe.cin.dsoa.api.service;
 
 import java.util.List;
 
+import br.ufpe.cin.dsoa.api.core.NamedElement;
+
 public interface PortInstance extends NamedElement {
 
 	public void setPort(Port port) ;

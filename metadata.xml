@@ -31,6 +31,10 @@
 		classname="br.ufpe.cin.dsoa.platform.handler.requires.DsoaRequiresHandler" >
 	</handler>
 	
+	<handler name="qosLibrary" namespace="br.ufpe.cin.dsoa"
+		classname="br.ufpe.cin.dsoa.platform.handler.qos.DsoaQoSLibraryHandler" >
+	</handler>
+	
 	<!-- ============================================================================================================ -->		
 	<!-- ============================================================================================================ -->
 	<!-- ========================== 			DSOA PLATFORM				========================================= -->

@@ -21,6 +21,8 @@ public interface Constants {
 	public static final String PROVIDES_ATT_FIELD		= "name";
 	public static final String PROVIDES_ATT_CLASSNAME	= "classname";
 	
+	public static final String QOS_LIBRARY_HANDLER_TAG 	= "qosLibrary";
+	public static final String QOS_LIBRARY_HANDLER_TAG_NAMESPACE	= REQUIRES_TAG_NAMESPACE;
 	/** 
 	 * Tag Constraint
 	 */
@@ -72,4 +74,19 @@ public interface Constants {
 	public static final String CONTEXT_NAME = "PartitionedByEventSource";
 	public static final String LOG_FOLDER = "logs/";
 	public static final String LOG_EXTENSION = ".log";
+	
+	// QoS Language tags
+
+	public static final String QOS_LIBRARY_TAG = "qosLibrary";
+	public static final String QOS_LIBRARY_NAME_TAG = "name";
+	
+	public static final String CATEGORY_TAG = "category";
+	public static final String CATEGORY_NAME_TAG = "name";
+	
+	public static final String ATTRIBUTE_TAG = "attribute";
+	public static final String ATTRIBUTE_NAME_TAG = "name";
+	
+	public static final String METRIC_TAG = "metric";
+	public static final String METRIC_NAME_TAG = "name";
+	
 }

@@ -1,5 +1,6 @@
 package br.ufpe.cin.dsoa.api.service.impl;
 
+import br.ufpe.cin.dsoa.api.core.impl.NamedElementImpl;
 import br.ufpe.cin.dsoa.api.service.Property;
 
 public class PropertyImpl extends NamedElementImpl implements Property  {

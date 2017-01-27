@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.ufpe.cin.dsoa.api.core.impl.NamedElementImpl;
+import br.ufpe.cin.dsoa.api.qos.QoSLibrary;
 import br.ufpe.cin.dsoa.api.service.Binding;
 import br.ufpe.cin.dsoa.api.service.DsoaComponentInstance;
 import br.ufpe.cin.dsoa.api.service.DsoaComponentType;
@@ -18,6 +20,16 @@ public class DsoaComponentInstanceImpl extends NamedElementImpl implements DsoaC
 	private Map<String, ServiceInstance> serviceInstanceMap;
 
 	private DsoaComponentInstanceManager instanceManager;
+	
+	private QoSLibrary qosLib;
+	
+	public void setQosLib(QoSLibrary lib) {
+		this.qosLib = lib;
+	}
+	
+	public QoSLibrary getQosLib() {
+		return this.qosLib;
+	}
 	
 	/**
 	 * 
