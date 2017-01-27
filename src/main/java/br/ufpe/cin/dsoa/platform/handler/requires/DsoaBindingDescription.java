@@ -26,7 +26,7 @@ public class DsoaBindingDescription {
 		elDependency.addAttribute(new Attribute(DEPENDENCY_ATT_SPECIFICATION, binding.getPort().getServiceSpecification().getFunctionalInterface().getInterfaceName()));
 		elDependency.addAttribute(new Attribute(DEPENDENCY_ATT_VALID, String.valueOf(binding.isValid())));
 		if (binding.isValid()) {
-			elDependency.addAttribute(new Attribute("bound-to", binding.getServiceInstance().getName()));
+			elDependency.addAttribute(new Attribute("bound-to", binding.getServiceInstanceProxy().getName()));
 		}
 		return elDependency;
 	}

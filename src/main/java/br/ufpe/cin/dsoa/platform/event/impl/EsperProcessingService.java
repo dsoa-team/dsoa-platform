@@ -242,7 +242,7 @@ public class EsperProcessingService implements EventProcessingService {
 					}
 					
 					@Override
-					public String getId() {
+					public String getComponentInstanceName() {
 						return String.format("dsoa-%s", eventType.getName());
 					}
 				}, eventType, subscriptionConfig);
@@ -259,7 +259,7 @@ public class EsperProcessingService implements EventProcessingService {
 					}
 
 					@Override
-					public String getId() {
+					public String getComponentInstanceName() {
 						return eventType.getName();
 					}
 				}, new Subscription(eventType, null), true);
@@ -277,7 +277,7 @@ public class EsperProcessingService implements EventProcessingService {
 			}
 			
 			@Override
-			public String getId() {
+			public String getComponentInstanceName() {
 				return String.format("dsoa-%s", eventType.getName());
 			}
 		}, eventType);

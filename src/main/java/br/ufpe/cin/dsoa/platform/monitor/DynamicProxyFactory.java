@@ -10,9 +10,11 @@ import java.util.logging.FileHandler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.osgi.framework.ServiceReference;
+
 import br.ufpe.cin.dsoa.api.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
-import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceProxyItf;
+import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceProxyImpl;
 import br.ufpe.cin.dsoa.util.Constants;
 import br.ufpe.cin.dsoa.util.DsoaUtil;
 
@@ -25,6 +27,7 @@ import br.ufpe.cin.dsoa.util.DsoaUtil;
  * @author fabions
  * 
  */
+// TODO REMOVE FROM THE PLATFORM, IT IS PART OF THE BindingManager
 public class DynamicProxyFactory implements ProxyFactory {
 
 	private static Logger logger;
@@ -55,12 +58,12 @@ public class DynamicProxyFactory implements ProxyFactory {
 	private Object proxy;
 	private EventDistribuitionService distribuitionService;
 	
-	public Object getProxy(String consumerId, ServiceInstance service) {
+	public Object getProxy(String consumerId, ServiceInstance serviceInstance) {
 		if (this.proxy == null) {
-			DynamicProxy dynaProxy = new DynamicProxy(consumerId, service);
+			DynamicProxy dynaProxy = new DynamicProxy(consumerId, serviceInstance);
 			
 			ClassLoader cl = this.getClass().getClassLoader();
-			String itfClassname = service.getPort().getServiceSpecification().getFunctionalInterface().getInterfaceName();
+			String itfClassname = serviceInstance.getPort().getServiceSpecification().getFunctionalInterface().getInterfaceName();
 			Class<?> itfClass;
 			try {
 				itfClass = cl.loadClass(itfClassname);
@@ -78,7 +81,10 @@ public class DynamicProxyFactory implements ProxyFactory {
 	class DynamicProxy implements InvocationHandler {
 
 		private String consumerId;
-		private ServiceInstanceProxyItf service;
+		private String serviceId;
+		
+		private Object serviceObject;
+		private ServiceReference serviceReference;
 
 		/**
 		 * HashCode method.
@@ -95,10 +101,10 @@ public class DynamicProxyFactory implements ProxyFactory {
 		 */
 		private Method m_toStringMethod;
 
-		public DynamicProxy(String consumerId, ServiceInstance service) {
+		public DynamicProxy(String consumerId, ServiceInstance serviceInstance) {
 			this.consumerId = consumerId;
-			this.service = (ServiceInstanceProxyItf)service;
-
+			this.serviceId = serviceInstance.getName();
+			this.serviceReference = ((ServiceInstanceProxyImpl)serviceInstance).getServiceReference();
 			try {
 				m_hashCodeMethod = Object.class.getMethod("hashCode", null);
 				m_equalsMethod = Object.class.getMethod("equals", new Class[] { Object.class });
@@ -107,6 +113,15 @@ public class DynamicProxyFactory implements ProxyFactory {
 				throw new NoSuchMethodError(e.getMessage());
 			}
 			
+		}
+		
+		public synchronized Object getServiceObject() {
+			if (this.serviceObject == null && 
+					null != serviceReference) {
+				serviceObject = serviceReference.getBundle().getBundleContext()
+						.getService(serviceReference);
+			}
+			return serviceObject;
 		}
 		
 		
@@ -146,10 +161,8 @@ public class DynamicProxyFactory implements ProxyFactory {
 			Object result = null;
 			boolean success = true;
 			try {
-				synchronized (service) {
-					if (service.getServiceObject() != null) {
-						result = method.invoke(service.getServiceObject(), args);
-					}
+				synchronized (serviceReference) {
+						result = method.invoke(this.getServiceObject(), args);
 				}
 			} catch (InvocationTargetException e) {
 				Throwable rawException = e.getTargetException();
@@ -167,24 +180,22 @@ public class DynamicProxyFactory implements ProxyFactory {
 				throw exc;
 			} finally {
 				responseTime = System.currentTimeMillis();
-				synchronized (service) {
-					if (service.getServiceObject() != null) {
+				if (getServiceObject() != null) {
 
-						Map<String, String> parameterTypes = new HashMap<String, String>();
-						Map<String, Object> parameterValues = new HashMap<String, Object>();
+					Map<String, String> parameterTypes = new HashMap<String, String>();
+					Map<String, Object> parameterValues = new HashMap<String, Object>();
 
-						for (int i = 0; i < method.getParameterTypes().length; i++) {
-							parameterTypes.put(i + "", method.getParameterTypes()[i].getName());
-							parameterValues.put(i + "", args[i]);
-						}
-						String returnType = method.getReturnType().getName();
-
-						notifyInvocation(consumerId, service.getName(), method.getName(),
-								requestTime, responseTime, success, exceptionClassName,
-								exceptionMessage, parameterTypes, parameterValues, returnType,
-								result);
-						logger.info(service.getName()+","+ System.currentTimeMillis()+"," + (responseTime - requestTime));
+					for (int i = 0; i < method.getParameterTypes().length; i++) {
+						parameterTypes.put(i + "", method.getParameterTypes()[i].getName());
+						parameterValues.put(i + "", args[i]);
 					}
+					String returnType = method.getReturnType().getName();
+
+					notifyInvocation(consumerId, serviceId, method.getName(),
+							requestTime, responseTime, success, exceptionClassName,
+							exceptionMessage, parameterTypes, parameterValues, returnType,
+							result);
+					logger.info(serviceId+","+ System.currentTimeMillis()+"," + (responseTime - requestTime));
 				}
 			}
 			return result;

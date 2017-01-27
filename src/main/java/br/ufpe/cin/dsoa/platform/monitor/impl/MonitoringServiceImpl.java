@@ -156,7 +156,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 				private String id = monitoredAttribute.getStatusVariableId();
 
 				@Override
-				public String getId() {
+				public String getComponentInstanceName() {
 					return id;
 				}
 

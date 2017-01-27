@@ -19,7 +19,7 @@ import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.RelationalOperator;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 import br.ufpe.cin.dsoa.api.service.impl.OsgiServiceFactory;
-import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceProxy;
+import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceProxyImpl;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.handler.requires.ServiceListener;
 import br.ufpe.cin.dsoa.platform.registry.InvalidServiceSpecificationException;
@@ -159,7 +159,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 	}
 
 	public void trackService(ServiceInstance bestService, ServiceListener listener) {
-		ServiceReference reference = ((ServiceInstanceProxy) bestService).getServiceReference();
+		ServiceReference reference = ((ServiceInstanceProxyImpl) bestService).getServiceReference();
 		this.openTracker(reference, listener);
 	}
 
@@ -168,7 +168,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 			ServiceListener listener, List<String> blackList)
 			throws InvalidServiceSpecificationException {
 		new OsgiTracker(context, this.createFilter(specification, blackList),
-				listener, blackList).open();
+				listener, specification.getFunctionalInterface().getInterfaceName(), blackList).open();
 	}
 
 	private void openTracker(ServiceReference reference,
@@ -191,15 +191,23 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 		listener.onError(e);
 	}
 
+	/**
+	 * This tracker is used only when the BindingManager asks the Service Registry to get a 
+	 * service and there is no available service candidates
+	 * 
+	 * @author fabions
+	 *
+	 */
 	class OsgiTracker extends ServiceTracker {
 
 		private ServiceListener listener;
+		private String serviceItf;
 		private List<String> blackList;
 
 		public OsgiTracker(BundleContext context, Filter filter,
-				ServiceListener listener, List<String> blackList) {
+				ServiceListener listener, String serviceItf, List<String> blackList) {
 			super(context, filter, null);
-
+			this.serviceItf = serviceItf;
 			this.listener = listener;
 			this.blackList = blackList;
 		}
@@ -211,7 +219,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 			if (!blackList.contains(reference)) {
 				//TODO MODIFICAR PARA REFERENCIAR UMA SERVICE INSTANCE
 				service = OsgiServiceFactory.getOsgiService(
-						listener.getServiceInterfaceName(), reference, true);
+						serviceItf, reference, true);
 				this.listener.onArrival(service);
 				// open tracker for departures
 				openTracker(reference, listener);

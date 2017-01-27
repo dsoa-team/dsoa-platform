@@ -15,12 +15,13 @@ import org.apache.felix.ipojo.metadata.Element;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ManagedService;
 
+import br.ufpe.cin.dsoa.api.service.ComponentInstance;
+import br.ufpe.cin.dsoa.api.service.ComponentType;
 import br.ufpe.cin.dsoa.api.service.Constraint;
-import br.ufpe.cin.dsoa.api.service.DsoaComponentInstance;
-import br.ufpe.cin.dsoa.api.service.DsoaComponentType;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.ProvidedPort;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
+import br.ufpe.cin.dsoa.api.service.impl.ComponentTypeImpl;
 import br.ufpe.cin.dsoa.api.service.impl.NonFunctionalSpecificationImpl;
 import br.ufpe.cin.dsoa.api.service.impl.ProvidedPortImpl;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceImpl;
@@ -50,7 +51,7 @@ public class DsoaProvidesHandler extends PrimitiveHandler implements ManagedServ
      */
     public void initializeComponentFactory(ComponentTypeDescription desc, Element metadata) throws ConfigurationException {
     	DsoaComponentFactory dsoaFactory = (DsoaComponentFactory)this.getFactory();
-		DsoaComponentType dsoaComponentType = dsoaFactory.getComponentType();
+		ComponentTypeImpl dsoaComponentType = dsoaFactory.getComponentType();
 		
 		Element[] providesTags = metadata.getElements(Constants.PROVIDES_TAG, Constants.PROVIDES_TAG_NAMESPACE);
 		for (Element providesTag : providesTags) {
@@ -73,8 +74,8 @@ public class DsoaProvidesHandler extends PrimitiveHandler implements ManagedServ
 			throws ConfigurationException {
 
 		DsoaComponentInstanceManager manager = (DsoaComponentInstanceManager)this.getInstanceManager();
-		DsoaComponentInstance componentInstance = manager.getDsoaComponentInstance();
-		DsoaComponentType componentType = componentInstance.getComponentType();
+		ComponentInstance componentInstance = manager.getDsoaComponentInstance();
+		ComponentType componentType = componentInstance.getComponentType();
 		
 		/*
 		 * It is important to see that we can only create Bindings here

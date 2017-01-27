@@ -119,7 +119,7 @@ public class TestEventProcessingAgent {
 			}
 
 			@Override
-			public String getId() {
+			public String getComponentInstanceName() {
 				return "consumer-01";
 			}
 		}, new Subscription(subscribedEventType, filter), true);
@@ -151,7 +151,7 @@ public class TestEventProcessingAgent {
 			}
 
 			@Override
-			public String getId() {
+			public String getComponentInstanceName() {
 				return "consumer-01";
 			}
 		}, new Subscription(subscribedEventType, filter), false);

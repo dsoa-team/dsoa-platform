@@ -110,7 +110,7 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 					}
 	
 					@Override
-					public String getId() {
+					public String getComponentInstanceName() {
 						return "qosLogger";
 					}
 				};

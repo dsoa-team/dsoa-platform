@@ -15,11 +15,11 @@ import org.apache.felix.ipojo.parser.PojoMetadata;
 
 import br.ufpe.cin.dsoa.api.service.Binding;
 import br.ufpe.cin.dsoa.api.service.Constraint;
-import br.ufpe.cin.dsoa.api.service.DsoaComponentInstance;
-import br.ufpe.cin.dsoa.api.service.DsoaComponentType;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.RequiredPort;
 import br.ufpe.cin.dsoa.api.service.impl.BindingImpl;
+import br.ufpe.cin.dsoa.api.service.impl.ComponentInstanceImpl;
+import br.ufpe.cin.dsoa.api.service.impl.ComponentTypeImpl;
 import br.ufpe.cin.dsoa.api.service.impl.NonFunctionalSpecificationImpl;
 import br.ufpe.cin.dsoa.api.service.impl.RequiredPortImpl;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
@@ -33,7 +33,7 @@ import br.ufpe.cin.dsoa.util.Constants;
 /**
  * The DsoaDependencyHandler is responsible for taking care of the service binding process, which is enacted by a 
  * dependency injection mechanism. This handler is a core element on the DsoaPlatform, and should only be used in
- * applications that use the DsoaComponentType.
+ * applications that use the ComponentType.
  * 
  * In a Dsoa application, the required services are represented by a collection of declared required fields, which specified
  * using dsoa:requires tag. Each required field is represented by an instance of the Dependency class, which is maintained in
@@ -47,6 +47,8 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 	
 	public static final String HANDLER_NAME = "br.ufpe.cin.dsoa:requires";
 	
+	private boolean started;
+	
 	/**
 	 * A list of Binding meta-objects, each one corresponding to a required service 
 	 */
@@ -54,11 +56,11 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 	
 	
 	/**
-	 * Initialize the ComponentFactory in order to help the building of the DsoaComponentType meta-object.
+	 * Initialize the ComponentFactory in order to help the building of the ComponentType meta-object.
 	 * This method is only called when the factory is when the factory becomes valid for the first time!
 	 * It is called without an attached instance, so we can not depend on instances here!
 	 * This method identifies every required service and builds a corresponding RequiredPort meta-object.
-	 * The RequiredPort meta-object is added to the DsoaComponentType meta-object in order to complete 
+	 * The RequiredPort meta-object is added to the ComponentType meta-object in order to complete 
 	 * its description.
 	 * 
 	 * @author fabions
@@ -71,7 +73,7 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 		 * the pojoMetadata represents ComponentType meta-data, not instance meta-data.
 		 */
 		DsoaComponentFactory dsoaFactory = (DsoaComponentFactory)this.getFactory();
-		DsoaComponentType dsoaComponentType = dsoaFactory.getComponentType();
+		ComponentTypeImpl dsoaComponentType = dsoaFactory.getComponentType();
 		PojoMetadata pojoMetadata = getFactory().getPojoMetadata();
 		
 		Element[] requiresTags = metadata.getElements(Constants.REQUIRES_TAG, Constants.REQUIRES_TAG_NAMESPACE);
@@ -119,12 +121,13 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 	@Override
 	public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
 		DsoaComponentInstanceManager manager = (DsoaComponentInstanceManager)this.getInstanceManager();
-		DsoaComponentInstance componentInstance = manager.getDsoaComponentInstance();
-		DsoaComponentType componentType = componentInstance.getComponentType();
+		ComponentInstanceImpl componentInstance = manager.getDsoaComponentInstance();
+		ComponentTypeImpl componentType = componentInstance.getComponentType();
 		
 		PojoMetadata pojoMetadata = getFactory().getPojoMetadata();
 		for(RequiredPort requiredPort : componentType.getRequiredPortList()) {
 			FieldMetadata fieldMetadata = pojoMetadata.getField(requiredPort.getName());
+			//TODO 
 			BindingImpl binding = new BindingImpl(this, componentInstance, requiredPort, buildProperties(configuration));
 			this.register(fieldMetadata, binding);
 		}
@@ -145,68 +148,7 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
     }
 	
 	
-    /**
-     * Handler start method.
-     * @see org.apache.felix.ipojo.Handler#start()
-     */
-    public void start() {
-    	setValidity(false);
-		startDependencies();
-    }
-    
-    /**
-     * Handler stop method.
-     * @see org.apache.felix.ipojo.Handler#stop()
-     */
-    public void stop() {
-    	if (this.isValid()) {
-    		this.stopDependencies();
-    	}
-	    this.setValidity(false);
-    }
-
-	public void startDependencies() {
-		synchronized (bindings) {
-		    for (Binding binding : bindings) {
-		        binding.start();
-		    }
-		}
-		computeState();
-	}
-	
-	public void stopDependencies() {
-		synchronized (bindings) {
-		    for (Binding binding : bindings) {
-		        binding.stop();
-		    }
-		}
-		computeState();
-	}
-
-    public void computeState() {
-        boolean initialState = getValidity();
-        boolean valid = true;
-        
-        synchronized (bindings) {
-            for (Binding binding: bindings) {
-                if (!binding.isValid()) {
-                    valid = false;
-                    break;
-                }
-            }
-            
-            if (valid) {
-                if (!initialState) {
-                    setValidity(true);
-                }
-            } else {
-                if (initialState) {
-                    setValidity(false);
-                }
-            }
-
-        }
-    }
+ 
     
 	public DsoaPlatform getDsoaPlatform() {
 		DsoaComponentInstanceManager manager = (DsoaComponentInstanceManager)this.getInstanceManager();
@@ -266,5 +208,76 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 		    }
 
 	}
+	 
+	 /*
+	  * OS MÉTODOS ABAIXO FORAM COPIADOS DA VERSÃO 1.0 DA PLATAFORMA PARA SEREM AVALIADOS
+	  */
+	 
+		
+	    /**
+	     * Handler start method.
+	     * @see org.apache.felix.ipojo.Handler#start()
+	     */
+	    public void start() {
+	        started = true;
+	        setValidity(false);
+		    startDependencies();
+	    }
+	    
+	    /**
+	     * Handler stop method.
+	     * @see org.apache.felix.ipojo.Handler#stop()
+	     */
+	    public void stop() {
+	        this.stopDependencies();
+	        this.setValidity(false);
+	        started = false;
+	    }
+
+		private void startDependencies() {
+			synchronized (bindings) {
+			    for (Binding binding : bindings) {
+			    	binding.start();
+			    }
+			}
+			computeState();
+		}
+		
+		private void stopDependencies() {
+			synchronized (bindings) {
+			    for (Binding binding : bindings) {
+			        binding.stop();
+			    }
+			}
+		}
+
+	    public void computeState() {
+	        if (!started) {
+	            return;
+	        }
+	        
+	        boolean initialState = getValidity();
+	        boolean valid = true;
+	        
+	        synchronized (bindings) {
+	            for (Binding binding : bindings) {
+	                if (!binding.isValid()) {
+	                    valid = false;
+	                    break;
+	                }
+	            }
+	            
+	            if (valid) {
+	                if (!initialState) {
+	                    setValidity(true);
+	                }
+	            } else {
+	                if (initialState) {
+	                    setValidity(false);
+	                }
+	            }
+
+	        }
+	    }
 	
 }

@@ -42,7 +42,7 @@ public class EsperSubscriptionBuilder extends EsperAgentBuilder  {
 		
 		public void buildFilterClause(){
 			this.queryString.append("(");
-			this.queryString.append(this.in.getAlias() +".data_consumerId = '" + eventConsumer.getId() +"'");
+			this.queryString.append(this.in.getAlias() +".data_consumerId = '" + eventConsumer.getComponentInstanceName() +"'");
 			this.queryString.append(" ) ");
 		}
 		

@@ -154,7 +154,7 @@ public class TestIntrospectionAgent {
 			}
 
 			@Override
-			public String getId() {
+			public String getComponentInstanceName() {
 				return "sample";
 			}
 		};

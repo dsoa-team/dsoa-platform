@@ -6,7 +6,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.InstanceManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -14,8 +13,8 @@ import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
+import br.ufpe.cin.dsoa.api.service.ComponentInstance;
 import br.ufpe.cin.dsoa.api.service.Constraint;
-import br.ufpe.cin.dsoa.api.service.DsoaComponentInstance;
 import br.ufpe.cin.dsoa.api.service.Port;
 import br.ufpe.cin.dsoa.api.service.Property;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
@@ -31,9 +30,9 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
     private DsoaProvidesHandler handler;
     
 	/**
-	 * The corresponding DsoaComponentInstance meta-object
+	 * The corresponding ComponentInstance meta-object
 	 */
-	private DsoaComponentInstance componentInstance;
+	private ComponentInstance componentInstance;
 	
 	private ServiceRegistration serviceRegistration;
 	
@@ -58,13 +57,15 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
 	 * @param port
 	 * @param configuration
 	 */
-	public ServiceInstanceImpl(DsoaProvidesHandler handler, DsoaComponentInstance componentInstance, Port port, Dictionary configuration) {
+	public ServiceInstanceImpl(DsoaProvidesHandler handler, ComponentInstance componentInstance, Port port, Dictionary configuration) {
 		super(componentInstance.getName()+"_"+port.getName(), port, buildProperties(configuration));
 		this.componentInstance = componentInstance;
 		this.handler = handler;
 		this.factory = new ServiceFactoryImpl();
 		this.configuration = configuration;
-		this.componentInstance.addServiceInstance(this);
+		
+		//TODO VIDEEEE
+		//this.componentInstance.addServiceInstance(this);
 	}
 	
 	
@@ -179,7 +180,7 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
             unregisterService();
         }
 
-        if (handler.getInstanceManager().getState() == ComponentInstance.VALID
+        if (handler.getInstanceManager().getState() == org.apache.felix.ipojo.ComponentInstance.VALID
                 && serviceRegistration == null ) {
             // Build the service properties list
 

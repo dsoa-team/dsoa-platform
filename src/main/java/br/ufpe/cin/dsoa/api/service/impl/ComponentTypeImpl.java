@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.ufpe.cin.dsoa.api.core.impl.NamedElementImpl;
-import br.ufpe.cin.dsoa.api.service.DsoaComponentType;
+import br.ufpe.cin.dsoa.api.service.ComponentType;
 import br.ufpe.cin.dsoa.api.service.ProvidedPort;
 import br.ufpe.cin.dsoa.api.service.RequiredPort;
 
-public class DsoaComponentTypeImpl extends NamedElementImpl implements DsoaComponentType {
+public class ComponentTypeImpl extends NamedElementImpl implements ComponentType {
 
 	private String classname;
 	private List<ProvidedPort> providedPortList;
 	private List<RequiredPort> requiredPortList;
 	
-	public DsoaComponentTypeImpl(String name, String classname) {
+	public ComponentTypeImpl(String name, String classname) {
 		super(name);
 		this.classname = classname;
 		this.providedPortList = new ArrayList<ProvidedPort>();

@@ -15,7 +15,8 @@ import br.ufpe.cin.dsoa.api.qos.impl.AttributeImpl;
 import br.ufpe.cin.dsoa.api.qos.impl.CategoryImpl;
 import br.ufpe.cin.dsoa.api.qos.impl.MetricImpl;
 import br.ufpe.cin.dsoa.api.qos.impl.QoSLibraryImpl;
-import br.ufpe.cin.dsoa.api.service.DsoaComponentInstance;
+import br.ufpe.cin.dsoa.api.service.ComponentInstance;
+import br.ufpe.cin.dsoa.api.service.impl.ComponentInstanceImpl;
 import br.ufpe.cin.dsoa.platform.component.DsoaComponentInstanceManager;
 import br.ufpe.cin.dsoa.util.Constants;
 
@@ -25,7 +26,7 @@ public class DsoaQoSLibraryHandler extends PrimitiveHandler {
 	public void configure(Element metadata, Dictionary configuration)
 			throws ConfigurationException {
 		DsoaComponentInstanceManager manager = (DsoaComponentInstanceManager)this.getInstanceManager();
-		DsoaComponentInstance componentInstance = manager.getDsoaComponentInstance();
+		ComponentInstanceImpl componentInstance = manager.getDsoaComponentInstance();
 		
 		Element[] qosTags = metadata.getElements(Constants.QOS_LIBRARY_HANDLER_TAG, Constants.QOS_LIBRARY_HANDLER_TAG_NAMESPACE);
 		if (qosTags != null && qosTags.length != 0) {
@@ -79,7 +80,7 @@ public class DsoaQoSLibraryHandler extends PrimitiveHandler {
 		
 		public Element getHandlerInfo() {
 			DsoaComponentInstanceManager manager = (DsoaComponentInstanceManager)getInstanceManager();
-			DsoaComponentInstance componentInstance = manager.getDsoaComponentInstance();
+			ComponentInstance componentInstance = manager.getDsoaComponentInstance();
 			Element descInfo = new Element("Handler", "");
 			descInfo.addAttribute(new org.apache.felix.ipojo.metadata.Attribute("name",Constants.QOS_LIBRARY_HANDLER_TAG_NAMESPACE +":"+ Constants.QOS_LIBRARY_HANDLER_TAG));
 			if (componentInstance.getQosLib() != null) {

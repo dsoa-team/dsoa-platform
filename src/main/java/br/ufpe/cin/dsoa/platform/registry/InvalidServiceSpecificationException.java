@@ -5,7 +5,6 @@ import java.util.List;
 import org.osgi.framework.InvalidSyntaxException;
 
 import br.ufpe.cin.dsoa.api.service.Constraint;
-import br.ufpe.cin.dsoa.api.service.impl.ConstraintImpl;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
 
 public class InvalidServiceSpecificationException extends RuntimeException {

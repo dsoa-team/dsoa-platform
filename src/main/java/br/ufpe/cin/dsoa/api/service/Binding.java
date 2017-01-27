@@ -1,5 +1,8 @@
 package br.ufpe.cin.dsoa.api.service;
 
+import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceProxy;
+
+
 
 /**
  * Represents a Binding and has a reference to a provided service (Endpoint)
@@ -13,14 +16,14 @@ public interface Binding extends PortInstance {
 	Port getPort();
 	
 	/** Represents the bounded service */
-	ServiceInstance getServiceInstance();
+	ServiceInstance getServiceInstanceProxy();
 	
 	public boolean isValid();
 	
 	/**
 	 * Bind this Binding
 	 */
-	public void bind(ServiceInstance serviceInstance);
+	public void bind(ServiceInstanceProxy serviceInstance);
 	
 	/** Unbind this Binding */
 	public void unbind();
@@ -36,4 +39,6 @@ public interface Binding extends PortInstance {
 	 * Interrupts the Binding's life-cycle management
 	 */
 	public void stop();
+
+	ComponentInstance getComponentInstance();
 }

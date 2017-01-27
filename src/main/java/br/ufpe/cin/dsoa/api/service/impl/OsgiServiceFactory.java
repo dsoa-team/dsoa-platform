@@ -47,6 +47,6 @@ public class OsgiServiceFactory {
 			Property prop = new PropertyImpl(key, value, value.getClass().getName());
 			props.add(prop);
 		}
-		return (isProxy ? new ServiceInstanceProxy(providedPort, props, reference) : new ServiceInstanceImpl(providedPort, props, reference)); 
+		return (isProxy ? new ServiceInstanceProxyImpl(providedPort, props, reference) : new ServiceInstanceImpl(providedPort, props, reference)); 
 	}
 }

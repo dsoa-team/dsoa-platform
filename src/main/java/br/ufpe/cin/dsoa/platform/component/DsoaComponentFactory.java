@@ -20,27 +20,18 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-import br.ufpe.cin.dsoa.api.qos.Attribute;
-import br.ufpe.cin.dsoa.api.qos.Category;
-import br.ufpe.cin.dsoa.api.qos.Metric;
-import br.ufpe.cin.dsoa.api.qos.QoSLibrary;
-import br.ufpe.cin.dsoa.api.qos.impl.AttributeImpl;
-import br.ufpe.cin.dsoa.api.qos.impl.CategoryImpl;
-import br.ufpe.cin.dsoa.api.qos.impl.MetricImpl;
-import br.ufpe.cin.dsoa.api.qos.impl.QoSLibraryImpl;
-import br.ufpe.cin.dsoa.api.service.DsoaComponentType;
-import br.ufpe.cin.dsoa.api.service.impl.DsoaComponentTypeImpl;
+import br.ufpe.cin.dsoa.api.service.ComponentType;
+import br.ufpe.cin.dsoa.api.service.impl.ComponentTypeImpl;
 import br.ufpe.cin.dsoa.platform.DsoaPlatform;
-import br.ufpe.cin.dsoa.util.Constants;
 
 /**
- * This class defines a factory responsible for the DsoaComponentType. When a
- * new component type is defined using an instance of the DsoaComponentType, it
+ * This class defines a factory responsible for the ComponentType. When a
+ * new component type is defined using an instance of the ComponentType, it
  * creates a corresponding Meta-Object, which contains meta-data concerning the
  * defined type. This meta-data determines the class that has the business code
  * which the component shall execute and the services that the component
  * requires and provides. When an instance of this component type is created
- * (that is, a DsoaComponentInstance), that Meta-Object is used as a Template to
+ * (that is, a ComponentInstance), that Meta-Object is used as a Template to
  * guide the component instantiation process.
  * 
  * The factory creation and initialization process:
@@ -82,9 +73,9 @@ public class DsoaComponentFactory extends ComponentFactory  {
 	 */
 
 	/**
-	 * The Meta-object representing the DsoaComponentType
+	 * The Meta-object representing the ComponentType
 	 */
-	private DsoaComponentType componentType;
+	private ComponentTypeImpl componentType;
 
 	/**
 	 * A tracker to verify the availability of the DsoaPlataform and its
@@ -130,7 +121,7 @@ public class DsoaComponentFactory extends ComponentFactory  {
 	public void check(Element metadata) throws ConfigurationException {
 		super.check(metadata);
 
-		if (metadata.getAttribute(DsoaComponentType.NAME) == null) {
+		if (metadata.getAttribute(ComponentType.NAME) == null) {
 			throw new ConfigurationException("A component type needs a name : "
 					+ metadata);
 		}
@@ -140,7 +131,7 @@ public class DsoaComponentFactory extends ComponentFactory  {
 	 * During this stage (the begining of the factory starting cycle (@see
 	 * org.apache.felix.ipojoiPojoFactory#start()), iPojo builds its internal
 	 * component type representation. We use this hook to define our own
-	 * component type, that is, a DsoaComponentType.
+	 * component type, that is, a ComponentType.
 	 * 
 	 * The starting process (iPojoFactory.start() workflow): 1. This method is
 	 * called
@@ -165,7 +156,7 @@ public class DsoaComponentFactory extends ComponentFactory  {
 	 * In our case, our handlers will help the factory to build the
 	 * DsoaCompontType Meta-Object by including meta-data concerning the
 	 * required and provided services represented by the corresponding ports.
-	 * So, at this posterior state, the DsoaComponentType definition, which is
+	 * So, at this posterior state, the ComponentType definition, which is
 	 * firstly build here, will be continued by the introduction of the
 	 * Handler's contribution.
 	 * 
@@ -180,9 +171,9 @@ public class DsoaComponentFactory extends ComponentFactory  {
 	 */
 	@Override
 	public ComponentTypeDescription getComponentTypeDescription() {
-		this.componentType = new DsoaComponentTypeImpl(
-				this.m_componentMetadata.getAttribute(DsoaComponentType.NAME),
-				this.m_componentMetadata.getAttribute(DsoaComponentType.CLASSNAME));
+		this.componentType = new ComponentTypeImpl(
+				this.m_componentMetadata.getAttribute(ComponentType.NAME),
+				this.m_componentMetadata.getAttribute(ComponentType.CLASSNAME));
 		
 		// Called to let iPojo build its internal description
 		return super.getComponentTypeDescription();
@@ -361,7 +352,7 @@ public class DsoaComponentFactory extends ComponentFactory  {
 	            }
         	}
         	
-        	Observe that, as we DO NOT override the start method on our DsoaComponentInstance class,
+        	Observe that, as we DO NOT override the start method on our ComponentInstance class,
         	it inherit this start, so it will start corresponding handlers and also register with
         	their HandlerManagers in order to propagate status information. The start calling on the HandlerManager 
         	will be propaged to the corresponding Handler.
@@ -420,7 +411,7 @@ public class DsoaComponentFactory extends ComponentFactory  {
 		return this.dsoa;
 	}
 	
-	public DsoaComponentType getComponentType() {
+	public ComponentTypeImpl getComponentType() {
 		return this.componentType;
 	}
 

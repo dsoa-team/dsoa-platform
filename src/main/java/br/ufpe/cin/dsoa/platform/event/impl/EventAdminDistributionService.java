@@ -140,7 +140,7 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 			}
 
 			@Override
-			public String getId() {
+			public String getComponentInstanceName() {
 				return String.format("import-%s-from-%s", eventType.getName(), adapter.getId());
 			}
 		}, subscription);
@@ -164,7 +164,7 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 				}
 			}
 
-			public String getId() {
+			public String getComponentInstanceName() {
 				return String.format("export-%s-to-%s", eventType.getName(), adapter.getId());
 			}
 		}, eventType);

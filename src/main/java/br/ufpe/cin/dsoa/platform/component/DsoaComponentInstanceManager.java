@@ -19,16 +19,15 @@ package br.ufpe.cin.dsoa.platform.component;
  * under the License.
  */
 
-import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.HandlerManager;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.InstanceStateListener;
 import org.apache.felix.ipojo.metadata.Element;
 import org.osgi.framework.BundleContext;
 
-import br.ufpe.cin.dsoa.api.service.DsoaComponentInstance;
-import br.ufpe.cin.dsoa.api.service.impl.DsoaComponentInstanceImpl;
+import br.ufpe.cin.dsoa.api.service.impl.ComponentInstanceImpl;
 import br.ufpe.cin.dsoa.platform.DsoaPlatform;
+import br.ufpe.cin.dsoa.platform.component.autonomic.DsoaComponentInstanceAutonomicManager;
 
 
 /**
@@ -82,7 +81,7 @@ import br.ufpe.cin.dsoa.platform.DsoaPlatform;
  * 
  * @author fabions
  */
-public class DsoaComponentInstanceManager extends InstanceManager implements ComponentInstance, InstanceStateListener {
+public class DsoaComponentInstanceManager extends InstanceManager implements org.apache.felix.ipojo.ComponentInstance, InstanceStateListener {
 
 	/**
 	 * Just to be compatible with iPojo expectations
@@ -97,7 +96,7 @@ public class DsoaComponentInstanceManager extends InstanceManager implements Com
     /**
      * A meta-object encapsulating component instance meta-data.
      */
-    private DsoaComponentInstance instance;
+    private ComponentInstanceImpl instance;
     
     /*
      * Inherited Attributes:
@@ -131,14 +130,14 @@ public class DsoaComponentInstanceManager extends InstanceManager implements Com
     public void configure(Element metadata, java.util.Dictionary configuration) throws org.apache.felix.ipojo.ConfigurationException {
     	/* 
     	 * The instance creation must occur before the superclass delegation in order
-    	 * to guarantee that the handlers can have access to the DsoaComponentInstance during
+    	 * to guarantee that the handlers can have access to the ComponentInstance during
     	 * their configuration. It is important to observe that m_name contains the component
     	 * instance name, that is configured using the "instance.name" property, which,
     	 * as mentioned above comes from the "name" attribute (vide comments above). This
-    	 * is the reason that the DsoaComponentInstance is instantiated just here, not in the
+    	 * is the reason that the ComponentInstance is instantiated just here, not in the
     	 * constructor, since there we have no access to the configuration data.
     	 */
-    	this.instance = new DsoaComponentInstanceImpl(this, (String) configuration.get("instance.name"), this.factory.getComponentType());
+    	this.instance = new ComponentInstanceImpl((String) configuration.get("instance.name"), this.factory.getComponentType(), this, new DsoaComponentInstanceAutonomicManager(getDsoaPlatform()));
     	
     	/*
     	 * The following code should not be required since it is part
@@ -153,7 +152,7 @@ public class DsoaComponentInstanceManager extends InstanceManager implements Com
     	super.configure(metadata, configuration);
     } 
     
-	public DsoaComponentInstance getDsoaComponentInstance() {
+	public ComponentInstanceImpl getDsoaComponentInstance() {
 		return this.instance;
 	}
 
