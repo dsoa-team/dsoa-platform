@@ -1,4 +1,4 @@
-package br.ufpe.cin.dsoa.platform.handler.requires.manager;
+package br.ufpe.cin.dsoa.platform.component.autonomic.management;
 
 // TODO REVIEW
 public interface DsoaBindingManagerMBean {

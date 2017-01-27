@@ -137,7 +137,8 @@ public class DsoaComponentInstanceManager extends InstanceManager implements org
     	 * is the reason that the ComponentInstance is instantiated just here, not in the
     	 * constructor, since there we have no access to the configuration data.
     	 */
-    	this.instance = new ComponentInstanceImpl((String) configuration.get("instance.name"), this.factory.getComponentType(), this, new DsoaComponentInstanceAutonomicManager(getDsoaPlatform()));
+    	this.instance = new ComponentInstanceImpl((String) configuration.get("instance.name"), this.factory.getComponentType(), 
+    			this, new DsoaComponentInstanceAutonomicManager(getDsoaPlatform(), instance));
     	
     	/*
     	 * The following code should not be required since it is part

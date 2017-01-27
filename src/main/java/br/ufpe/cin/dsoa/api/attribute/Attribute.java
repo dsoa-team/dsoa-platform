@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
@@ -33,14 +34,14 @@ public class Attribute  {
 	
 	private String id;
 	
-	@XmlElement(name = CATEGORY, required=true)
+	@XmlAttribute(name = CATEGORY, required=true)
     @XmlJavaTypeAdapter(AttributeCategoryAdapter.class)
 	private AttributeCategory category;
 	
-	@XmlElement(name = NAME, required=true)
+	@XmlAttribute(name = NAME, required=true)
 	private String name;
 	
-	@XmlElement(name = DESCRIPTION)
+	@XmlAttribute(name = DESCRIPTION)
 	private String description;
 	
 	@XmlElementWrapper(name = METADATA)

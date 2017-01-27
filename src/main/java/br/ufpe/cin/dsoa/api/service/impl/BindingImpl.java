@@ -8,7 +8,7 @@ import br.ufpe.cin.dsoa.api.service.Binding;
 import br.ufpe.cin.dsoa.api.service.ComponentInstance;
 import br.ufpe.cin.dsoa.api.service.Port;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
-import br.ufpe.cin.dsoa.platform.handler.requires.DsoaBindingManager;
+import br.ufpe.cin.dsoa.platform.component.autonomic.DsoaBindingManager;
 import br.ufpe.cin.dsoa.platform.handler.requires.DsoaRequiresHandler;
 import br.ufpe.cin.dsoa.util.Constants;
 
@@ -71,6 +71,7 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	public synchronized void bind(ServiceInstanceProxy serviceInstance) {
 		if (!isBound()) {
 			this.serviceInstanceProxy = serviceInstance;
+			this.manager.bound(serviceInstance.getName());
 		}
 		this.setValid(true);
 	}
@@ -81,8 +82,9 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	 */
 	public synchronized void unbind() {
 		if (isBound()) {
-			this.serviceInstanceProxy = null;
 			this.setValid(false);
+			this.manager.unbound(this.serviceInstanceProxy.getName());
+			this.serviceInstanceProxy = null;
 		}
 	}
 
@@ -122,12 +124,29 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 		}
 	}
 
+	/**
+	 * 
+	 * This method is called by the DsoaRequiresHandler in order
+	 * to tell the Binding Meta-Object to try to bind it self.
+	 * At that time, this meta-object calls its autonomic manager
+	 * in order to select an adequate ServiceInstanceProxy, which
+	 * this Binding can be connected to considering its requirements, as 
+	 * stated through corresponding Port specifications.
+	 *  
+	 */
 	public void start() {
 		if (!isBound()) {
 			manager.selectService();
 		}
 	}
 
+	/**
+	 *  This method is called by the DsoaRequiresHandler in order
+	 * to tell the Binding Meta-Object to try to unbind it self releasing
+	 * the ServiceInstanceProxy that it maintains. When this is done, the Binding
+	 * shall call its manager in order to search for another ServiceInstance.
+	 * 
+	 */
 	public void stop() {
 		this.unbind();
 		manager.selectService();

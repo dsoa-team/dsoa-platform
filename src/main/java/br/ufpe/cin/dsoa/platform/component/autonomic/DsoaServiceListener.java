@@ -1,8 +1,8 @@
-package br.ufpe.cin.dsoa.platform.handler.requires;
+package br.ufpe.cin.dsoa.platform.component.autonomic;
 
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 
-public interface ServiceListener {
+public interface DsoaServiceListener {
 
 	void onArrival(ServiceInstance service);
 	

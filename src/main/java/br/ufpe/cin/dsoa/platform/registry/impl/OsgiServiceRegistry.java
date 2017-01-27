@@ -21,7 +21,7 @@ import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 import br.ufpe.cin.dsoa.api.service.impl.OsgiServiceFactory;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceProxyImpl;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
-import br.ufpe.cin.dsoa.platform.handler.requires.ServiceListener;
+import br.ufpe.cin.dsoa.platform.component.autonomic.DsoaServiceListener;
 import br.ufpe.cin.dsoa.platform.registry.InvalidServiceSpecificationException;
 import br.ufpe.cin.dsoa.platform.registry.ServiceRegistry;
 import br.ufpe.cin.dsoa.platform.registry.filter.AndFilter;
@@ -44,7 +44,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 	}
 
 	public final void getBestService(ServiceSpecification specification,
-			List<String> blackList, ServiceListener listener) {
+			List<String> blackList, DsoaServiceListener listener) {
 
 		logger.log(Level.INFO, "blackList: {0}", blackList.toArray());
 		ServiceReference[] references = this.getServiceReferences(
@@ -158,21 +158,21 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 		return OsgiServiceFactory.getOsgiService(serviceInterface, reference, true);
 	}
 
-	public void trackService(ServiceInstance bestService, ServiceListener listener) {
+	public void trackService(ServiceInstance bestService, DsoaServiceListener listener) {
 		ServiceReference reference = ((ServiceInstanceProxyImpl) bestService).getServiceReference();
 		this.openTracker(reference, listener);
 	}
 
 	@Override
 	public void waitForService(ServiceSpecification specification,
-			ServiceListener listener, List<String> blackList)
+			DsoaServiceListener listener, List<String> blackList)
 			throws InvalidServiceSpecificationException {
 		new OsgiTracker(context, this.createFilter(specification, blackList),
 				listener, specification.getFunctionalInterface().getInterfaceName(), blackList).open();
 	}
 
 	private void openTracker(ServiceReference reference,
-			final ServiceListener listener) {
+			final DsoaServiceListener listener) {
 
 		new ServiceTracker(this.context, reference, null) {
 			@Override
@@ -186,7 +186,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 		}.open();
 	}
 
-	protected void registerError(Exception e, ServiceListener listener) {
+	protected void registerError(Exception e, DsoaServiceListener listener) {
 		logger.log(Level.SEVERE, e.getMessage());
 		listener.onError(e);
 	}
@@ -200,12 +200,12 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 	 */
 	class OsgiTracker extends ServiceTracker {
 
-		private ServiceListener listener;
+		private DsoaServiceListener listener;
 		private String serviceItf;
 		private List<String> blackList;
 
 		public OsgiTracker(BundleContext context, Filter filter,
-				ServiceListener listener, String serviceItf, List<String> blackList) {
+				DsoaServiceListener listener, String serviceItf, List<String> blackList) {
 			super(context, filter, null);
 			this.serviceItf = serviceItf;
 			this.listener = listener;

@@ -11,8 +11,8 @@ import br.ufpe.cin.dsoa.api.service.Binding;
 import br.ufpe.cin.dsoa.api.service.ComponentInstance;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 import br.ufpe.cin.dsoa.platform.component.DsoaComponentInstanceManager;
+import br.ufpe.cin.dsoa.platform.component.autonomic.DsoaBindingManager;
 import br.ufpe.cin.dsoa.platform.component.autonomic.DsoaComponentInstanceAutonomicManager;
-import br.ufpe.cin.dsoa.platform.handler.requires.DsoaBindingManager;
 
 /**
  * This is a Meta-Object that intends to provide a management interface to an Autonomic Manager in
