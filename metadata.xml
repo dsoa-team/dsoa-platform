@@ -35,6 +35,11 @@
 		classname="br.ufpe.cin.dsoa.platform.handler.qos.DsoaQoSLibraryHandler" >
 	</handler>
 	
+	<handler name="manager" namespace="br.ufpe.cin.dsoa"
+		classname="br.ufpe.cin.dsoa.platform.handler.manager.DsoaAutonomicManagerHandler" >
+	</handler>
+	
+	
 	<!-- ============================================================================================================ -->		
 	<!-- ============================================================================================================ -->
 	<!-- ========================== 			DSOA PLATFORM				========================================= -->
@@ -195,6 +200,7 @@
 	<!-- ========================== 			DSOA PLATFORM CONFIGURATOR 				   ========================== -->
 	<!-- ============================================================================================================ -->
 	<!-- ============================================================================================================ -->
+	<!--  THIS IS NOT DONE LIKE THAT IN THE NEW VERSION -->
 	<!-- 
 		This component is responsible for configuring the components that listen for platform extensions. It starts a 
 		bundle listener that is responsible for continuously looking for declarative extensions (attributes, events, 
@@ -202,8 +208,8 @@
 		In this context, it is an implementation of the "Extender Pattern". 
 		The management service also starts a service tracker that listen service registrations in order to starting
 		monitoring new services. So, when a remote service is registered, triggers the MonitoringService to start 
-		service monitoring.
-	 -->
+		service monitoring. -->
+
 	<component 	name="Platform.Configuration.ConfiguratorComponent" 
 				classname="br.ufpe.cin.dsoa.platform.configurator.PlatformConfigurator">
 		<requires field="attributeCatalog" />
@@ -215,7 +221,7 @@
 		<callback transition="validate" method="start" />
 		<callback transition="invalidate" method="stop" />
 	</component>
-
+	 -->
 
 	<!-- ============================================================================================================ -->		
 	<!-- ============================================================================================================ -->
@@ -319,7 +325,7 @@
 	<instance component="Platform.Metric.MetricComputingComponent" />
 	<instance component="Platform.Monitor.MonitoringComponent" />
 	<instance component="Platform.Registry.QoSAwareRegistryComponent" />
-	<instance component="Platform.Configuration.ConfiguratorComponent" />
+	<instance component="Platform.Configuration.ConfiguratorComponent" />  
 	<instance component="Platform.Management.ManagementComponent" />
 	<instance component="Platform.Management.ResourceManagerComponent" />
 	<instance component="Plataform.Management.InformationBase" />

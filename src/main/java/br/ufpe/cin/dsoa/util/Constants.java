@@ -23,6 +23,10 @@ public interface Constants {
 	
 	public static final String QOS_LIBRARY_HANDLER_TAG 	= "qosLibrary";
 	public static final String QOS_LIBRARY_HANDLER_TAG_NAMESPACE	= REQUIRES_TAG_NAMESPACE;
+	
+	
+	public static final String AUTONOMIC_HANDLER_TAG 	= "manager";
+	public static final String AUTONOMIC_HANDLER_TAG_NAMESPACE	= REQUIRES_TAG_NAMESPACE;
 	/** 
 	 * Tag Constraint
 	 */
@@ -88,5 +92,6 @@ public interface Constants {
 	
 	public static final String METRIC_TAG = "metric";
 	public static final String METRIC_NAME_TAG = "name";
+	public static final String EVENT_LIBRARY_TAG = "events";
 	
 }

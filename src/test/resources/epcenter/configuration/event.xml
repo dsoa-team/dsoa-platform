@@ -1,65 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--  TODO: anotar obrigatoriedade dos campos de propriedade -->
 <events>
-	<event type="AvgResponseTimeEvent" extends="DsoaEvent">
-		<data>
-			<property id="value" type="java.lang.Object" />
-		</data>
+	<event type="DsoaEvent">
+		<metadata>
+			<property id="id" type="java.lang.String" generated="true" required="true" />
+			<property id="source" type="java.lang.String" required="true" />
+			<property id="timestamp" type="java.lang.Long" generated="true" />
+			<property id="remote" type="java.lang.Boolean" />
+		</metadata>
 	</event>
-	
-	<event type="RequestOutOfScheduleEvent" extends="DsoaEvent">
-		<data>
-			<property id="value" type="java.lang.Double" />
-		</data>
-	</event>
-	
-	<event type="IntrospectSampleEvent" extends="DsoaEvent">
-		<data>
-			<property id="address" type="java.lang.Object" />
-			<property id="stock" type="java.lang.Object" />
-			<property id="lowerThreshold" type="java.lang.Object" />
-			<property id="higherThreshold" type="java.lang.Object" />
-			<property id="type" type="java.lang.Object" />
-			<property id="price" type="java.lang.Object" />
-		</data>
-	</event>
-	
-	<!-- <event type="Request" extends="DsoaEvent"/>
-	
-	<event type="Response" extends="DsoaEvent"/>
 	
 	<event type="InvocationEvent" extends="DsoaEvent">
-		<properties>
-			<property id="request" type="Request" />
-			<property id="response" type="Response" />
-		</properties>
-	</event> -->
+		<data>
+			<property id="consumerId" type="java.lang.String" />
+			<property id="serviceId" type="java.lang.String" required="true" />
+			<property id="operationName" type="java.lang.String" />
+			<property id="requestTimestamp" type="java.lang.Long" />
+			<property id="responseTimestamp" type="java.lang.Long" />
+			<property id="success" type="java.lang.Boolean" />
+			<property id="exceptionMessage" type="java.lang.String"/>
+			<property id="exceptionClass" type="java.lang.String" />
+			<property id="parameterTypes" type="java.util.Map" />
+			<property id="parameterValues" type="java.util.Map" />
+			<property id="returnType" type="java.lang.String" />
+			<property id="returnValue" type="java.lang.Object" />
+		</data>
+	</event>
 	
-<!-- 	
-	<event type="DsoaEvent">
-		<properties>
-			<property id="id" type="java.lang.String" />
-			<property id="timestamp" type="java.lang.Double" />
-		</properties>
+	<event type="UnbindEvent" extends="DsoaEvent">
+		<data>
+			<property id="consumerId" type="java.util.String" required="true" />
+			<property id="serviceId" type="java.lang.String" required="true" />
+			<property id="serviceInterface" type="java.lang.String" />
+		</data>
 	</event>
-
-
-<event type="ResponseTime" extends="DsoaEvent">
-		<properties>
-			<property id="value" type="java.lang.Double" />
-		</properties>
+	
+	<event type="BindEvent" extends="DsoaEvent">
+		<data>
+			<property id="consumerId" type="java.util.String" required="true" />
+			<property id="serviceId" type="java.lang.String" required="true" />
+			<property id="serviceInterface" type="java.lang.String" />
+		</data>
 	</event>
-
-	<event type="Availabilty" extends="DsoaEvent">
-		<properties>
-			<property id="value" type="java.lang.Double" />
-		</properties>
-	</event>
-
-	<event type="LoginEvent" extends="DsoaEvent">
-		<properties>
-			<property id="group" type="java.lang.String" />
-			<property id="user" type="java.lang.String" />
-		</properties>
-	</event> -->
+	<!-- 
+		publication event TODO
+	 -->
 </events>

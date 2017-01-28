@@ -185,7 +185,7 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 	
 	 class DsoaRequiresHandlerDescription extends HandlerDescription {
 
-			private static final String STATUS_ELEMENT = "status";
+			private static final String STATUS_ELEMENT = "state";
 
 			public DsoaRequiresHandlerDescription(DsoaRequiresHandler depHandler) {
 				super(depHandler);
@@ -193,7 +193,6 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 			
 			public Element getHandlerInfo() {
 				Element descInfo = new Element("Handler", "");
-				descInfo.addAttribute(new Attribute("name","br.ufpe.cin.dsoa:requires"));
 		        String state = "valid";
 		        for (Binding binding : bindings) {
 		        	DsoaBindingDescription bd = new DsoaBindingDescription(binding);
@@ -203,6 +202,7 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 		            descInfo.addElement(bd.getInfo());
 		        }
 		        descInfo.addAttribute(new Attribute(STATUS_ELEMENT, state));
+		        descInfo.addAttribute(new Attribute("name","br.ufpe.cin.dsoa:requires"));
 		        return descInfo;
 		        
 		    }
