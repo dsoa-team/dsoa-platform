@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
-import br.ufpe.cin.dsoa.api.attribute.AttributeAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.attribute.AttributeCategory;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
@@ -50,9 +49,9 @@ public class AttributeManager implements AttributeCatalog, AttributeEventMapperC
 		return this.attributeMap.values();
 	}
 	
-	public synchronized void addAttribute(Attribute attribute) throws AttributeAlreadyCatalogedException {
+	public synchronized void addAttribute(Attribute attribute) {
 		if (this.attributeMap.containsKey(attribute.getId())) {
-			throw new AttributeAlreadyCatalogedException(attribute);
+			return;
 		}
 		attribute.getCategory().addAttribute(attribute);
 		this.attributeMap.put(attribute.getId(), attribute);

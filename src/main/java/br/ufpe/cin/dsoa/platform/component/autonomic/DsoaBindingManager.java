@@ -260,8 +260,6 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 		this.notifyUnbind(serviceId, binding.getComponentInstance().getName());
 	}
 	
-	private EventDistribuitionService distribuitionService;
-	
 	public Object getProxy(String consumerId, ServiceInstance serviceInstance) {
 		if (this.proxyHandler == null) {
 			this.proxyHandler = new DsoaProxyHandler(consumerId, serviceInstance);
@@ -425,7 +423,7 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 					operationName, requestTimestamp, responseTimestamp, success, exceptionClass,
 					exceptionMessage, parameterTypes, parameterValues, returnType, returnValue);
 
-			distribuitionService.postEvent(Constants.INVOCATION_EVENT, metadata, data);
+			dsoaPlatform.getEventDistribuitionService().postEvent(Constants.INVOCATION_EVENT, metadata, data);
 			
 		}
 
@@ -435,8 +433,42 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 
 			return metadata;
 		}
-
+		
 		private Map<String, Object> loadInvocationData(String consumerId, String serviceId,
+				String operationName, long requestTimestamp, long responseTimestamp,
+				boolean success, String exceptionClass, String exceptionMessage,
+				Map<String, String> parameterTypes, Map<String, Object> parameterValues,
+				String returnType, Object returnValue) {
+
+			Map<String, Object> data = new HashMap<String, Object>();
+		
+			data.put(Constants.CONSUMER_ID, consumerId);
+			data.put(Constants.SERVICE_ID, serviceId);
+			data.put(Constants.OPERATION_NAME, operationName);
+			data.put(Constants.REQUEST_TIMESTAMP, requestTimestamp);
+			data.put(Constants.RESPONSE_TIMESTAMP, responseTimestamp);
+			data.put(Constants.SUCCESS, success);
+			if (success) {
+				data.put(Constants.SUCCESS_INCREMENT, 1);
+				data.put(Constants.FAILURE_INCREMENT, 0);
+			} else {
+				data.put(Constants.SUCCESS_INCREMENT, 0);
+				data.put(Constants.FAILURE_INCREMENT, 1);
+			}
+			data.put(Constants.RESPONSE_TIME, responseTimestamp - requestTimestamp);
+			if (exceptionClass != null) {
+				data.put(Constants.EXCEPTION_MESSAGE, exceptionMessage);
+				data.put(Constants.EXCEPTION_CLASS, exceptionClass);
+			}
+			data.put(Constants.PARAMETER_TYPES, parameterTypes);
+			data.put(Constants.PARAMETER_VALUES, parameterValues);
+			data.put(Constants.RETURN_TYPE, returnType);
+			data.put(Constants.RETURN_VALUE, returnValue);
+
+			return data;
+		}
+
+/*		private Map<String, Object> loadInvocationData(String consumerId, String serviceId,
 				String operationName, long requestTimestamp, long responseTimestamp,
 				boolean success, String exceptionClass, String exceptionMessage,
 				Map<String, String> parameterTypes, Map<String, Object> parameterValues,
@@ -461,7 +493,7 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 			data.put("returnValue", returnValue);
 
 			return data;
-		}
+		}*/
 	}
 	
 	

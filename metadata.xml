@@ -47,6 +47,10 @@
 	<component 	name="Platform.Dsoa.Service.Selector"
 				classname="br.ufpe.cin.dsoa.platform.service.selector.SimpleAdditiveWeighting">
 		<provides/>
+		<requires field="epService" />
+		<requires field="attributeMapperCatalog" />
+		<requires field="eventTypeCatalog" />
+		<callback transition="validate" method="start" />
 	</component>
 	
 	
@@ -227,6 +231,7 @@
 		<requires field="agentCatalog" />
 		<requires field="eventTypeCatalog" />
 		<requires field="epService" />
+		<requires field="edService" />
 		<requires field="resourceManager" />
 		<callback transition="validate" method="start" />
 		<callback transition="invalidate" method="stop" />

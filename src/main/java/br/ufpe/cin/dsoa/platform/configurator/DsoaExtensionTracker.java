@@ -2,6 +2,7 @@ package br.ufpe.cin.dsoa.platform.configurator;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +23,7 @@ import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperAlreadyCataloge
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperList;
 import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
+import br.ufpe.cin.dsoa.api.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
@@ -39,6 +41,7 @@ import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeCategoryAdapter;
 import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeManager;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
+import br.ufpe.cin.dsoa.util.Constants;
 import br.ufpe.cin.dsoa.util.DsoaSimpleLogger;
 
 /**
@@ -57,6 +60,7 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 
 	private Map<String, Unmarshaller> JAXBContexts;
 
+	private EventDistribuitionService edService;
 	private EventProcessingService epService;
 	private ResourceManager resourceManager;
 
@@ -91,6 +95,7 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 	}
 
 	// TODO AJUST
+	/*
 	private void addQoSLogger() {
 		List<AttributeEventMapper> mappers = attributeEventMapperCatalog
 				.getAttributeEventMapperList();
@@ -120,7 +125,7 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 			}
 																				// parametrizar
 		}
-	}
+	} */
 
 	@Override
 	public void removedBundle(Bundle bundle) {
@@ -267,6 +272,7 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 							
 							this.attributeEventMapperCatalog
 									.addAttributeEventMapper(mapper);
+							this.notifyNewMetricMap(mapper);
 							
 						}
 					} catch (AttributeEventMapperAlreadyCatalogedException e) {
@@ -279,8 +285,23 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 						+ ". Corresponding mapper definitions will not be considered!");
 				e1.printStackTrace();
 			}
-			this.addQoSLogger();
 		}
+	}
+
+	private void notifyNewMetricMap(AttributeEventMapper mapper) {
+		Map<String, Object> metadata = new HashMap<String, Object>();
+		metadata.put(Constants.SOURCE, "DsoaExtensionTracker");
+		metadata.put(Constants.TIMESTAMP, System.currentTimeMillis());
+
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("category", mapper.getCategory());
+		data.put("attribute", mapper.getName());
+		data.put("event", mapper.getEventTypeName());
+
+		EventType eventType = eventTypeCatalog.get(Constants.NEW_MONITORING_DIRECTIVE_EVENT);
+		Event dsoaEvent = eventType.createEvent(metadata, data);
+		epService.publish(dsoaEvent);
+		//edService.postEvent(event)
 	}
 
 	private void handleAgentDefinitions(Bundle bundle, int action) {
@@ -427,5 +448,9 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 	public void setResourceManager(ResourceManager resourceManager) {
 		this.resourceManager = resourceManager;
 
+	}
+
+	public void setEventDistributionService(EventDistribuitionService edService) {
+		this.edService = edService;
 	}
 }

@@ -5,6 +5,7 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
+import br.ufpe.cin.dsoa.api.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
@@ -39,6 +40,7 @@ public class PlatformConfigurator {
 	private EventTypeCatalog 			eventTypeCatalog;
 	
 	private EventProcessingService		epService;
+	private EventDistribuitionService 	edService;
 	
 	/**
 	 * This service is necessary for configuring the tracker that listens for
@@ -66,6 +68,7 @@ public class PlatformConfigurator {
 		extender.setAgentCatalog(this.agentCatalog);
 		extender.setEventTypeCatalog(eventTypeCatalog);
 		extender.setResourceManager(resourceManager);
+		extender.setEventDistributionService(edService);
 		extender.open();
 		
 		tracker = new ServiceTracker(context, managedFilter, new DsoaServiceTracker(resourceManager));

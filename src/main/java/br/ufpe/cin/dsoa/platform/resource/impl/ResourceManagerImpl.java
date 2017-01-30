@@ -18,6 +18,14 @@ import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 import br.ufpe.cin.dsoa.platform.resource.mbean.ManagedAgent;
 
+/**
+ * This class was defined in order to expose Event Processing Agents via JMX.
+ * Every time that a new Event Processing Agent is created, a MBean is registered
+ * in order to enable its dynamic alteration.
+ * 
+ * @author fabions
+ *
+ */
 public class ResourceManagerImpl implements ResourceManager {
 
 	private MonitoringService monitoringService;

@@ -11,7 +11,7 @@ import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 public class Normalizer {
 
 	public static double[][] normalize(List<Constraint> constraints,
-			List<ServiceInstance> candidates) {
+			List<ServiceInstance> candidates, Map<String, StatisticsComputingService> statistics) {
 
 		double matrix[][] = new double[candidates.size()][constraints.size()];
 
@@ -23,7 +23,7 @@ public class Normalizer {
 
 			for (int indexConstraint = 0; indexConstraint < constraints.size(); indexConstraint++) {
 				Constraint requiredConstraint = constraints.get(indexConstraint);
-				matrix[indexCandidate][indexConstraint] = mapConstraint.get(constraintKey(requiredConstraint)).getThreashold(); 
+				matrix[indexCandidate][indexConstraint] = getAttributeValue(candidate.getName(), mapConstraint, requiredConstraint, statistics); 
 			}
 		}
 	
@@ -31,6 +31,22 @@ public class Normalizer {
 		normalized = normalizeMatrix(matrix, min(matrix), max(matrix), constraints);
 		
 		return normalized;
+	}
+
+	private static double getAttributeValue(
+			String candidateId, Map<String, Constraint> mapConstraint, Constraint requiredConstraint, Map<String, StatisticsComputingService> statistics) {
+		String opName = "";
+		if (requiredConstraint.getOperation() != null && !requiredConstraint.getOperation().trim().isEmpty()) {
+			opName = "." + requiredConstraint.getOperation();
+		}
+		String key = String.format("%s%s.%s", candidateId,opName,requiredConstraint.getAttributeId());
+		double attValue = 0;
+		if (statistics.containsKey(key)) {
+			attValue = statistics.get(key).getMean();
+		} else {
+			attValue = mapConstraint.get(constraintKey(requiredConstraint)).getThreashold();
+		}
+		return attValue;
 	};
 	
 	public static double[][] normalizeMatrix(double[][] matrix, double[]min, double[]max, List<Constraint> constraints){

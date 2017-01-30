@@ -9,6 +9,14 @@
 		</metadata>
 	</event>
 	
+	<event type="NewMonitoringDirectiveEvent" extends="DsoaEvent">
+		<data>
+			<property id="category" type="java.lang.String" /> 
+			<property id="attribute" type="java.lang.String" />
+			<property id="event" type="java.lang.String" />
+		</data>
+	</event>
+	
 	<event type="InvocationEvent" extends="DsoaEvent">
 		<data>
 			<property id="consumerId" type="java.lang.String" />

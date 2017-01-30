@@ -1,17 +1,14 @@
 package br.ufpe.cin.dsoa.platform.service.selector;
 
-
-
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 
 public class StatisticsComputingService
 {
-/*	private DescriptiveStatistics stats;
-	private RollingList rollingList;
+	private DescriptiveStatistics stats;
 
 	public StatisticsComputingService() {
 		this.stats = new DescriptiveStatistics(100);
-		this.rollingList = new RollingList(100);
 	}
 	
 	public int getWindowSize() {
@@ -19,8 +16,6 @@ public class StatisticsComputingService
 	}
 
 	public void addValue(double value) {
-		DataValue item = new DataValue(value, System.currentTimeMillis());
-		this.rollingList.add(item);
 		this.stats.addValue(value);
 	}
 
@@ -65,7 +60,4 @@ public class StatisticsComputingService
 		return this.stats.getPercentile(p);
 	}
 
-	public List<DataValue> getDataValue() {
-		return this.rollingList.getList();
-	}*/
 }

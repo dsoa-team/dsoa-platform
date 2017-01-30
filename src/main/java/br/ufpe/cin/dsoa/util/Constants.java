@@ -54,6 +54,7 @@ public interface Constants {
 	 */
 	public static final String DSOA_EVENT 				= "dsoa.event";
 	public static final String EVENT_TYPE				= "type";
+	public static final String EVENT_TYPE_NAME			= "name";
 	public static final String INVOCATION_EVENT			= "InvocationEvent";
 	public static final String UNBIND_EVENT 			= "UnbindEvent";
 	public static final String BIND_EVENT 				= "BindEvent";
@@ -135,5 +136,7 @@ public interface Constants {
 	public static final String EVENT_LIBRARY_TAG = "events";
 	public static final String TIMESTAMP = "timestamp";
 	public static final String RESPONSE_TIME = "responseTime";
+	public static final String SOURCE = "source";
+	public static final String NEW_MONITORING_DIRECTIVE_EVENT = "NewMonitoringDirectiveEvent";
 	
 }

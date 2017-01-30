@@ -101,7 +101,7 @@ public class Event {
 	}
 
 	public String get(String key) {
-		return this.metadata.get("key").getValue().toString();
+		return this.metadata.get(key).getValue().toString();
 	}
 
 	@Override
