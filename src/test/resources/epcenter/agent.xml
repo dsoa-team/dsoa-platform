@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<agents>
+	<!-- 
+		PRIMITIVE EVENTS:
+			<event type="DsoaEvent">
+				<metadata>
+					<property id="id" type="java.lang.String" generated="true" required="true" />
+					<property id="source" type="java.lang.String" required="true" />
+					<property id="timestamp" type="java.lang.Long" generated="true" />
+					<property id="remote" type="java.lang.Boolean" />
+				</metadata>
+			</event>
+			
+			<event type="InvocationEvent" extends="DsoaEvent">
+				<data>
+					<property id="consumerId" type="java.lang.String" />
+					<property id="serviceId" type="java.lang.String" required="true" />
+					<property id="operationName" type="java.lang.String" />
+					<property id="requestTimestamp" type="java.lang.Long" />
+					<property id="responseTimestamp" type="java.lang.Long" />
+					<property id="success" type="java.lang.Boolean" />
+					<property id="successIncrement" type="java.lang.Integer" />
+					<property id="failureIncrement" type="java.lang.Integer" />
+					<property id="exceptionMessage" type="java.lang.String"/>
+					<property id="exceptionClass" type="java.lang.String" />
+					<property id="parameterTypes" type="java.util.Map" />
+					<property id="parameterValues" type="java.util.Map" />
+					<property id="returnType" type="java.lang.String" />
+					<property id="returnValue" type="java.lang.Object" />
+				</data>
+			</event>
+			
+			<event type="UnbindEvent" extends="DsoaEvent">
+				<data>
+					<property id="consumerId" type="java.util.String" required="true" />
+					<property id="serviceId" type="java.lang.String" required="true" />
+					<property id="serviceInterface" type="java.lang.String" />
+				</data>
+			</event>
+			
+			<event type="BindEvent" extends="DsoaEvent">
+				<data>
+					<property id="consumerId" type="java.util.String" required="true" />
+					<property id="serviceId" type="java.lang.String" required="true" />
+					<property id="serviceInterface" type="java.lang.String" />
+				</data>
+			</event>
+	 -->
+<!-- 
+	<agent id="ServiceStatisticsUpdatedEvent">
+		<description>Communicate new statistical data</description>
+		<mapping id="ServiceStatisticsUpdatedEventMapping">
+			<input-event type="InvocationEvent" alias="event">
+			</input-event>
+			<output-event type="ServiceStatisticsUpdatedEvent">
+				<metadata>
+					<property id="id" expression="event.metadata.id" />
+					<property id="timestamp" expression="event.metadata.timestamp" />
+					<property id="source" expression="event.metadata.source" />
+				</metadata>
+				<data>
+					<property id="totalInvocations" type="java.lang.Long" expression="sum(event.data.successIncrement)" />
+					<property id="totalFailures" type="java.lang.Long" expression="sum(event.data.failureIncrement)" />
+					<property id="totalAvgResponseTime" type="java.lang.Long" expression="avg(event.data.responseTime)" />
+					<property id="totalStdResponseTime" type="java.lang.Long" expression="count(*)" />
+				</data>
+			</output-event>
+			
+		</mapping>
+	</agent>
+	
+		<agent id="MaxResponseTimeAgent">
+		<description>Calculates max response time attribute</description>
+		<mapping id="MaxResponseTimeMapping">
+			<input-event type="InvocationEvent" alias="event">
+				<window type="length" size="10" unit=""/>
+			</input-event>
+			<output-event type="MaxResponseTimeEvent">
+				<metadata>
+					<property id="id" expression="event.metadata.id" />
+					<property id="timestamp" expression="event.metadata.timestamp" />
+					<property id="source" expression="event.metadata.source" />
+				</metadata>
+				<data>
+					<property id="value" type="java.lang.Double"
+						expression="max(event.data.responseTimestamp - event.data.requestTimestamp)" />
+				</data>
+			</output-event>
+		</mapping>
+	</agent>
+	
+
+	
+		<agent id="AvgAvailability">
+		<description>Calculates avg availability</description>
+		<mapping id="AvgAvailabilityMapping">
+			<input-event type="InvocationEvent" alias="event">
+				<window type="length" size="10" unit=""/>
+			</input-event>
+			<output-event type="AvgResponseTimeEvent">
+				<metadata>
+					<property id="id" expression="event.metadata.id" />
+					<property id="timestamp" expression="event.metadata.timestamp" />
+					<property id="source" expression="event.metadata.source" />
+				</metadata>
+				<data>
+					<property id="value" type="java.lang.Double"
+						expression="avg(event.data.responseTimestamp - event.data.requestTimestamp)" />
+				</data>
+			</output-event>
+		</mapping>
+	</agent>
+	
+ -->	
+<!-- 
+	<agent id="OutOfServiceAgent">
+		<description>OutOfServiceAgent identifies request made out of predefined times</description>
+		<mapping id="OutOfServiceAgentMapping">
+			<input-event type="InvocationEvent" alias="event">
+				<window type="length" size="1" unit="" />
+				<filterExpression>
+					<filter expression="event.data.exceptionClass"  operator="EQ" value="br.com.bb.exception.OutOfScheduleException"/>
+				</filterExpression>
+			</input-event>
+			<output-event type="RequestOutOfScheduleEvent">
+				<metadata>
+					<property id="id" expression="event.metadata.id" />
+					<property id="timestamp" expression="event.metadata.timestamp" />
+					<property id="source" expression="event.metadata.source" />
+				</metadata>
+				<data>
+					<property id="value" type="java.lang.Double"
+						expression="1" />
+				</data>
+			</output-event>
+		</mapping>
+	</agent>
+ -->	
+	<!-- <agent id="IntrospectSampleAgent">
+		<description></description>
+		<query id="IntrospectSampleQuery">
+			<command>
+				 context PartitionedByEventSource 
+				 INSERT INTO IntrospectSampleEvent 
+				 SELECT 
+				 event.metadata_id as metadata_id , 
+				 event.metadata_timestamp as metadata_timestamp , 
+				 event.metadata_source as metadata_source ,
+				 event.data_parameterValues('0') as data_address ,
+				 event.data_parameterValues('1') as data_stock ,
+				 event.data_parameterValues('2') as data_lowerThreshold ,
+				 event.data_parameterValues('3') as data_higherThreshold ,
+				 event.data_returnType as data_type , 
+				 event.data_returnValue as data_price
+				 FROM InvocationEvent as event
+			</command>
+		</query>
+	</agent> -->
+	
+	<!-- <agent id="MinResponseTimeAgent">
+		<description>Calculates min response time attribute</description>
+		<query id="MinResponseTimeQuery">
+			<command>
+				SELECT min (event.data_responseTimestamp -
+				event.data_requestTimestamp) as value
+				FROM
+				InvocationEvent.win:time(10 sec) as event
+			</command>
+		</query>
+	</agent> -->
+
+	<!-- <event type="DsoaEvent"> <metadata> <property id="id" type="java.lang.String" 
+		/> <property id="timestamp" type="java.lang.Double" /> </metadata> </event> 
+		<event type="AvgResponseTimeEvent" extends="DsoaEvent"> <data> <property 
+		id="value" type="java.lang.Double" /> </data> </event> -->
+
+
+
+	<!-- <metric name="ResponseTime" description="Response time from invocation"> 
+		<category name=performance"/> <input event="invocationEvent" alias="invocation"/> 
+		<output event="avgResponseTime" alias "avgResp"/> <window type="length_batch" 
+		size="100" /> <mapping event="ResponseTime"> <property id="id" type="Double" 
+		generated="true" /> <property id="timestamp" type="Double" gererated="true" 
+		/> <property id="value" statistic="avg" type="Double"> InvocationEvent.response.timestamp 
+		- InvocationEvent.request.timestamp </property> </mapping> </metric> -->
+
+
+	<!-- <agent> <name>AvailabilityAgent</name> <description>Availability attribute</description> 
+		<metric>Availability</metric> <transformer type="class"> <query> SELECT InvocationEvent.responseTimestamp 
+		- InvocationEvent.requestTimestamp as value FROM InvocationEvent </query> 
+		</transformer> </agent> <agent> <name>ResponseTimeAgent</name> <description>Calculates 
+		response time attribute</description> <metric>ResponseTime</metric> <transformer 
+		type="query"> <query> SELECT InvocationEvent.responseTimestamp - InvocationEvent.requestTimestamp 
+		as value FROM InvocationEvent </query> </transformer> </agent> <agent> <name>MeanResponseTimeAgent</name> 
+		<description>Calculates mean response time attribute</description> <metric>MeanResponseTime</metric> 
+		<transformer type="query"> <query> SELECT avg(InvocationEvent.responseTimestamp 
+		- InvocationEvent.requestTimestamp) as value FROM InvocationEvent:win(30s) 
+		</query> </transformer> </agent> -->
+</agents>
+

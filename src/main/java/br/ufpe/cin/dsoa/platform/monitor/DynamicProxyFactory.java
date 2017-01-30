@@ -231,22 +231,29 @@ public class DynamicProxyFactory implements ProxyFactory {
 				String returnType, Object returnValue) {
 
 			Map<String, Object> data = new HashMap<String, Object>();
-
+		
 			data.put(Constants.CONSUMER_ID, consumerId);
 			data.put(Constants.SERVICE_ID, serviceId);
-			data.put("operationName", operationName);
-			data.put("requestTimestamp", requestTimestamp);
-			data.put("responseTimestamp", responseTimestamp);
-			data.put("success", success);
-
-			if (exceptionClass != null) {
-				data.put("exceptionMessage", exceptionMessage);
-				data.put("exceptionClass", exceptionClass);
+			data.put(Constants.OPERATION_NAME, operationName);
+			data.put(Constants.REQUEST_TIMESTAMP, requestTimestamp);
+			data.put(Constants.RESPONSE_TIMESTAMP, responseTimestamp);
+			data.put(Constants.SUCCESS, success);
+			if (success) {
+				data.put(Constants.SUCCESS_INCREMENT, 1);
+				data.put(Constants.FAILURE_INCREMENT, 0);
+			} else {
+				data.put(Constants.SUCCESS_INCREMENT, 0);
+				data.put(Constants.FAILURE_INCREMENT, 1);
 			}
-			data.put("parameterTypes", parameterTypes);
-			data.put("parameterValues", parameterValues);
-			data.put("returnType", returnType);
-			data.put("returnValue", returnValue);
+			data.put(Constants.RESPONSE_TIME, responseTimestamp - requestTimestamp);
+			if (exceptionClass != null) {
+				data.put(Constants.EXCEPTION_MESSAGE, exceptionMessage);
+				data.put(Constants.EXCEPTION_CLASS, exceptionClass);
+			}
+			data.put(Constants.PARAMETER_TYPES, parameterTypes);
+			data.put(Constants.PARAMETER_VALUES, parameterValues);
+			data.put(Constants.RETURN_TYPE, returnType);
+			data.put(Constants.RETURN_VALUE, returnValue);
 
 			return data;
 		}

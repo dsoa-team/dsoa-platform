@@ -65,6 +65,33 @@ public interface Constants {
 	
 	public static final String ADAPTER_ID	 			= "adapter-id";
 	
+	
+	/*
+	 * 			data.put(Constants.CONSUMER_ID, consumerId);
+			data.put(Constants.SERVICE_ID, serviceId);
+			data.put("operationName", operationName);
+			data.put("requestTimestamp", requestTimestamp);
+			data.put("responseTimestamp", responseTimestamp);
+			data.put("success", success);
+			if (success) {
+				data.put("successIncrement", 1);
+				data.put("failureIncrement", 0);
+			} else {
+				data.put("successCounter", 0);
+				data.put("failureIncrement", 1);
+			}
+
+			if (exceptionClass != null) {
+				data.put("exceptionMessage", exceptionMessage);
+				data.put("exceptionClass", exceptionClass);
+			}
+			data.put("parameterTypes", parameterTypes);
+			data.put("parameterValues", parameterValues);
+			data.put("returnType", returnType);
+			data.put("returnValue", returnValue);
+	 */
+	
+	
 	/**
 	 *  Properties
 	 */
@@ -74,6 +101,19 @@ public interface Constants {
 	public static final Object METADATA_TIMESTAMP 		= "timestamp";
 	public static final Object METADATA_ID 				= "id";
 	public static final String REMOTE					= "remote";
+	
+	public static final String OPERATION_NAME = "operationName";
+	public static final String REQUEST_TIMESTAMP = "requestTimestamp";
+	public static final String RESPONSE_TIMESTAMP = "responseTimestamp";
+	public static final String SUCCESS = "success";
+	public static final String SUCCESS_INCREMENT = "successIncrement";
+	public static final String FAILURE_INCREMENT = "failureIncrement";
+	public static final String EXCEPTION_MESSAGE = "exceptionMessage";
+	public static final String EXCEPTION_CLASS = "exceptionClass";
+	public static final String PARAMETER_TYPES = "parameterTypes";
+	public static final String PARAMETER_VALUES = "parameterValues";
+	public static final String RETURN_TYPE = "returnType";
+	public static final String RETURN_VALUE = "returnValue";
 	
 	public static final String CONTEXT_NAME = "PartitionedByEventSource";
 	public static final String LOG_FOLDER = "logs/";
@@ -93,5 +133,7 @@ public interface Constants {
 	public static final String METRIC_TAG = "metric";
 	public static final String METRIC_NAME_TAG = "name";
 	public static final String EVENT_LIBRARY_TAG = "events";
+	public static final String TIMESTAMP = "timestamp";
+	public static final String RESPONSE_TIME = "responseTime";
 	
 }

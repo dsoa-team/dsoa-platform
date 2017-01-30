@@ -2,7 +2,6 @@ package br.ufpe.cin.dsoa.platform.registry.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,6 +13,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
+import br.ufpe.cin.dsoa.api.selector.RankStrategy;
 import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.RelationalOperator;
@@ -29,8 +29,6 @@ import br.ufpe.cin.dsoa.platform.registry.filter.DFilter;
 import br.ufpe.cin.dsoa.platform.registry.filter.FilterBuilder;
 import br.ufpe.cin.dsoa.platform.registry.filter.IFilter;
 import br.ufpe.cin.dsoa.platform.registry.filter.ObjectFilter;
-import br.ufpe.cin.dsoa.platform.registry.normalizer.Normalizer;
-import br.ufpe.cin.dsoa.platform.registry.rank.Rank;
 import br.ufpe.cin.dsoa.util.DsoaSimpleLogger;
 
 public class OsgiServiceRegistry implements ServiceRegistry {
@@ -140,22 +138,26 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 	}
 
 	private ServiceInstance rankServices(String serviceInterface,
-			ServiceReference[] references, List<Constraint> constraints) {
+			ServiceReference[] references, List<Constraint> requiredConstraints) {
+		
 		List<ServiceReference> referenceList = Arrays.asList(references);
-		ServiceReference ranking = context.getServiceReference(Rank.class
-				.getName());
 
-		ServiceReference reference = null;
-		if (ranking == null) {
-			Collections.sort(referenceList, new RankComparator());
-			reference = referenceList.get(0);
-		} else {
-			Normalizer normalizer = new Normalizer(constraints, references);
-			Rank rank = (Rank) context.getService(ranking);
-			reference = rank.ranking(constraints, normalizer, references);
+		List<ServiceInstance> candidates = new ArrayList<ServiceInstance>();
+		for(ServiceReference reference : referenceList) {
+			candidates.add(OsgiServiceFactory.getOsgiService(serviceInterface, reference, true));
 		}
-		//MODIFICAR PARA REFERENCIAR UMA SERVICE INSTANCE
-		return OsgiServiceFactory.getOsgiService(serviceInterface, reference, true);
+		
+		ServiceReference ranking = context.getServiceReference(RankStrategy.class.getName());
+		ServiceInstance selectedService = null;
+		
+		if(ranking != null){
+			RankStrategy strategy = (RankStrategy) context.getService(ranking);
+			selectedService = strategy.ranking(requiredConstraints, candidates);
+		} else {
+			selectedService = candidates.get(0);
+		}
+		
+		return selectedService;
 	}
 
 	public void trackService(ServiceInstance bestService, DsoaServiceListener listener) {

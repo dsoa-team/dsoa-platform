@@ -149,7 +149,7 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	 */
 	public void stop() {
 		this.unbind();
-		manager.selectService();
+		//manager.selectService();
 	}
 
 }

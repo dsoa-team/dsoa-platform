@@ -14,6 +14,7 @@ public class Filter {
 	@XmlAttribute(name = "expression")
 	private String expression;
 
+	
 	@XmlAttribute(name = "operator")
 	private String operator;
 
@@ -46,8 +47,9 @@ public class Filter {
 
 	@Override
 	public String toString() {
-		return "Filter [expression=" + expression + ", operator=" + operator + ", value=" + value
-				+ "]";
+		return "Filter [expression=" + expression + "]";
+				/*"+ ", operator=" + operator + ", value=" + value
+				+ "]";*/
 	}
 
 }

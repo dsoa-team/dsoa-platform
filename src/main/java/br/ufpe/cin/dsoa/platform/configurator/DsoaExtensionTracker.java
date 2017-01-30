@@ -90,6 +90,7 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 		this.handleAttributeEventMapperDefinitions(bundle, ADDED);
 	}
 
+	// TODO AJUST
 	private void addQoSLogger() {
 		List<AttributeEventMapper> mappers = attributeEventMapperCatalog
 				.getAttributeEventMapperList();

@@ -17,6 +17,9 @@
 			<property id="requestTimestamp" type="java.lang.Long" />
 			<property id="responseTimestamp" type="java.lang.Long" />
 			<property id="success" type="java.lang.Boolean" />
+			<property id="successIncrement" type="java.lang.Integer" />
+			<property id="failureIncrement" type="java.lang.Integer" />
+			<property id="responseTime" type="java.lang.Long" />
 			<property id="exceptionMessage" type="java.lang.String"/>
 			<property id="exceptionClass" type="java.lang.String" />
 			<property id="parameterTypes" type="java.util.Map" />
