@@ -1,14 +1,16 @@
-package br.ufpe.cin.dsoa.platform.registry.filter;
+package br.ufpe.cin.dsoa.platform.registry.impl.filter;
 
 import br.ufpe.cin.dsoa.api.service.RelationalOperator;
 
-public class ObjectFilter extends FilterBuilder {
 
+
+public class DFilter extends FilterBuilder{
+	
 	private final String name;
-	private final Object value;
+	private final double value;
 	private final RelationalOperator expression;
 	
-	public ObjectFilter(String name, RelationalOperator expression, Object value) {
+	public DFilter(String name, RelationalOperator expression, double value) {
 		super();
 		this.name = name;
 		this.value = value;
@@ -17,10 +19,8 @@ public class ObjectFilter extends FilterBuilder {
 
 	@Override
 	public StringBuilder append(StringBuilder builder) {
-		
-		String renderedExpression = expression.renderExpression(this.name, value.toString());
-		return builder.append('(').append(renderedExpression).append(')');
-		
-	}
+		String renderedExpression = expression.renderExpression(this.name, new Double(value).toString());
 
+		return builder.append('(').append(renderedExpression).append(')');
+	}
 }

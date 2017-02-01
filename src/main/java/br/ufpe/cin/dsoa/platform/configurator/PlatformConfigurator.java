@@ -16,9 +16,9 @@ import br.ufpe.cin.dsoa.util.Constants;
 
 
 /**
- * 	This component is responsible for configuring the components that listen for platform extensions, they are: 1. 
- 	DsoaBundleListener that looks for new attributes, events, and agents; 2. DsoaServiceTracker that listens service
-	registrations and, when a remote service is registered, triggers the MonitoringService to start service monitoring.
+ * 	This component is responsible for configuring the components that listen for platform extensions, they are: 
+ * 		1.DsoaBundleListener that looks for new attributes, events, and agents; 
+ * 		2.DsoaServiceTracker that listens service registrations and, when a remote service is registered, triggers the MonitoringService to start service monitoring.
 	
  * @author fabions
  *

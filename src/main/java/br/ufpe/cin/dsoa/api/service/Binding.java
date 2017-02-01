@@ -28,8 +28,6 @@ public interface Binding extends PortInstance {
 	/** Unbind this Binding */
 	public void unbind();
 	
-	public boolean isBound();
-	
 	/**
 	 * Initializes the Binding's life-cycle management
 	 */

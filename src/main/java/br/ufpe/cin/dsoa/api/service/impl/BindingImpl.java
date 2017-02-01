@@ -48,6 +48,8 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	 */
 	private boolean valid;
 	
+	private Object bindingLock = new Object();
+	
 	public BindingImpl(DsoaRequiresHandler handler,
 			ComponentInstanceImpl componentInstance, Port port,
 			List<br.ufpe.cin.dsoa.api.service.Property> props) {
@@ -64,49 +66,81 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 		
 	}
 
-	/**
-	 * Represents the bind action (available to the executor portion of the
-	 * BindingManager
-	 */
-	public synchronized void bind(ServiceInstanceProxy serviceInstance) {
-		if (!isBound()) {
-			this.serviceInstanceProxy = serviceInstance;
-			this.manager.bound(serviceInstance.getName());
-		}
-		this.setValid(true);
-	}
-
-	/**
-	 * Represents the unbind action (available to the executor portion of the
-	 * BindingManager
-	 */
-	public synchronized void unbind() {
-		if (isBound()) {
-			this.setValid(false);
-			this.manager.unbound(this.serviceInstanceProxy.getName());
-			this.serviceInstanceProxy = null;
-		}
-	}
-
-	public boolean isBound() {
-		return valid && (serviceInstanceProxy != null);
-	}
-
-	public void onSet(Object pojo, String fieldName, Object value) {
-		// Just do nothing...
-	}
-
-	// se chamar, a instância está válida
-	public Object onGet(Object pojo, String fieldName, Object value) {
-		return this.serviceInstanceProxy.getServiceObject();
-	}
-
 	public ServiceInstance getServiceInstanceProxy() {
 		return this.serviceInstanceProxy;
 	}
 
 	public ComponentInstance getComponentInstance() {
 		return this.componentInstance;
+	}
+
+	
+	/**
+	 * This method is inherited from FieldInterceptor interface.
+	 * It is called by the instance manager while a field is accessed
+	 * in order to allow an Interceptor to return the object to which
+	 * a message should be forwarded. Here, the Binding meta-object returns
+	 * the Service Instance to which it is currently bound to. More precisely,
+	 * it returns a proxy that refers to the real service pointed by that instance.
+	 * This proxy is instrumented in order to generate InvocationEvents that can be
+	 * processed to get quality-related information. This instance is only changed
+	 * when that service is removed from the registry or when it is not able to 
+	 * satisfy stated constraints anymore.
+	 * 
+	 * @see org.apache.felix.ipojo.FieldInterceptor#onGet(java.lang.Object, java.lang.String, java.lang.Object)
+	 */
+	// se chamar, a instância está válida
+	public Object onGet(Object pojo, String fieldName, Object value) {
+		synchronized (bindingLock) {
+			while (this.serviceInstanceProxy == null) {
+				try {
+					bindingLock.wait();
+				} catch (InterruptedException e) {
+					//e.printStackTrace();
+				}
+			}
+			return this.serviceInstanceProxy.getServiceObject();
+		}
+	}
+	
+	public void onSet(Object pojo, String fieldName, Object value) {
+		// Just do nothing...
+	}
+
+	/*
+	 * ===============================================================================
+	 * The following methods are responsible for managing Binding status.
+	 * They have being made synchronized in order to guarantee consistence.
+	 * ===============================================================================
+	 */
+	/**
+	 * Binds this Binding meta-object to the referred serviceInstance, which is, in fact,
+	 * a proxy to a registered service. This proxy is instrumented to generate
+	 * InvocationEvents. 
+	 */
+	public void bind(ServiceInstanceProxy serviceInstance) {
+		synchronized (bindingLock) {
+			if (this.serviceInstanceProxy == null) {
+				this.serviceInstanceProxy = serviceInstance;
+				this.manager.bound(serviceInstance.getName());
+				this.setValid(true);
+				bindingLock.notifyAll();
+			}
+		}
+	}
+
+	/**
+	 * Represents the unbind action (available to the executor portion of the
+	 * BindingManager
+	 */
+	public void unbind() {
+		synchronized (bindingLock) {
+			this.setValid(false);
+			if (this.serviceInstanceProxy != null) {
+				this.manager.unbound(this.serviceInstanceProxy.getName());
+				this.serviceInstanceProxy = null;
+			}
+		}
 	}
 
 	@Override
@@ -123,6 +157,7 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 				handler.setValidity(false);
 		}
 	}
+	
 
 	/**
 	 * 
@@ -135,9 +170,10 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	 *  
 	 */
 	public void start() {
-		if (!isBound()) {
+		if (this.serviceInstanceProxy == null) {
 			manager.selectService();
 		}
+		this.setValid(true);
 	}
 
 	/**

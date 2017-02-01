@@ -3,16 +3,15 @@ package br.ufpe.cin.dsoa.platform.resource.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
+import javax.management.ObjectName;
+
+import org.osgi.service.monitor.StatusVariable;
 
 import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 import br.ufpe.cin.dsoa.platform.management.ManagementInfomationBase;
+import br.ufpe.cin.dsoa.platform.monitor.MonitoredAttribute;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
@@ -51,52 +50,36 @@ public class ResourceManagerImpl implements ResourceManager {
 	public synchronized void manage(EventProcessingAgent agent) {
 
 		ManagedAgent managedAgent = new ManagedAgent(agent, epService);
-		try {
-			managedAgent.start();
-			managedAgents.put(agent.getId(), managedAgent);
+		if (!managedAgents.containsKey(agent.getId())){
+			try {
+				managedAgent.start();
+				managedAgents.put(agent.getId(), managedAgent);
 			
-		} catch (MalformedObjectNameException e) {
-			e.printStackTrace();
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-		} catch (InstanceAlreadyExistsException e) {
-			e.printStackTrace();
-		} catch (MBeanRegistrationException e) {
-			e.printStackTrace();
-		} catch (NotCompliantMBeanException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e){
-			System.err.println(e.getMessage());
+			} catch (Exception e){
+				e.printStackTrace();
+			}
 		}
 	}
 
 	public synchronized void release(EventProcessingAgent agent) {
-		ManagedAgent manager = this.managedAgents.get(agent.getId());
-		
-		try {
-			manager.stop();
-			this.managedAgents.remove(agent.getId());
-		} catch (MalformedObjectNameException e) {
-			e.printStackTrace();
-		} catch (MBeanRegistrationException e) {
-			e.printStackTrace();
-		} catch (InstanceNotFoundException e) {
-			e.printStackTrace();
-		} catch (NullPointerException e) {
-			e.printStackTrace();
+		if (this.managedAgents.containsKey(agent.getId())) {
+			ManagedAgent manager = this.managedAgents.get(agent.getId());
+			try {
+				manager.stop();
+				this.managedAgents.remove(agent.getId());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
-	class ManagedService {
+	class ManagedService { //implements ManagedServiceMBean {
 
 		private ServiceInstance service;
 		private MonitoredService monitoredService;
-/*		private ServiceEvaluator serviceEvaluator;
-		private ServiceMBean serviceMBean;*/
 
 		public ManagedService(ServiceInstance service) {
 			this.service = service;
-//			this.serviceEvaluator = new ServiceEvaluator(service);
 		}
 
 		public void start() {
@@ -110,12 +93,66 @@ public class ResourceManagerImpl implements ResourceManager {
 			this.unregisterMBean();
 		}
 
+		
+		
 		public void registerMBean() {
+			/*
+			if (!managedServices.containsKey(service.getName())) {
+				try {
+					MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+					ObjectName name = this.getObjectName();
+					mbeanServer.registerMBean(this, name);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			} */
 		}
-
+		
 		private void unregisterMBean() {
-
+			/*
+			if (managedServices.containsKey(service.getName())) {
+				try {
+					MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+					ObjectName name = this.getObjectName();
+					mbeanServer.unregisterMBean(name);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}*/
 		}
 
+		private ObjectName getObjectName() throws Exception {
+			return new ObjectName(String.format("dsoa:type=monitoredService, name=%s", service.getName()));
+		}
+
+		public String getMonitoredServicePid() {
+			return monitoredService.getMonitoredServicePid();
+		}
+
+		public String getComponentId() {
+			return monitoredService.getComponentId();
+		}
+
+		public boolean isStarted() {
+			return monitoredService.isStarted();
+		}
+
+		public String[] getStatusVariableNames() {
+			// TODO Auto-generated method stub
+			return monitoredService.getStatusVariableNames();
+		}
+
+		public StatusVariable getStatusVariable(String id) {
+			return monitoredService.getStatusVariable(id);
+		}
+
+		public String getDescription(String id) {
+			return monitoredService.getDescription(id);
+		}
+
+		public Map<String, MonitoredAttribute> getMetricVariableMap() {
+			return monitoredService.getMetricVariableMap();
+		}
+		
 	}
 }

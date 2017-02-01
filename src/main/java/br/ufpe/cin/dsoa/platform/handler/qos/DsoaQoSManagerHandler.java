@@ -29,10 +29,10 @@ import br.ufpe.cin.dsoa.platform.component.DsoaComponentInstanceManager;
 import br.ufpe.cin.dsoa.util.Constants;
 import br.ufpe.cin.dsoa.util.DsoaSimpleLogger;
 
-public class DsoaQoSLibraryHandler extends PrimitiveHandler {
+public class DsoaQoSManagerHandler extends PrimitiveHandler {
 	
-	private static Logger logger = DsoaSimpleLogger.getDsoaLogger(DsoaQoSLibraryHandler.class
-			.getCanonicalName(),DsoaQoSLibraryHandler.class
+	private static Logger logger = DsoaSimpleLogger.getDsoaLogger(DsoaQoSManagerHandler.class
+			.getCanonicalName(),DsoaQoSManagerHandler.class
 			.getCanonicalName() ,true, false);
 	
 
@@ -154,7 +154,7 @@ public class DsoaQoSLibraryHandler extends PrimitiveHandler {
 	
 	class DsoaQoSLibraryHandlerDescription extends HandlerDescription {
 
-		public DsoaQoSLibraryHandlerDescription(DsoaQoSLibraryHandler autonomicHandler) {
+		public DsoaQoSLibraryHandlerDescription(DsoaQoSManagerHandler autonomicHandler) {
 			super(autonomicHandler);
 		}
 		

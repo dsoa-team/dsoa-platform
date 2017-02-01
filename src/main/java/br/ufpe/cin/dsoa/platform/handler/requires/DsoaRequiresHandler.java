@@ -17,12 +17,12 @@ import br.ufpe.cin.dsoa.api.service.Binding;
 import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.RequiredPort;
+import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.api.service.impl.BindingImpl;
 import br.ufpe.cin.dsoa.api.service.impl.ComponentInstanceImpl;
 import br.ufpe.cin.dsoa.api.service.impl.ComponentTypeImpl;
 import br.ufpe.cin.dsoa.api.service.impl.NonFunctionalSpecificationImpl;
 import br.ufpe.cin.dsoa.api.service.impl.RequiredPortImpl;
-import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecificationImpl;
 import br.ufpe.cin.dsoa.platform.DsoaPlatform;
 import br.ufpe.cin.dsoa.platform.component.DsoaComponentFactory;
@@ -196,7 +196,7 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 		        String state = "valid";
 		        for (Binding binding : bindings) {
 		        	DsoaBindingDescription bd = new DsoaBindingDescription(binding);
-		            if (!binding.isBound()) {
+		            if (!binding.isValid()) {
 		                state = "invalid";
 		            }
 		            descInfo.addElement(bd.getInfo());
@@ -219,47 +219,19 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 	     * @see org.apache.felix.ipojo.Handler#start()
 	     */
 	    public void start() {
-	        started = true;
+		    for (Binding binding : bindings) {
+		    	binding.start();
+		    }
+		    started = true;
 	        setValidity(false);
-		    startDependencies();
+			computeState();
 	    }
 	    
-	    /**
-	     * Handler stop method.
-	     * @see org.apache.felix.ipojo.Handler#stop()
-	     */
-	    public void stop() {
-	        this.stopDependencies();
-	        this.setValidity(false);
-	        started = false;
-	    }
-
-		private void startDependencies() {
-			synchronized (bindings) {
-			    for (Binding binding : bindings) {
-			    	binding.start();
-			    }
-			}
-			computeState();
-		}
-		
-		private void stopDependencies() {
-			synchronized (bindings) {
-			    for (Binding binding : bindings) {
-			        binding.stop();
-			    }
-			}
-		}
-
 	    public void computeState() {
-	        if (!started) {
-	            return;
-	        }
-	        
-	        boolean initialState = getValidity();
-	        boolean valid = true;
-	        
 	        synchronized (bindings) {
+		        boolean initialState = getValidity();
+		        boolean valid = true;
+		        
 	            for (Binding binding : bindings) {
 	                if (!binding.isValid()) {
 	                    valid = false;
@@ -279,5 +251,25 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 
 	        }
 	    }
+	    
+	    /**
+	     * Handler stop method.
+	     * @see org.apache.felix.ipojo.Handler#stop()
+	     */
+	    public void stop() {
+	        this.stopDependencies();
+	        this.setValidity(false);
+	        started = false;
+	    }
+
+		private void stopDependencies() {
+			synchronized (bindings) {
+			    for (Binding binding : bindings) {
+			        binding.stop();
+			    }
+			}
+		}
+
+	    
 	
 }

@@ -148,6 +148,9 @@ public class EsperProcessingService implements EventProcessingService {
 	/**
 	 * subscribe to an event type. If shared = false
 	 * that subscription considers events related to one event consumer.
+	 * When a subscription is created, a corresponding statement is created
+	 * on Esper. The consumer is then registered on that subscription in order to receive events.
+	 * When en event ocurrs, the consumer has its handleEvent called back.
 	 */
 	public synchronized void subscribe(final EventConsumer consumer,
 			Subscription subscription, boolean shared) {
@@ -160,7 +163,7 @@ public class EsperProcessingService implements EventProcessingService {
 		query = director.getQuery();
 
 		//TODO REMOVER
-		System.out.println("QUERY CLIENT: " + query.getQueryString());
+		System.out.println("EPS Subscription: Consumer: " + subscription.getId() + " Query: " + query.getQueryString());
 
 		EPStatement statement = this.startQuery(query);
 		statement.addListener(new StatementAwareUpdateListener() {
@@ -203,6 +206,13 @@ public class EsperProcessingService implements EventProcessingService {
 	}
 
 	/**
+	 * This method is called every time a new EventType is defined. When this
+	 * happens, an automatic subscription is done on EDP (Event Distribution Service)
+	 * in order to register this EPS (Event Processing Service) as a listener
+	 * for this event type. This enables EPS to receive those events when they 
+	 * are posted on the EDS. Similarly, a subscription is done on EPS in order
+	 * to forward those events through the EDS.
+	 * 
 	 * add event type on eventTypeMap and registers event definition on esper
 	 */
 	public void registerEventType(final EventType eventType) {

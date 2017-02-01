@@ -32,7 +32,7 @@
 	</handler>
 	
 	<handler name="qosLibrary" namespace="br.ufpe.cin.dsoa"
-		classname="br.ufpe.cin.dsoa.platform.handler.qos.DsoaQoSLibraryHandler" >
+		classname="br.ufpe.cin.dsoa.platform.handler.qos.DsoaQoSManagerHandler" >
 	</handler>
 	
 	<handler name="manager" namespace="br.ufpe.cin.dsoa"

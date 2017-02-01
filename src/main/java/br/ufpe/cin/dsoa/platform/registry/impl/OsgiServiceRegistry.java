@@ -18,17 +18,16 @@ import br.ufpe.cin.dsoa.api.service.Constraint;
 import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 import br.ufpe.cin.dsoa.api.service.RelationalOperator;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
-import br.ufpe.cin.dsoa.api.service.impl.OsgiServiceFactory;
+import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 import br.ufpe.cin.dsoa.api.service.impl.ServiceInstanceProxyImpl;
-import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
 import br.ufpe.cin.dsoa.platform.component.autonomic.DsoaServiceListener;
 import br.ufpe.cin.dsoa.platform.registry.InvalidServiceSpecificationException;
 import br.ufpe.cin.dsoa.platform.registry.ServiceRegistry;
-import br.ufpe.cin.dsoa.platform.registry.filter.AndFilter;
-import br.ufpe.cin.dsoa.platform.registry.filter.DFilter;
-import br.ufpe.cin.dsoa.platform.registry.filter.FilterBuilder;
-import br.ufpe.cin.dsoa.platform.registry.filter.IFilter;
-import br.ufpe.cin.dsoa.platform.registry.filter.ObjectFilter;
+import br.ufpe.cin.dsoa.platform.registry.impl.filter.AndFilter;
+import br.ufpe.cin.dsoa.platform.registry.impl.filter.DFilter;
+import br.ufpe.cin.dsoa.platform.registry.impl.filter.FilterBuilder;
+import br.ufpe.cin.dsoa.platform.registry.impl.filter.IFilter;
+import br.ufpe.cin.dsoa.platform.registry.impl.filter.ObjectFilter;
 import br.ufpe.cin.dsoa.util.DsoaSimpleLogger;
 
 public class OsgiServiceRegistry implements ServiceRegistry {
@@ -144,7 +143,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 
 		List<ServiceInstance> candidates = new ArrayList<ServiceInstance>();
 		for(ServiceReference reference : referenceList) {
-			candidates.add(OsgiServiceFactory.getOsgiService(serviceInterface, reference, true));
+			candidates.add(DsoaOsgiUtils.translateOsgiServiceToDsoa(serviceInterface, reference, true));
 		}
 		
 		ServiceReference ranking = context.getServiceReference(RankStrategy.class.getName());
@@ -220,7 +219,7 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 
 			if (!blackList.contains(reference)) {
 				//TODO MODIFICAR PARA REFERENCIAR UMA SERVICE INSTANCE
-				service = OsgiServiceFactory.getOsgiService(
+				service = DsoaOsgiUtils.translateOsgiServiceToDsoa(
 						serviceItf, reference, true);
 				this.listener.onArrival(service);
 				// open tracker for departures

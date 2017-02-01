@@ -79,10 +79,11 @@ public class AttributeManager implements AttributeCatalog, AttributeEventMapperC
 		return new ArrayList<AttributeEventMapper>(this.attributeEventMapperMap.values());
 	}
 
-	public synchronized void addAttributeEventMapper(AttributeEventMapper mapper) throws AttributeEventMapperAlreadyCatalogedException {
+	public synchronized void addAttributeEventMapper(AttributeEventMapper mapper) {
 		String attId = AttributeManager.format(mapper.getCategory(), mapper.getName());
 		if (this.attributeEventMapperMap.containsKey(attId)) {
-			throw new AttributeEventMapperAlreadyCatalogedException(mapper);
+			return;
+			//throw new AttributeEventMapperAlreadyCatalogedException(mapper);
 		}
 		this.attributeEventMapperMap.put(attId, mapper);
 	}

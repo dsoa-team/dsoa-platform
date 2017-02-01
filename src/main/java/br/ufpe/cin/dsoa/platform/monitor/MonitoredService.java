@@ -12,7 +12,7 @@ import org.osgi.service.monitor.Monitorable;
 import org.osgi.service.monitor.StatusVariable;
 
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
-import br.ufpe.cin.dsoa.api.service.impl.ServiceSpecification;
+import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 
 public class MonitoredService implements Monitorable {
 	

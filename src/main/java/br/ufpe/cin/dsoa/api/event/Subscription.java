@@ -11,6 +11,13 @@ public class Subscription {
 
 	private String id;
 
+	/**
+	 * In order to enable query destruction, every  subscription should have its own unique id. 
+	 * That's why we use UUID.randomUUID() here.
+	 * 
+	 * @param eventType
+	 * @param filter
+	 */
 	public Subscription(EventType eventType, EventFilter filter) {
 		if (eventType == null) {
 			throw new IllegalArgumentException();

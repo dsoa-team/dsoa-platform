@@ -1,6 +1,7 @@
 package br.ufpe.cin.dsoa.api.service.impl;
 
 import br.ufpe.cin.dsoa.api.service.RequiredPort;
+import br.ufpe.cin.dsoa.api.service.ServiceSpecification;
 
 
 

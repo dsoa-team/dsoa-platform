@@ -1,7 +1,5 @@
-package br.ufpe.cin.dsoa.api.service.impl;
+package br.ufpe.cin.dsoa.api.service;
 
-import br.ufpe.cin.dsoa.api.service.FunctionalInterface;
-import br.ufpe.cin.dsoa.api.service.NonFunctionalSpecification;
 
 public interface ServiceSpecification {
 

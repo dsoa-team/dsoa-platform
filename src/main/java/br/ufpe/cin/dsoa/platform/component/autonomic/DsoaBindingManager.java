@@ -17,7 +17,6 @@ import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventPropertyMapper;
 import br.ufpe.cin.dsoa.api.event.Event;
 import br.ufpe.cin.dsoa.api.event.EventConsumer;
-import br.ufpe.cin.dsoa.api.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.api.event.EventFilter;
 import br.ufpe.cin.dsoa.api.event.EventType;
 import br.ufpe.cin.dsoa.api.event.FilterExpression;
@@ -48,7 +47,7 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 
 	private static Logger logger = DsoaSimpleLogger.getDsoaLogger(DsoaBindingManager.class
 			.getCanonicalName(),DsoaBindingManager.class
-			.getCanonicalName() ,true, false);
+			.getCanonicalName() ,true, true);
 	
 	/** 
 	 * The meta-object representing a binding between the field and a ServiceInstance 
@@ -65,8 +64,11 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 	private List<MonitoringRegistration> monitoringRegistrations;
 
 	private DsoaProxyHandler proxyHandler;
+	
+	private Object proxy;
 
 	private DsoaComponentInstanceAutonomicManager componentInstanceManager;
+
 	
 
 	public DsoaBindingManager(DsoaPlatform dsoa, DsoaComponentInstanceAutonomicManager componentInstanceManager, Binding binding) {
@@ -86,87 +88,93 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 	 * meta-object implementation (model@runtime) 
 	 */
 	public void selectService() {
+		blackList.clear();
+		if (proxyHandler != null) {
+			proxyHandler.ungetService();
+			proxyHandler = null;
+			proxy = null;
+		}
 		dsoaPlatform.getServiceRegistry().getBestService(binding.getPort().getServiceSpecification(),
 				getBlackList(), this);
 	}
 	
 	public void startMonitoring() {
-		this.monitoringRegistrations = new ArrayList<MonitoringRegistration>();
-
-		for (final Constraint constraint : binding.getPort()
-				.getServiceSpecification().getNonFunctionalSpecification()
-				.getConstraints()) {
-
-			String operationName = constraint.getOperation();
-			AttributableId attributableId = new AttributableId(binding.getServiceInstanceProxy().getName(),
-					operationName);
-			String attributeId = constraint.getAttributeId();
-
-			// TODO Here we shall ask DsoaAutonomicComponentInstanceManager for
-			// a monitoringAgent
-			// able to monitor a given constraint.
-			// this agent should call me (BindingManager) when the constraint is
-			// violated.
-			final AttributeEventMapper attMapper = this.dsoaPlatform
-					.getAttEventMapperCatalog().getAttributeEventMapper(
-							attributeId);
-
-			if (attMapper != null) {
-
-				EventType eventType = attMapper.getEventType();
-				PropertyType sourceType = eventType
-						.getMetadataPropertyType(Constants.EVENT_SOURCE);
-
-				List<FilterExpression> filterList = new ArrayList<FilterExpression>();
-
-				// Filter source
-				FilterExpression filterExp = new FilterExpression(new Property(
-						attributableId.getId(), sourceType),
-						RelationalOperator.EQ);
-				filterList.add(filterExp);
-
-				List<AttributeEventPropertyMapper> propertyMappers = attMapper
-						.getData();
-
-				// Filter constraints
-				for (AttributeEventPropertyMapper propertyMapper : propertyMappers) {
-					String eventPropertyName = propertyMapper.getExpression()
-							.replaceFirst(attMapper.getEventAlias() + ".", "")
-							.replaceFirst("data.", "");
-
-					PropertyType propertyType = eventType
-							.getDataPropertyType(eventPropertyName);
-					filterExp = new FilterExpression(new Property(
-							constraint.getThreashold(), propertyType),
-							constraint.getExpression().getComplement());
+			this.monitoringRegistrations = new ArrayList<MonitoringRegistration>();
+	
+			for (final Constraint constraint : binding.getPort()
+					.getServiceSpecification().getNonFunctionalSpecification()
+					.getConstraints()) {
+	
+				String operationName = constraint.getOperation();
+				AttributableId attributableId = new AttributableId(binding.getServiceInstanceProxy().getName(),
+						operationName);
+				String attributeId = constraint.getAttributeId();
+	
+				// TODO Here we shall ask DsoaAutonomicComponentInstanceManager for
+				// a monitoringAgent
+				// able to monitor a given constraint.
+				// this agent should call me (BindingManager) when the constraint is
+				// violated.
+				final AttributeEventMapper attMapper = this.dsoaPlatform
+						.getAttEventMapperCatalog().getAttributeEventMapper(
+								attributeId);
+	
+				if (attMapper != null) {
+	
+					EventType eventType = attMapper.getEventType();
+					PropertyType sourceType = eventType
+							.getMetadataPropertyType(Constants.EVENT_SOURCE);
+	
+					List<FilterExpression> filterList = new ArrayList<FilterExpression>();
+	
+					// Filter source
+					FilterExpression filterExp = new FilterExpression(new Property(
+							attributableId.getId(), sourceType),
+							RelationalOperator.EQ);
 					filterList.add(filterExp);
+	
+					List<AttributeEventPropertyMapper> propertyMappers = attMapper
+							.getData();
+	
+					// Filter constraints
+					for (AttributeEventPropertyMapper propertyMapper : propertyMappers) {
+						String eventPropertyName = propertyMapper.getExpression()
+								.replaceFirst(attMapper.getEventAlias() + ".", "")
+								.replaceFirst("data.", "");
+	
+						PropertyType propertyType = eventType
+								.getDataPropertyType(eventPropertyName);
+						filterExp = new FilterExpression(new Property(
+								constraint.getThreashold(), propertyType),
+								constraint.getExpression().getComplement());
+						filterList.add(filterExp);
+					}
+	
+					EventFilter filter = new EventFilter(filterList);
+					Subscription subscription = new Subscription(eventType, filter);
+	
+					EventConsumer consumer = new EventConsumerImpl(attMapper,
+							constraint);
+	
+					this.monitoringRegistrations.add(new MonitoringRegistration(
+							consumer, subscription));
+					this.dsoaPlatform.getEpService().subscribe(consumer,
+							subscription, true);// TODO:
+												// parametrizar
 				}
-
-				EventFilter filter = new EventFilter(filterList);
-				Subscription subscription = new Subscription(eventType, filter);
-
-				EventConsumer consumer = new EventConsumerImpl(attMapper,
-						constraint);
-
-				this.monitoringRegistrations.add(new MonitoringRegistration(
-						consumer, subscription));
-				this.dsoaPlatform.getEpService().subscribe(consumer,
-						subscription, true);// TODO:
-											// parametrizar
 			}
-		}
 	}
 
 	public void stopMonitoring() {
-		if (this.monitoringRegistrations != null
-				&& !this.monitoringRegistrations.isEmpty()) {
-			for (MonitoringRegistration registration : this.monitoringRegistrations) {
-				this.dsoaPlatform.getEpService().unsubscribe(
-						registration.getConsumer(),
-						registration.getSubscription());
+			if (this.monitoringRegistrations != null
+					&& !this.monitoringRegistrations.isEmpty()) {
+				for (MonitoringRegistration registration : this.monitoringRegistrations) {
+					this.dsoaPlatform.getEpService().unsubscribe(
+							registration.getConsumer(),
+							registration.getSubscription());
+				}
 			}
-		}
-		this.monitoringRegistrations = null;
+			this.monitoringRegistrations = null;
 	}
 	
 
@@ -174,19 +182,17 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 	 * These are callback methods used by the Service Registry to notify about
 	 * availability of required service
 	 */
-	// TODO VER REMOVER SYNC
-	public synchronized void onArrival(ServiceInstance serviceInstance) {
-		((ServiceInstanceProxyImpl)serviceInstance).setServiceObject(this.getProxy(binding.getName(), serviceInstance));
-		binding.bind((ServiceInstanceProxy)serviceInstance);
+	public void onArrival(ServiceInstance serviceInstance) {
+		synchronized(binding) {
+			((ServiceInstanceProxyImpl)serviceInstance).setServiceObject(this.getProxy(binding.getName(), serviceInstance));
+			binding.bind((ServiceInstanceProxy)serviceInstance);
+		}
 	}
 
 	// VER REMOVER SYNC
-	public synchronized void onDeparture(ServiceInstance service) {
-		binding.unbind();
-		blackList.clear();//TODO:REMOVE
-		if (proxyHandler != null) {
-			proxyHandler.ungetService();
-			proxyHandler = null;
+	public void onDeparture(ServiceInstance service) {
+		synchronized (binding) {
+			binding.unbind();
 		}
 		selectService();
 	}
@@ -213,8 +219,9 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 				value.getValue()));
 
 		System.err.println("====================================================");
-		
-		this.binding.unbind();
+		synchronized (binding) {
+			this.binding.unbind();
+		}
 		this.selectService();
 	}
 
@@ -239,7 +246,7 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 				eventTypeName, metadata, data);
 		logger.info("Binding notification: " + eventTypeName + " at "
 				+ System.currentTimeMillis() + "," + consumerId + ":"
-				+ serviceId);
+				+ serviceId +"\n");
 	}
 
 	private void notifyUnbind(String serviceId, String consumerId) {
@@ -261,7 +268,6 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 	}
 	
 	public Object getProxy(String consumerId, ServiceInstance serviceInstance) {
-		if (this.proxyHandler == null) {
 			this.proxyHandler = new DsoaProxyHandler(consumerId, serviceInstance);
 			
 			ClassLoader cl = this.getClass().getClassLoader();
@@ -271,14 +277,13 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 				itfClass = cl.loadClass(itfClassname);
 				Object proxy = java.lang.reflect.Proxy.newProxyInstance(cl,
 						new Class[] { itfClass }, proxyHandler);
+				this.proxy = proxy;
 				return proxy;
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
-		}
-		return this.proxyHandler;
 	}
 
 	class DsoaProxyHandler implements InvocationHandler {
@@ -511,7 +516,7 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 		public void handleEvent(Event event) {
 
 			AttributeValue value = attMapper.convertToAttribute(event);
-			logger.info(value.getAttribute().getId() + "," + value.getValue());
+			logger.info("DSOA BINDING MANAGER (MONITOR) " +binding.getServiceInstanceProxy().getName() + " : "+ value.getAttribute().getId() + "," + value.getValue());
 			constraintViolated(binding.getServiceInstanceProxy().getName(), constraint, value);
 		}
 

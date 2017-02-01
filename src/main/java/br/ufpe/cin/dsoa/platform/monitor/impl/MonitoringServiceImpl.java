@@ -95,13 +95,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 				String operation = attributeConstraint.getOperation();
 				String attributeId = attributeConstraint.getAttributeId();
 				Attribute attribute = this.attributeCatalog.getAttribute(attributeId);
-				Collection<Attribute> atts = this.attributeCatalog.getAttributes();
-				for(Attribute att : atts) {
-					System.out.println("AttId: " + att.getId());
-					System.out.println("AttName: " + att.getName());
-					System.out.println("AttDesc: " + att.getDescription());
-				}
-				
+
 				if (attribute == null) {
 					throw new InvalidParameterException("Attribute doesn't exists: " + operation + ":" + attributeId);
 				}

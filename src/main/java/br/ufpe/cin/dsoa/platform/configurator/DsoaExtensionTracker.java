@@ -272,7 +272,7 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 							
 							this.attributeEventMapperCatalog
 									.addAttributeEventMapper(mapper);
-							this.notifyNewMetricMap(mapper);
+							this.notifyNewMetricMapper(mapper);
 							
 						}
 					} catch (AttributeEventMapperAlreadyCatalogedException e) {
@@ -288,7 +288,7 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 		}
 	}
 
-	private void notifyNewMetricMap(AttributeEventMapper mapper) {
+	private void notifyNewMetricMapper(AttributeEventMapper mapper) {
 		Map<String, Object> metadata = new HashMap<String, Object>();
 		metadata.put(Constants.SOURCE, "DsoaExtensionTracker");
 		metadata.put(Constants.TIMESTAMP, System.currentTimeMillis());
@@ -300,6 +300,8 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 
 		EventType eventType = eventTypeCatalog.get(Constants.NEW_MONITORING_DIRECTIVE_EVENT);
 		Event dsoaEvent = eventType.createEvent(metadata, data);
+		
+		//TODO Verify this... what about the synchronous call here? Would it be better doing a edService.postEvent ?
 		epService.publish(dsoaEvent);
 		//edService.postEvent(event)
 	}
