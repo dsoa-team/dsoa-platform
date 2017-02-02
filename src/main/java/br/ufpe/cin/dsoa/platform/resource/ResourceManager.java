@@ -1,11 +1,12 @@
 package br.ufpe.cin.dsoa.platform.resource;
 
+
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 
 public interface ResourceManager {
 
-	void manage(ServiceInstance service);
+	ManagedService manage(ServiceInstance service);
 
 	void release(String serviceId);
 	

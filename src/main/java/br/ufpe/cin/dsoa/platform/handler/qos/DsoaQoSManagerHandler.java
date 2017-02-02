@@ -41,6 +41,7 @@ public class DsoaQoSManagerHandler extends PrimitiveHandler {
 	private AttributeCategoryAdapter attCatAdapter;
 	
 	@Override
+	@SuppressWarnings("rawtypes")
 	public void configure(Element metadata, Dictionary configuration)
 			throws ConfigurationException {
 		try {

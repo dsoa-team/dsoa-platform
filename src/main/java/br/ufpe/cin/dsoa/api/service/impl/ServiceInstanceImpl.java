@@ -46,6 +46,8 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
 	 * The real service factory implementation
 	 */
 	private ServiceFactory factory;
+
+	private ServiceReference reference;
 	
 
 	/**
@@ -57,6 +59,7 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
 	 * @param port
 	 * @param configuration
 	 */
+	@SuppressWarnings("rawtypes")
 	public ServiceInstanceImpl(DsoaProvidesHandler handler, ComponentInstance componentInstance, Port port, Dictionary configuration) {
 		super(componentInstance.getName()+"_"+port.getName(), port, buildProperties(configuration));
 		this.componentInstance = componentInstance;
@@ -68,6 +71,21 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
 		//this.componentInstance.addServiceInstance(this);
 	}
 	
+	/**
+	 * By now, the ServiceInstance name comes from the "service.pid" ou  "service.id"
+	 * @param port
+	 * @param props
+	 * @param reference
+	 */
+	public ServiceInstanceImpl(Port port, List<Property> props, ServiceReference reference) {
+		super(port.getName(), port, props);
+		this.reference = reference;
+	}
+	
+	
+	public ServiceReference getServiceReference() {
+		return reference;
+	}
 	
 	@SuppressWarnings("rawtypes")
 	private static List<br.ufpe.cin.dsoa.api.service.Property> buildProperties(Dictionary props) {
@@ -117,21 +135,15 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
     }	
 	
 	
-	/**
-	 * By now, the ServiceInstance name comes from the "service.pid" ou  "service.id"
-	 * @param port
-	 * @param props
-	 * @param reference
-	 */
-	public ServiceInstanceImpl(Port port, List<Property> props, ServiceReference reference) {
-		super(port.getName(), port, props);
-	}
+
 
     /**
      * Get the service reference of the service registration.
      * @return the service reference of the provided service (null if the
      * service is not published).
      */
+    
+    /*
     public ServiceReference getServiceReference() {
         if (serviceRegistration == null) {
             return null;
@@ -139,6 +151,7 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
             return serviceRegistration.getReference();
         }
     }
+    */
 
     /**
      * Returns a service object for the dependency.
@@ -174,6 +187,7 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
      * service.
      * This method also notifies the creation strategy of the publication.
      */
+    // TODO PROBABLY, THIS IS NOT REQUIRED ANYMORE...
     protected synchronized void registerService() {
         // Unregister if registered
         if (serviceRegistration != null) {
@@ -224,6 +238,7 @@ public class ServiceInstanceImpl extends PortInstanceImpl implements ServiceInst
 	/**
      * Unregisters the service.
      */
+    // TODO NOT USED
     protected synchronized void unregisterService() {
         if (serviceRegistration != null) {
             serviceRegistration.unregister();

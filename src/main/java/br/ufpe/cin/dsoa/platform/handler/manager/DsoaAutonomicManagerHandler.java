@@ -41,6 +41,7 @@ public class DsoaAutonomicManagerHandler extends PrimitiveHandler {
 	private EventProcessingService epService;
 
 	@Override
+	@SuppressWarnings("rawtypes")
 	public void configure(Element metadata, Dictionary configuration)
 			throws ConfigurationException {
 		try {

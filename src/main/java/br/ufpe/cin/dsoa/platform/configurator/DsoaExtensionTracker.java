@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -17,12 +16,10 @@ import org.osgi.framework.BundleContext;
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
 import br.ufpe.cin.dsoa.api.attribute.AttributeAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.attribute.AttributeList;
-import br.ufpe.cin.dsoa.api.attribute.AttributeValue;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperList;
 import br.ufpe.cin.dsoa.api.event.Event;
-import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.event.EventDistribuitionService;
 import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.EventType;
@@ -30,7 +27,6 @@ import br.ufpe.cin.dsoa.api.event.EventTypeAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.api.event.EventTypeList;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
-import br.ufpe.cin.dsoa.api.event.Subscription;
 import br.ufpe.cin.dsoa.api.event.agent.AgentAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.api.event.agent.AgentList;
 import br.ufpe.cin.dsoa.api.event.agent.EventProcessingAgent;
@@ -42,7 +38,6 @@ import br.ufpe.cin.dsoa.platform.attribute.impl.AttributeManager;
 import br.ufpe.cin.dsoa.platform.event.AgentCatalog;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 import br.ufpe.cin.dsoa.util.Constants;
-import br.ufpe.cin.dsoa.util.DsoaSimpleLogger;
 
 /**
  * This class implements the Extender Pattern. It monitors bundle lifecycle
@@ -70,10 +65,6 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 
 	private AttributeEventMapperCatalog attributeEventMapperCatalog;
 	private AttributeCategoryAdapter attCatAdapter;
-
-	private static Logger logger = DsoaSimpleLogger.getDsoaLogger(DsoaExtensionTracker.class
-			.getCanonicalName(),DsoaExtensionTracker.class
-			.getCanonicalName() ,true, false);
 
 	public DsoaExtensionTracker(BundleContext context) {
 		super(context);
@@ -159,7 +150,6 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 										this.eventTypeCatalog.add(type);
 										this.epService.registerEventType(type);
 									} catch (EventTypeAlreadyCatalogedException e) {
-										logger.warning(e.getMessage());
 									}
 								}
 								
@@ -189,7 +179,6 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 										this.eventTypeCatalog.add(subtype);
 										this.epService.registerEventType(subtype);
 									} catch (EventTypeAlreadyCatalogedException e) {
-										logger.warning(e.getMessage());
 									}
 								}
 							}
@@ -233,7 +222,7 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 				}
 
 			} catch (JAXBException e1) {
-				logger.warning("There was an error while processing file "
+				System.err.println("There was an error while processing file "
 						+ url
 						+ ". Corresponding mapper definitions will not be considered!");
 				e1.printStackTrace();
@@ -276,11 +265,10 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 							
 						}
 					} catch (AttributeEventMapperAlreadyCatalogedException e) {
-						logger.warning(e.getMessage());
 					}
 				}
 			} catch (JAXBException e1) {
-				logger.warning("There was an error while processing file "
+				System.err.println("There was an error while processing file "
 						+ url
 						+ ". Corresponding mapper definitions will not be considered!");
 				e1.printStackTrace();
@@ -343,11 +331,10 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 
 					} catch (AgentAlreadyCatalogedException e) {
 						// This  should not happen
-						logger.warning(e.getMessage());
 					}
 				}
 			} catch (JAXBException e) {
-				logger.warning("There was an error while processing file "
+				System.err.println("There was an error while processing file "
 						+ url
 						+ ". Corresponding agent definitions will not be considered!");
 				e.printStackTrace();
@@ -374,7 +361,7 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 								propType.setClazz(clazz);
 								att.addMetadata(propType);
 							} catch (ClassNotFoundException e) {
-								logger.warning("Property type could not be understood: "
+								System.err.println("Property type could not be understood: "
 										+ typeName
 										+ ". Removing property from Attribute "
 										+ att.getName() + "...");
@@ -394,7 +381,7 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 								propType.setClazz(clazz);
 								att.addData(propType);
 							} catch (ClassNotFoundException e) {
-								logger.warning("Property type could not be understood: "
+								System.err.println("Property type could not be understood: "
 										+ typeName
 										+ ". Removing property from Attribute "
 										+ att.getName() + "...");
@@ -415,11 +402,10 @@ public class DsoaExtensionTracker extends DsoaBundleTracker {
 							}
 						}
 					} catch (AttributeAlreadyCatalogedException e) {
-						logger.warning(e.getMessage());
 					}
 				}
 			} catch (JAXBException e) {
-				logger.warning("There was an error while processing file "
+				System.err.println("There was an error while processing file "
 						+ url
 						+ ". Corresponding attribute definitions will not be considered!");
 			}

@@ -47,7 +47,6 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 	
 	public static final String HANDLER_NAME = "br.ufpe.cin.dsoa:requires";
 	
-	private boolean started;
 	
 	/**
 	 * A list of Binding meta-objects, each one corresponding to a required service 
@@ -219,11 +218,10 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 	     * @see org.apache.felix.ipojo.Handler#start()
 	     */
 	    public void start() {
+	        setValidity(false);
 		    for (Binding binding : bindings) {
 		    	binding.start();
 		    }
-		    started = true;
-	        setValidity(false);
 			computeState();
 	    }
 	    
@@ -259,7 +257,6 @@ public class DsoaRequiresHandler extends PrimitiveHandler  {
 	    public void stop() {
 	        this.stopDependencies();
 	        this.setValidity(false);
-	        started = false;
 	    }
 
 		private void stopDependencies() {

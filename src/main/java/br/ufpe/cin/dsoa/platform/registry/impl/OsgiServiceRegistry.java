@@ -3,8 +3,6 @@ package br.ufpe.cin.dsoa.platform.registry.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -28,13 +26,10 @@ import br.ufpe.cin.dsoa.platform.registry.impl.filter.DFilter;
 import br.ufpe.cin.dsoa.platform.registry.impl.filter.FilterBuilder;
 import br.ufpe.cin.dsoa.platform.registry.impl.filter.IFilter;
 import br.ufpe.cin.dsoa.platform.registry.impl.filter.ObjectFilter;
-import br.ufpe.cin.dsoa.util.DsoaSimpleLogger;
 
 public class OsgiServiceRegistry implements ServiceRegistry {
 
 	private BundleContext context;
-
-	protected static Logger logger = DsoaSimpleLogger.getDsoaLogger("OsgiServiceRegistry","OsgiServiceRegistry" , true, true);
 
 	public OsgiServiceRegistry(BundleContext context) {
 		this.context = context;
@@ -43,7 +38,6 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 	public final void getBestService(ServiceSpecification specification,
 			List<String> blackList, DsoaServiceListener listener) {
 
-		logger.log(Level.INFO, "blackList: {0}", blackList.toArray());
 		ServiceReference[] references = this.getServiceReferences(
 				specification, blackList);
 
@@ -188,7 +182,6 @@ public class OsgiServiceRegistry implements ServiceRegistry {
 	}
 
 	protected void registerError(Exception e, DsoaServiceListener listener) {
-		logger.log(Level.SEVERE, e.getMessage());
 		listener.onError(e);
 	}
 

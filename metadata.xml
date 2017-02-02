@@ -126,7 +126,9 @@
 		<requires field="eventProcessingService"  /> 
 		<requires field="attributeCatalog"  /> 
 		<requires field="attributeMapperCatalog"  />
+		<requires field="eventCatalogy" />
 		<provides/>
+		<callback transition="invalidate" method="stop" />
 	</component>
 	
 	<!-- ============================================================================================================ -->		

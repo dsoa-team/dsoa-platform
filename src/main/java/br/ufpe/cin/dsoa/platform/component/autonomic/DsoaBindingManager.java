@@ -323,10 +323,11 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 			
 		}
 		
-		public void ungetService() {
+		public synchronized void ungetService() {
 			if (this.serviceReference != null) {
 				serviceReference.getBundle().getBundleContext().ungetService(serviceReference);
 			}
+			this.serviceReference = null;
 			this.serviceObject = null;
 		}
 

@@ -30,7 +30,7 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	/**
 	 * A meta-model object that represents the bound service instance
 	 */
-	private ServiceInstanceProxy serviceInstanceProxy;
+	private volatile ServiceInstanceProxy serviceInstanceProxy;
 
 	/**
 	 * A reference to the autonomic manager, which is responsible for managing
@@ -46,9 +46,9 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	/**
 	 * The binding's status
 	 */
-	private boolean valid;
+	private volatile boolean valid;
 	
-	private Object bindingLock = new Object();
+	private volatile Object bindingLock = new Object();
 	
 	public BindingImpl(DsoaRequiresHandler handler,
 			ComponentInstanceImpl componentInstance, Port port,
@@ -94,11 +94,12 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 		synchronized (bindingLock) {
 			while (this.serviceInstanceProxy == null) {
 				try {
-					bindingLock.wait();
+					bindingLock.wait(1000);
 				} catch (InterruptedException e) {
 					//e.printStackTrace();
 				}
 			}
+			bindingLock.notifyAll();
 			return this.serviceInstanceProxy.getServiceObject();
 		}
 	}
@@ -124,8 +125,9 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 				this.serviceInstanceProxy = serviceInstance;
 				this.manager.bound(serviceInstance.getName());
 				this.setValid(true);
-				bindingLock.notifyAll();
 			}
+			this.setValid(true);
+			bindingLock.notifyAll();
 		}
 	}
 
@@ -140,6 +142,7 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 				this.manager.unbound(this.serviceInstanceProxy.getName());
 				this.serviceInstanceProxy = null;
 			}
+			bindingLock.notifyAll();
 		}
 	}
 
@@ -173,7 +176,6 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 		if (this.serviceInstanceProxy == null) {
 			manager.selectService();
 		}
-		this.setValid(true);
 	}
 
 	/**

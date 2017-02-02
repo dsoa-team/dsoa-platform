@@ -14,6 +14,7 @@ import br.ufpe.cin.dsoa.platform.management.ManagementInfomationBase;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredAttribute;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoredService;
 import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
+import br.ufpe.cin.dsoa.platform.resource.ManagedService;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 import br.ufpe.cin.dsoa.platform.resource.mbean.ManagedAgent;
 
@@ -32,18 +33,19 @@ public class ResourceManagerImpl implements ResourceManager {
 	private EventProcessingService epService;
 	//private ProxyFactory proxyFactory;
 	
-	private Map<String, ManagedService> managedServices = new HashMap<String, ManagedService>();
+	private Map<String, ManagedServiceImpl> managedServices = new HashMap<String, ManagedServiceImpl>();
 	private Map<String, ManagedAgent> managedAgents = new HashMap<String, ManagedAgent>();
 
-	public synchronized void manage(ServiceInstance service) {
-		ManagedService serviceManager = new ManagedService(service);
-		serviceManager.start();
+	public synchronized ManagedService manage(ServiceInstance service) {
+		ManagedServiceImpl managedService = new ManagedServiceImpl(service);
+		managedService.start();
 		
-		this.managedServices.put(service.getName(), serviceManager);
+		this.managedServices.put(service.getName(), managedService);
+		return managedService;
 	}
 
 	public synchronized void release(String serviceId) {
-		ManagedService manager = this.managedServices.get(serviceId);
+		ManagedServiceImpl manager = this.managedServices.get(serviceId);
 		manager.stop();
 	}
 
@@ -72,13 +74,12 @@ public class ResourceManagerImpl implements ResourceManager {
 			}
 		}
 	}
-
-	class ManagedService { //implements ManagedServiceMBean {
+	class ManagedServiceImpl implements ManagedService { //implements ManagedServiceMBean {
 
 		private ServiceInstance service;
 		private MonitoredService monitoredService;
 
-		public ManagedService(ServiceInstance service) {
+		public ManagedServiceImpl(ServiceInstance service) {
 			this.service = service;
 		}
 

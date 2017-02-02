@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.felix.ipojo.metadata.Element;
-import org.osgi.framework.ServiceReference;
 
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
 import br.ufpe.cin.dsoa.api.service.Constraint;

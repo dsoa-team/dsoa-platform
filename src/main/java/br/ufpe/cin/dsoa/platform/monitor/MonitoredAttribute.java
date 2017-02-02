@@ -19,6 +19,7 @@ import br.ufpe.cin.dsoa.util.Constants;
  */
 public class MonitoredAttribute implements AttributeChangeListener {
 	
+	
 	private String				statusVariableId;	
 	private Attribute 			attribute;
 	private AttributableId	 	attributableId;
@@ -27,11 +28,11 @@ public class MonitoredAttribute implements AttributeChangeListener {
 	private BundleContext 		ctx;
 	private MonitoringRegistration monitoringRegistration;
 	
-	public MonitoredAttribute(BundleContext ctx, String monitoredServicePid, AttributableId attributableId, Attribute attribute) {
+	public MonitoredAttribute(BundleContext ctx, MonitoredService monitoredService, AttributableId attributableId, Attribute attribute) {
+		this.ctx = ctx;
 		this.attributableId = attributableId;
 		this.attribute = attribute;
-		this.monitoredServicePid = monitoredServicePid;
-		this.ctx = ctx;
+		this.monitoredServicePid = monitoredService.getMonitoredServicePid();
 	}
 	
 	public String getAttributeName() {

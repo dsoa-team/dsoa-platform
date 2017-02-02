@@ -40,7 +40,7 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 	}
 
 	public void start() {
-		this.executorService = Executors.newCachedThreadPool();
+		this.executorService = Executors.newFixedThreadPool(20,Executors.defaultThreadFactory());
 
 		this.adapterTracker = new ServiceTracker(this.context, EventAdapter.class.getName(),
 				new AdapterCustomizer());

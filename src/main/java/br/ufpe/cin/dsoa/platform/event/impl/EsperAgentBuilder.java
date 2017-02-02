@@ -33,7 +33,9 @@ public class EsperAgentBuilder implements QueryBuilder {
 	}
 
 	public void buildContextClause() {
-		this.queryString.append(" context " + Constants.CONTEXT_NAME);
+		if (this.in.getType() == "InvocationEvent") {
+			this.queryString.append(" context " + Constants.CONTEXT_NAME);
+		}
 	}
 
 	public void buildInsertIntoClause() {

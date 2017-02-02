@@ -138,5 +138,6 @@ public interface Constants {
 	public static final String RESPONSE_TIME = "responseTime";
 	public static final String SOURCE = "source";
 	public static final String NEW_MONITORING_DIRECTIVE_EVENT = "NewMonitoringDirectiveEvent";
+	public static final String SERVICE_MONITORING_EVENT = "ServiceMonitoringEvent";
 	
 }

@@ -2,7 +2,6 @@ package br.ufpe.cin.dsoa.platform.monitor.impl;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ import br.ufpe.cin.dsoa.api.event.EventConsumer;
 import br.ufpe.cin.dsoa.api.event.EventFilter;
 import br.ufpe.cin.dsoa.api.event.EventProcessingService;
 import br.ufpe.cin.dsoa.api.event.EventType;
+import br.ufpe.cin.dsoa.api.event.EventTypeCatalog;
 import br.ufpe.cin.dsoa.api.event.FilterExpression;
 import br.ufpe.cin.dsoa.api.event.Property;
 import br.ufpe.cin.dsoa.api.event.PropertyType;
@@ -35,7 +35,7 @@ import br.ufpe.cin.dsoa.platform.monitor.MonitoringService;
 import br.ufpe.cin.dsoa.util.Constants;
 
 /**
- * This component is responsible for monitoring services that are registered in
+ * This component is responsible for monitoring services that are registered with 
  * the platform. It reads the service non-functional specification, identify
  * declared QoS attributes, and starts a monitor (an agent processing instance)
  * that computes corresponding attribute values. It is important to mention that
@@ -53,22 +53,39 @@ public class MonitoringServiceImpl implements MonitoringService {
 	private BundleContext ctx;
 
 	private EventProcessingService eventProcessingService;
+	
+	private EventTypeCatalog eventCatalogy;
 
 	private AttributeCatalog attributeCatalog;
 
 	private AttributeEventMapperCatalog attributeMapperCatalog;
-
+	
 	/**
 	 * Maps a service.pid to the service that is created to store the metrics
 	 * associated to the service. That is: Map<service.pid, MonitoredService>
 	 */
 	private Map<String, List<MonitoredService>> serviceMonitorsMap = new HashMap<String, List<MonitoredService>>();
+	
+	public EventTypeCatalog getEventCatalogy () {
+		return this.eventCatalogy;
+	}
+	
+	public EventProcessingService getEventProcessingService() {
+		return this.eventProcessingService;
+	}
 
 
 	public MonitoringServiceImpl(BundleContext ctx) {
 		this.ctx = ctx;
 	}
 
+	public void stop() {
+		for(String pid : serviceMonitorsMap.keySet()) {
+			this.stopMonitoring(pid);
+		}
+	}
+
+	
 	public List<MonitoredService> getMonitoredServices() {
 		List<MonitoredService> list = new ArrayList<MonitoredService>();
 		for (List<MonitoredService> providedList : serviceMonitorsMap.values()) {
@@ -88,7 +105,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 
 	public MonitoredService startMonitoring(ServiceInstance service) {
 		NonFunctionalSpecification nfs = service.getPort().getServiceSpecification().getNonFunctionalSpecification();
-		MonitoredService monitoredService = new MonitoredService(ctx, service);
+		MonitoredService monitoredService = new MonitoredService(ctx, service, eventCatalogy,eventProcessingService);
 		if (nfs != null) {
 			for (Constraint attributeConstraint : service.getPort().getServiceSpecification().getNonFunctionalSpecification().getConstraints()) {
 
@@ -100,7 +117,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 					throw new InvalidParameterException("Attribute doesn't exists: " + operation + ":" + attributeId);
 				}
 
-				this.addMonitoredAttribute(monitoredService, attribute, operation);
+				//this.addMonitoredAttribute(monitoredService, attribute, operation);
 
 			}
 		}
@@ -138,7 +155,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 		AttributableId attributableId = new AttributableId(serviceId, operation);
 
 		final MonitoredAttribute monitoredAttribute = new MonitoredAttribute(ctx,
-				monitoredService.getMonitoredServicePid(), attributableId, attribute);
+				monitoredService, attributableId, attribute);
 
 		// add monitored attribute
 		monitoredService.addMonitoredAttribute(monitoredAttribute);
@@ -166,10 +183,10 @@ public class MonitoringServiceImpl implements MonitoringService {
 
 			monitoredAttribute.setMonitoringRegistration(new MonitoringRegistration(consumer,
 					subscription));
-
+			
 			eventProcessingService.subscribe(consumer, subscription, true);
+			
 		}
-
 	}
 
 	private Subscription createSubscription(MonitoredAttribute monitoredAttribute,

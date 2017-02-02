@@ -10,7 +10,6 @@ import java.util.StringTokenizer;
 import br.ufpe.cin.dsoa.api.attribute.Attribute;
 import br.ufpe.cin.dsoa.api.attribute.AttributeCategory;
 import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapper;
-import br.ufpe.cin.dsoa.api.attribute.mapper.AttributeEventMapperAlreadyCatalogedException;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeCatalog;
 import br.ufpe.cin.dsoa.platform.attribute.AttributeEventMapperCatalog;
 import br.ufpe.cin.dsoa.util.Constants;

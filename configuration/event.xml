@@ -17,6 +17,18 @@
 		</data>
 	</event>
 	
+	<event type="ServiceMonitoringEvent" extends="DsoaEvent">
+		<data>
+			<property id="serviceId" type="java.lang.String" required="true" />
+			<property id="serviceInterface" type="java.lang.String" required="true" />
+			<property id="operationName" type="java.lang.String" />
+			<property id="totalInvocations" type="java.lang.Long" />
+			<property id="successfulInvocations" type="java.lang.Long" />
+			<property id="failedInvocations" type="java.lang.Long" />
+			<property id="lastResponseTime" type="java.lang.Long" />
+		</data>
+	</event>
+	
 	<event type="InvocationEvent" extends="DsoaEvent">
 		<data>
 			<property id="consumerId" type="java.lang.String" />

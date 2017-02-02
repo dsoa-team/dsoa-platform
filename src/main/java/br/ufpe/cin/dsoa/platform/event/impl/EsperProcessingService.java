@@ -259,7 +259,7 @@ public class EsperProcessingService implements EventProcessingService {
 				
 				//TODO: Verificar se vai continuar aqui essa subscription (eventos
 				//derivados devem voltar ao EDS?)
-				this.subscribe(new EventConsumer() {
+				/*this.subscribe(new EventConsumer() {
 
 					@Override
 					public void handleEvent(Event event) {
@@ -272,7 +272,7 @@ public class EsperProcessingService implements EventProcessingService {
 					public String getComponentInstanceName() {
 						return eventType.getName();
 					}
-				}, new Subscription(eventType, null), true);
+				}, new Subscription(eventType, null), true);*/
 			}
 		}
 	}

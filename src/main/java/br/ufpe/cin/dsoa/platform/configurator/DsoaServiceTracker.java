@@ -1,5 +1,6 @@
 package br.ufpe.cin.dsoa.platform.configurator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.osgi.framework.ServiceReference;
@@ -7,6 +8,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 import br.ufpe.cin.dsoa.platform.registry.impl.DsoaOsgiUtils;
+import br.ufpe.cin.dsoa.platform.resource.ManagedService;
 import br.ufpe.cin.dsoa.platform.resource.ResourceManager;
 import br.ufpe.cin.dsoa.util.Constants;
 import br.ufpe.cin.dsoa.util.DsoaUtil;
@@ -48,20 +50,29 @@ public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 		if (!isProxy) {
 			try {
 				List<ServiceInstance> services = DsoaOsgiUtils.translateOsgiServiceToDsoa(reference);
+				List<ManagedService> managedServices = new ArrayList<ManagedService>();
 				// MODIFICAR PARA REFERENCIAR SERVICE INSTANCE
 				for (ServiceInstance service : services) {
-					resourceManagerImpl.manage(service);
+					managedServices.add(resourceManagerImpl.manage(service));
 				}
+				return managedServices;
 			} catch (ClassNotFoundException e) {
 				// this should never happen
 				e.printStackTrace();
 			}
 		}
-		return reference;
+		return null;
 	}
 
-	public void modifiedService(ServiceReference reference, Object service) {
-		// TODO Auto-generated method stub
+	public void modifiedService(ServiceReference reference, Object services) {
+/*		if (services != null && services instanceof List<?>) {
+			for (ManagedService mServ : (List<ManagedService>)services) {
+				Boolean started = (Boolean)reference.getProperty("service.started");
+				if (started) {
+					mServ.start();
+				}
+			}
+		}*/
 	}
 
 	public void removedService(ServiceReference reference, Object service) {
