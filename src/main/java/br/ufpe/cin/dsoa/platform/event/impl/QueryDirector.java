@@ -24,4 +24,8 @@ public class QueryDirector {
 	public Query getQuery(){
 		return this.builder.getQuery();
 	}
+	
+	public String getContext() {
+		return builder.getContext();
+	}
 }

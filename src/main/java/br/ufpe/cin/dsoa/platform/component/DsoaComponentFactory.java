@@ -58,7 +58,7 @@ public class DsoaComponentFactory extends ComponentFactory  {
 	 * Element m_componentMetadata: hierarchical component description protected
 	 * String m_factoryName: component classname (if factory name is not
 	 * specified) protected Map<String,ComponentInstance> m_componentInstances:
-	 * instance map protected BundleContext m_context: OSGi Context protected
+	 * instance map protected BundleContext m_context: OSGi Element protected
 	 * List<RequiredHandler> m_requiredHandlers: list containing
 	 * RequiredHandlers protected List<FactoryStateListener> m_listeners:
 	 * factory listeners protected boolean m_isPublic protected String m_version

@@ -24,4 +24,6 @@ public interface QueryBuilder {
 
 	public Query getQuery();
 
+	public String getContext();
+
 }

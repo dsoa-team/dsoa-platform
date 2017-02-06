@@ -65,14 +65,14 @@ public class DsoaServiceTracker implements ServiceTrackerCustomizer {
 	}
 
 	public void modifiedService(ServiceReference reference, Object services) {
-/*		if (services != null && services instanceof List<?>) {
+		if (services != null && services instanceof List<?>) {
 			for (ManagedService mServ : (List<ManagedService>)services) {
 				Boolean started = (Boolean)reference.getProperty("service.started");
 				if (started) {
 					mServ.start();
 				}
 			}
-		}*/
+		}
 	}
 
 	public void removedService(ServiceReference reference, Object service) {

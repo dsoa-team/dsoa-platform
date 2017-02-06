@@ -93,4 +93,10 @@ public class EsperSharedSubscriptionBuilder  implements QueryBuilder  {
 			
 		}
 
+		@Override
+		public String getContext() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	}

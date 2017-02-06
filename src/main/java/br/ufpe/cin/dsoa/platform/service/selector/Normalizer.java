@@ -11,7 +11,7 @@ import br.ufpe.cin.dsoa.api.service.ServiceInstance;
 public class Normalizer {
 
 	public static double[][] normalize(List<Constraint> constraints,
-			List<ServiceInstance> candidates, Map<String, StatisticsComputingService> statistics) {
+			List<ServiceInstance> candidates, Map<String, Double> statistics) {
 
 		double matrix[][] = new double[candidates.size()][constraints.size()];
 
@@ -34,7 +34,7 @@ public class Normalizer {
 	}
 
 	private static double getAttributeValue(
-			String candidateId, Map<String, Constraint> mapConstraint, Constraint requiredConstraint, Map<String, StatisticsComputingService> statistics) {
+			String candidateId, Map<String, Constraint> mapConstraint, Constraint requiredConstraint, Map<String, Double> statistics) {
 		String opName = "";
 		if (requiredConstraint.getOperation() != null && !requiredConstraint.getOperation().trim().isEmpty()) {
 			opName = "." + requiredConstraint.getOperation();
@@ -42,7 +42,7 @@ public class Normalizer {
 		String key = String.format("%s%s.%s", candidateId,opName,requiredConstraint.getAttributeId());
 		double attValue = 0;
 		if (statistics.containsKey(key)) {
-			attValue = statistics.get(key).getMean();
+			attValue = statistics.get(key);
 		} else {
 			attValue = mapConstraint.get(constraintKey(requiredConstraint)).getThreashold();
 		}

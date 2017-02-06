@@ -70,6 +70,13 @@ public class EsperProcessingService implements EventProcessingService {
 		this.ctx = ctx;
 	}
 
+	
+	/**
+	 * When the EsperProcessingService starts, it looks for primitive (internal) event declarations
+	 * in order to register then with the Event Catalog.
+	 * 
+	 * @throws JAXBException
+	 */
 	public void start() throws JAXBException {
 		Configuration configuration = new Configuration();
 		configuration.getEngineDefaults().getThreading()
@@ -103,6 +110,7 @@ public class EsperProcessingService implements EventProcessingService {
 
 	public void registerAgent(EventProcessingAgent agent) {
 		Query query = null;
+		String ctx = null;
 		Processing processing = agent.getProcessing();
 
 		if (processing instanceof ProcessingMapping) {
@@ -110,6 +118,7 @@ public class EsperProcessingService implements EventProcessingService {
 			QueryDirector director = new QueryDirector(builder);
 			director.construct();
 			query = director.getQuery();
+			ctx = director.getContext();
 			OutputEvent outputEvent = ((ProcessingMapping) processing)
 					.getOutputEvent();
 			InputEvent inputEvent = ((ProcessingMapping) processing)
@@ -131,8 +140,11 @@ public class EsperProcessingService implements EventProcessingService {
 			// registrados)
 		}
 
+		System.out.println("CONTEXT DEFINITION: " + ctx);
+		if (ctx != null && ctx != "") {
+			this.createAgentContext(ctx);
+		}
 		System.out.println("QUERY AGENT: " + query.getQueryString());
-
 		this.startQuery(query);
 	}
 	
@@ -311,10 +323,14 @@ public class EsperProcessingService implements EventProcessingService {
 		}
 	}
 
+	private void createAgentContext(String ctx) {
+		this.epServiceProvider.getEPAdministrator().createEPL(ctx);
+	}
+	
 	private void createAgentContext() {
 		String contextEPL = "create context " + Constants.CONTEXT_NAME
 				+ " partition by metadata_source from InvocationEvent";
-		this.epServiceProvider.getEPAdministrator().createEPL(contextEPL);
+		this.createAgentContext(contextEPL);
 	}
 
 	private void addOutputEventType(InputEvent inputEvent,

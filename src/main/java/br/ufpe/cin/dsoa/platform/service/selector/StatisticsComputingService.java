@@ -10,6 +10,10 @@ public class StatisticsComputingService
 	public StatisticsComputingService() {
 		this.stats = new DescriptiveStatistics(100);
 	}
+
+	public StatisticsComputingService(int windowSize) {
+		this.stats = new DescriptiveStatistics(windowSize);
+	}
 	
 	public int getWindowSize() {
 		return this.stats.getWindowSize();

@@ -90,6 +90,7 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 	public void selectService() {
 		blackList.clear();
 		if (proxyHandler != null) {
+			//blackList.add(proxyHandler.serviceId);
 			proxyHandler.ungetService();
 			proxyHandler = null;
 			proxy = null;
@@ -407,10 +408,11 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 					}
 					String returnType = method.getReturnType().getName();
 
-					notifyInvocation(consumerId, serviceId, method.getName(),
+					// TODO JUST TO VERIFY TEST RESULTS!
+					/*notifyInvocation(consumerId, serviceId, method.getName(),
 							requestTime, responseTime, success, exceptionClassName,
 							exceptionMessage, parameterTypes, parameterValues, returnType,
-							result);
+							result);*/
 					logger.info(serviceId+","+ System.currentTimeMillis()+"," + (responseTime - requestTime));
 				}
 			}
