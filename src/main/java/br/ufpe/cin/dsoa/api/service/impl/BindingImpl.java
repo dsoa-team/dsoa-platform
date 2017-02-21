@@ -91,7 +91,8 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	 */
 	// se chamar, a instância está válida
 	public Object onGet(Object pojo, String fieldName, Object value) {
-		synchronized (bindingLock) {
+		return this.serviceInstanceProxy.getServiceObject();
+		/*synchronized (bindingLock) {
 			while (this.serviceInstanceProxy == null) {
 				try {
 					bindingLock.wait(1000);
@@ -100,8 +101,8 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 				}
 			}
 			bindingLock.notifyAll();
-			return this.serviceInstanceProxy.getServiceObject();
-		}
+			
+		}*/
 	}
 	
 	public void onSet(Object pojo, String fieldName, Object value) {
@@ -124,7 +125,6 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 			if (this.serviceInstanceProxy == null) {
 				this.serviceInstanceProxy = serviceInstance;
 				this.manager.bound(serviceInstance.getName());
-				this.setValid(true);
 			}
 			this.setValid(true);
 			bindingLock.notifyAll();
@@ -137,6 +137,8 @@ public class BindingImpl extends PortInstanceImpl implements Binding,
 	 */
 	public void unbind() {
 		synchronized (bindingLock) {
+			// This first call here is to invalidate this binding. It will invalidate the requires handler,
+			// its manager, and the component instance manager (which will notify other handlers about this invalidation)
 			this.setValid(false);
 			if (this.serviceInstanceProxy != null) {
 				this.manager.unbound(this.serviceInstanceProxy.getName());

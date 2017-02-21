@@ -76,8 +76,6 @@ public class MonitoringAgent {
 			started = false;
 			monitoringThread = null;
 			monitoringRequestor = null;
-			System.err
-					.println("============= MONITOR SAIU ======================");
 		}
 	}
 
@@ -85,12 +83,11 @@ public class MonitoringAgent {
 
 		@Override
 		public String toString() {
-			return "[serviceId=" + serviceId + ", invCounter=" + invCounter + ", sucCounter=" + sucCounter
-					+ ", excCounter=" + excCounter + ", respTime=" + respTime
-					+ ", previousFailureTime=" + previousFailureTime
-					+ ", lastFailureTime=" + lastFailureTime
-					+ ", success=" + success
-					+ ", failure=" + failure + "]";
+			return serviceId + "," + respTime ;
+				//	+ ", previousFailureTime=" + previousFailureTime
+				//	+ ", lastFailureTime=" + lastFailureTime
+				//	+ ", success=" + success
+				//	+ ", failure=" + failure + "]";
 		}
 
 		private long invCounter = 0;
@@ -247,7 +244,7 @@ public class MonitoringAgent {
 						respTimestamp = System.currentTimeMillis();
 						s.setRespTime(respTimestamp - reqTimestamp);
 					}
-					logger.info(s.toString()+"\n");
+					logger.info(System.currentTimeMillis() + "=" + s.toString()+"\n");
 					notifyInvocation("MonitoringAgent",s.serviceId, s.getOperationName(), reqTimestamp, respTimestamp, success, exceptionClass,
 							exceptionMessage,null,null,null, null );
 				}

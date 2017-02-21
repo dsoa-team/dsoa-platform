@@ -133,7 +133,7 @@ public class SimpleAdditiveWeighting implements RankStrategy {
 			lastMetricValuePerServiceOperation.put(key, Double.valueOf(val));
 			DecimalFormat df = new DecimalFormat("#.###");
 			Logger log = logMap.get(attValue.getAttribute().getId());
-			log.info(System.currentTimeMillis() + ":" + source + ":" + attValue.getAttribute().getId() + ":" + df.format(val)+"\n");			
+			log.info(System.currentTimeMillis() + ":" + source + ":" + attValue.getAttribute().getId() + ":" + df.format(val));			
 			/*
 			 * PREVIOUS VERSION STORED THE AVG OF THE ENTIRE HISTORY
 			 * StatisticsComputingService stats = statistics.get(key);

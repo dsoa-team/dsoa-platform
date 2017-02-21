@@ -240,7 +240,7 @@ public class EsperProcessingService implements EventProcessingService {
 			// (isso sera tratado como uma subscricao)
 			if (!eventType.isPrimitive()) {
 				
-				//XXX: TEMP
+				/*
 				Collection<EventAdapter> adapters = this.eventAdapterCatalog.getAdapters();
 				if(!adapters.isEmpty()) {
 					Map<String, Object> config = new HashMap<String, Object>();
@@ -252,7 +252,7 @@ public class EsperProcessingService implements EventProcessingService {
 						this.eventDistribuitionService.importEvents(eventType, config);
 					}
 				}
-				//XXX: TEMP
+			
 				
 				Map<String, Object> subscriptionConfig = new HashMap<String, Object>();
 				subscriptionConfig.put(Constants.REMOTE, true);
@@ -268,6 +268,9 @@ public class EsperProcessingService implements EventProcessingService {
 						return String.format("dsoa-%s", eventType.getName());
 					}
 				}, eventType, subscriptionConfig);
+					*/
+				
+				
 				
 				//TODO: Verificar se vai continuar aqui essa subscription (eventos
 				//derivados devem voltar ao EDS?)

@@ -40,37 +40,37 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 	}
 
 	public void start() {
-		this.executorService = Executors.newFixedThreadPool(20,Executors.defaultThreadFactory());
+		//this.executorService = Executors.newFixedThreadPool(20,Executors.defaultThreadFactory());
 
-		this.adapterTracker = new ServiceTracker(this.context, EventAdapter.class.getName(),
+/*		this.adapterTracker = new ServiceTracker(this.context, EventAdapter.class.getName(),
 				new AdapterCustomizer());
-		this.adapterTracker.open();
+		this.adapterTracker.open();*/
 	}
 
 	public void stop() {
-		this.executorService.shutdown();
-		this.adapterTracker.close();
+/*		this.executorService.shutdown();
+		this.adapterTracker.close();*/
 	}
 
 	@Override
 	public void postEvent(String eventTypeName, Map<String, Object> metadata,
 			Map<String, Object> data) {
-		NotificationWorker worker = new NotificationWorker(eventTypeName, metadata, data);
-		executorService.execute(worker);
+/*		NotificationWorker worker = new NotificationWorker(eventTypeName, metadata, data);
+		executorService.execute(worker);*/
 	}
 
 	@Override
 	public void postEvent(Event event) {
 
-		NotificationWorker worker = new NotificationWorker(event);
-		executorService.execute(worker);
+/*		NotificationWorker worker = new NotificationWorker(event);
+		executorService.execute(worker);*/
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void subscribe(final EventConsumer consumer, final EventType eventType) {
 
-		final String topic = String.format("%s/*", eventType.getName());
+/*		final String topic = String.format("%s/*", eventType.getName());
 
 		@SuppressWarnings("rawtypes")
 		Hashtable props = new Hashtable();
@@ -84,14 +84,14 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 				Event dsoaEvent = eventType.createEvent(rawEvent);
 				consumer.handleEvent(dsoaEvent);
 			}
-		}, props);
+		}, props);*/
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void subscribe(final EventConsumer consumer, final EventType eventType,
 			Map<String, Object> configuration) {
-		
+/*		
 		final String topic = String.format("%s/*", eventType.getName());
 
 		@SuppressWarnings("rawtypes")
@@ -114,14 +114,14 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 				Event dsoaEvent = eventType.createEvent(rawEvent);
 				consumer.handleEvent(dsoaEvent);
 			}
-		}, props);
+		}, props);*/
 	}
 	
 
 	@Override
 	public void importEvents(final EventType eventType, Map<String, Object> configuration) {
 
-		String adapterId = (String) configuration.get("adapter-id");
+/*		String adapterId = (String) configuration.get("adapter-id");
 		final EventAdapter adapter = eventAdapterCatalog.get(adapterId);
 		
 		if(adapter == null){
@@ -136,20 +136,20 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 			@Override
 			public void handleEvent(Event event) {
 				event.setRemote();
-				postEvent(event);
+				//postEvent(event);
 			}
 
 			@Override
 			public String getComponentInstanceName() {
 				return String.format("import-%s-from-%s", eventType.getName(), adapter.getId());
 			}
-		}, subscription);
+		}, subscription);*/
 	}
 
 	@Override
 	public void exportEvents(final EventType eventType, final Map<String, Object> configuration) {
 
-		String adapterId = (String) configuration.get("adapter-id");
+/*		String adapterId = (String) configuration.get("adapter-id");
 		final EventAdapter adapter = eventAdapterCatalog.get(adapterId);
 		if(adapter == null){
 			System.err.println("Adapter not found.");
@@ -167,7 +167,7 @@ public class EventAdminDistributionService implements EventDistribuitionService 
 			public String getComponentInstanceName() {
 				return String.format("export-%s-to-%s", eventType.getName(), adapter.getId());
 			}
-		}, eventType);
+		}, eventType);*/
 
 	}
 

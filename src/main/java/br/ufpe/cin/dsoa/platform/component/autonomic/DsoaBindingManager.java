@@ -260,12 +260,12 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 
 	public void bound(String serviceId) {
 		this.startMonitoring();
-		this.notifyBind(serviceId, binding.getComponentInstance().getName());
+		//this.notifyBind(serviceId, binding.getComponentInstance().getName());
 	}
 
 	public void unbound(String serviceId) {
 		this.stopMonitoring();
-		this.notifyUnbind(serviceId, binding.getComponentInstance().getName());
+		//this.notifyUnbind(serviceId, binding.getComponentInstance().getName());
 	}
 	
 	public Object getProxy(String consumerId, ServiceInstance serviceInstance) {
@@ -332,7 +332,7 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 			this.serviceObject = null;
 		}
 
-		public synchronized Object getServiceObject() {
+		public Object getServiceObject() {
 			if (this.serviceObject == null && 
 					null != serviceReference) {
 				serviceObject = serviceReference.getBundle().getBundleContext()
@@ -378,9 +378,8 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 			Object result = null;
 			boolean success = true;
 			try {
-				synchronized (serviceReference) {
+				//TODO REMOVIDO SYNC.
 						result = method.invoke(this.getServiceObject(), args);
-				}
 			} catch (InvocationTargetException e) {
 				Throwable rawException = e.getTargetException();
 				exceptionClassName = rawException.getClass().getName();
@@ -399,7 +398,7 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 				responseTime = System.currentTimeMillis();
 				if (getServiceObject() != null) {
 
-					Map<String, String> parameterTypes = new HashMap<String, String>();
+					/*Map<String, String> parameterTypes = new HashMap<String, String>();
 					Map<String, Object> parameterValues = new HashMap<String, Object>();
 
 					for (int i = 0; i < method.getParameterTypes().length; i++) {
@@ -407,14 +406,17 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 						parameterValues.put(i + "", args[i]);
 					}
 					String returnType = method.getReturnType().getName();
-
+*/
 					// TODO JUST TO VERIFY TEST RESULTS!
 					/*notifyInvocation(consumerId, serviceId, method.getName(),
 							requestTime, responseTime, success, exceptionClassName,
 							exceptionMessage, parameterTypes, parameterValues, returnType,
 							result);*/
-					logger.info(serviceId+","+ System.currentTimeMillis()+"," + (responseTime - requestTime));
+					logger.info(System.currentTimeMillis()+"," +serviceId+"," + serviceReference.getProperty("service.pid")+","+serviceReference.getProperty("service.id")+"," + (responseTime - requestTime)+","+Thread.currentThread().getName());
+				} else {
+					logger.info(System.currentTimeMillis()+"," +serviceId+"," + serviceReference.getProperty("service.pid")+","+serviceReference.getProperty("service.id")+"," + (responseTime - requestTime)+","+Thread.currentThread().getName()+","+"servOb null"+","+exceptionClassName);
 				}
+				
 			}
 			return result;
 		}
@@ -519,7 +521,7 @@ public class DsoaBindingManager implements ConstraintViolationListener, DsoaServ
 		public void handleEvent(Event event) {
 
 			AttributeValue value = attMapper.convertToAttribute(event);
-			logger.info("DSOA BINDING MANAGER (MONITOR) " +binding.getServiceInstanceProxy().getName() + " : "+ value.getAttribute().getId() + "," + value.getValue());
+			logger.info("Const. Viol."+ "," + System.currentTimeMillis() + "," + binding.getServiceInstanceProxy().getName() + " , "+ value.getAttribute().getId() + "," + value.getValue());
 			constraintViolated(binding.getServiceInstanceProxy().getName(), constraint, value);
 		}
 
